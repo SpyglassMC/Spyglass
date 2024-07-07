@@ -1,12 +1,13 @@
 import type { DeepReadonly } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
-import type { McfunctionNode } from '../node/index.js'
+import type { CommandChildNode, McfunctionNode } from '../node/index.js'
 import { CommandNode, MacroNode } from '../node/index.js'
 import type { ArgumentTreeNode, RootTreeNode } from '../tree/index.js'
 import { categorizeTreeChildren, redirect, resolveParentTreeNode } from '../tree/index.js'
 
 export type MockNodesGetter = (
 	treeNode: ArgumentTreeNode,
+	prevNodes: CommandChildNode[],
 	range: core.CompleterContext,
 ) => core.Arrayable<core.AstNode>
 
@@ -57,12 +58,15 @@ export function command(
 			parentTreeNode.children,
 		)
 
+		const lastIndex = node.children.indexOf(lastChildNode)
+		const prevNodes = node.children.slice(0, lastIndex + 1) as core.Mutable<CommandChildNode>[]
+
 		return [
 			...literalTreeNodes.map(([name]) =>
 				core.CompletionItem.create(name, ctx.offset, { kind: core.CompletionKind.Keyword })
 			),
 			...argumentTreeNodes.flatMap(([_name, treeNode]) =>
-				core.Arrayable.toArray(getMockNodes(treeNode, ctx)).flatMap((n) =>
+				core.Arrayable.toArray(getMockNodes(treeNode, prevNodes, ctx)).flatMap((n) =>
 					core.completer.dispatch(n, ctx)
 				)
 			),

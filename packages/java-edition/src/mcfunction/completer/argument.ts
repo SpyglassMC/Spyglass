@@ -70,6 +70,7 @@ import type { ArgumentTreeNode } from '../tree/index.js'
 
 export const getMockNodes: mcf.completer.MockNodesGetter = (
 	rawTreeNode,
+	prevNodes,
 	ctx: CompleterContext,
 ): Arrayable<AstNode> => {
 	const range = ctx.offset
@@ -194,6 +195,18 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return VectorNode.mock(range, { dimension: 2, integersOnly: true })
 		case 'minecraft:vec3':
 			return VectorNode.mock(range, { dimension: 3 })
+		case 'spyglassmc:criterion':
+			const advancementNode = prevNodes.length > 0
+				? prevNodes[prevNodes.length - 1].children[0]
+				: undefined
+			if (ResourceLocationNode.is(advancementNode)) {
+				return SymbolNode.mock(range, {
+					category: 'advancement',
+					subcategory: 'criterion',
+					parentPath: [ResourceLocationNode.toString(advancementNode, 'full')],
+				})
+			}
+			return []
 		case 'spyglassmc:tag':
 			return SymbolNode.mock(range, { category: 'tag' })
 		// ==== Unimplemented ====
