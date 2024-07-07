@@ -40,6 +40,7 @@ module.exports = {
 		"@typescript-eslint/prefer-readonly": "warn",
 		"@typescript-eslint/no-floating-promises": "error",
 		"curly": "warn",
+		"eqeqeq": "warn",
 		"import/no-duplicates": "error",
 		"indent": "off",
 		"no-fallthrough": "warn",
@@ -63,7 +64,6 @@ module.exports = {
 		],
 		"object-shorthand": "warn",
 		"prefer-const": "warn",
-		"prefer-object-spread": "warn",
-		"eqeqeq": "warn"
+		"prefer-object-spread": "warn"
 	}
 }
