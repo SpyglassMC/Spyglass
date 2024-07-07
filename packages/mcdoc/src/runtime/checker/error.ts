@@ -351,7 +351,7 @@ function condense<T, E extends McdocRuntimeError<T>>(
 
 	const distinctErrors = distinctErrorsPerNode.flatMap(e => e.errors)
 	const commonErrors = distinctErrors
-		.filter(e => e.definitions.length == validDefinitions.length)
+		.filter(e => e.definitions.length === validDefinitions.length)
 		.map(e => e.error)
 	const definitionsWithUncommonErrors = distinctErrors
 		.filter(e => e.definitions.length < validDefinitions.length)
