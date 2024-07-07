@@ -25,5 +25,16 @@ export function registerMcdocAttributes(meta: core.MetaRegistry) {
 				usageType: config.definition ? 'definition' : 'reference',
 			})
 		},
+		stringMocker: (config, _, ctx) => {
+			const parts = dissectUri(ctx.doc.uri, ctx)
+			if (!parts || !parts.ok || parts.category !== 'advancement') {
+				return undefined
+			}
+			return core.SymbolNode.mock(ctx.offset, {
+				category: 'advancement',
+				subcategory: 'criterion',
+				parentPath: [`${parts.namespace}:${parts.identifier}`],
+			})
+		},
 	})
 }
