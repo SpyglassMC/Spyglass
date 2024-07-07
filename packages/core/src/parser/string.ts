@@ -26,8 +26,8 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			const contentStart = src.cursor
 			while (src.canRead() && src.peek() !== currentQuote) {
 				const c = src.peek()
+				const cStart = src.cursor
 				if (options.escapable && c === '\\') {
-					const cStart = src.cursor
 					src.skip()
 					const c2 = src.read()
 					if (
@@ -75,6 +75,13 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 					}
 				} else {
 					src.skip()
+					const cEnd = src.cursor
+					if (cEnd - cStart > 1) {
+						ans.valueMap.push({
+							inner: Range.create(ans.value.length, ans.value.length + 1),
+							outer: Range.create(cStart, cEnd),
+						})
+					}
 					ans.value += c
 				}
 			}
