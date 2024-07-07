@@ -25,6 +25,7 @@
   "code-action.string-unquote": "Unquote this string",
   "code-action.vector-align-0.0": "Align this vector to block origin",
   "code-action.vector-align-0.5": "Align this vector to block center",
+  "command-too-long": "Command with length %0% is longer than maximum length %1%",
   "comment": "a comment starting with %0%",
   "conjunction.and_2": " and ",
   "conjunction.and_3+_1": ", ",
