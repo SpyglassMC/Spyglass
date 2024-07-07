@@ -12,6 +12,7 @@ import type {
 	KeywordType,
 	ListType,
 	LiteralType,
+	LongType,
 	MappedType,
 	NumericType,
 	ParallelIndices,
@@ -44,6 +45,7 @@ export type SimplifiedMcdocTypeNoUnion =
 	| ListType
 	| LiteralType
 	| NumericType
+	| LongType
 	| PrimitiveArrayType
 	| StringType
 	| SimplifiedStructType
@@ -498,7 +500,8 @@ function checkShallowly<T>(
 			if (
 				typeDef.valueRange
 				&& simplifiedInferred.kind === 'literal'
-				&& typeof simplifiedInferred.value.value === 'number'
+				&& simplifiedInferred.value.kind !== 'string'
+				&& simplifiedInferred.value.kind !== 'boolean'
 				&& !NumericRange.isInRange(typeDef.valueRange, simplifiedInferred.value.value)
 			) {
 				errors.push({

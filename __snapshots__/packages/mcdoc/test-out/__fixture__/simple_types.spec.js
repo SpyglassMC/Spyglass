@@ -391,7 +391,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
             "kind": "literal",
             "value": {
               "kind": "long",
-              "value": 42
+              "value": "42"
             }
           }
         },
@@ -1497,12 +1497,12 @@ exports['mcdoc __fixture__ simple types 1'] = {
                       "type": "mcdoc:typed_number",
                       "children": [
                         {
-                          "type": "integer",
+                          "type": "long",
                           "range": {
                             "start": 249,
                             "end": 251
                           },
-                          "value": 42
+                          "value": "42"
                         },
                         {
                           "type": "mcdoc:literal",
