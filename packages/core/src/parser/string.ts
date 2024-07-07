@@ -18,15 +18,15 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			value: '',
 			valueMap: [],
 		}
-		let start = src.cursor
+		let start: number
 
 		if (options.quotes?.length && (src.peek() === '"' || src.peek() === "'")) {
 			const currentQuote = src.read() as Quote
 			ans.quote = currentQuote
-			const contentStart = src.cursor
+			let cStart = src.cursor
+			start = cStart
 			while (src.canRead() && src.peek() !== currentQuote) {
 				const c = src.peek()
-				const cStart = src.cursor
 				if (options.escapable && c === '\\') {
 					src.skip()
 					const c2 = src.read()
@@ -73,6 +73,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						})
 						ans.value += c2
 					}
+					cStart = src.cursor
 				} else {
 					src.skip()
 					const cEnd = src.cursor
@@ -83,6 +84,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						})
 					}
 					ans.value += c
+					cStart = cEnd
 				}
 			}
 
@@ -93,9 +95,8 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			if (!options.quotes.includes(currentQuote)) {
 				ctx.err.report(localize('parser.string.illegal-quote', options.quotes), ans)
 			}
-
-			start = contentStart
 		} else if (options.unquotable) {
+			start = src.cursor
 			while (src.canRead() && isAllowedCharacter(src.peek(), options.unquotable)) {
 				ans.value += src.read()
 			}
@@ -103,6 +104,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 				ctx.err.report(localize('expected', localize('string')), src)
 			}
 		} else {
+			start = src.cursor
 			ctx.err.report(localize('expected', options.quotes!), src)
 		}
 
