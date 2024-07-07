@@ -919,7 +919,7 @@ export const numericType: Parser<NumericTypeNode> = typeBase(
 		),
 	}, {
 		predicate: (src) => src.tryPeek('long'),
-		parser: syntax([keyword(NumericTypeIntKinds, { colorTokenType: 'type' }), atLongRange], true),
+		parser: syntax([keyword('long', { colorTokenType: 'type' }), atLongRange], true),
 	}, {
 		parser: syntax([keyword(NumericTypeIntKinds, { colorTokenType: 'type' }), atIntRange], true),
 	}]),
@@ -928,10 +928,12 @@ export const numericType: Parser<NumericTypeNode> = typeBase(
 export const primitiveArrayType: Parser<PrimitiveArrayTypeNode> = typeBase(
 	'mcdoc:type/primitive_array',
 	syntax([
-		any([
-			sequence([literal('long'), atLongRange]),
-			sequence([literal(PrimitiveArrayValueKinds), atIntRange]),
-		]),
+		select([{
+			predicate: (src) => src.tryPeek('long'),
+			parser: syntax([literal('long'), atLongRange], true),
+		}, {
+			parser: syntax([literal(PrimitiveArrayValueKinds), atIntRange], true),
+		}]),
 		keyword('[]', { allowedChars: new Set(['[', ']']), colorTokenType: 'type' }),
 		atIntRange,
 	]),
