@@ -40,6 +40,7 @@ module.exports = {
 		"@typescript-eslint/prefer-readonly": "warn",
 		"@typescript-eslint/no-floating-promises": "error",
 		"curly": "warn",
+		"eqeqeq": "warn",
 		"import/no-duplicates": "error",
 		"indent": "off",
 		"no-fallthrough": "warn",

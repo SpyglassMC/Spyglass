@@ -226,7 +226,7 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 	if (node.options.category) {
 		const symbols = ctx.symbols.getVisibleSymbols(node.options.category, ctx.doc.uri)
 		const thisKey = Object.entries(symbols).flatMap(([key, symbol]) => {
-			if ((symbol.declaration?.[0] ?? symbol.definition?.[0])?.uri == ctx.doc.uri) {
+			if ((symbol.declaration?.[0] ?? symbol.definition?.[0])?.uri === ctx.doc.uri) {
 				return [key]
 			}
 			return []

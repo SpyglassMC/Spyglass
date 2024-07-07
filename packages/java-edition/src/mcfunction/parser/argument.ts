@@ -1589,7 +1589,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 			negated,
 		}
 		const value = nbt.parser.entry(src, ctx)
-		if (value == core.Failure) {
+		if (value === core.Failure) {
 			ctx.err.report(localize('expected', localize('nbt.node')), src)
 			src.skipUntilOrEnd(',', '|', ']')
 		} else {
@@ -1613,7 +1613,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 			negated,
 		}
 		const predicate = nbt.parser.entry(src, ctx)
-		if (predicate == core.Failure) {
+		if (predicate === core.Failure) {
 			ctx.err.report(localize('expected', localize('nbt.node')), src)
 			src.skipUntilOrEnd(',', '|', ']')
 		} else {

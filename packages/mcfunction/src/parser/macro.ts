@@ -86,7 +86,7 @@ function validateMacroArgument(src: core.Source, ctx: core.ParserContext, start:
 	src.skip(2)
 	const keyStart = src.cursor
 	src.skipUntilOrEnd(core.LF, core.CR, ')')
-	if (src.peek() != ')') {
+	if (src.peek() !== ')') {
 		// Macro key was not closed
 		ctx.err.report(
 			localize('expected', localeQuote(')')),
