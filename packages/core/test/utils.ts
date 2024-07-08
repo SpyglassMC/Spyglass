@@ -66,7 +66,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 		logger,
 		meta: data.meta ?? new MetaRegistry(),
 		profilers: data.profilers ?? ProfilerFactory.noop(),
-		projectRoot: data.projectRoot ?? 'file:///',
+		projectRoots: data.projectRoots ?? ['file:///'],
 		roots: data.roots ?? [],
 		symbols: data.symbols ?? new SymbolUtil({}, externals.event.EventEmitter),
 	}

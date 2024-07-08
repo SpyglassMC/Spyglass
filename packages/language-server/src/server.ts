@@ -81,7 +81,7 @@ connection.onInitialize(async (params) => {
 				cacheRoot: fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRoot).toString()),
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
-				projectRoot: core.fileUtil.ensureEndingSlash(workspaceFolders[0].uri),
+				projectRoots: workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri)),
 			},
 		})
 		service.project.on('documentErrored', async ({ errors, uri, version }) => {
