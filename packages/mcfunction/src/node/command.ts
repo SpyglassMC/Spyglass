@@ -1,7 +1,12 @@
 import * as core from '@spyglassmc/core'
 
+export interface CommandOptions {
+	slash?: 'allowed' | 'required'
+}
+
 export interface CommandNode extends core.SequenceNode<CommandChildNode> {
 	type: 'mcfunction:command'
+	readonly options: CommandOptions
 	slash?: core.Range
 }
 export namespace CommandNode {
@@ -12,8 +17,8 @@ export namespace CommandNode {
 		return (node as CommandNode | undefined)?.type === 'mcfunction:command'
 	}
 
-	export function mock(range: core.RangeLike): CommandNode {
-		return { type: 'mcfunction:command', range: core.Range.get(range), children: [] }
+	export function mock(range: core.RangeLike, options: CommandOptions = {}): CommandNode {
+		return { type: 'mcfunction:command', range: core.Range.get(range), children: [], options }
 	}
 }
 

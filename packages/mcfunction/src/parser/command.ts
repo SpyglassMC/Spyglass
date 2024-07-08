@@ -3,6 +3,7 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 import type {
 	CommandChildNode,
 	CommandNode,
+	CommandOptions,
 	LiteralCommandChildNode,
 	TrailingCommandChildNode,
 	UnknownCommandChildNode,
@@ -20,17 +21,27 @@ import { literal } from './literal.js'
 export function command(
 	tree: RootTreeNode,
 	argument: ArgumentParserGetter,
+	options: CommandOptions = {},
 ): core.InfallibleParser<CommandNode> {
 	return (src, ctx): CommandNode => {
 		const ans: CommandNode = {
 			type: 'mcfunction:command',
 			range: core.Range.create(src),
 			children: [],
+			options,
 		}
 
 		const start = src.cursor
 		if (src.trySkip('/')) {
 			ans.slash = core.Range.create(start, src.cursor)
+			if (!options.slash) {
+				ctx.err.report(localize('mcfunction.parser.leading-slash.unexpected'), ans.slash)
+			}
+		} else if (options.slash === 'required') {
+			ctx.err.report(
+				localize('expected', localize('mcfunction.parser.leading-slash')),
+				core.Range.create(start, start + 1),
+			)
 		}
 
 		dispatch(ans.children, src, ctx, [], tree, tree, argument)
