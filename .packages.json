@@ -4,8 +4,8 @@
 			"locales"
 		],
 		"released": {
-			"commit": "38a04e10062ad9909b4dd1992dbdc9328a36f6e4",
-			"version": "0.4.9"
+			"commit": "5e86994df657c3754d7ae37783c271b3d3981e26",
+			"version": "0.4.10"
 		}
 	},
 	"discord-bot": {
@@ -17,7 +17,7 @@
 		],
 		"released": {
 			"commit": "330eb95cb684cee0b8754b20a42caa70199a106d",
-			"version": "0.3.12"
+			"version": "0.3.13"
 		}
 	},
 	"java-edition": {
@@ -31,7 +31,7 @@
 		],
 		"released": {
 			"commit": "38a04e10062ad9909b4dd1992dbdc9328a36f6e4",
-			"version": "0.3.12"
+			"version": "0.3.13"
 		}
 	},
 	"json": {
@@ -42,7 +42,7 @@
 		],
 		"released": {
 			"commit": "8600c834873ef993068f6f8e657dae496f3cbf45",
-			"version": "0.3.11"
+			"version": "0.3.12"
 		}
 	},
 	"language-server": {
@@ -54,7 +54,7 @@
 		],
 		"released": {
 			"commit": "330eb95cb684cee0b8754b20a42caa70199a106d",
-			"version": "0.4.11"
+			"version": "0.4.12"
 		}
 	},
 	"locales": {
@@ -70,7 +70,7 @@
 		],
 		"released": {
 			"commit": "0e920e830cdc3d00c873897aa2a20fcea7d6fb56",
-			"version": "0.3.12"
+			"version": "0.3.13"
 		}
 	},
 	"mcdoc-cli": {
@@ -80,7 +80,7 @@
 		],
 		"released": {
 			"commit": "330eb95cb684cee0b8754b20a42caa70199a106d",
-			"version": "0.1.12"
+			"version": "0.1.13"
 		}
 	},
 	"mcfunction": {
@@ -90,7 +90,7 @@
 		],
 		"released": {
 			"commit": "dff0a4e0a6ed3d7de39686659d99ad77bc5116cd",
-			"version": "0.2.11"
+			"version": "0.2.12"
 		}
 	},
 	"nbt": {
@@ -101,7 +101,7 @@
 		],
 		"released": {
 			"commit": "8600c834873ef993068f6f8e657dae496f3cbf45",
-			"version": "0.3.12"
+			"version": "0.3.13"
 		}
 	},
 	"playground": {
@@ -113,7 +113,7 @@
 		],
 		"released": {
 			"commit": "330eb95cb684cee0b8754b20a42caa70199a106d",
-			"version": "0.2.12"
+			"version": "0.2.13"
 		}
 	},
 	"vscode-extension": {
@@ -121,8 +121,8 @@
 			"language-server"
 		],
 		"released": {
-			"commit": "67c345f7c1857afd1d66d342c100c2c4c97cf8a3",
-			"version": "4.1.1"
+			"commit": "5e86994df657c3754d7ae37783c271b3d3981e26",
+			"version": "4.1.2"
 		}
 	}
 }
