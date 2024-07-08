@@ -52,7 +52,7 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 		// TODO: fix completer inside commands
 		stringParser: ({ slash, empty }) => {
 			return (src, ctx) => {
-				if ((empty && !src.canRead()) || (slash === 'chat' && src.peek() === '/')) {
+				if ((empty && !src.canRead()) || (slash === 'chat' && src.peek() !== '/')) {
 					return core.string({
 						unquotable: { blockList: new Set(), allowEmpty: true },
 					})(src, ctx)
