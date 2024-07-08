@@ -116,7 +116,7 @@ export class CacheService {
 
 	async load(): Promise<LoadResult> {
 		const ans: LoadResult = { symbols: {} }
-		if (this.project.projectRoots.length == 0) {
+		if (this.project.projectRoots.length === 0) {
 			return ans
 		}
 		const __profiler = this.project.profilers.get('cache#load')
