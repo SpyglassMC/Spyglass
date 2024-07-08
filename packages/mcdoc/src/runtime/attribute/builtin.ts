@@ -8,6 +8,7 @@ interface IdConfig {
 	tags?: 'allowed' | 'implicit' | 'required'
 	definition?: boolean
 	prefix?: '!'
+	empty?: 'allowed'
 }
 
 const idValidator = validator.alternatives<IdConfig>(
@@ -17,6 +18,7 @@ const idValidator = validator.alternatives<IdConfig>(
 		tags: validator.optional(validator.options('allowed', 'implicit', 'required')),
 		definition: validator.optional(validator.boolean),
 		prefix: validator.optional(validator.options('!')),
+		empty: validator.optional(validator.options('allowed')),
 	}),
 	() => ({}),
 )
@@ -64,6 +66,18 @@ function getResourceLocationOptions(
 	ctx.logger.warn(`[mcdoc id] Unhandled registry ${registry}`)
 	return undefined
 }
+
+interface IntegerConfig {
+	min?: number
+	max?: number
+}
+const integerValidator = validator.alternatives<IntegerConfig>(
+	validator.tree({
+		min: validator.optional(validator.number),
+		max: validator.optional(validator.number),
+	}),
+	() => ({}),
+)
 
 export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 	registerAttribute(meta, 'canonical', () => undefined, {
@@ -127,6 +141,11 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 			const resourceLocation = core.resourceLocation(options)
 			return (src, ctx) => {
+				if (config.empty && !src.canRead()) {
+					return core.string({
+						unquotable: { blockList: new Set(), allowEmpty: true },
+					})(src, ctx)
+				}
 				if (config.prefix) {
 					return core.prefixed({ prefix: config.prefix, child: resourceLocation })(src, ctx)
 				}
@@ -148,6 +167,11 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				return core.PrefixedNode.mock(ctx.offset, config.prefix, resourceLocation)
 			}
 			return resourceLocation
+		},
+	})
+	registerAttribute(meta, 'integer', integerValidator, {
+		stringParser: (config) => {
+			return core.integer({ pattern: /^-?\d+$/, min: config.min, max: config.max })
 		},
 	})
 	registerAttribute(meta, 'color', validator.string, {

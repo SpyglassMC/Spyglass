@@ -2,7 +2,7 @@ import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localize } from '@spyglassmc/locales'
 import type * as mcdoc from '@spyglassmc/mcdoc'
-import * as mcf from '@spyglassmc/mcfunction'
+import type * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { dissectUri, reportDissectError } from '../../binder/index.js'
 import { getTagValues } from '../../common/index.js'
@@ -31,16 +31,6 @@ const entry: core.Checker<mcf.McfunctionNode> = (node, ctx) => {
 }
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
-	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
-		ctx.err.report(localize('unexpected-leading-slash'), node.slash)
-	}
-	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
-	if (release && ReleaseVersion.cmp(release, '1.20.5') >= 0) {
-		const commandLength = core.Range.length(node.range)
-		if (commandLength > 2_000_000) {
-			ctx.err.report(localize('command-too-long', commandLength, 2_000_000), node)
-		}
-	}
 	rootCommand(node.children, 0, ctx)
 }
 

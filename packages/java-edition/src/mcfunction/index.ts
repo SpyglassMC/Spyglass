@@ -35,12 +35,17 @@ export const initialize = (
 
 	mcf.initialize(ctx)
 
-	const supportsBackslashContinuation = ReleaseVersion.cmp(releaseVersion, '1.20.2') >= 0
-	const supportsMacros = ReleaseVersion.cmp(releaseVersion, '1.20.2') >= 0
+	const mcfunctionOptions: mcf.McfunctionOptions = {
+		lineContinuation: ReleaseVersion.cmp(releaseVersion, '1.20.2') >= 0,
+		macros: ReleaseVersion.cmp(releaseVersion, '1.20.2') >= 0,
+		commandOptions: ReleaseVersion.cmp(releaseVersion, '1.20.5') >= 0
+			? { maxLength: 2_000_000 }
+			: {},
+	}
 
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],
-		parser: mcf.entry(tree, parser.argument, { supportsBackslashContinuation, supportsMacros }),
+		parser: mcf.entry(tree, parser.argument, mcfunctionOptions),
 		completer: mcf.completer.entry(tree, completer.getMockNodes),
 		triggerCharacters: [' ', '[', '=', '!', ',', '{', ':', '/', '.', '"', "'"],
 	})
