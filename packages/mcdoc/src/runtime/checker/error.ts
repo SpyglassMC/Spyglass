@@ -557,10 +557,10 @@ export function getDefaultErrorReporter<T>(
 				localizedText = localize(`mcdoc.runtime.checker.${defaultTranslationKey}`)
 				break
 			case 'internal':
-				break
+				return
 			default:
 				localizedText = localize(defaultTranslationKey)
 		}
-		ctx.err.report(localizedText!, getErrorRange(error.node, error.kind), severity)
+		ctx.err.report(localizedText, getErrorRange(error.node, error.kind), severity)
 	}
 }

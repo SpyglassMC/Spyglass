@@ -30,6 +30,14 @@ export namespace Color {
 	])
 	export const ColorNames = [...NamedColors.keys()]
 
+	export function fromNamed(value: string): Color | undefined {
+		const composite = NamedColors.get(value)
+		if (composite === undefined) {
+			return undefined
+		}
+		return fromCompositeRGB(composite)
+	}
+
 	/**
 	 * @param r A decimal within [0.0, 1.0].
 	 * @param g A decimal within [0.0, 1.0].
@@ -69,18 +77,43 @@ export namespace Color {
 	}
 
 	/**
+	 * @param value A string in the format `#rrggbb`
+	 */
+	export function fromHexRGB(value: string): Color {
+		var bigint = parseInt(value.slice(1), 16)
+		var r = (bigint >> 16) & 255
+		var g = (bigint >> 8) & 255
+		var b = bigint & 255
+		return fromIntRGB(r, g, b)
+	}
+
+	/**
 	 * @param value `R << 16 + G << 8 + B`. Negative values result in white.
 	 */
-	export function fromCompositeInt(value: number): Color {
+	export function fromCompositeRGB(value: number): Color {
 		if (value < 0) {
 			return fromDecRGB(1.0, 1.0, 1.0)
 		}
 		const b = value % 256
-		value >>= 8
+		value >>>= 8
 		const g = value % 256
-		value >>= 8
+		value >>>= 8
 		const r = value % 256
 		return fromIntRGB(r, g, b)
+	}
+
+	/**
+	 * @param value `A << 24 + R << 16 + G << 8 + B`.
+	 */
+	export function fromCompositeARGB(value: number): Color {
+		const b = value % 256
+		value >>>= 8
+		const g = value % 256
+		value >>>= 8
+		const r = value % 256
+		value >>>= 8
+		const a = value % 256
+		return fromIntRGBA(r, g, b, a)
 	}
 }
 
@@ -112,7 +145,11 @@ export enum ColorFormat {
 	/**
 	 * `16620441`
 	 */
-	CompositeInt,
+	CompositeRGB,
+	/**
+	 * `4294945365`
+	 */
+	CompositeARGB,
 }
 
 export type FormattableColor = { value: Color; format: ColorFormat[]; range?: Range }
@@ -151,9 +188,16 @@ export namespace ColorPresentation {
 					Math.round(((color[0] * 255) << 16) + ((color[1] * 255) << 8) + color[2] * 255)
 						.toString(16).padStart(6, '0')
 				}`
-			case ColorFormat.CompositeInt:
+			case ColorFormat.CompositeRGB:
 				return `${
 					Math.round(((color[0] * 255) << 16) + ((color[1] * 255) << 8) + color[2] * 255)
+				}`
+			case ColorFormat.CompositeARGB:
+				return `${
+					(BigInt(Math.round(color[3] * 255)) << 24n)
+					+ (BigInt(Math.round(color[0] * 255)) << 16n)
+					+ (BigInt(Math.round(color[1] * 255)) << 8n)
+					+ BigInt(Math.round(color[2] * 255))
 				}`
 		}
 	}

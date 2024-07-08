@@ -413,7 +413,7 @@ exports['mcdoc attribute Parse "#[bitfield=enum (int) {↓⮀⮀⮀⮀⮀Foo = 1
   "errors": []
 }
 
-exports['mcdoc attribute Parse "#[color=composite_int]" 1'] = {
+exports['mcdoc attribute Parse "#[color=composite_rgb]" 1'] = {
   "node": {
     "type": "mcdoc:attribute",
     "children": [
@@ -437,7 +437,7 @@ exports['mcdoc attribute Parse "#[color=composite_int]" 1'] = {
                   "start": 8,
                   "end": 21
                 },
-                "value": "composite_int"
+                "value": "composite_rgb"
               }
             ],
             "range": {

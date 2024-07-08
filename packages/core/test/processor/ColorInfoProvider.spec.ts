@@ -24,12 +24,17 @@ describe('Color', () => {
 			snapshot(Color.fromIntRGB(255, 191, 127))
 		})
 	})
-	describe('fromCompositeInt()', () => {
+	describe('fromCompositeRGB()', () => {
 		it('Should return correctly', () => {
-			snapshot(Color.fromCompositeInt(0xffaa55))
+			snapshot(Color.fromCompositeRGB(0xffaa55))
 		})
 		it('Should return white for negative number', () => {
-			assert.deepStrictEqual(Color.fromCompositeInt(-1), [1.0, 1.0, 1.0, 1.0])
+			assert.deepStrictEqual(Color.fromCompositeRGB(-1), [1.0, 1.0, 1.0, 1.0])
+		})
+	})
+	describe('fromCompositeARGB()', () => {
+		it('Should return correctly', () => {
+			snapshot(Color.fromCompositeARGB(0xeeffaa55))
 		})
 	})
 })
