@@ -1,5 +1,5 @@
 :page-layout: default
-:page-title: Mcdoc
+:page-title: Mcdoc Specification
 :page-parent: Home
 
 :toc:

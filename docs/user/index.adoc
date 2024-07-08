@@ -45,7 +45,7 @@ Main article: link:./user/config[Config]
 
 == Mcdoc Specification
 
-Main article: link:./user/mcdoc[Mcdoc]
+Main article: link:./user/mcdoc/specification[Mcdoc]
 
 == Playground
 
