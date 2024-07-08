@@ -32,6 +32,7 @@ export function command(
 		}
 
 		const start = src.cursor
+		const innerStart = src.innerCursor
 		if (src.trySkip('/')) {
 			ans.slash = core.Range.create(start, src.cursor)
 			if (!options.slash) {
@@ -58,6 +59,16 @@ export function command(
 		}
 
 		ans.range.end = src.cursor
+
+		if (options.maxLength) {
+			const commandLength = src.innerCursor - innerStart
+			if (commandLength > options.maxLength) {
+				ctx.err.report(
+					localize('mcfunction.parser.command-too-long', commandLength, options.maxLength),
+					ans,
+				)
+			}
+		}
 
 		return ans
 	}

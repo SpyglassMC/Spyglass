@@ -2,6 +2,7 @@ import * as core from '@spyglassmc/core'
 
 export interface CommandOptions {
 	slash?: 'allowed' | 'required'
+	maxLength?: number
 }
 
 export interface CommandNode extends core.SequenceNode<CommandChildNode> {

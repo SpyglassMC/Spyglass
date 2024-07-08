@@ -31,13 +31,6 @@ const entry: core.Checker<mcf.McfunctionNode> = (node, ctx) => {
 }
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
-	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
-	if (release && ReleaseVersion.cmp(release, '1.20.5') >= 0) {
-		const commandLength = core.Range.length(node.range)
-		if (commandLength > 2_000_000) {
-			ctx.err.report(localize('command-too-long', commandLength, 2_000_000), node)
-		}
-	}
 	rootCommand(node.children, 0, ctx)
 }
 
