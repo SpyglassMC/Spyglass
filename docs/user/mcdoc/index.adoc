@@ -1,0 +1,6 @@
+:page-layout: default
+:page-title: Mcdoc
+:page-parent: Home
+:page-has_children: true
+
+Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs.

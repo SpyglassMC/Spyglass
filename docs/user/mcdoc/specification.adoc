@@ -1,6 +1,7 @@
 :page-layout: default
-:page-title: Mcdoc Specification
-:page-parent: Home
+:page-title: Specification
+:page-parent: Mcdoc
+:page-grand_parent: Home
 
 :toc:
 
@@ -1250,8 +1251,6 @@ TODO: Data validator hooks can contribute additional type assignability rules. e
 
 * For JSON: `byte = short = int = long = float = double`
 * For NBT: `boolean = (byte @ 0..1) ⊂ byte`
-
-ajsdhflkajgslkthisissoharddkhdgklsjhiuyra
 
 // == Procedures
 
