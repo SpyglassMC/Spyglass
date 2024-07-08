@@ -1,4 +1,4 @@
-# v4.1.1 (2024-07-08)
+# v4.1.2 (2024-07-08)
 
 ### 🐛 Bug Fixes
 - [`0e920e8`](https://github.com/SpyglassMC/Spyglass/commit/0e920e830cdc3d00c873897aa2a20fcea7d6fb56) Fixed issue where NBT and JSON validation incorrectly used cached types ([#1495](https://github.com/SpyglassMC/Spyglass/pull/1495))
