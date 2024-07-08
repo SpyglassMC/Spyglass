@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import { dissectUri } from '../binder'
+import { dissectUri } from '../binder/index.js'
 
 const validator = mcdoc.runtime.attribute.validator
 
