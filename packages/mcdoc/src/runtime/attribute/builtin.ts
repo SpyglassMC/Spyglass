@@ -8,6 +8,7 @@ interface IdConfig {
 	tags?: 'allowed' | 'implicit' | 'required'
 	definition?: boolean
 	prefix?: '!'
+	empty?: 'allowed'
 }
 
 const idValidator = validator.alternatives<IdConfig>(
@@ -17,6 +18,7 @@ const idValidator = validator.alternatives<IdConfig>(
 		tags: validator.optional(validator.options('allowed', 'implicit', 'required')),
 		definition: validator.optional(validator.boolean),
 		prefix: validator.optional(validator.options('!')),
+		empty: validator.optional(validator.options('allowed')),
 	}),
 	() => ({}),
 )
@@ -127,6 +129,11 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 			const resourceLocation = core.resourceLocation(options)
 			return (src, ctx) => {
+				if (config.empty && !src.canRead()) {
+					return core.string({
+						unquotable: { blockList: new Set(), allowEmpty: true },
+					})(src, ctx)
+				}
 				if (config.prefix) {
 					return core.prefixed({ prefix: config.prefix, child: resourceLocation })(src, ctx)
 				}
