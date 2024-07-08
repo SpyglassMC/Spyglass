@@ -52,18 +52,18 @@ export class Service {
 
 	colorize(node: FileNode<AstNode>, doc: TextDocument, range?: Range): readonly ColorToken[] {
 		try {
-			this.debug(`Colorizing '${doc.uri}' # ${doc.version}`)
+			this.debug(`Colorizing ${doc.uri} # ${doc.version}`)
 			const colorizer = this.project.meta.getColorizer(node.type)
 			return colorizer(node, ColorizerContext.create(this.project, { doc, range }))
 		} catch (e) {
-			this.logger.error(`[Service] [colorize] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Service] [colorize] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 		return []
 	}
 
 	getColorInfo(node: FileNode<AstNode>, doc: TextDocument): ColorInfo[] {
 		try {
-			this.debug(`Getting color info for '${doc.uri}' # ${doc.version}`)
+			this.debug(`Getting color info for ${doc.uri} # ${doc.version}`)
 			const ans: ColorInfo[] = []
 			traversePreOrder(
 				node,
@@ -77,7 +77,7 @@ export class Service {
 			)
 			return ans
 		} catch (e) {
-			this.logger.error(`[Service] [getColorInfo] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Service] [getColorInfo] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 		return []
 	}
@@ -90,9 +90,7 @@ export class Service {
 	): ColorPresentation[] {
 		try {
 			this.debug(
-				`Getting color presentation for '${doc.uri}' # ${doc.version} @ ${
-					Range.toString(range)
-				}`,
+				`Getting color presentation for ${doc.uri} # ${doc.version} @ ${Range.toString(range)}`,
 			)
 			let node = AstNode.findDeepestChild({ node: file, needle: range.start })
 			while (node) {
@@ -107,7 +105,7 @@ export class Service {
 			}
 		} catch (e) {
 			this.logger.error(
-				`[Service] [getColorPresentation] Failed for “${doc.uri}” #${doc.version}`,
+				`[Service] [getColorPresentation] Failed for ${doc.uri} # ${doc.version}`,
 				e,
 			)
 		}
@@ -116,7 +114,7 @@ export class Service {
 
 	complete(node: FileNode<AstNode>, doc: TextDocument, offset: number, triggerCharacter?: string) {
 		try {
-			this.debug(`Getting completion for '${doc.uri}' # ${doc.version} @ ${offset}`)
+			this.debug(`Getting completion for ${doc.uri} # ${doc.version} @ ${offset}`)
 			const shouldComplete = this.project.meta.shouldComplete(doc.languageId, triggerCharacter)
 			if (shouldComplete) {
 				return completer.file(
@@ -125,7 +123,7 @@ export class Service {
 				)
 			}
 		} catch (e) {
-			this.logger.error(`[Service] [complete] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Service] [complete] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 		return []
 	}
@@ -151,21 +149,21 @@ export class Service {
 
 	format(node: FileNode<AstNode>, doc: TextDocument, tabSize: number, insertSpaces: boolean) {
 		try {
-			this.debug(`Formatting '${doc.uri}' # ${doc.version}`)
+			this.debug(`Formatting ${doc.uri} # ${doc.version}`)
 			const formatter = this.project.meta.getFormatter(node.type)
 			return formatter(
 				node,
 				FormatterContext.create(this.project, { doc, tabSize, insertSpaces }),
 			)
 		} catch (e) {
-			this.logger.error(`[Service] [format] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Service] [format] Failed for ${doc.uri} # ${doc.version}`, e)
 			throw e
 		}
 	}
 
 	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | undefined {
 		try {
-			this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
+			this.debug(`Getting hover for ${doc.uri} # ${doc.version} @ ${offset}`)
 			let node = AstNode.findDeepestChild({ node: file, needle: offset })
 			while (node) {
 				const symbol = this.project.symbols.resolveAlias(node.symbol)
@@ -182,7 +180,7 @@ export class Service {
 				node = node.parent
 			}
 		} catch (e) {
-			this.logger.error(`[Service] [getHover] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Service] [getHover] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 		return undefined
 	}
@@ -190,7 +188,7 @@ export class Service {
 	getInlayHints(node: FileNode<AstNode>, doc: TextDocument, range?: Range): InlayHint[] {
 		try {
 			// TODO: `range` argument is not used.
-			this.debug(`Getting inlay hints for '${doc.uri}' # ${doc.version}`)
+			this.debug(`Getting inlay hints for ${doc.uri} # ${doc.version}`)
 			const ans: InlayHint[] = []
 			const ctx = ProcessorContext.create(this.project, { doc })
 			for (const provider of this.project.meta.inlayHintProviders) {
@@ -198,7 +196,7 @@ export class Service {
 			}
 			return ans
 		} catch (e) {
-			this.logger.error(`[Service] [getInlayHints] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Service] [getInlayHints] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 		return []
 	}
@@ -209,7 +207,7 @@ export class Service {
 		offset: number,
 	): SignatureHelp | undefined {
 		try {
-			this.debug(`Getting signature help for '${doc.uri}' # ${doc.version} @ ${offset}`)
+			this.debug(`Getting signature help for ${doc.uri} # ${doc.version} @ ${offset}`)
 			const ctx = SignatureHelpProviderContext.create(this.project, { doc, offset })
 			for (const provider of this.project.meta.signatureHelpProviders) {
 				const result = provider(node, ctx)
@@ -219,7 +217,7 @@ export class Service {
 			}
 		} catch (e) {
 			this.logger.error(
-				`[Service] [getSignatureHelp] Failed for “${doc.uri}” #${doc.version}`,
+				`[Service] [getSignatureHelp] Failed for ${doc.uri} # ${doc.version}`,
 				e,
 			)
 		}
@@ -243,7 +241,7 @@ export class Service {
 			this.debug(
 				`Getting symbol locations of usage '${
 					searchedUsages.join(',')
-				}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`,
+				}' for ${doc.uri} # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`,
 			)
 			let node = AstNode.findDeepestChild({ node: file, needle: offset })
 			while (node) {
@@ -272,7 +270,7 @@ export class Service {
 			}
 		} catch (e) {
 			this.logger.error(
-				`[Service] [getSymbolLocations] Failed for “${doc.uri}” #${doc.version}`,
+				`[Service] [getSymbolLocations] Failed for ${doc.uri} # ${doc.version}`,
 				e,
 			)
 		}

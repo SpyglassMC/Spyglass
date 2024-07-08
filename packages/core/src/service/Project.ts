@@ -328,14 +328,15 @@ export class Project implements ExternalEventEmitter {
 
 		this.#ctx = {}
 
-		this.logger.info(`[Project] [init] cacheRoot = “${cacheRoot}”`)
+		this.logger.info(`[Project] [init] cacheRoot = ${cacheRoot}`)
+		this.logger.info(`[Project] [init] projectRoots = ${projectRoots.join(' ')}`)
 
 		this.#configService.on('changed', ({ config }) => {
 			this.config = config
 			this.logger.info('[Project] [Config] Changed')
 		}).on(
 			'error',
-			({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading “${uri}”`, error),
+			({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading ${uri}`, error),
 		)
 
 		this.setInitPromise()
@@ -674,7 +675,7 @@ export class Project implements ExternalEventEmitter {
 				const content = bufferToString(await this.fs.readFile(uri))
 				return TextDocument.create(uri, languageId, -1, content)
 			} catch (e) {
-				this.logger.warn(`[Project] [read] Failed creating TextDocument for “${uri}”`, e)
+				this.logger.warn(`[Project] [read] Failed creating TextDocument for ${uri}`, e)
 				return undefined
 			}
 		}
@@ -727,7 +728,7 @@ export class Project implements ExternalEventEmitter {
 				return result.doc
 			}
 			throw new Error(
-				`[Project] [read] Client-managed URI “${uri}” does not have a TextDocument in the cache`,
+				`[Project] [read] Client-managed URI ${uri} does not have a TextDocument in the cache`,
 			)
 		}
 		return getCacheHandlingPromise(uri)
@@ -767,7 +768,7 @@ export class Project implements ExternalEventEmitter {
 			this.#bindingInProgressUris.delete(doc.uri)
 			this.#symbolUpToDateUris.add(doc.uri)
 		} catch (e) {
-			this.logger.error(`[Project] [bind] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Project] [bind] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 	}
 
@@ -786,7 +787,7 @@ export class Project implements ExternalEventEmitter {
 				this.lint(doc, node)
 			})
 		} catch (e) {
-			this.logger.error(`[Project] [check] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Project] [check] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 	}
 
@@ -827,7 +828,7 @@ export class Project implements ExternalEventEmitter {
 				;(node.linterErrors as LanguageError[]).push(...ctx.err.dump())
 			}
 		} catch (e) {
-			this.logger.error(`[Project] [lint] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Project] [lint] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 	}
 
@@ -903,9 +904,7 @@ export class Project implements ExternalEventEmitter {
 		const doc = this.#clientManagedDocAndNodes.get(uri)?.doc
 		if (!doc) {
 			throw new Error(
-				`TextDocument for “${uri}” is ${
-					!doc ? 'not cached' : 'a Promise'
-				}. This should not happen. Did the language client send a didChange notification without sending a didOpen one, or is there a logic error on our side resulting the 'read' function overriding the 'TextDocument' created in the 'didOpen' notification handler?`,
+				`TextDocument for ${uri} is not cached. This should not happen. Did the language client send a didChange notification without sending a didOpen one, or is there a logic error on our side resulting the 'read' function overriding the 'TextDocument' created in the 'didOpen' notification handler?`,
 			)
 		}
 		TextDocument.update(doc, changes, version)

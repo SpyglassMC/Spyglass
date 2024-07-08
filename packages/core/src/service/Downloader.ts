@@ -78,7 +78,7 @@ export class Downloader {
 							)
 							return ans
 						} catch (e) {
-							this.logger.error(`[Downloader] [${id}] Loading cached file “${cacheUri}”`, e)
+							this.logger.error(`[Downloader] [${id}] Loading cached file ${cacheUri}`, e)
 							if (this.externals.error.isKind(e, 'ENOENT')) {
 								// Cache checksum exists, but cached file doesn't.
 								// Remove the invalid cache checksum.
@@ -86,7 +86,7 @@ export class Downloader {
 									await this.externals.fs.unlink(cacheChecksumUri)
 								} catch (e) {
 									this.logger.error(
-										`[Downloader] [${id}] Removing invalid cache checksum “${cacheChecksumUri}”`,
+										`[Downloader] [${id}] Removing invalid cache checksum ${cacheChecksumUri}`,
 										e,
 									)
 								}
@@ -96,14 +96,14 @@ export class Downloader {
 				} catch (e) {
 					if (!this.externals.error.isKind(e, 'ENOENT')) {
 						this.logger.error(
-							`[Downloader] [${id}] Loading cache checksum “${cacheChecksumUri}”`,
+							`[Downloader] [${id}] Loading cache checksum ${cacheChecksumUri}`,
 							e,
 						)
 					}
 				}
 			} catch (e) {
 				this.logger.error(
-					`[Downloader] [${id}] Fetching latest checksum “${checksumJob.uri}”`,
+					`[Downloader] [${id}] Fetching latest checksum ${checksumJob.uri}`,
 					e,
 				)
 			}
@@ -120,7 +120,7 @@ export class Downloader {
 						await fileUtil.writeFile(this.externals, cacheChecksumUri, `${checksum}\n`)
 					} catch (e) {
 						this.logger.error(
-							`[Downloader] [${id}] Saving cache checksum “${cacheChecksumUri}”`,
+							`[Downloader] [${id}] Saving cache checksum ${cacheChecksumUri}`,
 							e,
 						)
 					}
@@ -129,23 +129,23 @@ export class Downloader {
 					const serializer = cache.serializer ?? ((b) => b)
 					await fileUtil.writeFile(this.externals, cacheUri, serializer(buffer))
 				} catch (e) {
-					this.logger.error(`[Downloader] [${id}] Caching file “${cacheUri}”`, e)
+					this.logger.error(`[Downloader] [${id}] Caching file ${cacheUri}`, e)
 				}
 			}
-			this.logger.info(`[Downloader] [${id}] Downloaded from “${uri}”`)
+			this.logger.info(`[Downloader] [${id}] Downloaded from ${uri}`)
 			return await transformer(buffer)
 		} catch (e) {
-			this.logger.error(`[Downloader] [${id}] Downloading “${uri}”`, e)
+			this.logger.error(`[Downloader] [${id}] Downloading ${uri}`, e)
 			if (cache && cacheUri) {
 				try {
 					const cachedBuffer = await fileUtil.readFile(this.externals, cacheUri)
 					const deserializer = cache.deserializer ?? ((b) => b)
 					const ans = await transformer(deserializer(cachedBuffer))
-					this.logger.warn(`[Downloader] [${id}] Fell back to cached file “${cacheUri}”`)
+					this.logger.warn(`[Downloader] [${id}] Fell back to cached file ${cacheUri}`)
 					return ans
 				} catch (e) {
 					this.logger.error(
-						`[Downloader] [${id}] Fallback: loading cached file “${cacheUri}”`,
+						`[Downloader] [${id}] Fallback: loading cached file ${cacheUri}`,
 						e,
 					)
 				}

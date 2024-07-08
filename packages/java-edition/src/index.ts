@@ -34,7 +34,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		} catch (e) {
 			if (!externals.error.isKind(e, 'ENOENT')) {
 				// `pack.mcmeta` exists but broken. Log an error.
-				logger.error(`[je.initialize] Failed loading pack.mcmeta “${uri}”`, e)
+				logger.error(`[je.initialize] Failed loading pack.mcmeta ${uri}`, e)
 			}
 		}
 		return undefined
@@ -53,7 +53,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 					const data = await readPackMcmeta(uri)
 					if (data) {
 						logger.info(
-							`[je.initialize] Found a valid pack.mcmeta “${uri}” with pack_format “${data.pack.pack_format}”`,
+							`[je.initialize] Found a valid pack.mcmeta ${uri} with pack_format ${data.pack.pack_format}`,
 						)
 						return data
 					}

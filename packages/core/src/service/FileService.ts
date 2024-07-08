@@ -223,7 +223,7 @@ export class FileUriSupporter implements UriProtocolSupporter {
 					files.set(uri, await externals.fs.getAllFiles(uri))
 				}
 			} catch (e) {
-				logger.error(`[FileUriSupporter#create] Bad dependency “${uri}”`, e)
+				logger.error(`[FileUriSupporter#create] Bad dependency ${uri}`, e)
 			}
 		}
 
@@ -310,11 +310,11 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	 */
 	private static decodeUri(uri: Uri): { archiveName: string; pathInArchive: string } {
 		if (uri.protocol !== ArchiveUriSupporter.Protocol) {
-			throw new Error(`Expected protocol “${ArchiveUriSupporter.Protocol}” in “${uri}”`)
+			throw new Error(`Expected protocol “${ArchiveUriSupporter.Protocol}” in ${uri}`)
 		}
 		const path = uri.pathname
 		if (!path) {
-			throw new Error(`Missing path in archive uri “${uri.toString()}”`)
+			throw new Error(`Missing path in archive uri ${uri}`)
 		}
 		return { archiveName: uri.host, pathInArchive: path.charAt(0) === '/' ? path.slice(1) : path }
 	}
@@ -345,7 +345,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 					entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
 				}
 			} catch (e) {
-				logger.error(`[SpyglassUriSupporter#create] Bad dependency “${uri}”`, e)
+				logger.error(`[SpyglassUriSupporter#create] Bad dependency ${uri}`, e)
 			}
 		}
 
