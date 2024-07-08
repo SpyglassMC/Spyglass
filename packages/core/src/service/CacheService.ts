@@ -123,7 +123,7 @@ export class CacheService {
 		let filePath: string | undefined
 		try {
 			filePath = await this.getCacheFileUri()
-			this.project.logger.info(`[CacheService#load] symbolCachePath = “${filePath}”`)
+			this.project.logger.info(`[CacheService#load] symbolCachePath = ${filePath}`)
 			const cache =
 				(await fileUtil.readGzippedJson(this.project.externals, filePath)) as CacheFile
 			__profiler.task('Read File')
@@ -236,7 +236,7 @@ export class CacheService {
 
 			return true
 		} catch (e) {
-			this.project.logger.error(`[CacheService#save] path = “${filePath}”`, e)
+			this.project.logger.error(`[CacheService#save] path = ${filePath}`, e)
 		}
 		return false
 	}
