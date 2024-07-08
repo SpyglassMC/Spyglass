@@ -67,6 +67,18 @@ function getResourceLocationOptions(
 	return undefined
 }
 
+interface IntegerConfig {
+	min?: number
+	max?: number
+}
+const integerValidator = validator.alternatives<IntegerConfig>(
+	validator.tree({
+		min: validator.optional(validator.number),
+		max: validator.optional(validator.number),
+	}),
+	() => ({}),
+)
+
 export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 	registerAttribute(meta, 'canonical', () => undefined, {
 		// Has hardcoded behavior in the runtime checker
@@ -155,6 +167,11 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				return core.PrefixedNode.mock(ctx.offset, config.prefix, resourceLocation)
 			}
 			return resourceLocation
+		},
+	})
+	registerAttribute(meta, 'integer', integerValidator, {
+		stringParser: (config) => {
+			return core.integer({ pattern: /^-?\d+$/, min: config.min, max: config.max })
 		},
 	})
 	registerAttribute(meta, 'color', validator.string, {
