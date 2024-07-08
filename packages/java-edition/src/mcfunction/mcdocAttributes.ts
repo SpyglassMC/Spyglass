@@ -11,8 +11,8 @@ const validator = mcdoc.runtime.attribute.validator
 
 interface CommandConfig {
 	slash?: 'allowed' | 'required' | 'chat'
-	empty?: 'allowed'
 	max_length?: number
+	empty?: 'allowed'
 }
 const commandValidator = validator.alternatives<CommandConfig>(
 	validator.tree({
