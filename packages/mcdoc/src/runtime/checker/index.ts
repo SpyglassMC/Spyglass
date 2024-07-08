@@ -814,7 +814,7 @@ function simplifyReference<T>(
 	}
 	const mapped = context.typeMapping?.[typeDef.path]
 	if (mapped) {
-		return { typeDef: mapped }
+		return { typeDef: mapped, dynamicData: true }
 	}
 	// TODO Probably need to keep original symbol around in some way to support "go to definition"
 	const symbol = context.ctx.symbols.query(context.ctx.doc, 'mcdoc', typeDef.path)
@@ -1086,8 +1086,8 @@ function simplifyUnion<T>(
 
 	const members: SimplifiedMcdocTypeNoUnion[] = []
 	for (const member of validMembers) {
-		const { typeDef: simplified, dynamicData: memberDynamid } = simplify(member, context)
-		if (memberDynamid) {
+		const { typeDef: simplified, dynamicData: memberDynamic } = simplify(member, context)
+		if (memberDynamic) {
 			dynamicData = true
 		}
 		if (simplified.kind === 'union') {
@@ -1158,8 +1158,9 @@ function simplifyStruct<T>(
 				}
 				structKey = simplifiedKeyResult.typeDef
 			}
-			const mappedField = context.typeMapping
-				? {
+			let mappedField: StructTypePairField
+			if (context.typeMapping) {
+				mappedField = {
 					...field,
 					type: {
 						kind: 'mapped',
@@ -1167,7 +1168,12 @@ function simplifyStruct<T>(
 						mapping: context.typeMapping,
 					} satisfies McdocType,
 				}
-				: field
+				// Don't cache mapped field data
+				// TODO find a better way to handle mapped types with caching
+				dynamicData = true
+			} else {
+				mappedField = field
+			}
 			addField(structKey, mappedField)
 		} else {
 			const simplifiedSpread = simplify(field.type, {
@@ -1201,6 +1207,9 @@ function simplifyList<T>(typeDef: ListType, context: SimplifyContext<T>): Simpli
 			...typeDef,
 			item: { kind: 'mapped', child: typeDef.item, mapping: context.typeMapping },
 		},
+		// Don't cache mapped field data
+		// TODO find a better way to handle mapped types with caching
+		dynamicData: true,
 	}
 }
 
@@ -1220,6 +1229,9 @@ function simplifyTuple<T>(
 				mapping: context.typeMapping!,
 			})),
 		},
+		// Don't cache mapped field data
+		// TODO find a better way to handle mapped types with caching
+		dynamicData: true,
 	}
 }
 
