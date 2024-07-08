@@ -66,7 +66,7 @@ export const enum CoordinateSystem {
 }
 
 export interface EntitySelectorAdvancementsArgumentCriteriaNode
-	extends core.RecordBaseNode<core.StringNode, core.BooleanNode>
+	extends core.RecordBaseNode<core.StringNode | core.SymbolNode, core.BooleanNode>
 {
 	type: 'mcfunction:entity_selector/arguments/advancements/criteria'
 }

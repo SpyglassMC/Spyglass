@@ -768,6 +768,14 @@ const AdvancementTargets: PartialTreeNode = Object.freeze({
 							properties: {
 								category: 'advancement',
 							},
+							children: {
+								criterion: {
+									parser: 'spyglassmc:criterion',
+									properties: {
+										usageType: 'reference',
+									},
+								},
+							},
 						},
 					},
 				},
