@@ -3,8 +3,8 @@ import type { AstNode, ErrorNode } from '../node/index.js'
 import { SequenceUtil, SequenceUtilDiscriminator } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import { ErrorReporter } from '../service/index.js'
-import type { ErrorSeverity, ReadonlySource } from '../source/index.js'
-import { IndexMap, Range, Source } from '../source/index.js'
+import type { ErrorSeverity, IndexMap, ReadonlySource } from '../source/index.js'
+import { Range, Source } from '../source/index.js'
 import type { InfallibleParser, Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
 
@@ -504,7 +504,7 @@ export function concatOnTrailingBackslash<N extends Returnable>(parser: Parser<N
 			indexMap.push({ inner: Range.create(wrappedStr.length), outer: Range.span(from, to) })
 		}
 
-		const wrappedSrc = new Source(wrappedStr, IndexMap.merge(src.indexMap, indexMap))
+		const wrappedSrc = new Source(wrappedStr, indexMap)
 		wrappedSrc.innerCursor = wrappedSrcCursor
 		const ans = parser(wrappedSrc, ctx)
 		src.cursor = wrappedSrc.cursor
