@@ -814,7 +814,7 @@ function simplifyReference<T>(
 	}
 	const mapped = context.typeMapping?.[typeDef.path]
 	if (mapped) {
-		return { typeDef: mapped }
+		return { typeDef: mapped, dynamicData: true }
 	}
 	// TODO Probably need to keep original symbol around in some way to support "go to definition"
 	const symbol = context.ctx.symbols.query(context.ctx.doc, 'mcdoc', typeDef.path)
