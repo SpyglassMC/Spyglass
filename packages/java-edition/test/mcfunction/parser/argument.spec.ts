@@ -114,7 +114,7 @@ const Suites: Partial<
 	'minecraft:nbt_tag': [{ content: ['0', '0b', '0l', '0.0', '"foo"', '{foo:bar}'] }],
 	'minecraft:objective': [{ content: ['foo', '012'] }],
 	'minecraft:objective_criteria': [{
-		content: ['dummy', 'used:spyglass', 'minecraft.used:minecraft.spyglass'],
+		content: ['dummy', 'used:spyglass', 'minecraft.used:minecraft.spyglass', 'teamkill.aqua'],
 	}],
 	'minecraft:operation': [{ content: ['=', '>', '<'] }],
 	'minecraft:particle': [{
