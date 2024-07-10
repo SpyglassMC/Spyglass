@@ -377,12 +377,17 @@ export class Project implements ExternalEventEmitter {
 			this.tryClearingCache(uri)
 		}).on('ready', () => {
 			this.#isReady = true
-			// // Recheck client managed files after the READY process, as they may have incomplete results and are user-facing.
-			// const promises: Promise<unknown>[] = []
-			// for (const { doc, node } of this.#clientManagedDocAndNodes.values()) {
-			// 	promises.push(this.check(doc, node))
-			// }
-			// Promise.all(promises).catch(e => this.logger.error('[Project#ready] Error occurred when rechecking client managed files after READY', e))
+			// Recheck client managed files after the READY process, as they may have incomplete results and are user-facing.
+			const promises: Promise<unknown>[] = []
+			for (const { doc, node } of this.#clientManagedDocAndNodes.values()) {
+				promises.push(this.check(doc, node))
+			}
+			Promise.all(promises).catch(e =>
+				this.logger.error(
+					'[Project#ready] Error occurred when rechecking client managed files after READY',
+					e,
+				)
+			)
 		})
 	}
 
