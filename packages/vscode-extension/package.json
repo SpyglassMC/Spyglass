@@ -188,6 +188,16 @@
     "configuration": {
       "title": "Spyglass",
       "properties": {
+        "spyglassmc.env.gameVersion": {
+          "type": "string",
+          "enum": [
+            "Auto",
+            "Latest release",
+            "Latest snapshot"
+          ],
+          "markdownDescription": "%spyglassmc.env.gameVersion%",
+          "default": "Auto"
+        },
         "spyglassmc.trace.server": {
           "type": "string",
           "enum": [
