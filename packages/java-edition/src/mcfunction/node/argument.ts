@@ -452,6 +452,8 @@ export namespace ObjectiveCriteriaNode {
 		'totalKillCount',
 		'trigger',
 		'xp',
+		...core.Color.ColorNames.map((n) => `killedByTeam.${n}`),
+		...core.Color.ColorNames.map((n) => `teamkill.${n}`),
 	]
 	export const ComplexCategories = new Map<string, core.RegistryCategory>([
 		['broken', 'item'],
