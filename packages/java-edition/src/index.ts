@@ -203,5 +203,5 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)
 
-	return { loadedVersion: release }
+	return { loadedVersion: release, errorSource: release }
 }

@@ -48,7 +48,7 @@ export function attempt<N extends Returnable = AstNode>(
 	ctx: ParserContext,
 ): AttemptResult<N> {
 	const tmpSrc = src.clone()
-	const tmpCtx = { ...ctx, err: new ErrorReporter() }
+	const tmpCtx = { ...ctx, err: new ErrorReporter(ctx.err.source) }
 
 	const result = parser(tmpSrc, tmpCtx)
 

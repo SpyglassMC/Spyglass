@@ -48,7 +48,7 @@ export function diagnostic(error: core.PosRangeLanguageError): ls.Diagnostic {
 		error.message,
 		diagnosticSeverity(error.severity),
 		undefined,
-		'spyglassmc',
+		error.source ? `spyglassmc(${error.source})` : 'spyglassmc',
 	)
 	if (error.info?.deprecated) {
 		;(ans.tags ??= [])?.push(ls.DiagnosticTag.Deprecated)

@@ -5,7 +5,7 @@ import { ErrorSeverity, LanguageError, Range } from '../source/index.js'
 export class ErrorReporter {
 	public errors: LanguageError[] = []
 
-	constructor() {}
+	constructor(public readonly source?: string) {}
 
 	/**
 	 * Reports a new error.
@@ -19,7 +19,7 @@ export class ErrorReporter {
 		if (message.trim() === '') {
 			throw new Error('Tried to report an error with no message')
 		}
-		this.errors.push(LanguageError.create(message, Range.get(range), severity, info))
+		this.errors.push(LanguageError.create(message, Range.get(range), severity, info, this.source))
 	}
 
 	/**
@@ -41,8 +41,8 @@ export class ErrorReporter {
 }
 
 export class LinterErrorReporter extends ErrorReporter {
-	constructor(public ruleName: string, public ruleSeverity: ErrorSeverity) {
-		super()
+	constructor(public ruleName: string, public ruleSeverity: ErrorSeverity, source?: string) {
+		super(source)
 	}
 
 	lint(
@@ -64,7 +64,7 @@ export class LinterErrorReporter extends ErrorReporter {
 		ruleName: string,
 		ruleSeverity: ErrorSeverity,
 	): LinterErrorReporter {
-		const ans = new LinterErrorReporter(ruleName, ruleSeverity)
+		const ans = new LinterErrorReporter(ruleName, ruleSeverity, reporter.source)
 		ans.errors = reporter.errors
 		return ans
 	}
