@@ -4,7 +4,12 @@ import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import { getItemSlotsArgumentValues } from './common/index.js'
-import { EntitySelectorAtVariable, EntitySelectorNode, ScoreHolderNode } from './node/argument.js'
+import {
+	BlockNode,
+	EntitySelectorAtVariable,
+	EntitySelectorNode,
+	ScoreHolderNode,
+} from './node/argument.js'
 import * as parser from './parser/index.js'
 
 const validator = mcdoc.runtime.attribute.validator
@@ -90,6 +95,10 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 	mcdoc.runtime.registerAttribute(meta, 'tag', () => undefined, {
 		stringParser: () => parser.tag('definition'), // TODO: make this a config
 		stringMocker: (_, __, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'tag' }),
+	})
+	mcdoc.runtime.registerAttribute(meta, 'block_predicate', () => undefined, {
+		stringParser: () => parser.blockPredicate,
+		stringMocker: (_, __, ctx) => BlockNode.mock(ctx.offset, true),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'entity', entityValidator, {
 		stringParser: (config) =>
