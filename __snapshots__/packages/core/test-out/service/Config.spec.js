@@ -21,10 +21,7 @@ exports['ConfigService merge() Should merge empty overrides correctly 2'] = {
       "a": true,
       "b": false
     }
-  },
-  "format": {},
-  "lint": {},
-  "snippet": {}
+  }
 }
 
 exports['ConfigService merge() Should merge empty overrides correctly 3'] = {
@@ -37,10 +34,7 @@ exports['ConfigService merge() Should merge empty overrides correctly 3'] = {
       "a": true,
       "b": false
     }
-  },
-  "format": {},
-  "lint": {},
-  "snippet": {}
+  }
 }
 
 exports['ConfigService merge() Should merge multiple overrides correctly 1'] = {
@@ -55,10 +49,7 @@ exports['ConfigService merge() Should merge multiple overrides correctly 1'] = {
     },
     "foo": "qux",
     "erm": 3
-  },
-  "format": {},
-  "lint": {},
-  "snippet": {}
+  }
 }
 
 exports['ConfigService merge() Should merge nested overrides correctly 1'] = {
@@ -71,10 +62,7 @@ exports['ConfigService merge() Should merge nested overrides correctly 1'] = {
       "a": true,
       "b": false
     }
-  },
-  "format": {},
-  "lint": {},
-  "snippet": {}
+  }
 }
 
 exports['ConfigService merge() Should merge nested overrides correctly 2'] = {
@@ -83,11 +71,11 @@ exports['ConfigService merge() Should merge nested overrides correctly 2'] = {
     "dependencies": [
       "@vanilla-mcdoc"
     ],
-    "feature": {}
-  },
-  "format": {},
-  "lint": {},
-  "snippet": {}
+    "feature": {
+      "a": true,
+      "b": false
+    }
+  }
 }
 
 exports['ConfigService merge() Should merge nested overrides correctly 3'] = {
@@ -97,12 +85,10 @@ exports['ConfigService merge() Should merge nested overrides correctly 3'] = {
       "@vanilla-mcdoc"
     ],
     "feature": {
+      "a": true,
       "b": true
     }
-  },
-  "format": {},
-  "lint": {},
-  "snippet": {}
+  }
 }
 
 exports['ConfigService merge() Should merge nested overrides correctly 4'] = {
@@ -112,13 +98,11 @@ exports['ConfigService merge() Should merge nested overrides correctly 4'] = {
       "@vanilla-mcdoc"
     ],
     "feature": {
+      "a": true,
       "b": true,
       "c": 9
     }
-  },
-  "format": {},
-  "lint": {},
-  "snippet": {}
+  }
 }
 
 exports['ConfigService merge() Should merge nested overrides correctly 5'] = {
@@ -129,10 +113,7 @@ exports['ConfigService merge() Should merge nested overrides correctly 5'] = {
       "a": true,
       "b": false
     }
-  },
-  "format": {},
-  "lint": {},
-  "snippet": {}
+  }
 }
 
 exports['ConfigService merge() Should merge top-level overrides correctly 1'] = {
@@ -146,7 +127,5 @@ exports['ConfigService merge() Should merge top-level overrides correctly 1'] = 
       "b": false
     }
   },
-  "format": {},
-  "lint": {},
-  "snippet": {}
+  "test": true
 }

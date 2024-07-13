@@ -1,6 +1,6 @@
 import rfdc from 'rfdc'
 import type { ExternalEventEmitter } from '../common/index.js'
-import { Arrayable, bufferToString, TypePredicates } from '../common/index.js'
+import { Arrayable, bufferToString, merge, TypePredicates } from '../common/index.js'
 import { ErrorSeverity } from '../source/index.js'
 import { FileCategories, RegistryCategories } from '../symbol/index.js'
 import type { Project } from './Project.js'
@@ -493,13 +493,6 @@ export class ConfigService implements ExternalEventEmitter {
 	}
 
 	public static merge(base: Config, ...overrides: any[]): Config {
-		// FIXME
-		const ans = rfdc()(base)
-		for (const override of overrides) {
-			for (const key of ['env', 'format', 'lint', 'snippet'] as const) {
-				ans[key] = { ...ans[key], ...override[key] } as any
-			}
-		}
-		return ans
+		return overrides.reduce(merge, rfdc()(base))
 	}
 }
