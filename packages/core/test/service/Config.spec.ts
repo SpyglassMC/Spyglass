@@ -31,8 +31,15 @@ describe('ConfigService', () => {
 			snapshot(ConfigService.merge(base, {}, {}))
 		})
 
+		it('Should merge top-level overrides correctly', async () => {
+			snapshot(ConfigService.merge(base, { test: true }))
+		})
+
 		it('Should merge nested overrides correctly', async () => {
 			snapshot(ConfigService.merge(base, { env: { dataSource: 'TEST' } }))
+			snapshot(ConfigService.merge(base, { env: { feature: {} } }))
+			snapshot(ConfigService.merge(base, { env: { feature: { b: true } } }))
+			snapshot(ConfigService.merge(base, { env: { feature: { b: true, c: 9 } } }))
 			snapshot(ConfigService.merge(base, { env: { dependencies: [] } }))
 		})
 
