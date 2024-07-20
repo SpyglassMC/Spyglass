@@ -117,7 +117,7 @@ export namespace ResourceLocation {
 	 */
 	export const TagPrefix = '#'
 	/**
-	 * The prefix for removing a component.
+	 * The seperator of namespace and path.
 	 */
 	export const NamespacePathSep = ':'
 	/**
@@ -129,7 +129,7 @@ export namespace ResourceLocation {
 	export function lengthen(value: string): FullResourceLocation {
 		switch (value.indexOf(NamespacePathSep)) {
 			case -1:
-				return `${DefaultNamespace}${NamespacePathSep}${value}`
+				return `!${DefaultNamespace}${NamespacePathSep}${value}`
 			case 0:
 				return `${DefaultNamespace}${value}` as unknown as FullResourceLocation
 			default:
