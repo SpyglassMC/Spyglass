@@ -64,6 +64,7 @@ export const LegalResourceLocationCharacters = new Set([
 	'_',
 	'-',
 	'.',
+	'!',
 ])
 
 export function resourceLocation(
