@@ -117,7 +117,7 @@ export namespace ResourceLocation {
 	 */
 	export const TagPrefix = '#'
 	/**
-	 * The seperator of namespace and path.
+	 * The prefix for removing a component.
 	 */
 	export const NamespacePathSep = ':'
 	/**
