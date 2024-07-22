@@ -117,9 +117,9 @@ export const NodeJsExternals: Externals = {
 		unlink(location) {
 			return fsp.unlink(toFsPathLike(location))
 		},
-		watch(locations) {
+		watch(locations, { usePolling = false } = {}) {
 			return new ChokidarWatcherWrapper(
-				chokidar.watch(locations.map(toPath), { usePolling: process.platform === 'win32' }),
+				chokidar.watch(locations.map(toPath), { usePolling }),
 			)
 		},
 		writeFile(location, data, options) {
