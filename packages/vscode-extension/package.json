@@ -169,6 +169,11 @@
         "command": "spyglassmc.showCacheRoot",
         "title": "%spyglassmc.commands.showCacheRoot.title%",
         "category": "Spyglass"
+      },
+      {
+        "command": "spyglassmc.showOutput",
+        "title": "%spyglassmc.commands.showOutput.title%",
+        "category": "Spyglass"
       }
     ],
     "menus": {
@@ -182,6 +187,9 @@
         },
         {
           "command": "spyglassmc.showCacheRoot"
+        },
+        {
+          "command": "spyglassmc.showOutput"
         }
       ]
     },

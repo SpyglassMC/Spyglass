@@ -122,7 +122,7 @@ export async function activate(context: vsc.ExtensionContext) {
 
 		if (customCapabilities?.showCacheRoot) {
 			context.subscriptions.push(
-				vsc.commands.registerCommand('spyglassmc.showCacheRoot', async (): Promise<void> => {
+				vsc.commands.registerCommand('spyglassmc.showCacheRoot', async () => {
 					try {
 						await client.sendRequest('spyglassmc/showCacheRoot')
 					} catch (e) {
@@ -131,6 +131,16 @@ export async function activate(context: vsc.ExtensionContext) {
 				}),
 			)
 		}
+
+		context.subscriptions.push(
+			vsc.commands.registerCommand('spyglassmc.showOutput', () => {
+				try {
+					client.outputChannel.show()
+				} catch (e) {
+					console.error('[client#showOutput]', e)
+				}
+			}),
+		)
 
 		return new Promise<void>((resolve) => {
 			client.onProgress(lc.WorkDoneProgress.type, 'initialize', (params) => {
