@@ -816,7 +816,7 @@ export class Project implements ExternalEventEmitter {
 
 				const ctx = LinterContext.create(this, {
 					doc,
-					err: new LinterErrorReporter(ruleName, ruleSeverity),
+					err: new LinterErrorReporter(ruleName, ruleSeverity, this.ctx['errorSource']),
 					ruleName,
 					ruleValue,
 				})

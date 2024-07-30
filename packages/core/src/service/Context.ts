@@ -53,7 +53,7 @@ export namespace ParserContext {
 			...ContextBase.create(project),
 			config: project.config,
 			doc: opts.doc,
-			err: opts.err ?? new ErrorReporter(),
+			err: opts.err ?? new ErrorReporter(project.ctx['errorSource']),
 		}
 	}
 }
@@ -121,7 +121,7 @@ export namespace BinderContext {
 	export function create(project: ProjectData, opts: BinderContextOptions): BinderContext {
 		return {
 			...ProcessorContext.create(project, opts),
-			err: opts.err ?? new ErrorReporter(),
+			err: opts.err ?? new ErrorReporter(project.ctx['errorSource']),
 			ensureBindingStarted: project.ensureBindingStarted?.bind(project),
 		}
 	}
@@ -138,7 +138,7 @@ export namespace CheckerContext {
 	export function create(project: ProjectData, opts: CheckerContextOptions): CheckerContext {
 		return {
 			...ProcessorContext.create(project, opts),
-			err: opts.err ?? new ErrorReporter(),
+			err: opts.err ?? new ErrorReporter(project.ctx['errorSource']),
 			ensureBindingStarted: project.ensureBindingStarted?.bind(project),
 		}
 	}

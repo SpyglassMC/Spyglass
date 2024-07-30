@@ -7,6 +7,7 @@ export interface LanguageErrorData {
 	message: string
 	severity: ErrorSeverity
 	info?: LanguageErrorInfo
+	source?: string
 }
 
 export interface LanguageError extends LanguageErrorData {
@@ -26,10 +27,14 @@ export namespace LanguageError {
 		range: Range,
 		severity = ErrorSeverity.Error,
 		info?: LanguageErrorInfo,
+		source?: string,
 	): LanguageError {
 		const ans: LanguageError = { range, message, severity }
 		if (info) {
 			ans.info = info
+		}
+		if (source) {
+			ans.source = source
 		}
 		return ans
 	}
@@ -42,6 +47,7 @@ export namespace LanguageError {
 			message: error.message,
 			severity: error.severity,
 			...(error.info && { info: error.info }),
+			...(error.source && { source: error.source }),
 		}
 	}
 }

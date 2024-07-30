@@ -25,7 +25,11 @@ export function attempt<N extends AstNode>(
 	node: N,
 	ctx: BinderContext,
 ): AttemptResult | Promise<AttemptResult> {
-	const tempCtx: BinderContext = { ...ctx, err: new ErrorReporter(), symbols: ctx.symbols.clone() }
+	const tempCtx: BinderContext = {
+		...ctx,
+		err: new ErrorReporter(ctx.err.source),
+		symbols: ctx.symbols.clone(),
+	}
 
 	const processAfterBinder = () => {
 		StateProxy.undoChanges(node as StateProxy<N>)
