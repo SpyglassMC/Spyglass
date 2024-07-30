@@ -78,6 +78,9 @@ connection.onInitialize(async (params) => {
 				'project#ready#bind',
 			]),
 			project: {
+				defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
+					env: { gameVersion: initializationOptions?.gameVersion },
+				}),
 				cacheRoot: fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRoot).toString()),
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
