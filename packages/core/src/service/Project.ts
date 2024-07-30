@@ -511,7 +511,9 @@ export class Project implements ExternalEventEmitter {
 				}
 				this.#watchedFiles.clear()
 				this.#watcherReady = false
-				this.#watcher = this.externals.fs.watch(this.projectRoots).once('ready', () => {
+				this.#watcher = this.externals.fs.watch(this.projectRoots, {
+					usePolling: this.config.env.useFilePolling,
+				}).once('ready', () => {
 					this.#watcherReady = true
 					resolve()
 				}).on('add', (uri) => {
