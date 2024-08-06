@@ -7,7 +7,7 @@
 
 ### 🐛 Bug Fixes
 - [`60694bc`](https://github.com/SpyglassMC/Spyglass/commit/60694bc1b6f294817f537a961bb31d533fb287b5) Added missing `teamkill.*` and `killedByTeam.*` scoreboard objectives ([#1501](https://github.com/SpyglassMC/Spyglass/pull/1501))
-- [`db02249`](https://github.com/SpyglassMC/Spyglass/commit/db02249e6b646c6e430cd501d4a4e14156177fbb) Added `env.usePolling` config to mitigate folder renaming problems ([#1523](https://github.com/SpyglassMC/Spyglass/pull/1523))
+- [`db02249`](https://github.com/SpyglassMC/Spyglass/commit/db02249e6b646c6e430cd501d4a4e14156177fbb) Added `env.useFilePolling` config to mitigate folder renaming problems ([#1523](https://github.com/SpyglassMC/Spyglass/pull/1523))
 - [`1a469d7`](https://github.com/SpyglassMC/Spyglass/commit/1a469d7ccb7229af956dd2a1e544f23af0f65097) Fixed problems with config merging ([#1519](https://github.com/SpyglassMC/Spyglass/pull/1519))
 - [`9ee9ba8`](https://github.com/SpyglassMC/Spyglass/commit/9ee9ba866841500936405c7c9dabbb773d822b65) Removed incorrect collection length errors in some NBT cases ([#1559](https://github.com/SpyglassMC/Spyglass/pull/1559))
 
