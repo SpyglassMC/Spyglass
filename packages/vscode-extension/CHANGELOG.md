@@ -1,3 +1,16 @@
+# v4.2.0 (2024-08-07)
+
+### ✨ New Features
+- [`f4d4588`](https://github.com/SpyglassMC/Spyglass/commit/f4d458894a94237f06db4ab36305c3f44b02bc41) Added a "Game Version" vscode setting ([#1506](https://github.com/SpyglassMC/Spyglass/pull/1506))
+- [`87841f6`](https://github.com/SpyglassMC/Spyglass/commit/87841f6a267f37cc88d648a676b29b92e56067ca) Added a "Show Output" vscode command ([1505](https://github.com/SpyglassMC/Spyglass/pull/1505))
+- [`956a6a3`](https://github.com/SpyglassMC/Spyglass/commit/956a6a3bb7436daedb47f06ad169f24533f3b576) Added the currently loaded version to the end of error messages ([#1515](https://github.com/SpyglassMC/Spyglass/pull/1515))
+
+### 🐛 Bug Fixes
+- [`60694bc`](https://github.com/SpyglassMC/Spyglass/commit/60694bc1b6f294817f537a961bb31d533fb287b5) Added missing `teamkill.*` and `killedByTeam.*` scoreboard objectives ([#1501](https://github.com/SpyglassMC/Spyglass/pull/1501))
+- [`db02249`](https://github.com/SpyglassMC/Spyglass/commit/db02249e6b646c6e430cd501d4a4e14156177fbb) Added `env.usePolling` config to mitigate folder renaming problems ([#1523](https://github.com/SpyglassMC/Spyglass/pull/1523))
+- [`1a469d7`](https://github.com/SpyglassMC/Spyglass/commit/1a469d7ccb7229af956dd2a1e544f23af0f65097) Fixed problems with config merging ([#1519](https://github.com/SpyglassMC/Spyglass/pull/1519))
+- [`9ee9ba8`](https://github.com/SpyglassMC/Spyglass/commit/9ee9ba866841500936405c7c9dabbb773d822b65) Removed incorrect collection length errors in some NBT cases ([#1559](https://github.com/SpyglassMC/Spyglass/pull/1559))
+
 # v4.1.2 (2024-07-08)
 
 ### 🐛 Bug Fixes
