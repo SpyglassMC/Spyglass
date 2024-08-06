@@ -43,7 +43,7 @@ There's no support for multiple config files or inheriting/overriding config fil
 		"permissionLevel": 2,
 		"plugins": [],
 		"mcmetaSummaryOverrides": {},
-		useFilePolling: false
+		"useFilePolling": false
 	},
 	"format": {
 		"blockStateBracketSpacing": { "inside": 0 },
