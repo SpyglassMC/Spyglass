@@ -115,6 +115,7 @@ export const NormalFileCategories = Object.freeze(
 		'enchantment',
 		'enchantment_provider',
 		'function',
+		'instrument',
 		'item_modifier',
 		'jukebox_song',
 		'loot_table',
