@@ -123,6 +123,7 @@ export const NormalFileCategories = Object.freeze(
 		'predicate',
 		'recipe',
 		'structure',
+		'trial_spawner',
 		'trim_material',
 		'trim_pattern',
 		'wolf_variant',
