@@ -44,7 +44,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		const searched = new Set<string>()
 		for (let depth = 0; depth <= 2; depth += 1) {
 			for (const projectRoot of projectRoots) {
-				const files = await externals.fs.getAllFiles(projectRoot, depth + 1)
+				const files = await core.fileUtil.getAllFiles(externals, projectRoot, depth + 1)
 				for (const uri of files.filter(uri => uri.endsWith('/pack.mcmeta'))) {
 					if (searched.has(uri)) {
 						continue

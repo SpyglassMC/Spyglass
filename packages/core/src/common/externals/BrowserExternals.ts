@@ -104,9 +104,6 @@ class BrowserFileSystem implements ExternalFileSystem {
 	async chmod(_location: FsLocation, _mode: number): Promise<void> {
 		return
 	}
-	async getAllFiles(_location: FsLocation): Promise<string[]> {
-		return []
-	}
 	async mkdir(
 		location: FsLocation,
 		_options?: { mode?: number | undefined; recursive?: boolean | undefined } | undefined,
@@ -117,6 +114,10 @@ class BrowserFileSystem implements ExternalFileSystem {
 		}
 		this.states[location] = { type: 'directory' }
 		this.saveStates()
+	}
+	async readdir(_location: FsLocation) {
+		// Not implemented
+		return []
 	}
 	async readFile(location: FsLocation): Promise<Uint8Array> {
 		location = location.toString()

@@ -220,7 +220,7 @@ export class FileUriSupporter implements UriProtocolSupporter {
 				if (fileUtil.isFileUri(uri) && (await externals.fs.stat(uri)).isDirectory()) {
 					uri = fileUtil.ensureEndingSlash(uri)
 					roots.push(uri as RootUriString)
-					files.set(uri, await externals.fs.getAllFiles(uri))
+					files.set(uri, await fileUtil.getAllFiles(externals, uri))
 				}
 			} catch (e) {
 				logger.error(`[FileUriSupporter#create] Bad dependency ${uri}`, e)
