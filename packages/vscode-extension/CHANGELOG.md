@@ -1,3 +1,9 @@
+# v4.2.3 (2024-09-17)
+
+### 🐛 Bug Fixes
+- [`c67a9b6`](https://github.com/SpyglassMC/Spyglass/commit/c67a9b64725b5c9f7e447ceb683a4b2bcc8c7d2f) Fixed issues when the workspace path contained special characters ([#1599](https://github.com/SpyglassMC/Spyglass/pull/1599))
+- [`2f468d2`](https://github.com/SpyglassMC/Spyglass/commit/2f468d27d000181105b93112261ff706994e0d71) Removed invalid heightmap types from commands ([#1598](https://github.com/SpyglassMC/Spyglass/pull/1598))
+
 # v4.2.0 (2024-08-07)
 
 ### ✨ New Features
