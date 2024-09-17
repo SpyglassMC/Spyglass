@@ -71,24 +71,6 @@ class BrowserExternalDownloader implements ExternalDownloader {
 	}
 }
 
-class BrowserFsWatcher implements FsWatcher {
-	on(event: string, listener: (...args: any[]) => unknown): this {
-		if (event === 'ready') {
-			listener()
-		}
-		return this
-	}
-
-	once(event: unknown, listener: (...args: any[]) => unknown): this {
-		if (event === 'ready') {
-			listener()
-		}
-		return this
-	}
-
-	async close(): Promise<void> {}
-}
-
 class BrowserFileSystem implements ExternalFileSystem {
 	private static readonly LocalStorageKey = 'spyglassmc-browser-fs'
 	private states: Record<string, { type: 'file'; content: string } | { type: 'directory' }>
@@ -148,9 +130,6 @@ class BrowserFileSystem implements ExternalFileSystem {
 		}
 		delete this.states[location]
 		this.saveStates()
-	}
-	watch(_locations: FsLocation[]): FsWatcher {
-		return new BrowserFsWatcher()
 	}
 	async writeFile(
 		location: FsLocation,

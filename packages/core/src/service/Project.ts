@@ -74,6 +74,7 @@ export interface ProjectOptions {
 	 * File URIs to the roots of this project.
 	 */
 	projectRoots: RootUriString[]
+	projectRootsWatcher?: FsWatcher
 	symbols?: SymbolUtil
 }
 
@@ -173,9 +174,10 @@ export class Project implements ExternalEventEmitter {
 	readonly #initializers: readonly ProjectInitializer[]
 	#initPromise!: Promise<void>
 	#readyPromise!: Promise<void>
-	readonly #watchedFiles = new Set<string>()
-	#watcher!: FsWatcher
-	#watcherReady = false
+	#watcher: FsWatcher | undefined
+	get watchedFiles() {
+		return this.#watcher?.watchedFiles ?? new Set()
+	}
 
 	#isReady = false
 	get isReady(): boolean {
@@ -291,7 +293,7 @@ export class Project implements ExternalEventEmitter {
 	 */
 	getTrackedFiles(): string[] {
 		const extensions: string[] = this.meta.getSupportedFileExtensions()
-		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.#watchedFiles]
+		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.watchedFiles]
 			.filter((file) => extensions.includes(fileUtil.extname(file) ?? ''))
 		const filteredFiles = this.ignore.filter(supportedFiles)
 		return filteredFiles
@@ -309,6 +311,7 @@ export class Project implements ExternalEventEmitter {
 			logger = Logger.create(),
 			profilers = ProfilerFactory.noop(),
 			projectRoots,
+			projectRootsWatcher,
 		}: ProjectOptions,
 	) {
 		this.#cacheRoot = cacheRoot
@@ -320,6 +323,7 @@ export class Project implements ExternalEventEmitter {
 		this.logger = logger
 		this.profilers = profilers
 		this.projectRoots = projectRoots
+		this.#watcher = projectRootsWatcher
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
@@ -510,34 +514,21 @@ export class Project implements ExternalEventEmitter {
 		}
 		const listProjectFiles = () =>
 			new Promise<void>((resolve) => {
-				if (this.projectRoots.length === 0) {
-					resolve()
-					return
+				if (!this.#watcher) {
+					return resolve()
 				}
-				this.#watchedFiles.clear()
-				this.#watcherReady = false
-				this.#watcher = this.externals.fs.watch(this.projectRoots, {
-					usePolling: this.config.env.useFilePolling,
-				}).once('ready', () => {
-					this.#watcherReady = true
+
+				this.#watcher
+					.on('add', (uri) => this.emit('fileCreated', { uri }))
+					.on('change', (uri) => this.emit('fileModified', { uri }))
+					.on('unlink', (uri) => this.emit('fileDeleted', { uri }))
+					.on('error', (e) => this.logger.error('[Project#watcher]', e))
+
+				if (this.#watcher.isReady) {
 					resolve()
-				}).on('add', (uri) => {
-					this.#watchedFiles.add(uri)
-					if (this.#watcherReady) {
-						this.emit('fileCreated', { uri })
-					}
-				}).on('change', (uri) => {
-					if (this.#watcherReady) {
-						this.emit('fileModified', { uri })
-					}
-				}).on('unlink', (uri) => {
-					this.#watchedFiles.delete(uri)
-					if (this.#watcherReady) {
-						this.emit('fileDeleted', { uri })
-					}
-				}).on('error', (e) => {
-					this.logger.error('[Project] [chokidar]', e)
-				})
+				} else {
+					this.#watcher.on('ready', resolve)
+				}
 			})
 		const ready = async () => {
 			await this.init()
@@ -621,13 +612,12 @@ export class Project implements ExternalEventEmitter {
 	 */
 	async close(): Promise<void> {
 		clearInterval(this.#cacheSaverIntervalId)
-		await this.#watcher.close()
+		await this.#watcher?.close()
 		await this.cacheService.save()
 	}
 
 	async restart(): Promise<void> {
 		try {
-			await this.#watcher.close()
 			this.#bindingInProgressUris.clear()
 			this.#symbolUpToDateUris.clear()
 			this.setReadyPromise()
@@ -979,11 +969,11 @@ export class Project implements ExternalEventEmitter {
 	private shouldRemove(uri: string): boolean {
 		return (!this.#clientManagedUris.has(uri)
 			&& !this.#dependencyFiles?.has(uri)
-			&& !this.#watchedFiles.has(uri))
+			&& !this.watchedFiles.has(uri))
 	}
 
 	private isOnlyWatched(uri: string): boolean {
-		return (this.#watchedFiles.has(uri)
+		return (this.watchedFiles.has(uri)
 			&& !this.#clientManagedUris.has(uri)
 			&& !this.#dependencyFiles?.has(uri))
 	}
