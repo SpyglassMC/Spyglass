@@ -88,9 +88,6 @@ export namespace fileUtil {
 		return (ensureEndingSlash(fromUri) + (toUri.startsWith('/') ? toUri.slice(1) : toUri))
 	}
 
-	/**
-	 * @throws If `uri` is not a valid URI.
-	 */
 	export function isFileUri(uri: string): boolean {
 		return uri.startsWith('file:')
 	}
@@ -168,6 +165,35 @@ export namespace fileUtil {
 				throw e
 			}
 		}
+	}
+
+	/**
+	 * @returns An array of file URI strings.
+	 */
+	export async function getAllFiles(
+		externals: Externals,
+		root: FsLocation,
+		depth: number = Number.POSITIVE_INFINITY,
+	): Promise<string[]> {
+		async function walk(path: FsLocation, level: number): Promise<string[]> {
+			if (level > depth) {
+				return []
+			}
+
+			const entries = await externals.fs.readdir(path)
+			return (await Promise.all(entries.map(async (e) => {
+				const entryPath = fileUtil.join(path.toString(), e.name)
+				if (e.isDirectory()) {
+					return await walk(entryPath, level + 1)
+				} else if (e.isFile()) {
+					return entryPath
+				} else {
+					return []
+				}
+			}))).flat()
+		}
+
+		return walk(root, 0)
 	}
 
 	export async function markReadOnly(externals: Externals, path: FsLocation): Promise<void> {

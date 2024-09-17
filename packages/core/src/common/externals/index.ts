@@ -55,13 +55,14 @@ export interface ExternalFileSystem {
 	 */
 	chmod(location: FsLocation, mode: number): Promise<void>
 	/**
-	 * @returns an array of file URIs under the given `location`.
-	 */
-	getAllFiles(location: FsLocation, depth?: number): Promise<string[]>
-	/**
 	 * @param options `mode` - File mode bit mask (e.g. `0o775`).
 	 */
 	mkdir(location: FsLocation, options?: { mode?: number; recursive?: boolean }): Promise<void>
+	readdir(
+		location: FsLocation,
+	): Promise<
+		{ name: string; isDirectory(): boolean; isFile(): boolean; isSymbolicLink(): boolean }[]
+	>
 	readFile(location: FsLocation): Promise<Uint8Array>
 	/**
 	 * Show the file/directory in the platform-specific explorer program.
