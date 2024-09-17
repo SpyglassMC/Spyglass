@@ -119,7 +119,10 @@ export const NodeJsExternals: Externals = {
 		},
 		watch(locations, { usePolling = false } = {}) {
 			return new ChokidarWatcherWrapper(
-				chokidar.watch(locations.map(toPath), { usePolling }),
+				chokidar.watch(locations.map(toPath), {
+					usePolling,
+					disableGlobbing: true,
+				}),
 			)
 		},
 		writeFile(location, data, options) {
