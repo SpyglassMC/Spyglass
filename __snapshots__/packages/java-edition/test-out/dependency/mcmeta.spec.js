@@ -26,49 +26,56 @@ exports['mcmeta resolveConfiguredVersion() Should resolve "1.16.5" 1'] = {
   "id": "1.16.5",
   "name": "1.16.5",
   "release": "1.16.5",
-  "isLatest": false
+  "isLatest": false,
+  "reason": "config"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "20w06a" 1'] = {
   "id": "20w06a",
   "name": "Snapshot 20w06a",
   "release": "1.16",
-  "isLatest": false
+  "isLatest": false,
+  "reason": "config"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "22w03a" 1'] = {
   "id": "22w03a",
   "name": "22w03a",
   "release": "1.18.2",
-  "isLatest": true
+  "isLatest": true,
+  "reason": "config"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "Auto" 1'] = {
   "id": "1.16.5",
   "name": "1.16.5",
   "release": "1.16.5",
-  "isLatest": false
+  "isLatest": false,
+  "reason": "auto"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "Latest Release" 1'] = {
   "id": "1.18.1",
   "name": "1.18.1",
   "release": "1.18.1",
-  "isLatest": false
+  "isLatest": false,
+  "reason": "config"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "Latest Snapshot" 1'] = {
   "id": "22w03a",
   "name": "22w03a",
   "release": "1.18.2",
-  "isLatest": true
+  "isLatest": true,
+  "reason": "config"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "unknown" 1'] = {
   "id": "22w03a",
   "name": "22w03a",
   "release": "1.18.2",
-  "isLatest": true
+  "isLatest": true,
+  "reason": "config"
 }
 
 exports['mcmeta symbolRegistrar() Should register correctly 1'] = `
