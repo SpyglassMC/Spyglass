@@ -117,7 +117,11 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
           "value": 1
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 12
+    }
   },
   "errors": []
 }
@@ -129,7 +133,11 @@ exports['nbt compound() Parse "{}" 1'] = {
       "start": 0,
       "end": 2
     },
-    "children": []
+    "children": [],
+    "innerRange": {
+      "start": 1,
+      "end": 1
+    }
   },
   "errors": []
 }

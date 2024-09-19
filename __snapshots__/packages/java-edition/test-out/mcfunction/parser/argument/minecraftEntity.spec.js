@@ -88,7 +88,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ ]" with {"amount":"mult
             "start": 2,
             "end": 5
           },
-          "children": []
+          "children": [],
+          "innerRange": {
+            "start": 3,
+            "end": 4
+          }
         }
       ],
       "variable": "a",
@@ -98,7 +102,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ ]" with {"amount":"mult
           "start": 2,
           "end": 5
         },
-        "children": []
+        "children": [],
+        "innerRange": {
+          "start": 3,
+          "end": 4
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -312,7 +320,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                 "end": 74
                               }
                             }
-                          ]
+                          ],
+                          "innerRange": {
+                            "start": 61,
+                            "end": 75
+                          }
                         }
                       ],
                       "key": {
@@ -386,14 +398,22 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               "end": 74
                             }
                           }
-                        ]
+                        ],
+                        "innerRange": {
+                          "start": 61,
+                          "end": 75
+                        }
                       },
                       "end": {
                         "start": 77,
                         "end": 78
                       }
                     }
-                  ]
+                  ],
+                  "innerRange": {
+                    "start": 20,
+                    "end": 79
+                  }
                 }
               ],
               "key": {
@@ -566,7 +586,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               "end": 74
                             }
                           }
-                        ]
+                        ],
+                        "innerRange": {
+                          "start": 61,
+                          "end": 75
+                        }
                       }
                     ],
                     "key": {
@@ -640,21 +664,33 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                             "end": 74
                           }
                         }
-                      ]
+                      ],
+                      "innerRange": {
+                        "start": 61,
+                        "end": 75
+                      }
                     },
                     "end": {
                       "start": 77,
                       "end": 78
                     }
                   }
-                ]
+                ],
+                "innerRange": {
+                  "start": 20,
+                  "end": 79
+                }
               },
               "end": {
                 "start": 81,
                 "end": 82
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 83
+          }
         }
       ],
       "variable": "a",
@@ -838,7 +874,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               "end": 74
                             }
                           }
-                        ]
+                        ],
+                        "innerRange": {
+                          "start": 61,
+                          "end": 75
+                        }
                       }
                     ],
                     "key": {
@@ -912,14 +952,22 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                             "end": 74
                           }
                         }
-                      ]
+                      ],
+                      "innerRange": {
+                        "start": 61,
+                        "end": 75
+                      }
                     },
                     "end": {
                       "start": 77,
                       "end": 78
                     }
                   }
-                ]
+                ],
+                "innerRange": {
+                  "start": 20,
+                  "end": 79
+                }
               }
             ],
             "key": {
@@ -1092,7 +1140,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                             "end": 74
                           }
                         }
-                      ]
+                      ],
+                      "innerRange": {
+                        "start": 61,
+                        "end": 75
+                      }
                     }
                   ],
                   "key": {
@@ -1166,21 +1218,33 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                           "end": 74
                         }
                       }
-                    ]
+                    ],
+                    "innerRange": {
+                      "start": 61,
+                      "end": 75
+                    }
                   },
                   "end": {
                     "start": 77,
                     "end": 78
                   }
                 }
-              ]
+              ],
+              "innerRange": {
+                "start": 20,
+                "end": 79
+              }
             },
             "end": {
               "start": 81,
               "end": 82
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 83
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -1264,7 +1328,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                     "start": 19,
                     "end": 22
                   },
-                  "children": []
+                  "children": [],
+                  "innerRange": {
+                    "start": 20,
+                    "end": 21
+                  }
                 }
               ],
               "key": {
@@ -1307,7 +1375,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                   "start": 19,
                   "end": 22
                 },
-                "children": []
+                "children": [],
+                "innerRange": {
+                  "start": 20,
+                  "end": 21
+                }
               },
               "end": {
                 "start": 23,
@@ -1357,7 +1429,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                     "start": 40,
                     "end": 43
                   },
-                  "children": []
+                  "children": [],
+                  "innerRange": {
+                    "start": 41,
+                    "end": 42
+                  }
                 }
               ],
               "key": {
@@ -1400,14 +1476,22 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                   "start": 40,
                   "end": 43
                 },
-                "children": []
+                "children": [],
+                "innerRange": {
+                  "start": 41,
+                  "end": 42
+                }
               },
               "end": {
                 "start": 44,
                 "end": 45
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 46
+          }
         }
       ],
       "variable": "a",
@@ -1461,7 +1545,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                   "start": 19,
                   "end": 22
                 },
-                "children": []
+                "children": [],
+                "innerRange": {
+                  "start": 20,
+                  "end": 21
+                }
               }
             ],
             "key": {
@@ -1504,7 +1592,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                 "start": 19,
                 "end": 22
               },
-              "children": []
+              "children": [],
+              "innerRange": {
+                "start": 20,
+                "end": 21
+              }
             },
             "end": {
               "start": 23,
@@ -1554,7 +1646,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                   "start": 40,
                   "end": 43
                 },
-                "children": []
+                "children": [],
+                "innerRange": {
+                  "start": 41,
+                  "end": 42
+                }
               }
             ],
             "key": {
@@ -1597,14 +1693,22 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                 "start": 40,
                 "end": 43
               },
-              "children": []
+              "children": [],
+              "innerRange": {
+                "start": 41,
+                "end": 42
+              }
             },
             "end": {
               "start": 44,
               "end": 45
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 46
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -1940,7 +2044,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
                 "end": 39
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 40
+          }
         }
       ],
       "variable": "a",
@@ -2237,7 +2345,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
               "end": 39
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 40
+        }
       },
       "chunkLimited": false,
       "currentEntity": false,
@@ -2432,7 +2544,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..1 , ]" wit
                 "end": 20
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 21
+          }
         }
       ],
       "variable": "a",
@@ -2578,7 +2694,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..1 , ]" wit
               "end": 20
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 21
+        }
       },
       "chunkLimited": false,
       "currentEntity": false,
@@ -3087,7 +3207,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                 "end": 52
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 53
+          }
         }
       ],
       "variable": "a",
@@ -3564,7 +3688,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
               "end": 52
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 53
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -4039,7 +4167,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                 "end": 46
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 47
+          }
         }
       ],
       "variable": "a",
@@ -4484,7 +4616,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
               "end": 46
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 47
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -4780,7 +4916,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
                 "end": 29
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 30
+          }
         }
       ],
       "variable": "a",
@@ -5029,7 +5169,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
               "end": 29
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 30
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -5230,7 +5374,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = 1.. , ]" with {
                 "end": 17
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 18
+          }
         }
       ],
       "variable": "a",
@@ -5376,7 +5524,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = 1.. , ]" with {
               "end": 17
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 18
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -5510,7 +5662,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ limit = 1 , ]" with {"a
                 "end": 15
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 16
+          }
         }
       ],
       "variable": "a",
@@ -5614,7 +5770,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ limit = 1 , ]" with {"a
               "end": 15
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 16
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -6242,7 +6402,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                 "end": 58
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 59
+          }
         }
       ],
       "variable": "a",
@@ -6840,7 +7004,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
               "end": 58
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 59
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -7420,7 +7588,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                 "end": 52
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 53
+          }
         }
       ],
       "variable": "a",
@@ -7970,7 +8142,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
               "end": 52
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 53
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -8078,7 +8254,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                         "start": 10,
                         "end": 12
                       },
-                      "children": []
+                      "children": [],
+                      "innerRange": {
+                        "start": 11,
+                        "end": 11
+                      }
                     }
                   ],
                   "inverted": false,
@@ -8088,7 +8268,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                       "start": 10,
                       "end": 12
                     },
-                    "children": []
+                    "children": [],
+                    "innerRange": {
+                      "start": 11,
+                      "end": 11
+                    }
                   }
                 }
               ],
@@ -8139,7 +8323,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                       "start": 10,
                       "end": 12
                     },
-                    "children": []
+                    "children": [],
+                    "innerRange": {
+                      "start": 11,
+                      "end": 11
+                    }
                   }
                 ],
                 "inverted": false,
@@ -8149,7 +8337,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                     "start": 10,
                     "end": 12
                   },
-                  "children": []
+                  "children": [],
+                  "innerRange": {
+                    "start": 11,
+                    "end": 11
+                  }
                 }
               },
               "end": {
@@ -8157,7 +8349,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                 "end": 14
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 15
+          }
         }
       ],
       "variable": "a",
@@ -8218,7 +8414,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                       "start": 10,
                       "end": 12
                     },
-                    "children": []
+                    "children": [],
+                    "innerRange": {
+                      "start": 11,
+                      "end": 11
+                    }
                   }
                 ],
                 "inverted": false,
@@ -8228,7 +8428,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                     "start": 10,
                     "end": 12
                   },
-                  "children": []
+                  "children": [],
+                  "innerRange": {
+                    "start": 11,
+                    "end": 11
+                  }
                 }
               }
             ],
@@ -8279,7 +8483,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                     "start": 10,
                     "end": 12
                   },
-                  "children": []
+                  "children": [],
+                  "innerRange": {
+                    "start": 11,
+                    "end": 11
+                  }
                 }
               ],
               "inverted": false,
@@ -8289,7 +8497,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                   "start": 10,
                   "end": 12
                 },
-                "children": []
+                "children": [],
+                "innerRange": {
+                  "start": 11,
+                  "end": 11
+                }
               }
             },
             "end": {
@@ -8297,7 +8509,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
               "end": 14
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 15
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -8636,7 +8852,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                 "end": 59
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 60
+          }
         }
       ],
       "variable": "a",
@@ -8945,7 +9165,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
               "end": 59
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 60
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -9075,7 +9299,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[limit=1]" with {"amount"
                 "value": 1
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 10
+          }
         }
       ],
       "variable": "a",
@@ -9175,7 +9403,11 @@ exports['mcfunction argument minecraft:entity Parse "@a[limit=1]" with {"amount"
               "value": 1
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 10
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -9396,7 +9628,11 @@ exports['mcfunction argument minecraft:entity Parse "@e[limit=1]" with {"amount"
                 "value": 1
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 10
+          }
         }
       ],
       "variable": "e",
@@ -9496,7 +9732,11 @@ exports['mcfunction argument minecraft:entity Parse "@e[limit=1]" with {"amount"
               "value": 1
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 10
+        }
       },
       "currentEntity": false,
       "playersOnly": false,
@@ -9682,7 +9922,11 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                 }
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 11
+          }
         }
       ],
       "variable": "e",
@@ -9826,7 +10070,11 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
               }
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 11
+        }
       },
       "currentEntity": false,
       "playersOnly": false,
@@ -10078,7 +10326,11 @@ exports['mcfunction argument minecraft:entity Parse "@n[distance=..5]" with {"am
                 ]
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 15
+          }
         }
       ],
       "variable": "n",
@@ -10220,7 +10472,11 @@ exports['mcfunction argument minecraft:entity Parse "@n[distance=..5]" with {"am
               ]
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 15
+        }
       },
       "chunkLimited": true,
       "currentEntity": false,
@@ -10403,7 +10659,11 @@ exports['mcfunction argument minecraft:entity Parse "@n[distance=..5]" with {"am
                 ]
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 15
+          }
         }
       ],
       "variable": "n",
@@ -10545,7 +10805,11 @@ exports['mcfunction argument minecraft:entity Parse "@n[distance=..5]" with {"am
               ]
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 15
+        }
       },
       "chunkLimited": true,
       "currentEntity": false,
@@ -10721,7 +10985,11 @@ exports['mcfunction argument minecraft:entity Parse "@n[type=cow]" with {"amount
                 }
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 11
+          }
         }
       ],
       "variable": "n",
@@ -10865,7 +11133,11 @@ exports['mcfunction argument minecraft:entity Parse "@n[type=cow]" with {"amount
               }
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 11
+        }
       },
       "currentEntity": false,
       "playersOnly": false,
@@ -11048,7 +11320,11 @@ exports['mcfunction argument minecraft:entity Parse "@n[type=cow]" with {"amount
                 }
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 11
+          }
         }
       ],
       "variable": "n",
@@ -11192,7 +11468,11 @@ exports['mcfunction argument minecraft:entity Parse "@n[type=cow]" with {"amount
               }
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 11
+        }
       },
       "currentEntity": false,
       "playersOnly": false,
@@ -11453,7 +11733,11 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
                 "end": 27
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 28
+          }
         }
       ],
       "variable": "s",
@@ -11650,7 +11934,11 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
               "end": 27
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 28
+        }
       },
       "currentEntity": true,
       "playersOnly": false,

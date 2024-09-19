@@ -342,7 +342,11 @@ exports['nbt path() Parse "foo.{ }" 1'] = {
               "start": 4,
               "end": 7
             },
-            "children": []
+            "children": [],
+            "innerRange": {
+              "start": 5,
+              "end": 6
+            }
           }
         ]
       }
@@ -704,7 +708,11 @@ exports['nbt path() Parse "foo[ { } ]" 1'] = {
               "start": 5,
               "end": 8
             },
-            "children": []
+            "children": [],
+            "innerRange": {
+              "start": 6,
+              "end": 7
+            }
           }
         ],
         "range": {
@@ -767,7 +775,11 @@ exports['nbt path() Parse "foo{ }" 1'] = {
               "start": 3,
               "end": 6
             },
-            "children": []
+            "children": [],
+            "innerRange": {
+              "start": 4,
+              "end": 5
+            }
           }
         ]
       }
@@ -797,7 +809,11 @@ exports['nbt path() Parse "{ }" 1'] = {
               "start": 0,
               "end": 3
             },
-            "children": []
+            "children": [],
+            "innerRange": {
+              "start": 1,
+              "end": 2
+            }
           }
         ]
       }
@@ -827,7 +843,11 @@ exports['nbt path() Parse "{ }.foo" 1'] = {
               "start": 0,
               "end": 3
             },
-            "children": []
+            "children": [],
+            "innerRange": {
+              "start": 1,
+              "end": 2
+            }
           }
         ]
       },
