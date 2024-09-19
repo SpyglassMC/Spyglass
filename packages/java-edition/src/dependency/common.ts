@@ -1,4 +1,4 @@
-import * as core from '@spyglassmc/core'
+import type * as core from '@spyglassmc/core'
 
 export type ReleaseVersion = `1.${number}`
 export namespace ReleaseVersion {
@@ -46,8 +46,8 @@ export namespace PackMcmeta {
 		}
 	}
 
-	export async function getType(uri: string, externals: core.Externals) {
-		const dir = await externals.fs.readdir(core.fileUtil.dirname(uri))
+	export async function getType(packRoot: string, externals: core.Externals) {
+		const dir = await externals.fs.readdir(packRoot)
 		const isResourcePack = dir.some(e => e.isDirectory() && e.name === 'assets')
 			&& !dir.some(e => e.isDirectory() && e.name === 'data')
 		return isResourcePack ? 'assets' : 'data'
@@ -56,7 +56,7 @@ export namespace PackMcmeta {
 
 export interface PackInfo {
 	type: 'data' | 'assets'
-	uri: string
+	packRoot: string
 	packMcmeta: PackMcmeta | undefined
 	versionInfo: VersionInfo
 }

@@ -1,6 +1,9 @@
 import * as core from '@spyglassmc/core'
 import type { PackMcmeta, ReleaseVersion, VersionInfo, VersionInfoReason } from './common.js'
 
+// DOCS: Update this when a new snapshot cycle begins
+export const NEXT_RELEASE_VERSION = '1.21.2'
+
 /**
  * @param inputVersion {@link core.Config.env.gameVersion}
  */
@@ -22,8 +25,7 @@ export function resolveConfiguredVersion(
 				return versions[i].id
 			}
 		}
-		// DOCS: Update this when a new snapshot cycle begins
-		return '1.21.2'
+		return NEXT_RELEASE_VERSION
 	}
 
 	function toVersionInfo(
