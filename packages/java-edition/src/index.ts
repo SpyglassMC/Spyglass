@@ -50,21 +50,18 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 						continue
 					}
 					searched.add(uri)
-					const data = await readPackMcmeta(uri)
-					if (data) {
-						const dir = await externals.fs.readdir(core.fileUtil.dirname(uri))
-						if (
-							dir.some(e => e.isDirectory() && e.name === 'assets')
-							&& !dir.some(e => e.isDirectory() && e.name === 'data')
-						) {
-							// assets folder exists but data doesn't, this is a resource pack
-							continue
-						}
-						logger.info(
-							`[je.initialize] Found a valid pack.mcmeta ${uri} with pack_format ${data.pack.pack_format}`,
-						)
-						return data
+					const contents = await readPackMcmeta(uri)
+					if (!contents) {
+						continue
 					}
+					const isResourcePack = await PackMcmeta.isResourcePack(uri, externals)
+					if (isResourcePack) {
+						continue
+					}
+					logger.info(
+						`[je.initialize] Found a valid pack.mcmeta ${uri} with pack_format ${contents.pack.pack_format}`,
+					)
+					return contents
 				}
 			}
 		}

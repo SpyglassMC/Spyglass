@@ -1,3 +1,5 @@
+import * as core from '@spyglassmc/core'
+
 export type ReleaseVersion = `1.${number}`
 export namespace ReleaseVersion {
 	/**
@@ -39,5 +41,11 @@ export namespace PackMcmeta {
 		if (!format) {
 			throw new Error('“pack.pack_format” undefined')
 		}
+	}
+
+	export async function isResourcePack(uri: string, externals: core.Externals) {
+		const dir = await externals.fs.readdir(core.fileUtil.dirname(uri))
+		return dir.some(e => e.isDirectory() && e.name === 'assets')
+			&& !dir.some(e => e.isDirectory() && e.name === 'data')
 	}
 }
