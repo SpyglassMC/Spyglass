@@ -25,11 +25,14 @@ export namespace ReleaseVersion {
 	}
 }
 
+export type VersionInfoReason = 'auto' | 'config' | 'fallback'
+
 export interface VersionInfo {
 	release: ReleaseVersion
 	id: string
 	name: string
 	isLatest: boolean
+	reason: VersionInfoReason
 }
 
 export interface PackMcmeta {
@@ -43,9 +46,17 @@ export namespace PackMcmeta {
 		}
 	}
 
-	export async function isResourcePack(uri: string, externals: core.Externals) {
+	export async function getType(uri: string, externals: core.Externals) {
 		const dir = await externals.fs.readdir(core.fileUtil.dirname(uri))
-		return dir.some(e => e.isDirectory() && e.name === 'assets')
+		const isResourcePack = dir.some(e => e.isDirectory() && e.name === 'assets')
 			&& !dir.some(e => e.isDirectory() && e.name === 'data')
+		return isResourcePack ? 'assets' : 'data'
 	}
+}
+
+export interface PackInfo {
+	type: 'data' | 'assets'
+	uri: string
+	packMcmeta: PackMcmeta | undefined
+	versionInfo: VersionInfo
 }
