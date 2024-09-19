@@ -108,6 +108,14 @@ export namespace fileUtil {
 		return i >= 0 ? uri.slice(i + 1) : uri
 	}
 
+	/**
+	 * @returns The part from the beginning of the URI to the last `/`.
+	 */
+	export function dirname(uri: string): string {
+		const i = uri.lastIndexOf('/')
+		return i >= 0 ? uri.slice(0, i) : uri
+	}
+
 	/* istanbul ignore next */
 	export function getParentOfFile(externals: Externals, path: FsLocation): FsLocation {
 		return new Uri('.', path)
