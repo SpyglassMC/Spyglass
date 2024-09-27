@@ -1,3 +1,4 @@
+import type { WatchOptions } from 'chokidar'
 import type { Uri } from '../util.js'
 import type { ExternalDownloader } from './downloader.js'
 
@@ -74,7 +75,7 @@ export interface ExternalFileSystem {
 	unlink(location: FsLocation): Promise<void>
 	watch(
 		locations: FsLocation[],
-		options: { ignored?: string[]; usePolling?: boolean },
+		options: WatchOptions,
 	): FsWatcher
 	/**
 	 * @param options `mode` - File mode bit mask (e.g. `0o775`).

@@ -1,5 +1,6 @@
 import type { Ignore } from 'ignore'
 import ignore from 'ignore'
+import { isAbsolute, resolve as resolvePath } from 'path'
 import url from 'url'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
@@ -531,10 +532,26 @@ export class Project implements ExternalEventEmitter {
 					return
 				}
 
+				const ignored = []
+				const absoluteExcludePaths = this.#excludePaths
+					.filter(isAbsolute)
+					.map((path) => resolvePath(path))
+				const matchesAbsolutePath = (path: string): boolean => {
+					return absoluteExcludePaths.some((exclude) => {
+						if (process.platform === 'win32') {
+							const normalizeWinPath = (p: string) => resolvePath(p).toLowerCase()
+							return normalizeWinPath(path) === normalizeWinPath(exclude)
+						} else {
+							return exclude === path
+						}
+					})
+				}
+				ignored.push(matchesAbsolutePath)
+
+				const relativeExcludePaths = this.#excludePaths.filter((path) => !isAbsolute(path))
 				// Need to list the full file paths for chokidar to match
-				const ignored: string[] = []
 				for (const rootUri of this.projectRoots) {
-					const absolutePaths = this.#excludePaths.map((path) =>
+					const absolutePaths = relativeExcludePaths.map((path) =>
 						url.fileURLToPath(`${rootUri}${path}`)
 					)
 					ignored.push(...absolutePaths)
