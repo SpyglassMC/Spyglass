@@ -404,6 +404,7 @@ export class Project implements ExternalEventEmitter {
 		}
 
 		const parseExcludePaths = async () => {
+			const paths = []
 			for (const pattern of this.config.env.exclude) {
 				if (pattern === '@gitignore') {
 					const gitignore = await this.readGitignore()
@@ -411,12 +412,15 @@ export class Project implements ExternalEventEmitter {
 						const gitignoreLines = gitignore.split(/\r?\n/)
 						const gitignorePaths = gitignoreLines
 							.filter((line) => line !== '' && !line.startsWith('#'))
-						this.#excludePaths.push(...gitignorePaths)
+						paths.push(...gitignorePaths)
 					}
 				} else {
-					this.#excludePaths.push(pattern)
+					paths.push(pattern)
 				}
 			}
+			// Chokidar never matches paths with a trailing (back)slash, so fix any paths
+			// that may be specified as such
+			this.#excludePaths.push(...paths.map((path) => path.replace(/(\\|\/)$/, '')))
 		}
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
