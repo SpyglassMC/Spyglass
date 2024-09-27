@@ -185,6 +185,7 @@ export class Project implements ExternalEventEmitter {
 	config!: Config
 	ignore: Ignore = ignore()
 	readonly downloader: Downloader
+	readonly #excludePaths: string[] = []
 	readonly externals: Externals
 	readonly fs: FileService
 	readonly isDebugging: boolean
@@ -395,14 +396,24 @@ export class Project implements ExternalEventEmitter {
 		const loadConfig = async () => {
 			this.config = await this.#configService.load()
 			this.ignore = ignore()
+			await parseExcludePaths()
+			for (const pattern of this.#excludePaths) {
+				this.ignore.add(pattern)
+			}
+		}
+
+		const parseExcludePaths = async () => {
 			for (const pattern of this.config.env.exclude) {
 				if (pattern === '@gitignore') {
 					const gitignore = await this.readGitignore()
 					if (gitignore) {
-						this.ignore.add(gitignore)
+						const gitignoreLines = gitignore.split(/\r?\n/)
+						const gitignorePaths = gitignoreLines
+							.filter((line) => line !== '' && !line.startsWith('#'))
+						this.#excludePaths.push(...gitignorePaths)
 					}
 				} else {
-					this.ignore.add(pattern)
+					this.#excludePaths.push(pattern)
 				}
 			}
 		}
