@@ -72,7 +72,10 @@ export interface ExternalFileSystem {
 	showFile(path: FsLocation): Promise<void>
 	stat(location: FsLocation): Promise<{ isDirectory(): boolean; isFile(): boolean }>
 	unlink(location: FsLocation): Promise<void>
-	watch(locations: FsLocation[], options: { usePolling?: boolean }): FsWatcher
+	watch(
+		locations: FsLocation[],
+		options: { ignored?: string[]; usePolling?: boolean },
+	): FsWatcher
 	/**
 	 * @param options `mode` - File mode bit mask (e.g. `0o775`).
 	 */

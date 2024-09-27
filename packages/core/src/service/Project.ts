@@ -1,5 +1,6 @@
 import type { Ignore } from 'ignore'
 import ignore from 'ignore'
+import url from 'url'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
@@ -525,9 +526,20 @@ export class Project implements ExternalEventEmitter {
 					resolve()
 					return
 				}
+
+				// Need to list the full file paths for chokidar to match
+				const ignored: string[] = []
+				for (const rootUri of this.projectRoots) {
+					const absolutePaths = this.#excludePaths.map((path) =>
+						url.fileURLToPath(`${rootUri}${path}`)
+					)
+					ignored.push(...absolutePaths)
+				}
+
 				this.#watchedFiles.clear()
 				this.#watcherReady = false
 				this.#watcher = this.externals.fs.watch(this.projectRoots, {
+					ignored,
 					usePolling: this.config.env.useFilePolling,
 				}).once('ready', () => {
 					this.#watcherReady = true
