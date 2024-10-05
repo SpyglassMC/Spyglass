@@ -9,8 +9,8 @@ import * as ls from 'vscode-languageserver/node.js'
  */
 export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 	#ready = false
-	#readyPromise: Promise<void>
-	#watchedFiles = new Set<string>()
+	readonly #readyPromise: Promise<void>
+	readonly #watchedFiles = new Set<string>()
 	#lspListener: ls.Disposable | undefined
 
 	get isReady() {

@@ -174,7 +174,7 @@ export class Project implements ExternalEventEmitter {
 	readonly #initializers: readonly ProjectInitializer[]
 	#initPromise!: Promise<void>
 	#readyPromise!: Promise<void>
-	#watcher: FsWatcher | undefined
+	readonly #watcher: FsWatcher | undefined
 	get watchedFiles() {
 		return this.#watcher?.watchedFiles ?? new Set()
 	}

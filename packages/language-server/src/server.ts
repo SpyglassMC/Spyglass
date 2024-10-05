@@ -196,7 +196,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 
 connection.onDidChangeWatchedFiles((params) => {
 	logger.info('[FsWatcher] raw LSP changes', params)
-	fsWatcher!.onLspDidChangeWatchedFiles(params)
+	void fsWatcher!.onLspDidChangeWatchedFiles(params)
 })
 
 connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) => {
