@@ -20,6 +20,7 @@ interface Resource {
 	path: string
 	category: FileCategory
 	ext: `.${string}`
+	pack: 'data' | 'assets'
 	since?: ReleaseVersion
 	until?: ReleaseVersion
 }
@@ -33,6 +34,7 @@ function resource(path: string, resource: Partial<Resource> = {}) {
 		path,
 		category: resource.category ?? path as FileCategory,
 		ext: resource.ext ?? '.json',
+		pack: resource.pack ?? 'data',
 		...resource,
 	})
 }
@@ -120,6 +122,18 @@ for (const registry of TaggableResourceLocationCategories) {
 	resource(`tags/${registry}`, { category: `tag/${registry}`, since: '1.18' })
 }
 
+// Resource pack
+resource('atlases', { pack: 'assets', category: 'atlas', since: '1.19.3' })
+resource('blockstates', { pack: 'assets', category: 'block_definition' })
+resource('fonts', { pack: 'assets', category: 'font', since: '1.16' })
+resource('lang', { pack: 'assets', category: 'lang' })
+resource('models', { pack: 'assets', category: 'model' })
+resource('particles', { pack: 'assets', category: 'particle' })
+resource('post_effect', { pack: 'assets' })
+resource('shaders', { pack: 'assets', category: 'shader' }) // TODO: support other extensions
+resource('sounds', { pack: 'assets', category: 'sound', ext: '.ogg' })
+resource('textures', { pack: 'assets', category: 'texture', ext: '.png' })
+
 export function* getRels(
 	uri: string,
 	rootUris: readonly RootUriString[],
@@ -128,7 +142,7 @@ export function* getRels(
 
 	const parts = uri.split('/')
 	for (let i = parts.length - 2; i >= 0; i--) {
-		if (parts[i] === 'data') { // TODO: support assets
+		if (parts[i] === 'data' || parts[i] === 'assets') {
 			yield parts.slice(i).join('/')
 		}
 	}
@@ -149,8 +163,8 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 			continue
 		}
 		const [pack, namespace, ...rest] = parts
-		if (pack !== 'data') {
-			continue // TODO: support assets
+		if (pack !== 'data' && pack !== 'assets') {
+			continue
 		}
 		let resource: Resource | undefined = undefined
 		let matchIndex = 0
@@ -162,6 +176,9 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 			}
 		}
 		if (!resource) {
+			continue
+		}
+		if (resource.pack !== pack) {
 			continue
 		}
 		let identifier = rest.slice(matchIndex).join('/')
