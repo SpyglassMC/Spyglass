@@ -7,6 +7,7 @@ exports['dissectUri() Dissect Uri "file:///data/minecraft/advancements/data/foo/
   "path": "advancements",
   "category": "advancement",
   "ext": ".json",
+  "pack": "data",
   "until": "1.21",
   "namespace": "minecraft",
   "identifier": "data/foo/predicates/bar"
@@ -21,6 +22,7 @@ exports['dissectUri() Dissect Uri "file:///data/minecraft/loot_table/foo.json" i
   "path": "loot_table",
   "category": "loot_table",
   "ext": ".json",
+  "pack": "data",
   "since": "1.21",
   "namespace": "minecraft",
   "identifier": "foo"
@@ -31,6 +33,7 @@ exports['dissectUri() Dissect Uri "file:///data/minecraft/loot_tables/foo.json" 
   "path": "loot_tables",
   "category": "loot_table",
   "ext": ".json",
+  "pack": "data",
   "until": "1.21",
   "namespace": "minecraft",
   "identifier": "foo"
@@ -41,6 +44,7 @@ exports['dissectUri() Dissect Uri "file:///data/minecraft/tags/block/bar.json" 1
   "path": "tags/block",
   "category": "tag/block",
   "ext": ".json",
+  "pack": "data",
   "since": "1.21",
   "namespace": "minecraft",
   "identifier": "bar",
@@ -52,6 +56,7 @@ exports['dissectUri() Dissect Uri "file:///data/minecraft/tags/block/bar.json" i
   "path": "tags/block",
   "category": "tag/block",
   "ext": ".json",
+  "pack": "data",
   "since": "1.21",
   "namespace": "minecraft",
   "identifier": "bar"
@@ -62,6 +67,7 @@ exports['dissectUri() Dissect Uri "file:///data/minecraft/tags/blocks/bar.json" 
   "path": "tags/blocks",
   "category": "tag/block",
   "ext": ".json",
+  "pack": "data",
   "until": "1.21",
   "namespace": "minecraft",
   "identifier": "bar"
@@ -72,6 +78,7 @@ exports['dissectUri() Dissect Uri "file:///data/minecraft/tags/blocks/bar.json" 
   "path": "tags/blocks",
   "category": "tag/block",
   "ext": ".json",
+  "pack": "data",
   "until": "1.21",
   "namespace": "minecraft",
   "identifier": "bar",
@@ -83,6 +90,7 @@ exports['dissectUri() Dissect Uri "file:///data/qux/dimension/foo/baz.json" in 1
   "path": "dimension",
   "category": "dimension",
   "ext": ".json",
+  "pack": "data",
   "since": "1.16",
   "namespace": "qux",
   "identifier": "foo/baz"
@@ -97,6 +105,7 @@ exports['dissectUri() with customResources Dissect Uri "file:///data/minecraft/a
   "path": "advancement",
   "category": "advancement",
   "ext": ".json",
+  "pack": "data",
   "since": "1.21",
   "namespace": "minecraft",
   "identifier": "foo"
@@ -107,6 +116,7 @@ exports['dissectUri() with customResources Dissect Uri "file:///data/minecraft/l
   "path": "loot_tables",
   "category": "loot_table",
   "ext": ".json",
+  "pack": "data",
   "until": "1.21",
   "namespace": "minecraft",
   "identifier": "foo"
@@ -117,6 +127,7 @@ exports['dissectUri() with customResources Dissect Uri "file:///data/qux/biome_m
   "path": "biome_modifiers",
   "category": "fabric:biome_modifier",
   "ext": ".json",
+  "pack": "data",
   "namespace": "qux",
   "identifier": "snowy"
 }
@@ -126,6 +137,7 @@ exports['dissectUri() with customResources Dissect Uri "file:///data/qux/tags/cu
   "path": "tags/custom_registry",
   "category": "tag/custom_registry",
   "ext": ".json",
+  "pack": "data",
   "namespace": "qux",
   "identifier": "nested/bar"
 }
