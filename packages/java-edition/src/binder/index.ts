@@ -25,18 +25,22 @@ interface Resource {
 	until?: ReleaseVersion
 }
 
-const Resources = new Map<string, Resource>()
+const Resources = new Map<string, Resource[]>()
 
 function resource(path: string, resource: Partial<Resource> & { category: FileCategory }): void
 function resource(path: FileCategory, resource: Partial<Resource>): void
 function resource(path: string, resource: Partial<Resource> = {}) {
-	Resources.set(path, {
-		path,
-		category: resource.category ?? path as FileCategory,
-		ext: resource.ext ?? '.json',
-		pack: resource.pack ?? 'data',
-		...resource,
-	})
+	const previous = Resources.get(path) ?? []
+	Resources.set(path, [
+		...previous,
+		{
+			path,
+			category: resource.category ?? path as FileCategory,
+			ext: resource.ext ?? '.json',
+			pack: resource.pack ?? 'data',
+			...resource,
+		},
+	])
 }
 
 // Pre-1.21 data pack plurals
@@ -126,11 +130,17 @@ for (const registry of TaggableResourceLocationCategories) {
 resource('atlases', { pack: 'assets', category: 'atlas', since: '1.19.3' })
 resource('blockstates', { pack: 'assets', category: 'block_definition' })
 resource('fonts', { pack: 'assets', category: 'font', since: '1.16' })
+resource('fonts', { pack: 'assets', category: 'font/ttf', since: '1.16', ext: '.ttf' })
+resource('fonts', { pack: 'assets', category: 'font/otf', since: '1.16', ext: '.otf' })
+resource('fonts', { pack: 'assets', category: 'font/unihex', since: '1.20', ext: '.zip' })
 resource('lang', { pack: 'assets', category: 'lang' })
 resource('models', { pack: 'assets', category: 'model' })
 resource('particles', { pack: 'assets', category: 'particle' })
-resource('post_effect', { pack: 'assets' })
-resource('shaders', { pack: 'assets', category: 'shader' }) // TODO: support other extensions
+resource('post_effect', { pack: 'assets', since: '1.21.2' })
+resource('shaders/post', { pack: 'assets', category: 'post_effect', until: '1.21.2' })
+resource('shaders', { pack: 'assets', category: 'shader' })
+resource('shaders', { pack: 'assets', category: 'shader/fragment', ext: '.fsh' })
+resource('shaders', { pack: 'assets', category: 'shader/vertex', ext: '.vsh' })
 resource('sounds', { pack: 'assets', category: 'sound', ext: '.ogg' })
 resource('textures', { pack: 'assets', category: 'texture', ext: '.png' })
 
@@ -166,30 +176,35 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 		if (pack !== 'data' && pack !== 'assets') {
 			continue
 		}
-		let resource: Resource | undefined = undefined
-		let matchIndex = 0
+		const candidateResources: [Resource, string][] = []
 		for (let i = 1; i < rest.length; i += 1) {
-			const res = Resources.get(rest.slice(0, i).join('/'))
-			if (res) {
-				resource = res
-				matchIndex = i
+			const resources = Resources.get(rest.slice(0, i).join('/'))
+			for (const res of resources ?? []) {
+				if (res.pack !== pack) {
+					continue
+				}
+				let identifier = rest.slice(i).join('/')
+				if (!identifier.endsWith(res.ext)) {
+					continue
+				}
+				identifier = identifier.slice(0, -res.ext.length)
+				candidateResources.push([res, identifier])
 			}
 		}
-		if (!resource) {
+		if (candidateResources.length === 0) {
 			continue
 		}
-		if (resource.pack !== pack) {
-			continue
+		// Finding the last, because that will be the deepest match
+		let res = candidateResources.findLast(([res]) => matchVersion(release, res.since, res.until))
+		if (res !== undefined) {
+			return { ok: true, ...res[0], namespace, identifier: res[1], expected: undefined }
 		}
-		let identifier = rest.slice(matchIndex).join('/')
-		if (!identifier.endsWith(resource.ext)) {
-			continue
-		}
-		identifier = identifier.slice(0, -resource.ext.length)
-		if (!matchVersion(release, resource.since, resource.until)) {
-			let expected: string | undefined = undefined
-			for (const [path, other] of Resources) {
-				if (other.category !== resource.category) {
+		// Try to find the expected path that matches the current version
+		res = candidateResources[candidateResources.length - 1]
+		let expected: string | undefined = undefined
+		for (const [path, others] of Resources) {
+			for (const other of others) {
+				if (other.category !== res[0].category) {
 					continue
 				}
 				if (matchVersion(release, other.since, other.until)) {
@@ -197,9 +212,8 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 					break
 				}
 			}
-			return { ok: false, ...resource, namespace, identifier, expected }
 		}
-		return { ok: true, ...resource, namespace, identifier, expected: undefined }
+		return { ok: false, ...res[0], namespace, identifier: res[1], expected }
 	}
 
 	return undefined
