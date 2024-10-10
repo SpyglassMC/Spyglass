@@ -72,7 +72,6 @@ export interface ExternalFileSystem {
 	showFile(path: FsLocation): Promise<void>
 	stat(location: FsLocation): Promise<{ isDirectory(): boolean; isFile(): boolean }>
 	unlink(location: FsLocation): Promise<void>
-	watch(locations: FsLocation[], options: { usePolling?: boolean }): FsWatcher
 	/**
 	 * @param options `mode` - File mode bit mask (e.g. `0o775`).
 	 */
@@ -88,7 +87,14 @@ export interface ExternalFileSystem {
  */
 export type FsLocation = string | Uri
 
+/**
+ * A file system watcher that reports additions, changes, and deletions of files.
+ * Changes to directories should not be reported.
+ */
 export interface FsWatcher {
+	get isReady(): boolean
+	get watchedFiles(): Set<string>
+
 	on(eventName: 'ready', listener: () => unknown): this
 	once(eventName: 'ready', listener: () => unknown): this
 
