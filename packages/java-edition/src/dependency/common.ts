@@ -1,3 +1,5 @@
+import type * as core from '@spyglassmc/core'
+
 export type ReleaseVersion = `1.${number}`
 export namespace ReleaseVersion {
 	/**
@@ -23,11 +25,14 @@ export namespace ReleaseVersion {
 	}
 }
 
+export type VersionInfoReason = 'auto' | 'config' | 'fallback'
+
 export interface VersionInfo {
 	release: ReleaseVersion
 	id: string
 	name: string
 	isLatest: boolean
+	reason: VersionInfoReason
 }
 
 export interface PackMcmeta {
@@ -40,4 +45,18 @@ export namespace PackMcmeta {
 			throw new Error('“pack.pack_format” undefined')
 		}
 	}
+
+	export async function getType(packRoot: string, externals: core.Externals) {
+		const dir = await externals.fs.readdir(packRoot)
+		const isResourcePack = dir.some(e => e.isDirectory() && e.name === 'assets')
+			&& !dir.some(e => e.isDirectory() && e.name === 'data')
+		return isResourcePack ? 'assets' : 'data'
+	}
+}
+
+export interface PackInfo {
+	type: 'data' | 'assets'
+	packRoot: string
+	packMcmeta: PackMcmeta | undefined
+	versionInfo: VersionInfo
 }
