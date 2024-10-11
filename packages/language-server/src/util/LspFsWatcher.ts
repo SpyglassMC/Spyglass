@@ -85,13 +85,13 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 						if (this.#watchedFiles.has(uri)) {
 							this.emit('unlink', uri)
 							this.#watchedFiles.delete(uri)
-						}
-
-						// Find all files under the deleted URI and send 'unlink' events for them as well.
-						for (const watchedUri of this.#watchedFiles) {
-							if (core.fileUtil.isSubUriOf(watchedUri, uri)) {
-								this.emit('unlink', watchedUri)
-								this.#watchedFiles.delete(watchedUri)
+						} else {
+							// Find all files under the deleted URI and send 'unlink' events for them as well.
+							for (const watchedUri of this.#watchedFiles) {
+								if (core.fileUtil.isSubUriOf(watchedUri, uri)) {
+									this.emit('unlink', watchedUri)
+									this.#watchedFiles.delete(watchedUri)
+								}
 							}
 						}
 						break
