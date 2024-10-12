@@ -6,13 +6,7 @@ import type {
 	ExternalDownloaderOptions,
 	RemoteUriString,
 } from './downloader.js'
-import type {
-	ExternalEventEmitter,
-	ExternalFileSystem,
-	Externals,
-	FsLocation,
-	FsWatcher,
-} from './index.js'
+import type { ExternalEventEmitter, ExternalFileSystem, Externals, FsLocation } from './index.js'
 
 type Listener = (...args: unknown[]) => unknown
 class BrowserEventEmitter implements ExternalEventEmitter {

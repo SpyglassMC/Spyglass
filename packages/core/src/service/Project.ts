@@ -2,7 +2,7 @@ import type { Ignore } from 'ignore'
 import ignore from 'ignore'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
+import type { ExternalEventEmitter, Externals, IntervalId } from '../common/index.js'
 import {
 	bufferToString,
 	Logger,
@@ -34,6 +34,7 @@ import { LinterErrorReporter } from './ErrorReporter.js'
 import { ArchiveUriSupporter, FileService, FileUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
+import type { FsWatcher } from './FsWatcher.js'
 import { MetaRegistry } from './MetaRegistry.js'
 import { ProfilerFactory } from './Profiler.js'
 
