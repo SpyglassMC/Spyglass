@@ -224,7 +224,11 @@ exports['mcfunction argument minecraft:nbt_tag Parse "{foo:bar}" 1'] = {
               ]
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 1,
+          "end": 8
+        }
       }
     ]
   },

@@ -106,7 +106,11 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = 
               ]
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 1,
+          "end": 8
+        }
       }
     ]
   },
@@ -127,7 +131,11 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{}" 1'] = {
           "start": 0,
           "end": 2
         },
-        "children": []
+        "children": [],
+        "innerRange": {
+          "start": 1,
+          "end": 1
+        }
       }
     ]
   },
