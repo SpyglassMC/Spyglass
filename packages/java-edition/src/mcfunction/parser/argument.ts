@@ -1595,9 +1595,8 @@ const components: core.InfallibleParser<ComponentListNode> = core.map(
 	}),
 	(res) => {
 		const ans: ComponentListNode = {
+			...res,
 			type: 'mcfunction:component_list',
-			range: res.range,
-			children: res.children,
 		}
 		return ans
 	},

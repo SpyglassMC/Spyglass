@@ -3,6 +3,7 @@ import type { AstNode } from './AstNode.js'
 
 export interface RecordBaseNode<K extends AstNode, V extends AstNode> extends AstNode {
 	readonly children: PairNode<K, V>[]
+	innerRange?: Range
 }
 
 export interface RecordNode<K extends AstNode, V extends AstNode> extends RecordBaseNode<K, V> {

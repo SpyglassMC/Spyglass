@@ -269,9 +269,10 @@ export namespace ItemStackNode {
 	}
 }
 
-export interface ComponentListNode extends core.AstNode {
+export interface ComponentListNode
+	extends core.RecordBaseNode<core.ResourceLocationNode, nbt.NbtNode>
+{
 	type: 'mcfunction:component_list'
-	children: core.PairNode<core.ResourceLocationNode, nbt.NbtNode>[]
 }
 
 export namespace ComponentListNode {

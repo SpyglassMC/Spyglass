@@ -139,7 +139,11 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 7,
+        "end": 14
+      }
     },
     "nbt": {
       "type": "nbt:compound",
@@ -241,7 +245,11 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 16,
+        "end": 23
+      }
     },
     "isPredicate": true
   },
@@ -410,7 +418,11 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 6,
+        "end": 13
+      }
     },
     "isPredicate": true
   },
