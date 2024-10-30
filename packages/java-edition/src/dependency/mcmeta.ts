@@ -23,7 +23,7 @@ export async function resolveConfiguredVersion(
 			}
 		}
 		// DOCS: Update this when a new snapshot cycle begins
-		return '1.21.3'
+		return '1.21.4'
 	}
 
 	function toVersionInfo(version: McmetaVersion | undefined): VersionInfo {
