@@ -29,6 +29,18 @@
 			"args": ["--timeout", "999999"],
 			"console": "integratedTerminal",
 			"internalConsoleOptions": "neverOpen"
+		},
+		{
+			"type": "extensionHost",
+			"request": "launch",
+			"name": "Launch Web Client",
+			"debugWebWorkerHost": true,
+			"args": [
+				"--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension",
+				"--extensionDevelopmentKind=web"
+			],
+			"outFiles": ["${workspaceFolder}/packages/vscode-extension/dist/**/*.js"],
+			"preLaunchTask": "npm: watch"
 		}
 	],
 	"compounds": [
