@@ -9,6 +9,7 @@ interface IdConfig {
 	definition?: boolean
 	prefix?: '!'
 	empty?: 'allowed'
+	exclude?: string[]
 }
 
 const idValidator = validator.alternatives<IdConfig>(
@@ -19,6 +20,17 @@ const idValidator = validator.alternatives<IdConfig>(
 		definition: validator.optional(validator.boolean),
 		prefix: validator.optional(validator.options('!')),
 		empty: validator.optional(validator.options('allowed')),
+		exclude: validator.optional(validator.alternatives<string[]>(
+			validator.map(validator.string, v => [v]),
+			(value) => {
+				if (value?.kind === 'tuple') {
+					return value.items.flatMap(i =>
+						i.kind === 'literal' && i.value.kind === 'string' ? [i.value.value] : []
+					)
+				}
+				return core.Failure
+			},
+		)),
 	}),
 	() => ({}),
 )
@@ -149,7 +161,21 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				if (config.prefix) {
 					return core.prefixed({ prefix: config.prefix, child: resourceLocation })(src, ctx)
 				}
-				return resourceLocation(src, ctx)
+				const node = resourceLocation(src, ctx)
+				if (config.exclude) {
+					const resourceLocation = core.ResourceLocationNode.toString(node, 'full')
+					for (const e of config.exclude ?? []) {
+						const excluded = core.ResourceLocation.lengthen(e)
+						if (resourceLocation === excluded) {
+							ctx.err.report(
+								localize('not-allowed-here', localeQuote(excluded)),
+								node,
+								core.ErrorSeverity.Warning,
+							)
+						}
+					}
+				}
+				return node
 			}
 		},
 		stringMocker: (config, typeDef, ctx) => {
