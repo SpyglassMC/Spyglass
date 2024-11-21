@@ -1618,6 +1618,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	}
 
 	if (src.trySkip('=')) {
+		src.skipWhitespace()
 		const ans: ComponentTestExactNode = {
 			type: 'mcfunction:component_test_exact',
 			range: core.Range.create(start, src),
@@ -1639,6 +1640,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	}
 
 	if (src.trySkip('~')) {
+		src.skipWhitespace()
 		if (key.options.category !== undefined) {
 			key.options.category = 'item_sub_predicate_type'
 		}
