@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import type { TypeDefSymbolData } from '@spyglassmc/mcdoc/lib/binder/index.js'
 import type { PackMcmeta, ReleaseVersion, VersionInfo } from './common.js'
 
 /**
@@ -160,6 +161,54 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 				},
 			)
 		}
+
+		symbols.query(McmetaSummaryUri, 'mcdoc/dispatcher', 'mcdoc:block_states').enter({
+			usage: { type: 'declaration' },
+		}).onEach(Object.entries(summary.blocks), ([id, [properties]], blockQuery) => {
+			const data: TypeDefSymbolData = {
+				typeDef: {
+					kind: 'struct',
+					fields: Object.entries(properties).map(([propKey, propValues]) => ({
+						kind: 'pair',
+						key: propKey,
+						optional: true,
+						type: {
+							kind: 'union',
+							members: propValues.map(value => ({
+								kind: 'literal',
+								value: { kind: 'string', value },
+							})),
+						},
+					})),
+				},
+			}
+			blockQuery.member(id, (stateQuery) => {
+				stateQuery.enter({
+					data: { data },
+					usage: { type: 'declaration' },
+				})
+			})
+		})
+
+		symbols.query(McmetaSummaryUri, 'mcdoc/dispatcher', 'mcdoc:block_state_keys').enter({
+			usage: { type: 'declaration' },
+		}).onEach(Object.entries(summary.blocks), ([id, [properties]], blockQuery) => {
+			const data: TypeDefSymbolData = {
+				typeDef: {
+					kind: 'union',
+					members: Object.keys(properties).map(propKey => ({
+						kind: 'literal',
+						value: { kind: 'string', value: propKey },
+					})),
+				},
+			}
+			blockQuery.member(id, (stateQuery) => {
+				stateQuery.enter({
+					data: { data },
+					usage: { type: 'declaration' },
+				})
+			})
+		})
 	}
 
 	function addRegistriesSymbols(registries: McmetaRegistries, symbols: core.SymbolUtil) {
