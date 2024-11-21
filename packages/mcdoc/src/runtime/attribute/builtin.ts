@@ -8,6 +8,7 @@ interface IdConfig {
 	tags?: 'allowed' | 'implicit' | 'required'
 	definition?: boolean
 	prefix?: '!'
+	path?: string
 	empty?: 'allowed'
 	exclude?: string[]
 }
@@ -19,6 +20,7 @@ const idValidator = validator.alternatives<IdConfig>(
 		tags: validator.optional(validator.options('allowed', 'implicit', 'required')),
 		definition: validator.optional(validator.boolean),
 		prefix: validator.optional(validator.options('!')),
+		path: validator.optional(validator.string),
 		empty: validator.optional(validator.options('allowed')),
 		exclude: validator.optional(validator.alternatives<string[]>(
 			validator.map(validator.string, v => [v]),
@@ -36,7 +38,7 @@ const idValidator = validator.alternatives<IdConfig>(
 )
 
 function getResourceLocationOptions(
-	{ registry, tags, definition }: IdConfig,
+	{ registry, tags, definition, path }: IdConfig,
 	requireCanonical: boolean,
 	ctx: core.ContextBase,
 	typeDef?: core.DeepReadonly<SimplifiedMcdocTypeNoUnion>,
@@ -66,6 +68,7 @@ function getResourceLocationOptions(
 				requireCanonical,
 				allowTag: true,
 				requireTag: tags === 'required',
+				implicitPath: path,
 			}
 		}
 	} else if (core.ResourceLocationCategory.is(registry)) {
@@ -73,6 +76,7 @@ function getResourceLocationOptions(
 			category: registry,
 			requireCanonical,
 			usageType: definition ? 'definition' : 'reference',
+			implicitPath: path,
 		}
 	}
 	ctx.logger.warn(`[mcdoc id] Unhandled registry ${registry}`)
