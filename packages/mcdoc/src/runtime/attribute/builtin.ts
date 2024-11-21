@@ -62,25 +62,20 @@ function getResourceLocationOptions(
 		registry = `tag/${registry}`
 	}
 	if (tags === 'allowed' || tags === 'required') {
-		if (core.TaggableResourceLocationCategory.is(registry)) {
-			return {
-				category: registry,
-				requireCanonical,
-				allowTag: true,
-				requireTag: tags === 'required',
-				implicitPath: path,
-			}
-		}
-	} else if (core.ResourceLocationCategory.is(registry)) {
 		return {
-			category: registry,
+			category: registry as core.TaggableResourceLocationCategory,
 			requireCanonical,
-			usageType: definition ? 'definition' : 'reference',
+			allowTag: true,
+			requireTag: tags === 'required',
 			implicitPath: path,
 		}
 	}
-	ctx.logger.warn(`[mcdoc id] Unhandled registry ${registry}`)
-	return undefined
+	return {
+		category: registry as core.ResourceLocationCategory,
+		requireCanonical,
+		usageType: definition ? 'definition' : 'reference',
+		implicitPath: path,
+	}
 }
 
 interface IntegerConfig {
