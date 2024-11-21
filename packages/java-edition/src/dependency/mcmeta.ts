@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
-import type { PackMcmeta, ReleaseVersion, VersionInfo, VersionInfoReason } from './common.js'
+import type { PackMcmeta, VersionInfo, VersionInfoReason } from './common.js'
+import { ReleaseVersion } from './common.js'
 
 // DOCS: Update this when a new snapshot cycle begins
 export const NEXT_RELEASE_VERSION = '1.21.4'
@@ -124,7 +125,10 @@ export function getMcmetaSummaryUris(
 	}
 }
 
-export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
+export function symbolRegistrar(
+	summary: McmetaSummary,
+	release: ReleaseVersion,
+): core.SymbolRegistrar {
 	const McmetaSummaryUri = 'mcmeta://summary/registries.json'
 
 	/**
@@ -187,8 +191,10 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 	}
 
 	function addBuiltinSymbols(symbols: core.SymbolUtil) {
-		symbols.query(McmetaSummaryUri, 'loot_table', 'minecraft:empty')
-			.enter({ usage: { type: 'declaration' } })
+		if (ReleaseVersion.cmp(release, '1.21.2') < 0) {
+			symbols.query(McmetaSummaryUri, 'loot_table', 'minecraft:empty')
+				.enter({ usage: { type: 'declaration' } })
+		}
 	}
 
 	return (symbols) => {

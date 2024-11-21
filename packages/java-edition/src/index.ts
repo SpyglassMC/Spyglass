@@ -130,8 +130,8 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	}
 
 	meta.registerSymbolRegistrar('mcmeta-summary', {
-		checksum: summary.checksum,
-		registrar: symbolRegistrar(summary as McmetaSummary),
+		checksum: `${summary.checksum}_v2`,
+		registrar: symbolRegistrar(summary as McmetaSummary, release),
 	})
 
 	meta.registerLinter('nameOfNbtKey', {
