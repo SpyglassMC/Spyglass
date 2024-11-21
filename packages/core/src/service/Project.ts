@@ -1,5 +1,7 @@
 import type { Ignore } from 'ignore'
 import ignore from 'ignore'
+import { isAbsolute, resolve as resolvePath } from 'path'
+import url from 'url'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
@@ -185,6 +187,7 @@ export class Project implements ExternalEventEmitter {
 	config!: Config
 	ignore: Ignore = ignore()
 	readonly downloader: Downloader
+	readonly #excludePaths: string[] = []
 	readonly externals: Externals
 	readonly fs: FileService
 	readonly isDebugging: boolean
@@ -395,16 +398,30 @@ export class Project implements ExternalEventEmitter {
 		const loadConfig = async () => {
 			this.config = await this.#configService.load()
 			this.ignore = ignore()
+			await parseExcludePaths()
+			for (const pattern of this.#excludePaths) {
+				this.ignore.add(pattern)
+			}
+		}
+
+		const parseExcludePaths = async () => {
+			const paths = []
 			for (const pattern of this.config.env.exclude) {
 				if (pattern === '@gitignore') {
 					const gitignore = await this.readGitignore()
 					if (gitignore) {
-						this.ignore.add(gitignore)
+						const gitignoreLines = gitignore.split(/\r?\n/)
+						const gitignorePaths = gitignoreLines
+							.filter((line) => line !== '' && !line.startsWith('#'))
+						paths.push(...gitignorePaths)
 					}
 				} else {
-					this.ignore.add(pattern)
+					paths.push(pattern)
 				}
 			}
+			// Chokidar never matches paths with a trailing (back)slash, so fix any paths
+			// that may be specified as such
+			this.#excludePaths.push(...paths.map((path) => path.replace(/(\\|\/)$/, '')))
 		}
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
@@ -514,9 +531,36 @@ export class Project implements ExternalEventEmitter {
 					resolve()
 					return
 				}
+
+				const ignored = []
+				const absoluteExcludePaths = this.#excludePaths
+					.filter(isAbsolute)
+					.map((path) => resolvePath(path))
+				const matchesAbsolutePath = (path: string): boolean => {
+					return absoluteExcludePaths.some((exclude) => {
+						if (process.platform === 'win32') {
+							const normalizeWinPath = (p: string) => resolvePath(p).toLowerCase()
+							return normalizeWinPath(path) === normalizeWinPath(exclude)
+						} else {
+							return exclude === path
+						}
+					})
+				}
+				ignored.push(matchesAbsolutePath)
+
+				const relativeExcludePaths = this.#excludePaths.filter((path) => !isAbsolute(path))
+				// Need to list the full file paths for chokidar to match
+				for (const rootUri of this.projectRoots) {
+					const absolutePaths = relativeExcludePaths.map((path) =>
+						url.fileURLToPath(`${rootUri}${path}`)
+					)
+					ignored.push(...absolutePaths)
+				}
+
 				this.#watchedFiles.clear()
 				this.#watcherReady = false
 				this.#watcher = this.externals.fs.watch(this.projectRoots, {
+					ignored,
 					usePolling: this.config.env.useFilePolling,
 				}).once('ready', () => {
 					this.#watcherReady = true
