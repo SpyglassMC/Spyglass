@@ -1353,10 +1353,13 @@ export function scoreHolder(
 	usageType: core.SymbolUsageType,
 	amount: 'multiple' | 'single',
 ): core.Parser<ScoreHolderNode> {
-	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
-		core.select([{ predicate: (src) => src.peek() === '@', parser: selector() }, {
-			parser: scoreHolderFakeName(usageType),
-		}]),
+	return core.map<core.LiteralNode | core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
+		core.select([
+			// Technically score holders can start with *, but this doesn't account for it
+			{ prefix: '*', parser: core.literal('*') },
+			{ prefix: '@', parser: selector() },
+			{ parser: scoreHolderFakeName(usageType) },
+		]),
 		(res, _src, ctx) => {
 			const ans: ScoreHolderNode = {
 				type: 'mcfunction:score_holder',
@@ -1366,8 +1369,10 @@ export function scoreHolder(
 
 			if (core.SymbolNode.is(res)) {
 				ans.fakeName = res
-			} else {
+			} else if (EntitySelectorNode.is(res)) {
 				ans.selector = res
+			} else {
+				ans.wildcard = res
 			}
 
 			if (amount === 'single' && ans.selector && !ans.selector.single) {

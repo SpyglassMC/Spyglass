@@ -533,9 +533,10 @@ export namespace ParticleNode {
 
 export interface ScoreHolderNode extends core.AstNode {
 	type: 'mcfunction:score_holder'
-	children: [core.SymbolNode | EntitySelectorNode]
+	children: [core.LiteralNode | core.SymbolNode | EntitySelectorNode]
 	fakeName?: core.SymbolNode
 	selector?: EntitySelectorNode
+	wildcard?: core.LiteralNode
 }
 export namespace ScoreHolderNode {
 	export function mock(range: core.RangeLike): ScoreHolderNode {
