@@ -251,7 +251,10 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 					RegExp(pattern)
 				} catch (e) {
 					const message = e instanceof Error ? e.message : `${e}`
-					ctx.err.report(localize('invalid-regex-pattern', message), node, 2)
+					const error = message
+						.replace(/^Invalid regular expression: /, '')
+						.replace(/^\/.+\/: /, '')
+					ctx.err.report(localize('invalid-regex-pattern', error), node, 2)
 				}
 			}
 		},
