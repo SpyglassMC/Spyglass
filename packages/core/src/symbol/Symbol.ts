@@ -209,6 +209,7 @@ export const AssetsFileCategories = Object.freeze(
 		'font/ttf',
 		'font/otf',
 		'font/unihex',
+		'item_definition', // items
 		'lang',
 		'model',
 		'particle',
