@@ -555,4 +555,13 @@ CATEGORY loot_table
 + SYMBOL minecraft:empty {loot_table} [Public]
 + + declaration:
 + + + {"uri":"mcmeta://summary/registries.json"}
+------------
+CATEGORY model
++ SYMBOL minecraft:builtin/generated {model} [Public]
++ + declaration:
++ + + {"uri":"mcmeta://summary/registries.json"}
++ ------------
++ SYMBOL minecraft:builtin/entity {model} [Public]
++ + declaration:
++ + + {"uri":"mcmeta://summary/registries.json"}
 `
