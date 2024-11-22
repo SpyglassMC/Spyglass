@@ -329,7 +329,7 @@ export namespace SymbolLinterConfig {
 export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
-		dependencies: ['@vanilla-datapack', '@vanilla-mcdoc'],
+		dependencies: ['@vanilla-datapack', '@vanilla-resourcepack', '@vanilla-mcdoc'],
 		exclude: ['@gitignore', '.vscode/', '.github/'],
 		customResources: {},
 		feature: {

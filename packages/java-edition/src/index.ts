@@ -1,18 +1,16 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
-import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
-import type { McmetaSummary, McmetaVersion, McmetaVersions, PackInfo } from './dependency/index.js'
+import type { McmetaSummary, McmetaVersions, PackInfo } from './dependency/index.js'
 import {
 	getMcmetaSummary,
 	getVanillaDatapack,
 	getVanillaMcdoc,
+	getVanillaResourcepack,
 	getVersions,
-	NEXT_RELEASE_VERSION,
 	PackMcmeta,
-	ReleaseVersion,
 	resolveConfiguredVersion,
 	symbolRegistrar,
 } from './dependency/index.js'
@@ -114,6 +112,11 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		() => getVanillaDatapack(downloader, version.id, version.isLatest),
 	)
 
+	meta.registerDependencyProvider(
+		'@vanilla-resourcepack',
+		() => getVanillaResourcepack(downloader, version.id, version.isLatest),
+	)
+
 	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader))
 
 	const summary = await getMcmetaSummary(
@@ -155,6 +158,14 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 
 	registerMcdocAttributes(meta, release)
 	registerPackFormatAttribute(meta, release, versions, packs)
+
+	meta.registerLanguage('zip', { extensions: ['.zip'] })
+	meta.registerLanguage('png', { extensions: ['.png'] })
+	meta.registerLanguage('ogg', { extensions: ['.ogg'] })
+	meta.registerLanguage('ttf', { extensions: ['.ttf'] })
+	meta.registerLanguage('otf', { extensions: ['.otf'] })
+	meta.registerLanguage('fsh', { extensions: ['.fsh'] })
+	meta.registerLanguage('vsh', { extensions: ['.vsh'] })
 
 	json.initialize(ctx)
 	jeJson.initialize(ctx)
