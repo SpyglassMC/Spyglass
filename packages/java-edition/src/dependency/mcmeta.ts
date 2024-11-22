@@ -1,15 +1,19 @@
 import * as core from '@spyglassmc/core'
 import type { TypeDefSymbolData } from '@spyglassmc/mcdoc/lib/binder/index.js'
-import type { PackMcmeta, ReleaseVersion, VersionInfo } from './common.js'
+import type { PackMcmeta, VersionInfo, VersionInfoReason } from './common.js'
+import { ReleaseVersion } from './common.js'
+
+// DOCS: Update this when a new snapshot cycle begins
+export const NEXT_RELEASE_VERSION = '1.21.4'
 
 /**
  * @param inputVersion {@link core.Config.env.gameVersion}
  */
-export async function resolveConfiguredVersion(
+export function resolveConfiguredVersion(
 	inputVersion: string,
 	versions: McmetaVersions,
-	getPackMcmeta: () => Promise<PackMcmeta | undefined>,
-): Promise<VersionInfo> {
+	packMcmeta: PackMcmeta | undefined,
+): VersionInfo {
 	function findReleaseTarget(version: McmetaVersion): string {
 		if (version.release_target) {
 			return version.release_target
@@ -23,17 +27,20 @@ export async function resolveConfiguredVersion(
 				return versions[i].id
 			}
 		}
-		// DOCS: Update this when a new snapshot cycle begins
-		return '1.21.4'
+		return NEXT_RELEASE_VERSION
 	}
 
-	function toVersionInfo(version: McmetaVersion | undefined): VersionInfo {
+	function toVersionInfo(
+		version: McmetaVersion | undefined,
+		reason: VersionInfoReason,
+	): VersionInfo {
 		version = version ?? versions[0]
 		return {
 			id: version.id,
 			name: version.name,
 			release: findReleaseTarget(version) as ReleaseVersion,
 			isLatest: version === versions[0],
+			reason,
 		}
 	}
 
@@ -45,40 +52,41 @@ export async function resolveConfiguredVersion(
 	versions = versions.sort((a, b) => b.data_version - a.data_version)
 	const latestRelease = versions.find((v) => v.type === 'release')
 	if (inputVersion === 'auto') {
-		const packMcmeta = await getPackMcmeta()
-		if (packMcmeta && latestRelease) {
+		const packFormat = packMcmeta?.pack.pack_format
+		if (packFormat && latestRelease) {
 			// If the pack format is larger than the latest release, use the latest snapshot
-			if (packMcmeta.pack.pack_format > latestRelease.data_pack_version) {
-				return toVersionInfo(versions[0])
+			if (packFormat > latestRelease.data_pack_version) {
+				return toVersionInfo(versions[0], 'auto')
 			}
 			// Look for versions from recent to oldest, picking the most recent release that matches
 			let oldestRelease = undefined
 			for (const version of versions) {
 				if (version.type === 'release') {
 					// If we already passed the pack format, use the oldest release so far
-					if (packMcmeta.pack.pack_format > version.data_pack_version) {
-						return toVersionInfo(oldestRelease)
+					if (packFormat > version.data_pack_version) {
+						return toVersionInfo(oldestRelease, 'auto')
 					}
-					if (packMcmeta.pack.pack_format === version.data_pack_version) {
-						return toVersionInfo(version)
+					if (packFormat === version.data_pack_version) {
+						return toVersionInfo(version, 'auto')
 					}
 					oldestRelease = version
 				}
 			}
 			// If the pack format is still lower, use the oldest known release version
-			return toVersionInfo(oldestRelease)
+			return toVersionInfo(oldestRelease, 'auto')
 		}
 		// Fall back to the latest release if pack mcmeta is not available
-		return toVersionInfo(latestRelease)
+		return toVersionInfo(latestRelease, 'fallback')
 	} else if (inputVersion === 'latest release') {
-		return toVersionInfo(latestRelease)
+		return toVersionInfo(latestRelease, 'config')
 	} else if (inputVersion === 'latest snapshot') {
-		return toVersionInfo(versions[0])
+		return toVersionInfo(versions[0], 'config')
 	}
 	return toVersionInfo(
 		versions.find((v) =>
 			inputVersion === v.id.toLowerCase() || inputVersion === v.name.toLowerCase()
 		),
+		'config',
 	)
 }
 
@@ -118,7 +126,10 @@ export function getMcmetaSummaryUris(
 	}
 }
 
-export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
+export function symbolRegistrar(
+	summary: McmetaSummary,
+	release: ReleaseVersion,
+): core.SymbolRegistrar {
 	const McmetaSummaryUri = 'mcmeta://summary/registries.json'
 
 	/**
@@ -229,8 +240,10 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 	}
 
 	function addBuiltinSymbols(symbols: core.SymbolUtil) {
-		symbols.query(McmetaSummaryUri, 'loot_table', 'minecraft:empty')
-			.enter({ usage: { type: 'declaration' } })
+		if (ReleaseVersion.cmp(release, '1.21.2') < 0) {
+			symbols.query(McmetaSummaryUri, 'loot_table', 'minecraft:empty')
+				.enter({ usage: { type: 'declaration' } })
+		}
 	}
 
 	return (symbols) => {

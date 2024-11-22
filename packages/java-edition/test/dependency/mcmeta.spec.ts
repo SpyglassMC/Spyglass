@@ -52,10 +52,10 @@ describe('mcmeta', () => {
 		]
 		for (const { version, packMcmeta } of suites) {
 			it(`Should resolve "${version}"`, async () => {
-				const actual = await resolveConfiguredVersion(
+				const actual = resolveConfiguredVersion(
 					version,
 					Fixtures.Versions,
-					async () => packMcmeta,
+					packMcmeta,
 				)
 				snapshot(actual)
 			})
@@ -84,7 +84,7 @@ describe('mcmeta', () => {
 				commands: undefined as any,
 				fluids: Fluids,
 				registries: Fixtures.Registries,
-			})
+			}, '1.18.2')
 			const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 			registrar(symbols, {})
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))

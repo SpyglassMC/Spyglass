@@ -1,8 +1,8 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { McmetaVersion, McmetaVersions } from './dependency'
-import { ReleaseVersion } from './dependency'
+import type { McmetaVersions, PackInfo } from './dependency'
+import { NEXT_RELEASE_VERSION, ReleaseVersion } from './dependency'
 
 export function registerMcdocAttributes(meta: core.MetaRegistry, release: ReleaseVersion) {
 	mcdoc.runtime.registerAttribute(meta, 'since', mcdoc.runtime.attribute.validator.string, {
@@ -49,12 +49,29 @@ export function registerPackFormatAttribute(
 	meta: core.MetaRegistry,
 	release: ReleaseVersion,
 	versions: McmetaVersions,
+	packs: PackInfo[],
 ) {
-	const packFormats = new Map<number, McmetaVersion>()
+	const dataFormats = new Map<number, string[]>()
+	const assetsFormats = new Map<number, string[]>()
+	if (versions[0]?.type !== 'release') {
+		dataFormats.set(versions[0].data_pack_version, [NEXT_RELEASE_VERSION])
+		assetsFormats.set(versions[0].resource_pack_version, [NEXT_RELEASE_VERSION])
+	}
 	for (const version of versions) {
-		if (version.type === 'release' && !packFormats.has(version.data_pack_version)) {
-			packFormats.set(version.data_pack_version, version)
+		if (version.type === 'release') {
+			dataFormats.set(version.data_pack_version, [
+				...dataFormats.get(version.data_pack_version) ?? [],
+				version.id,
+			])
+			assetsFormats.set(version.resource_pack_version, [
+				...assetsFormats.get(version.resource_pack_version) ?? [],
+				version.id,
+			])
 		}
+	}
+	function getFormats(packMcmetaUri: string) {
+		const thisPack = packs.find(p => core.fileUtil.isSubUriOf(packMcmetaUri, p.packRoot))
+		return thisPack?.type === 'assets' ? assetsFormats : dataFormats
 	}
 	mcdoc.runtime.registerAttribute(meta, 'pack_format', () => undefined, {
 		checker: (_, typeDef) => {
@@ -63,14 +80,14 @@ export function registerPackFormatAttribute(
 			}
 			const target = typeDef.value.value
 			return (node, ctx) => {
-				const targetVersion = packFormats.get(target)
-				if (!targetVersion) {
+				const targetVersions = getFormats(ctx.doc.uri).get(target)
+				if (!targetVersions) {
 					ctx.err.report(
 						localize('java-edition.pack-format.unsupported', target),
 						node,
 						core.ErrorSeverity.Warning,
 					)
-				} else if (targetVersion.id !== release) {
+				} else if (!targetVersions.some(v => v === release)) {
 					ctx.err.report(
 						localize('java-edition.pack-format.not-loaded', target, release),
 						node,
@@ -80,10 +97,10 @@ export function registerPackFormatAttribute(
 			}
 		},
 		numericCompleter: (_, ctx) => {
-			return [...packFormats.values()].map((v, i) => ({
+			return [...getFormats(ctx.doc.uri).entries()].map(([k, v], i) => ({
 				range: core.Range.create(ctx.offset),
-				label: `${v.data_pack_version}`,
-				labelSuffix: ` (${v.id})`,
+				label: `${k}`,
+				labelSuffix: ` (${v[0]})`,
 				sortText: `${i}`.padStart(4, '0'),
 			} satisfies core.CompletionItem))
 		},
