@@ -16,7 +16,7 @@ export type McdocCategory = (typeof McdocCategories)[number]
 export const RegistryCategories = Object.freeze(
 	[
 		'activity',
-		'armor_material',
+		'armor_material', // Removed
 		'attribute',
 		'block',
 		'block_entity_type',
@@ -25,10 +25,12 @@ export const RegistryCategories = Object.freeze(
 		'cat_variant',
 		'chunk_status',
 		'command_argument_type',
+		'consume_effect_type',
 		'creative_mode_tab',
 		'custom_stat',
 		'data_component_type',
 		'decorated_pot_pattern',
+		'decorated_pot_patterns', // Removed
 		'enchantment_effect_component_type',
 		'enchantment_entity_effect_type',
 		'enchantment_level_based_value_type',
@@ -63,12 +65,15 @@ export const RegistryCategories = Object.freeze(
 		'pos_rule_test',
 		'position_source_type',
 		'potion',
+		'recipe_book_category',
+		'recipe_display',
 		'recipe_serializer',
 		'recipe_type',
 		'rule_block_entity_modifier',
 		'rule_test',
 		'schedule',
 		'sensor_type',
+		'slot_display',
 		'sound_event',
 		'stat_type',
 		'trigger_type',
