@@ -271,12 +271,36 @@ export namespace ItemStackNode {
 
 export interface ComponentListNode extends core.AstNode {
 	type: 'mcfunction:component_list'
-	children: core.PairNode<core.ResourceLocationNode, nbt.NbtNode>[]
+	children: (ComponentNode | ComponentRemovalNode)[]
 }
 
 export namespace ComponentListNode {
 	export function is(node: core.AstNode): node is ComponentListNode {
 		return (node as ComponentListNode).type === 'mcfunction:component_list'
+	}
+}
+
+export interface ComponentNode extends core.AstNode {
+	type: 'mcfunction:component'
+	children: (core.ResourceLocationNode | nbt.NbtNode)[]
+	key: core.ResourceLocationNode
+	value?: nbt.NbtNode
+}
+export namespace ComponentNode {
+	export function is(node: core.AstNode): node is ComponentNode {
+		return (node as ComponentNode).type === 'mcfunction:component'
+	}
+}
+
+export interface ComponentRemovalNode extends core.AstNode {
+	type: 'mcfunction:component_removal'
+	children: (core.LiteralNode | core.ResourceLocationNode)[]
+	prefix: core.LiteralNode
+	key: core.ResourceLocationNode
+}
+export namespace ComponentRemovalNode {
+	export function is(node: core.AstNode): node is ComponentRemovalNode {
+		return (node as ComponentRemovalNode).type === 'mcfunction:component_removal'
 	}
 }
 
