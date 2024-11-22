@@ -106,13 +106,13 @@ export namespace Color {
 	 * @param value `A << 24 + R << 16 + G << 8 + B`.
 	 */
 	export function fromCompositeARGB(value: number): Color {
-		const b = value % 256
-		value >>>= 8
-		const g = value % 256
-		value >>>= 8
-		const r = value % 256
-		value >>>= 8
-		const a = value % 256
+		value |= 0 // Cast to signed 32-bit integer
+
+		const a = (value >>> 24) & 0xff
+		const r = (value >>> 16) & 0xff
+		const g = (value >>> 8) & 0xff
+		const b = value & 0xff
+
 		return fromIntRGBA(r, g, b, a)
 	}
 }
@@ -194,10 +194,12 @@ export namespace ColorPresentation {
 				}`
 			case ColorFormat.CompositeARGB:
 				return `${
-					(BigInt(Math.round(color[3] * 255)) << 24n)
-					+ (BigInt(Math.round(color[0] * 255)) << 16n)
-					+ (BigInt(Math.round(color[1] * 255)) << 8n)
-					+ BigInt(Math.round(color[2] * 255))
+					Number(
+						(BigInt(Math.round(color[3] * 255)) << 24n)
+							+ (BigInt(Math.round(color[0] * 255)) << 16n)
+							+ (BigInt(Math.round(color[1] * 255)) << 8n)
+							+ BigInt(Math.round(color[2] * 255)),
+					) << 0 // Convert to signed 32-bit integer
 				}`
 		}
 	}
