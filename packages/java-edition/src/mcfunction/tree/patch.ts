@@ -981,6 +981,22 @@ const ExecuteStoreTarget: PartialTreeNode = Object.freeze({
 				},
 			},
 		},
+		score: {
+			children: {
+				targets: {
+					properties: {
+						usageType: 'definition',
+					},
+					children: {
+						objective: {
+							properties: {
+								accessType: SymbolAccessType.Write,
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 })
 
