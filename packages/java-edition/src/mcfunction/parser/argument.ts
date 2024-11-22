@@ -1586,27 +1586,80 @@ function vector(options: VectorNode.Options): core.InfallibleParser<VectorNode> 
 	}
 }
 
-const components: core.InfallibleParser<ComponentListNode> = core.map(
-	core.record({
-		start: '[',
-		pair: {
-			key: core.resourceLocation({ category: 'data_component_type' }),
-			sep: '=',
-			value: nbt.parser.entry,
-			end: ',',
-			trailingEnd: true,
-		},
-		end: ']',
-	}),
-	(res) => {
-		const ans: ComponentListNode = {
-			type: 'mcfunction:component_list',
-			range: res.range,
-			children: res.children,
+const components: core.Parser<ComponentListNode> = (src, ctx) => {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	const allowComponentRemoval = !release || ReleaseVersion.cmp(release, '1.21') >= 0
+
+	const ans: ComponentListNode = {
+		type: 'mcfunction:component_list',
+		range: core.Range.create(src),
+		children: [],
+	}
+
+	if (!src.trySkip('[')) {
+		return core.Failure
+	}
+	src.skipWhitespace()
+
+	while (src.canRead() && src.peek() !== ']') {
+		const start = src.cursor
+		if (allowComponentRemoval && src.tryPeek('!')) {
+			const prefix = core.literal('!')(src, ctx)
+			src.skipWhitespace()
+			const key = core.resourceLocation({ category: 'data_component_type' })(src, ctx)
+			ans.children.push({
+				type: 'mcfunction:component_removal',
+				range: core.Range.create(start, src),
+				children: [prefix, key],
+				prefix,
+				key,
+			})
+			src.skipWhitespace()
+		} else {
+			const key = core.resourceLocation({ category: 'data_component_type' })(src, ctx)
+			src.skipWhitespace()
+			core.literal('=')(src, ctx)
+			src.skipWhitespace()
+			const value = nbt.parser.entry(src, ctx)
+			if (value === core.Failure) {
+				ctx.err.report(
+					localize('expected', localize('parser.record.value')),
+					core.Range.create(src, () => src.skipUntilOrEnd(',', ']', '\r', '\n')),
+				)
+				ans.children.push({
+					type: 'mcfunction:component',
+					range: core.Range.create(start, src),
+					children: [key],
+					key,
+					value: undefined,
+				})
+			} else {
+				ans.children.push({
+					type: 'mcfunction:component',
+					range: core.Range.create(start, src),
+					children: [key, value],
+					key,
+					value,
+				})
+			}
+			src.skipWhitespace()
 		}
-		return ans
-	},
-)
+		if (src.trySkip(',')) {
+			src.skipWhitespace()
+			if (src.peek() === ']') {
+				break
+			}
+		} else {
+			break
+		}
+	}
+
+	src.skipWhitespace()
+	core.literal(']')(src, ctx)
+
+	ans.range.end = src.cursor
+	return ans
+}
 
 const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	const start = src.cursor
