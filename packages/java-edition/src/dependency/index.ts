@@ -159,7 +159,7 @@ function getCacheOptionsBasedOnGitHubCommitSha(owner: string, repo: string, ref:
  * @returns The URI to the `.tar.gz` file.
  */
 async function downloadGitHubRepo(
-	{ defaultBranch, downloader, getTag, repo, isLatest, owner, version }: {
+	{ defaultBranch, downloader, getTag, repo, isLatest, owner, version, suffix }: {
 		defaultBranch: string
 		downloader: core.Downloader
 		getTag: (version: string) => string
@@ -167,13 +167,14 @@ async function downloadGitHubRepo(
 		repo: string
 		isLatest: boolean
 		version: string
+		suffix?: string
 	},
 ): Promise<string> {
 	const ref = getGitRef({ defaultBranch, getTag, isLatest, version })
 
 	const out: core.DownloaderDownloadOut = {}
 	await downloader.download<Uint8Array>({
-		id: `mc-je/${version}/${repo}.tar.gz`,
+		id: `mc-je/${version}/${repo}${suffix ?? ''}.tar.gz`,
 		uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
 		transformer: (b) => b,
 		cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
@@ -205,6 +206,32 @@ export async function getVanillaDatapack(
 		repo: 'mcmeta',
 		isLatest,
 		version,
+	})
+	return { info: { startDepth: 1 }, uri }
+}
+
+/* istanbul ignore next */
+/**
+ * @throws Network/file system errors.
+ *
+ * @returns
+ * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
+ * 	- `uri`: URI to the `.tar.gz` file.
+ */
+export async function getVanillaResourcepack(
+	downloader: core.Downloader,
+	version: string,
+	isLatest: boolean,
+): Promise<core.Dependency> {
+	const uri = await downloadGitHubRepo({
+		defaultBranch: 'assets-tiny',
+		downloader,
+		getTag: (v) => `${v}-assets-tiny`,
+		owner: 'misode',
+		repo: 'mcmeta',
+		isLatest,
+		version,
+		suffix: '-assets',
 	})
 	return { info: { startDepth: 1 }, uri }
 }
