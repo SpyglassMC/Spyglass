@@ -62,6 +62,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 						config.env.gameVersion,
 						versions,
 						packMcmeta,
+						type,
 					)
 					packs.push({ type, packRoot, packMcmeta, versionInfo })
 				}
@@ -83,21 +84,22 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	const packs = await findPackMcmetas(versions)
 
 	function selectVersionInfo(packs: PackInfo[], versions: McmetaVersions) {
-		// Select the first valid data pack.mcmeta
+		// Select the first valid pack.mcmeta, prioritizing data packs
 		const pack = packs.find(p => p.packMcmeta !== undefined && p.type === 'data')
+			?? packs.find(p => p.packMcmeta !== undefined && p.type === 'assets')
 		const version = pack === undefined
-			? resolveConfiguredVersion(config.env.gameVersion, versions, undefined)
+			? resolveConfiguredVersion(config.env.gameVersion, versions, undefined, undefined)
 			: pack.versionInfo
 		const packMessage = pack === undefined
 			? 'Failed finding a valid pack.mcmeta'
 			: `Found a valid pack.mcmeta ${pack.packRoot}/pack.mcmeta`
 		const reasonMessage = pack && version.reason === 'auto'
-			? `using pack format ${pack.packMcmeta?.pack.pack_format} to select`
+			? `using ${pack.type} pack format ${pack.packMcmeta?.pack.pack_format} to select`
 			: version.reason === 'config'
 			? `but using config override "${config.env.gameVersion}" to select`
 			: version.reason === 'fallback'
 			? 'using fallback'
-			: 'loading' // should never occur
+			: 'impossible' // should never occur
 		const versionMessage = `version ${version.release}${
 			version.id === version.release ? '' : ` (${version.id})`
 		}`

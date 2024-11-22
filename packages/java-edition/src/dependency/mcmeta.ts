@@ -13,6 +13,7 @@ export function resolveConfiguredVersion(
 	inputVersion: string,
 	versions: McmetaVersions,
 	packMcmeta: PackMcmeta | undefined,
+	packType: 'assets' | 'data' | undefined,
 ): VersionInfo {
 	function findReleaseTarget(version: McmetaVersion): string {
 		if (version.release_target) {
@@ -55,7 +56,11 @@ export function resolveConfiguredVersion(
 		const packFormat = packMcmeta?.pack.pack_format
 		if (packFormat && latestRelease) {
 			// If the pack format is larger than the latest release, use the latest snapshot
-			if (packFormat > latestRelease.data_pack_version) {
+			if (
+				packFormat > (packType === 'assets'
+					? latestRelease.resource_pack_version
+					: latestRelease.data_pack_version)
+			) {
 				return toVersionInfo(versions[0], 'auto')
 			}
 			// Look for versions from recent to oldest, picking the most recent release that matches
@@ -63,10 +68,18 @@ export function resolveConfiguredVersion(
 			for (const version of versions) {
 				if (version.type === 'release') {
 					// If we already passed the pack format, use the oldest release so far
-					if (packFormat > version.data_pack_version) {
+					if (
+						packFormat > (packType === 'assets'
+							? version.resource_pack_version
+							: version.data_pack_version)
+					) {
 						return toVersionInfo(oldestRelease, 'auto')
 					}
-					if (packFormat === version.data_pack_version) {
+					if (
+						packFormat === (packType === 'assets'
+							? version.resource_pack_version
+							: version.data_pack_version)
+					) {
 						return toVersionInfo(version, 'auto')
 					}
 					oldestRelease = version
