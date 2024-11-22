@@ -24,14 +24,7 @@ const idValidator = validator.alternatives<IdConfig>(
 		empty: validator.optional(validator.options('allowed')),
 		exclude: validator.optional(validator.alternatives<string[]>(
 			validator.map(validator.string, v => [v]),
-			(value) => {
-				if (value?.kind === 'tuple') {
-					return value.items.flatMap(i =>
-						i.kind === 'literal' && i.value.kind === 'string' ? [i.value.value] : []
-					)
-				}
-				return core.Failure
-			},
+			validator.list(validator.string),
 		)),
 	}),
 	() => ({}),
