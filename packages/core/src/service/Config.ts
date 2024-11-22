@@ -426,6 +426,10 @@ export const VanillaConfig: Config = {
 				then: { report: 'warning' },
 			},
 			{
+				if: { category: ['attribute_modifier', 'attribute_modifier_uuid', 'tag'] },
+				then: { declare: 'public' },
+			},
+			{
 				then: { declare: 'block' },
 			},
 		],
