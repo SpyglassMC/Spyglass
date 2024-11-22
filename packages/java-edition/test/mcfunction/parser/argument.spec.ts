@@ -102,6 +102,7 @@ const Suites: Partial<
 	'minecraft:item_stack': [
 		{ content: ['stick', 'minecraft:stick', 'stick{foo:bar}'] },
 		{ content: ['stick', 'diamond_pickaxe[unbreakable={}]', 'apple[!food]'], version: '1.20.5' },
+		{ content: ['diamond_pickaxe[unbreakable={},rarity=epic]', 'apple[!food]'], version: '1.21' },
 	],
 	'minecraft:loot_modifier': [{ content: ['foo:bar', '[{function:"furnace_smelt"}]'] }],
 	'minecraft:loot_predicate': [{
