@@ -266,4 +266,23 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 		},
 	})
+	registerAttribute(meta, 'regex_pattern', () => undefined, {
+		checker: (_, typeDef) => {
+			if (typeDef.kind !== 'literal' || typeDef.value.kind !== 'string') {
+				return undefined
+			}
+			const pattern = typeDef.value.value
+			return (node, ctx) => {
+				try {
+					RegExp(pattern)
+				} catch (e) {
+					const message = e instanceof Error ? e.message : `${e}`
+					const error = message
+						.replace(/^Invalid regular expression: /, '')
+						.replace(/^\/.+\/: /, '')
+					ctx.err.report(localize('invalid-regex-pattern', error), node, 2)
+				}
+			}
+		},
+	})
 }
