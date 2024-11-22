@@ -138,11 +138,16 @@ export const dispatchSync = SyncBinder.create<AstNode>((node, ctx) => {
 
 export const resourceLocation = SyncBinder.create<ResourceLocationNode>((node, ctx) => {
 	const raw = ResourceLocationNode.toString(node, 'full')
-	const sanitizedRaw = ResourceLocation.lengthen(
+	let sanitizedRaw = ResourceLocation.lengthen(
 		node.options.namespacePathSep === '.'
 			? raw.replace(/\./g, ResourceLocation.NamespacePathSep)
 			: raw,
 	)
+	if (node.options.implicitPath) {
+		const sepIndex = sanitizedRaw.indexOf(ResourceLocation.NamespacePathSep)
+		sanitizedRaw = sanitizedRaw.substring(0, sepIndex + 1) + node.options.implicitPath
+			+ sanitizedRaw.substring(sepIndex + 1)
+	}
 	if (node.options.category) {
 		ctx.symbols.query(
 			ctx.doc,

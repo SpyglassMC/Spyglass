@@ -644,9 +644,6 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 								children: {
 									name: {
 										parser: 'spyglassmc:tag',
-										properties: {
-											usageType: 'definition',
-										},
 									},
 								},
 							},
@@ -977,6 +974,22 @@ const ExecuteStoreTarget: PartialTreeNode = Object.freeze({
 					properties: {
 						category: 'bossbar',
 						accessType: SymbolAccessType.Write,
+					},
+				},
+			},
+		},
+		score: {
+			children: {
+				targets: {
+					properties: {
+						usageType: 'definition',
+					},
+					children: {
+						objective: {
+							properties: {
+								accessType: SymbolAccessType.Write,
+							},
+						},
 					},
 				},
 			},

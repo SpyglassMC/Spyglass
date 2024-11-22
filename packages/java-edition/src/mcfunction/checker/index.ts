@@ -153,17 +153,17 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 		return
 	}
 	const groupedComponents = new Map<string, core.AstNode[]>()
-	for (const pair of node.components.children) {
-		if (!pair.key) {
+	for (const child of node.components.children) {
+		if (!child.key) {
 			continue
 		}
-		const componentId = core.ResourceLocationNode.toString(pair.key, 'full')
+		const componentId = core.ResourceLocationNode.toString(child.key, 'full')
 		if (!groupedComponents.has(componentId)) {
 			groupedComponents.set(componentId, [])
 		}
-		groupedComponents.get(componentId)!.push(pair.key)
-		if (pair.value) {
-			nbt.checker.index('minecraft:data_component', componentId)(pair.value, ctx)
+		groupedComponents.get(componentId)!.push(child.key)
+		if (child.type === 'mcfunction:component' && child.value) {
+			nbt.checker.index('minecraft:data_component', componentId)(child.value, ctx)
 		}
 	}
 	for (const [_, group] of groupedComponents) {
