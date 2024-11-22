@@ -23,54 +23,63 @@ exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in versio
       },
       "children": [
         {
-          "type": "mcfunction:component_removal",
+          "type": "mcfunction:component",
           "range": {
             "start": 6,
             "end": 11
           },
           "children": [
             {
-              "type": "literal",
-              "range": {
-                "start": 6,
-                "end": 7
-              },
-              "value": "!"
-            },
-            {
               "type": "resource_location",
               "range": {
-                "start": 7,
+                "start": 6,
                 "end": 11
               },
               "path": [
-                "food"
+                "!food"
               ]
             }
           ],
-          "prefix": {
-            "type": "literal",
-            "range": {
-              "start": 6,
-              "end": 7
-            },
-            "value": "!"
-          },
           "key": {
             "type": "resource_location",
             "range": {
-              "start": 7,
+              "start": 6,
               "end": 11
             },
             "path": [
-              "food"
+              "!food"
             ]
           }
         }
       ]
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 6,
+        "end": 11
+      },
+      "message": "Illegal character(s): “!”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 11,
+        "end": 11
+      },
+      "message": "Expected “=”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 11,
+        "end": 11
+      },
+      "message": "Expected a value",
+      "severity": 3
+    }
+  ]
 }
 
 exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in version 1.21 1'] = {

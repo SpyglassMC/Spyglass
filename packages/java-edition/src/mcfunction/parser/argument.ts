@@ -1582,6 +1582,9 @@ function vector(options: VectorNode.Options): core.InfallibleParser<VectorNode> 
 }
 
 const components: core.Parser<ComponentListNode> = (src, ctx) => {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	const allowComponentRemoval = !release || ReleaseVersion.cmp(release, '1.21') >= 0
+
 	const ans: ComponentListNode = {
 		type: 'mcfunction:component_list',
 		range: core.Range.create(src),
@@ -1595,7 +1598,7 @@ const components: core.Parser<ComponentListNode> = (src, ctx) => {
 
 	while (src.canRead() && src.peek() !== ']') {
 		const start = src.cursor
-		if (src.tryPeek('!')) {
+		if (allowComponentRemoval && src.tryPeek('!')) {
 			const prefix = core.literal('!')(src, ctx)
 			src.skipWhitespace()
 			const key = core.resourceLocation({ category: 'data_component_type' })(src, ctx)
