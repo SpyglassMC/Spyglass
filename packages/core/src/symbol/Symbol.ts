@@ -205,6 +205,7 @@ export const AssetsFileCategories = Object.freeze(
 	[
 		'atlas',
 		'block_definition', // blockstates
+		'equipment',
 		'font',
 		'font/ttf',
 		'font/otf',

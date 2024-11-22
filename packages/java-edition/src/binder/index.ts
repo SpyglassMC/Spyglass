@@ -129,6 +129,7 @@ for (const registry of TaggableResourceLocationCategories) {
 // Resource pack
 resource('atlases', { pack: 'assets', category: 'atlas', since: '1.19.3' })
 resource('blockstates', { pack: 'assets', category: 'block_definition' })
+resource('equipment', { pack: 'assets', category: 'equipment', since: '1.21.4' })
 resource('fonts', { pack: 'assets', category: 'font', since: '1.16' })
 resource('fonts', { pack: 'assets', category: 'font/ttf', since: '1.16', ext: '.ttf' })
 resource('fonts', { pack: 'assets', category: 'font/otf', since: '1.16', ext: '.otf' })
@@ -136,6 +137,12 @@ resource('fonts', { pack: 'assets', category: 'font/unihex', since: '1.20', ext:
 resource('items', { pack: 'assets', category: 'item_definition', since: '1.21.4' })
 resource('lang', { pack: 'assets', category: 'lang' })
 resource('models', { pack: 'assets', category: 'model' })
+resource('models/equipment', {
+	pack: 'assets',
+	category: 'equipment',
+	since: '1.21.2',
+	until: '1.21.4',
+})
 resource('particles', { pack: 'assets', category: 'particle' })
 resource('post_effect', { pack: 'assets', since: '1.21.2' })
 resource('shaders/post', { pack: 'assets', category: 'post_effect', until: '1.21.2' })

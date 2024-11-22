@@ -86,6 +86,7 @@
           "assets/*/atlases/**/*.json",
           "assets/*/blockstates/**/*.json",
           "assets/*/items/**/*.json",
+          "assets/*/equipment/**/*.json",
           "assets/*/fonts/**/*.json",
           "assets/*/lang/**/*.json",
           "assets/*/models/**/*.json",
