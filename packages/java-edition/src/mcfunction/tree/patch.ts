@@ -28,16 +28,25 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 												children: {
 													add: {
 														children: {
+															id: {
+																properties: {
+																	category: 'attribute_modifier',
+																},
+															},
 															uuid: {
 																properties: {
 																	category: 'attribute_modifier_uuid',
-																	usageType: 'definition',
 																},
 															},
 														},
 													},
 													remove: {
 														children: {
+															id: {
+																properties: {
+																	category: 'attribute_modifier',
+																},
+															},
 															uuid: {
 																properties: {
 																	category: 'attribute_modifier_uuid',
@@ -49,6 +58,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 														children: {
 															get: {
 																children: {
+																	id: {
+																		properties: {
+																			category: 'attribute_modifier',
+																		},
+																	},
 																	uuid: {
 																		properties: {
 																			category: 'attribute_modifier_uuid',
