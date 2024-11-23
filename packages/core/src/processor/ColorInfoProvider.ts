@@ -88,17 +88,12 @@ export namespace Color {
 	}
 
 	/**
-	 * @param value `R << 16 + G << 8 + B`. Negative values result in white.
+	 * @param value `R << 16 + G << 8 + B`.
 	 */
 	export function fromCompositeRGB(value: number): Color {
-		if (value < 0) {
-			return fromDecRGB(1.0, 1.0, 1.0)
-		}
-		const b = value % 256
-		value >>>= 8
-		const g = value % 256
-		value >>>= 8
-		const r = value % 256
+		const r = value >> 16 & 0xff
+		const g = value >> 8 & 0xff
+		const b = value & 0xff
 		return fromIntRGB(r, g, b)
 	}
 
@@ -106,13 +101,12 @@ export namespace Color {
 	 * @param value `A << 24 + R << 16 + G << 8 + B`.
 	 */
 	export function fromCompositeARGB(value: number): Color {
-		value |= 0 // Cast to signed 32-bit integer
-
+		// Cast to signed 32-bit integer
+		value |= 0
 		const a = (value >>> 24) & 0xff
 		const r = (value >>> 16) & 0xff
 		const g = (value >>> 8) & 0xff
 		const b = value & 0xff
-
 		return fromIntRGBA(r, g, b, a)
 	}
 }
