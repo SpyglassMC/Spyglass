@@ -121,8 +121,8 @@
 			"language-server"
 		],
 		"released": {
-			"commit": "89e54ff5436086adbb0db7b8b4efca598c139703",
-			"version": "4.3.0"
+			"commit": "0fe6f00034aeb4513989e0cb7a80a1ca917ede80",
+			"version": "4.3.1"
 		}
 	}
 }
