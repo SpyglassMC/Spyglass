@@ -4,7 +4,6 @@ This release adds initial support for resource packs! This also helps with `pack
 ### ✨ New Features
 - [`1d62c9c`](https://github.com/SpyglassMC/Spyglass/commit/1d62c9c3330612a9c77efec960ff91c86a0b7e7e) Added support for resource packs ([#1603](https://github.com/SpyglassMC/Spyglass/pull/1603))
 - [`6e0e705`](https://github.com/SpyglassMC/Spyglass/commit/6e0e705ebbf451860d36e40331b2aabfd3d9ae12) Added validation and autocomplete for block states in JSON and NBT ([#1641](https://github.com/SpyglassMC/Spyglass/pull/1641))
-- Improved debug logging for 
 
 ### 🐛 Bug Fixes
 - [`ee4fefa`](https://github.com/SpyglassMC/Spyglass/commit/ee4fefac40d84f7add20ba1ac33004433d6c7c9b) The `air` item is now disallowed in a few places ([#1615](https://github.com/SpyglassMC/Spyglass/pull/1615))
