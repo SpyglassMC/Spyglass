@@ -1,3 +1,18 @@
+# v4.3.0 (2024-11-23)
+This release adds initial support for resource packs! This also helps with `pack_format` detection when you have both a resource pack and data pack in the same workspace.
+
+### ✨ New Features
+- [`1d62c9c`](https://github.com/SpyglassMC/Spyglass/commit/1d62c9c3330612a9c77efec960ff91c86a0b7e7e) Added support for resource packs ([#1603](https://github.com/SpyglassMC/Spyglass/pull/1603))
+- [`6e0e705`](https://github.com/SpyglassMC/Spyglass/commit/6e0e705ebbf451860d36e40331b2aabfd3d9ae12) Added validation and autocomplete for block states in JSON and NBT ([#1641](https://github.com/SpyglassMC/Spyglass/pull/1641))
+- Improved debug logging for 
+
+### 🐛 Bug Fixes
+- [`ee4fefa`](https://github.com/SpyglassMC/Spyglass/commit/ee4fefac40d84f7add20ba1ac33004433d6c7c9b) The `air` item is now disallowed in a few places ([#1615](https://github.com/SpyglassMC/Spyglass/pull/1615))
+- [`dbae237`](https://github.com/SpyglassMC/Spyglass/commit/dbae237487ed0c867d7f01ebbdd2d564a78cbecd) Packed ARGB colors now correctly wrap to negatives ([#1642](https://github.com/SpyglassMC/Spyglass/pull/1642))
+- [`74dbb91`](https://github.com/SpyglassMC/Spyglass/commit/74dbb91a8ca64101ee991e4c2abb15ba47abac9c) Fixed a few places in item predicates where whitespace was not allowed ([#1643](https://github.com/SpyglassMC/Spyglass/pull/1643))
+- [`3076009`](https://github.com/SpyglassMC/Spyglass/commit/307600953b24bca4bd25f0f9a6d7646a212253a9) The `nameOfScoreHolder` no longer complains for the special `*` score holder ([#1644](https://github.com/SpyglassMC/Spyglass/pull/1644))
+- [`89921ff`](https://github.com/SpyglassMC/Spyglass/commit/89921ff3b69d587dcfb2623c0be30d4bfa94fbe7) Component removal syntax added in 1.21 is now supported ([#1645](https://github.com/SpyglassMC/Spyglass/pull/1645))
+
 # v4.2.3 (2024-09-17)
 
 ### 🐛 Bug Fixes
