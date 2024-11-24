@@ -115,7 +115,11 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 4,
+        "end": 11
+      }
     },
     "isPredicate": false
   },
@@ -284,7 +288,11 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 6,
+        "end": 13
+      }
     },
     "isPredicate": false
   },

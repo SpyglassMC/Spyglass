@@ -33,6 +33,7 @@ export function record<K extends AstNode, V extends AstNode>(
 		const ans: RecordNode<K, V> = { type: 'record', range: Range.create(src), children: [] }
 
 		if (src.trySkip(start)) {
+			ans.innerRange = Range.create(src)
 			src.skipWhitespace()
 
 			let requiresPairEnd = false
@@ -134,6 +135,7 @@ export function record<K extends AstNode, V extends AstNode>(
 			}
 
 			// End.
+			ans.innerRange.end = src.cursor
 			if (!src.trySkip(end)) {
 				ctx.err.report(localize('expected', localeQuote(end)), src)
 			}

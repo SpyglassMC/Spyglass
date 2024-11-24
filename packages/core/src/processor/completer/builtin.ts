@@ -112,7 +112,7 @@ export function record<K extends AstNode, V extends AstNode, N extends RecordBas
 	o: RecordOptions<K, V, N>,
 ): Completer<N> {
 	return (node, ctx) => {
-		if (!Range.contains(Range.translate(node, 1, -1), ctx.offset, true)) {
+		if (!node.innerRange || !Range.contains(node.innerRange, ctx.offset, true)) {
 			return []
 		}
 

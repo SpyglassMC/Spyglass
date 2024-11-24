@@ -228,7 +228,11 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                   "quote": "\""
                 }
               }
-            ]
+            ],
+            "innerRange": {
+              "start": 6,
+              "end": 33
+            }
           }
         ],
         "id": {
@@ -340,7 +344,11 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                 "quote": "\""
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 6,
+            "end": 33
+          }
         },
         "isPredicate": false
       }
@@ -496,7 +504,11 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
               "quote": "\""
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 6,
+          "end": 33
+        }
       }
     ],
     "id": {
@@ -895,7 +907,11 @@ exports['mcfunction argument minecraft:particle Parse "end_rod{}" in version 1.2
           "start": 7,
           "end": 9
         },
-        "children": []
+        "children": [],
+        "innerRange": {
+          "start": 8,
+          "end": 8
+        }
       }
     ],
     "id": {
