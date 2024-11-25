@@ -94,11 +94,11 @@ class BrowserFileSystem implements ExternalFileSystem {
 	private states: Record<string, { type: 'file'; content: string } | { type: 'directory' }>
 
 	constructor() {
-		this.states = JSON.parse(localStorage.getItem(BrowserFileSystem.LocalStorageKey) ?? '{}')
+		this.states = {} // JSON.parse(localStorage.getItem(BrowserFileSystem.LocalStorageKey) ?? '{}')
 	}
 
 	private saveStates() {
-		localStorage.setItem(BrowserFileSystem.LocalStorageKey, JSON.stringify(this.states))
+		// localStorage.setItem(BrowserFileSystem.LocalStorageKey, JSON.stringify(this.states))
 	}
 
 	async chmod(_location: FsLocation, _mode: number): Promise<void> {
