@@ -308,17 +308,15 @@ const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
 		return
 	}
 	const options = node.children?.find(nbt.NbtCompoundNode.is)
-	if (ParticleNode.requiresOptions(id)) {
-		if (options) {
-			nbt.checker.index('minecraft:particle', core.ResourceLocation.lengthen(id))(options, ctx)
-		} else {
-			ctx.err.report(
-				localize('expected', localize('nbt.node.compound')),
-				core.Range.create(node.id.range.end, node.id.range.end + 1),
-			)
-		}
-	} else if (options) {
-		ctx.err.report(localize('expected', localize('nothing')), options)
+	if (options) {
+		// Even if particle isn't explicitly marked as requiring options,
+		// run the type checker anyways to allow an empty compound
+		nbt.checker.index('minecraft:particle', core.ResourceLocation.lengthen(id))(options, ctx)
+	} else if (ParticleNode.requiresOptions(id)) {
+		ctx.err.report(
+			localize('expected', localize('nbt.node.compound')),
+			core.Range.create(node.id.range.end, node.id.range.end + 1),
+		)
 	}
 }
 // #endregion

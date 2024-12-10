@@ -536,8 +536,10 @@ export namespace ParticleNode {
 	const OptionTypes = new Set(
 		[
 			...SpecialTypes,
+			'block_crumble',
 			'dust_pillar',
 			'entity_effect',
+			'trail',
 		],
 	)
 	export type OptionType = typeof SpecialTypes extends Set<infer T> ? T : undefined
