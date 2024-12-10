@@ -524,6 +524,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							roll: {
 								children: {
 									range: {
+										properties: {
+											minSpan: 1,
+											maxSpan: 2147483646,
+										},
 										children: {
 											sequence: {
 												properties: {
@@ -538,6 +542,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							value: {
 								children: {
 									range: {
+										properties: {
+											minSpan: 1,
+											maxSpan: 2147483646,
+										},
 										children: {
 											sequence: {
 												properties: {
