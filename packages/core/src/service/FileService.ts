@@ -267,7 +267,10 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	private getDataInArchive(archiveName: string, pathInArchive: string): Uint8Array {
 		const entries = this.entries.get(archiveName)
 		if (!entries) {
-			throw new Error(`Archive “${archiveName}” has not been loaded into the memory`)
+			throw this.externals.error.createKind(
+				'ENOENT',
+				`Archive “${archiveName}” has not been loaded into the memory`,
+			)
 		}
 		const entry = entries.get(pathInArchive)
 		if (!entry) {

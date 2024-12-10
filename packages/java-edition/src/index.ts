@@ -21,6 +21,7 @@ import * as jeMcf from './mcfunction/index.js'
 export * as binder from './binder/index.js'
 export * as dependency from './dependency/index.js'
 export * as json from './json/index.js'
+export * from './mcdocAttributes.js'
 export * as mcf from './mcfunction/index.js'
 
 export const initialize: core.ProjectInitializer = async (ctx) => {
