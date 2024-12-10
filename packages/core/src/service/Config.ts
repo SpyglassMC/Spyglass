@@ -116,6 +116,12 @@ export interface EnvConfig {
 	permissionLevel: 1 | 2 | 3 | 4
 	plugins: string[]
 	/**
+	 * Whether to enable caching of mcdoc simplified types.
+	 *
+	 * May become corrupt after changing game versions, so this is currently disabled by default.
+	 */
+	enableMcdocCaching: boolean
+	/**
 	 * Makes the file-watcher use polling to watch for file changes.
 	 * Comes at a performance cost for very large datapacks.
 	 *
@@ -362,6 +368,7 @@ export const VanillaConfig: Config = {
 		permissionLevel: 2,
 		plugins: [],
 		mcmetaSummaryOverrides: {},
+		enableMcdocCaching: false,
 		useFilePolling: false,
 	},
 	format: {
