@@ -141,6 +141,8 @@
   "mcfunction.parser.no-permission": "Permission level %0% is required, which is higher than %1% defined in config",
   "mcfunction.parser.objective.too-long": "Objective names cannot be longer than %0% characters",
   "mcfunction.parser.range.min>max": "The minimum value %0% is larger than the maximum value %1%",
+  "mcfunction.parser.range.span-too-large": "The range size %0% is larger than the maximum %1%",
+  "mcfunction.parser.range.span-too-small": "The range size %0% is smaller than the minimum %1%",
   "mcfunction.parser.score_holder.fake-name.too-long": "Fake names cannot be longer than %0% characters",
   "mcfunction.parser.sep": "a space (%0%)",
   "mcfunction.parser.trailing": "Trailing data encountered: %0%",

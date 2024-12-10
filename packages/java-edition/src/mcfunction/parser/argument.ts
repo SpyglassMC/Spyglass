@@ -171,7 +171,15 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:entity_summon':
 			return wrap(core.resourceLocation({ category: 'entity_type' }))
 		case 'minecraft:float_range':
-			return wrap(range('float'))
+			return wrap(
+				range(
+					'float',
+					treeNode.properties?.min,
+					treeNode.properties?.max,
+					treeNode.properties?.minSpan,
+					treeNode.properties?.maxSpan,
+				),
+			)
 		case 'minecraft:function':
 			return wrap(core.resourceLocation({ category: 'function', allowTag: true }))
 		case 'minecraft:gamemode':
@@ -181,7 +189,15 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:heightmap':
 			return wrap(core.literal(...HeightmapValues))
 		case 'minecraft:int_range':
-			return wrap(range('integer'))
+			return wrap(
+				range(
+					'integer',
+					treeNode.properties?.min,
+					treeNode.properties?.max,
+					treeNode.properties?.minSpan,
+					treeNode.properties?.maxSpan,
+				),
+			)
 		case 'minecraft:item_enchantment':
 			return wrap(core.resourceLocation({ category: 'enchantment' }))
 		case 'minecraft:item_predicate':
@@ -650,18 +666,24 @@ function range(
 	type: 'float',
 	min?: number,
 	max?: number,
+	minSpan?: number,
+	maxSpan?: number,
 	cycleable?: boolean,
 ): core.Parser<FloatRangeNode>
 function range(
 	type: 'integer',
 	min?: number,
 	max?: number,
+	minSpan?: number,
+	maxSpan?: number,
 	cycleable?: boolean,
 ): core.Parser<IntRangeNode>
 function range(
 	type: 'float' | 'integer',
 	min?: number,
 	max?: number,
+	minSpan?: number,
+	maxSpan?: number,
 	cycleable?: boolean,
 ): core.Parser<FloatRangeNode | IntRangeNode> {
 	const number: core.Parser<core.FloatNode | core.IntegerNode> = type === 'float'
@@ -707,6 +729,21 @@ function range(
 					localize('mcfunction.parser.range.min>max', ans.value[0], ans.value[1]),
 					res,
 				)
+			} else if (minSpan !== undefined || maxSpan !== undefined) {
+				const span = ans.value[0] !== undefined && ans.value[1] !== undefined
+					? Math.abs(ans.value[0] - ans.value[1])
+					: (ans.value[0] ?? ans.value[1] ?? Infinity)
+				if (minSpan !== undefined && span < minSpan) {
+					ctx.err.report(
+						localize('mcfunction.parser.range.span-too-small', span, minSpan),
+						res,
+					)
+				} else if (maxSpan !== undefined && span > maxSpan) {
+					ctx.err.report(
+						localize('mcfunction.parser.range.span-too-large', span, maxSpan),
+						res,
+					)
+				}
 			}
 			return ans
 		},
@@ -1234,7 +1271,14 @@ export function selector(ignoreInvalidPrefix = false): core.Parser<EntitySelecto
 												case 'x_rotation':
 												case 'y_rotation':
 													return core.map<FloatRangeNode>(
-														range('float', undefined, undefined, true),
+														range(
+															'float',
+															undefined,
+															undefined,
+															undefined,
+															undefined,
+															true,
+														),
 														(res, _, ctx) => {
 															if (hasKey(key.value)) {
 																ctx.err.report(
