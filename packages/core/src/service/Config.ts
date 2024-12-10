@@ -2,7 +2,7 @@ import rfdc from 'rfdc'
 import type { ExternalEventEmitter } from '../common/index.js'
 import { Arrayable, bufferToString, merge, TypePredicates } from '../common/index.js'
 import { ErrorSeverity } from '../source/index.js'
-import { FileCategories, RegistryCategories } from '../symbol/index.js'
+import { DataFileCategories, FileCategories, RegistryCategories } from '../symbol/index.js'
 import type { Project } from './Project.js'
 /* eslint-disable no-restricted-syntax */
 
@@ -421,7 +421,7 @@ export const VanillaConfig: Config = {
 			{
 				if: [
 					{ category: RegistryCategories, namespace: 'minecraft' },
-					{ category: [...FileCategories, 'bossbar', 'objective', 'team'] },
+					{ category: [...DataFileCategories, 'bossbar', 'objective', 'team'] },
 				],
 				then: { report: 'warning' },
 			},
