@@ -136,7 +136,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	}
 
 	meta.registerSymbolRegistrar('mcmeta-summary', {
-		checksum: `${summary.checksum}_v2`,
+		checksum: `${summary.checksum}_v3`,
 		registrar: symbolRegistrar(summary as McmetaSummary, release),
 	})
 
