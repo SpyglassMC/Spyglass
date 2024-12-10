@@ -57,6 +57,7 @@ describe('mcmeta', () => {
 					Fixtures.Versions,
 					packMcmeta,
 					undefined,
+					console,
 				)
 				snapshot(actual)
 			})
