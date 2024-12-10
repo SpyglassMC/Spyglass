@@ -61,6 +61,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 						versions,
 						packMcmeta,
 						type,
+						logger,
 					)
 					packs.push({ type, packRoot, packMcmeta, versionInfo })
 				}
@@ -86,7 +87,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		const pack = packs.find(p => p.packMcmeta !== undefined && p.type === 'data')
 			?? packs.find(p => p.packMcmeta !== undefined && p.type === 'assets')
 		const version = pack === undefined
-			? resolveConfiguredVersion(config.env.gameVersion, versions, undefined, undefined)
+			? resolveConfiguredVersion(config.env.gameVersion, versions, undefined, undefined, logger)
 			: pack.versionInfo
 		const packMessage = pack === undefined
 			? 'Failed finding a valid pack.mcmeta'

@@ -14,6 +14,7 @@ export function resolveConfiguredVersion(
 	versions: McmetaVersions,
 	packMcmeta: PackMcmeta | undefined,
 	packType: 'assets' | 'data' | undefined,
+	logger: core.Logger,
 ): VersionInfo {
 	function findReleaseTarget(version: McmetaVersion): string {
 		if (version.release_target) {
@@ -49,7 +50,14 @@ export function resolveConfiguredVersion(
 		throw new Error('mcmeta version list is empty')
 	}
 
+	// This should never happen, but for some reason happens sometimes
+	// https://github.com/SpyglassMC/Spyglass/issues/1621
+	if (inputVersion === undefined) {
+		logger.warn('[resolveConfiguredVersion] Input version was undefined! Falling back to "auto"')
+		inputVersion = 'auto'
+	}
 	inputVersion = inputVersion.toLowerCase()
+
 	versions = versions.sort((a, b) => b.data_version - a.data_version)
 	const latestRelease = versions.find((v) => v.type === 'release')
 	if (inputVersion === 'auto') {
