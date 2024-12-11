@@ -13,32 +13,31 @@ export function createLogger(verbose?: boolean): core.Logger {
 	}
 }
 
-export async function createService(
+export async function createProject(
 	logger: core.Logger,
-	projectRoot: string,
-): Promise<core.Service> {
+	root: string,
+): Promise<core.Project> {
 	const cacheRoot = resolve(process.cwd(), '.cache')
+	const projectRoot = resolve(process.cwd(), root)
 
-	const service = new core.Service({
+	const project = new core.Project({
 		logger,
 		profilers: new core.ProfilerFactory(logger, [
 			'project#init',
 			'project#ready',
 			'project#ready#bind',
 		]),
-		project: {
-			cacheRoot: core.fileUtil.ensureEndingSlash(pathToFileURL(cacheRoot).toString()),
-			defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
-				env: { dependencies: [] },
-			}),
-			externals: NodeJsExternals,
-			initializers: [mcdoc.initialize],
-			projectRoots: [core.fileUtil.ensureEndingSlash(pathToFileURL(projectRoot).toString())],
-		},
+		cacheRoot: core.fileUtil.ensureEndingSlash(pathToFileURL(cacheRoot).toString()),
+		defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
+			env: { dependencies: [] },
+		}),
+		externals: NodeJsExternals,
+		initializers: [mcdoc.initialize],
+		projectRoots: [core.fileUtil.ensureEndingSlash(pathToFileURL(projectRoot).toString())],
 	})
 
-	await service.project.ready()
-	await service.project.cacheService.save()
+	await project.ready()
+	await project.cacheService.save()
 
-	return service
+	return project
 }
