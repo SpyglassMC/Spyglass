@@ -1,3 +1,15 @@
+# v4.3.2 (2024-12-11)
+
+### 🐛 Bug Fixes
+- [`9a366e8`](https://github.com/SpyglassMC/Spyglass/commit/9a366e8d82c407a6f219e0ea4ebc77154115b5a0) Mcodc caching is now disabled by default, added config `env.enableMcdocCaching` to re-enable it ([#1671](https://github.com/SpyglassMC/Spyglass/pull/1671))
+- [`0565b6c`](https://github.com/SpyglassMC/Spyglass/commit/0565b6c659f558378f814560267f0f8782e3389c) Hidden `undeclaredSymbol` warnings for resource pack file references ([#1667](https://github.com/SpyglassMC/Spyglass/pull/1667))
+- [`d30e9c4`](https://github.com/SpyglassMC/Spyglass/commit/d30e9c49c0126eae5ce98f1c5f97d04eb0789cb4) Fixed `block_crumble` and `trail` particles not allowing options ([#1665](https://github.com/SpyglassMC/Spyglass/pull/1665))
+- [`cbbd65c`](https://github.com/SpyglassMC/Spyglass/commit/cbbd65c3b1fb18fb74eaeaad8ed336e3db94fd88) The size of the range in `/random` is now validated ([#1670](https://github.com/SpyglassMC/Spyglass/pull/1670))
+- [`ad20d9b`](https://github.com/SpyglassMC/Spyglass/commit/ad20d9bf5c53aa9b8454b8255f8ea1f890bde68e) Ensure the cache root exists before showing it ([#1669](https://github.com/SpyglassMC/Spyglass/pull/1669))
+- [`28a9d70`](https://github.com/SpyglassMC/Spyglass/commit/28a9d701125eb254c743a2fc40a62954e1d1b336) Fixed an issue where the language server would crash ([#1668](https://github.com/SpyglassMC/Spyglass/pull/1668))
+- [`e8d8d2b`](https://github.com/SpyglassMC/Spyglass/commit/e8d8d2b9b8545edc0e46e3b88dc4f94b1107f547) Fixed spring feature configuration ([#1666](https://github.com/SpyglassMC/Spyglass/pull/1666))
+- [`dfe4269`](https://github.com/SpyglassMC/Spyglass/commit/dfe426911c2b6a0037f701344502d135de6a53d2) Fixed "archive has not been loaded into the memory" log spam ([#1664](https://github.com/SpyglassMC/Spyglass/pull/1664))
+
 # v4.3.0 (2024-11-23)
 This release adds initial support for resource packs! This also helps with `pack_format` detection when you have both a resource pack and data pack in the same workspace.
 
