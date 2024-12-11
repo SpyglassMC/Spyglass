@@ -17,7 +17,7 @@
 		],
 		"released": {
 			"commit": "330eb95cb684cee0b8754b20a42caa70199a106d",
-			"version": "0.3.20"
+			"version": "0.3.21"
 		}
 	},
 	"java-edition": {
@@ -30,8 +30,8 @@
 			"nbt"
 		],
 		"released": {
-			"commit": "cbbd65c3b1fb18fb74eaeaad8ed336e3db94fd88",
-			"version": "0.3.20"
+			"commit": "7434a8c71149a5a9b38275ec9c0ef82c911d89f1",
+			"version": "0.3.21"
 		}
 	},
 	"json": {
@@ -54,7 +54,7 @@
 		],
 		"released": {
 			"commit": "f4d458894a94237f06db4ab36305c3f44b02bc41",
-			"version": "0.4.19"
+			"version": "0.4.20"
 		}
 	},
 	"locales": {
@@ -113,7 +113,7 @@
 		],
 		"released": {
 			"commit": "330eb95cb684cee0b8754b20a42caa70199a106d",
-			"version": "0.2.20"
+			"version": "0.2.21"
 		}
 	},
 	"vscode-extension": {
@@ -122,7 +122,7 @@
 		],
 		"released": {
 			"commit": "5b42fbdf22e94feee579263b42e4111d4d9be17c",
-			"version": "4.3.2"
+			"version": "4.3.3"
 		}
 	}
 }
