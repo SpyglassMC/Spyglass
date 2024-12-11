@@ -1,8 +1,8 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { McmetaVersions, PackInfo } from './dependency'
-import { NEXT_RELEASE_VERSION, ReleaseVersion } from './dependency'
+import { NEXT_RELEASE_VERSION, ReleaseVersion } from './dependency/index.js'
+import type { McmetaVersions, PackInfo } from './dependency/index.js'
 
 export function registerMcdocAttributes(meta: core.MetaRegistry, release: ReleaseVersion) {
 	mcdoc.runtime.registerAttribute(meta, 'since', mcdoc.runtime.attribute.validator.string, {
