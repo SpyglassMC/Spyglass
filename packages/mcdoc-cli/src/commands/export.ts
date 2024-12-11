@@ -2,7 +2,12 @@ import { fileUtil } from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { resolve } from 'path'
 import { pathToFileURL } from 'url'
-import { createLogger, createProject as createProject } from '../common.js'
+import { createLogger, createProject as createProject, sortMaps } from '../common.js'
+
+interface Export {
+	mcdoc: Map<string, mcdoc.McdocType>
+	'mcdoc/dispatcher': Map<string, Map<string, mcdoc.McdocType>>
+}
 
 interface Args {
 	source: string
@@ -13,19 +18,36 @@ export async function exportCommand(args: Args) {
 	const logger = createLogger(args.verbose)
 	const project = await createProject(logger, args.source)
 
-	const data: { mcdoc: Record<string, unknown> } = { mcdoc: {} }
+	const data: Export = {
+		mcdoc: new Map(),
+		'mcdoc/dispatcher': new Map(),
+	}
 
 	const symbols = project.symbols.getVisibleSymbols('mcdoc')
 	for (const [name, symbol] of Object.entries(symbols)) {
 		if (mcdoc.binder.TypeDefSymbolData.is(symbol.data)) {
-			data.mcdoc[name] = symbol.data.typeDef
+			data.mcdoc.set(name, symbol.data.typeDef)
+		}
+	}
+	const dispatchers = project.symbols.getVisibleSymbols('mcdoc/dispatcher')
+	for (const [name, symbol] of Object.entries(dispatchers)) {
+		const dispatcherMap = new Map()
+		data['mcdoc/dispatcher'].set(name, dispatcherMap)
+		for (const [id, member] of Object.entries(symbol.members ?? {})) {
+			if (mcdoc.binder.TypeDefSymbolData.is(member.data)) {
+				dispatcherMap.set(id, member.data.typeDef)
+			}
 		}
 	}
 
+	const output = {
+		mcdoc: sortMaps(data.mcdoc),
+		'mcdoc/dispatcher': sortMaps(data['mcdoc/dispatcher']),
+	}
 	const outputFile = pathToFileURL(resolve(process.cwd(), args.output)).toString()
 	await Promise.all([
-		fileUtil.writeFile(project.externals, outputFile, JSON.stringify(data, undefined, 2)),
-		fileUtil.writeGzippedJson(project.externals, `${outputFile}.gz`, data),
+		fileUtil.writeFile(project.externals, outputFile, JSON.stringify(output, undefined, '\t')),
+		fileUtil.writeGzippedJson(project.externals, `${outputFile}.gz`, output),
 	])
 
 	await project.close()

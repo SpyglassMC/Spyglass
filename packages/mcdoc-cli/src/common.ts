@@ -41,3 +41,14 @@ export async function createProject(
 
 	return project
 }
+
+export function sortMaps(data: unknown): unknown {
+	if (data instanceof Map) {
+		return Object.fromEntries(
+			[...data.entries()]
+				.sort((a, b) => a[0].localeCompare(b[0]))
+				.map(([k, v]) => [k, sortMaps(v)]),
+		)
+	}
+	return data
+}
