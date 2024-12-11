@@ -185,7 +185,11 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
               "value": true
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 1,
+          "end": 33
+        }
       }
     ],
     "targetType": {
@@ -282,7 +286,11 @@ exports['mcfunction argument minecraft:style Parse "{"bold": true}" 1'] = {
               "value": true
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 1,
+          "end": 13
+        }
       }
     ],
     "targetType": {

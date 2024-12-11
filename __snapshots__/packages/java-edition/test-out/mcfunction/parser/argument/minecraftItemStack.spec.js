@@ -51,7 +51,11 @@ exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in versio
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 6,
+        "end": 11
+      }
     }
   },
   "errors": [
@@ -151,7 +155,11 @@ exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in versio
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 6,
+        "end": 11
+      }
     }
   },
   "errors": []
@@ -204,7 +212,11 @@ exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreak
                 "start": 28,
                 "end": 30
               },
-              "children": []
+              "children": [],
+              "innerRange": {
+                "start": 29,
+                "end": 29
+              }
             }
           ],
           "key": {
@@ -223,7 +235,11 @@ exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreak
               "start": 28,
               "end": 30
             },
-            "children": []
+            "children": [],
+            "innerRange": {
+              "start": 29,
+              "end": 29
+            }
           }
         },
         {
@@ -295,7 +311,11 @@ exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreak
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 16,
+        "end": 42
+      }
     }
   },
   "errors": []
@@ -348,7 +368,11 @@ exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreak
                 "start": 28,
                 "end": 30
               },
-              "children": []
+              "children": [],
+              "innerRange": {
+                "start": 29,
+                "end": 29
+              }
             }
           ],
           "key": {
@@ -367,10 +391,18 @@ exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreak
               "start": 28,
               "end": 30
             },
-            "children": []
+            "children": [],
+            "innerRange": {
+              "start": 29,
+              "end": 29
+            }
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 16,
+        "end": 30
+      }
     }
   },
   "errors": []
@@ -557,7 +589,11 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 6,
+        "end": 13
+      }
     }
   },
   "errors": []

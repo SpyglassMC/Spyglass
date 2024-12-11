@@ -225,7 +225,11 @@ exports['JSON object parser object() Parse "{"1": "2", "3": "4"}" 1'] = {
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 19
+    }
   },
   "errors": []
 }
@@ -335,7 +339,11 @@ exports['JSON object parser object() Parse "{"1": "2"}" 1'] = {
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 9
+    }
   },
   "errors": []
 }
@@ -480,7 +488,11 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                   "quote": "\""
                 }
               }
-            ]
+            ],
+            "innerRange": {
+              "start": 7,
+              "end": 15
+            }
           }
         ],
         "key": {
@@ -612,7 +624,11 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                 "quote": "\""
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 7,
+            "end": 15
+          }
         },
         "end": {
           "start": 16,
@@ -674,7 +690,11 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 27
+    }
   },
   "errors": [
     {
@@ -793,7 +813,11 @@ exports['JSON object parser object() Parse "{"hey": "there"}" 1'] = {
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 15
+    }
   },
   "errors": []
 }
@@ -923,7 +947,11 @@ exports['JSON object parser object() Parse "{"test": "⧵u1z34"}" 1'] = {
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 17
+    }
   },
   "errors": [
     {
@@ -1082,7 +1110,11 @@ exports['JSON object parser object() Parse "{"⧵"": "⧵u1234"}" 1'] = {
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 15
+    }
   },
   "errors": []
 }
@@ -1212,7 +1244,11 @@ exports['JSON object parser object() Parse "{"⧵z": "ermm"}" 1'] = {
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 13
+    }
   },
   "errors": [
     {
@@ -1297,7 +1333,11 @@ exports['JSON object parser object() Parse "{1: 2}" 1'] = {
           }
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 5
+    }
   },
   "errors": [
     {
@@ -1318,7 +1358,11 @@ exports['JSON object parser object() Parse "{}" 1'] = {
       "start": 0,
       "end": 2
     },
-    "children": []
+    "children": [],
+    "innerRange": {
+      "start": 1,
+      "end": 1
+    }
   },
   "errors": []
 }
