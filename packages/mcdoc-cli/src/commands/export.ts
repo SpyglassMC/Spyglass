@@ -2,7 +2,7 @@ import { fileUtil } from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { resolve } from 'path'
 import { pathToFileURL } from 'url'
-import { createLogger, createProject as createProject, sortMaps } from '../common.js'
+import { createLogger, createProject as createProject, sortMaps, writeJson } from '../common.js'
 
 interface Export {
 	mcdoc: Map<string, mcdoc.McdocType>
@@ -12,6 +12,7 @@ interface Export {
 interface Args {
 	source: string
 	output: string
+	gzip: boolean
 	verbose: boolean
 }
 export async function exportCommand(args: Args) {
@@ -45,10 +46,7 @@ export async function exportCommand(args: Args) {
 		'mcdoc/dispatcher': sortMaps(data['mcdoc/dispatcher']),
 	}
 	const outputFile = pathToFileURL(resolve(process.cwd(), args.output)).toString()
-	await Promise.all([
-		fileUtil.writeFile(project.externals, outputFile, JSON.stringify(output, undefined, '\t')),
-		fileUtil.writeGzippedJson(project.externals, `${outputFile}.gz`, output),
-	])
+	await writeJson(outputFile, output, args.gzip)
 
 	await project.close()
 }

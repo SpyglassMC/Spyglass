@@ -1,12 +1,16 @@
+import type { Logger } from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
+import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { resolve } from 'path'
 import { pathToFileURL } from 'url'
-import { createLogger, createProject, sortMaps } from '../common.js'
+import { createLogger, createProject, sortMaps, writeJson } from '../common.js'
 
 interface Args {
 	source: string
 	output: string
+	upgrade?: boolean
+	gzip: boolean
 	verbose: boolean
 }
 export async function localeCommand(args: Args) {
@@ -17,7 +21,7 @@ export async function localeCommand(args: Args) {
 
 	function add(name: string, desc: string) {
 		if (locale.has(name)) {
-			logger.warn(`Duplicate key, overwriting ${name}`)
+			logger.warn(`Duplicate key ${name}`)
 		}
 		locale.set(
 			name,
@@ -80,12 +84,76 @@ export async function localeCommand(args: Args) {
 		}
 	}
 
-	const output = sortMaps(locale)
 	const outputFile = pathToFileURL(resolve(process.cwd(), args.output)).toString()
-	await Promise.all([
-		fileUtil.writeFile(project.externals, outputFile, JSON.stringify(output, undefined, '\t')),
-		fileUtil.writeGzippedJson(project.externals, `${outputFile}.gz`, output),
-	])
+
+	if (args.upgrade) {
+		const oldLocale = await readLocale(outputFile)
+		const outputDir = fileUtil.getParentOfFile(NodeJsExternals, outputFile).toString()
+		const entries = await NodeJsExternals.fs.readdir(outputDir)
+		const others = entries.filter(e => e.isFile() && e.name.endsWith('.json'))
+			.map(e => e.name.slice(0, e.name.length - '.json'.length))
+		for (const key of others) {
+			const otherFile = `${outputDir}${key}.json`
+			if (otherFile === outputFile) {
+				continue
+			}
+			logger.info(`Upgrading ${otherFile}`)
+			const oldOther = await readLocale(otherFile)
+			const other = upgradeLocale(oldOther, oldLocale, locale, logger)
+			await writeJson(otherFile, sortMaps(other), args.gzip)
+		}
+	}
+
+	await writeJson(outputFile, sortMaps(locale), args.gzip)
 
 	await project.close()
+}
+
+type Locale = Map<string, string>
+
+async function readLocale(path: string): Promise<Locale> {
+	const data = await fileUtil.readJson(NodeJsExternals, path)
+	const locale = new Map<string, string>()
+	for (const [key, value] of Object.entries(data ?? {})) {
+		if (typeof value === 'string') {
+			locale.set(key, value)
+		}
+	}
+	return locale
+}
+
+function upgradeLocale(other: Locale, oldBase: Locale, newBase: Locale, logger: Logger): Locale {
+	const invertedNew = new Map<string, string[]>()
+	for (const [key, value] of newBase.entries()) {
+		const otherKeys = invertedNew.get(value)
+		if (otherKeys) {
+			invertedNew.set(value, [...otherKeys, key])
+		} else {
+			invertedNew.set(value, [key])
+		}
+	}
+
+	const upgraded = new Map<string, string>()
+	for (const [key, value] of other.entries()) {
+		if (newBase.has(key)) {
+			// Key exists, base value may have been altered.
+			upgraded.set(key, value)
+			continue
+		}
+		const baseValue = oldBase.get(key)
+		if (!baseValue) {
+			// Key was already removed previously. Prune.
+			continue
+		}
+		const possibleKeys = invertedNew.get(baseValue) ?? []
+		if (possibleKeys.length === 1) {
+			logger.info('Moved key', key, '->', possibleKeys[0])
+			upgraded.set(possibleKeys[0], value)
+		} else {
+			// Unknown move or removal. Keeping unused key for one cycle.
+			upgraded.set(key, value)
+		}
+	}
+
+	return upgraded
 }

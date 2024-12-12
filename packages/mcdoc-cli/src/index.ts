@@ -16,6 +16,7 @@ await CLI.scriptName('mcdoc')
 				demandOption: true,
 			})
 			.option('source', { describe: 'directory containing mcdoc sources', default: '.' })
+			.option('gzip', { type: 'boolean', default: false })
 			.option('verbose', { alias: 'v', type: 'boolean', default: false })
 	}, exportCommand)
 	.command('locale <output>', 'Generate and upgrade locales.', () => {
@@ -26,6 +27,12 @@ await CLI.scriptName('mcdoc')
 				demandOption: true,
 			})
 			.option('source', { describe: 'directory containing mcdoc sources', default: '.' })
+			.option('upgrade', {
+				descript: 'whether to upgrade the other locales in the same directory',
+				type: 'boolean',
+				default: false,
+			})
+			.option('gzip', { type: 'boolean', default: false })
 			.option('verbose', { alias: 'v', type: 'boolean', default: false })
 	}, localeCommand)
 	.strict()
