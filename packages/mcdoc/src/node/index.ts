@@ -622,9 +622,15 @@ export interface EnumFieldNode extends AstNode {
 export namespace EnumFieldNode {
 	export function destruct(
 		node: EnumFieldNode,
-	): { attributes: AttributeNode[]; identifier: IdentifierNode; value: EnumValueNode } {
+	): {
+		attributes: AttributeNode[]
+		docComments?: DocCommentsNode
+		identifier: IdentifierNode
+		value: EnumValueNode
+	} {
 		return {
 			attributes: node.children.filter(AttributeNode.is),
+			docComments: node.children.find(DocCommentsNode.is),
 			identifier: node.children.find(IdentifierNode.is)!,
 			value: node.children.find(EnumValueNode.is)!,
 		}

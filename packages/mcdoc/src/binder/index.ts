@@ -862,9 +862,10 @@ function convertEnumBlock(node: EnumBlockNode, ctx: McdocBinderContext): EnumTyp
 }
 
 function convertEnumField(node: EnumFieldNode, ctx: McdocBinderContext): EnumTypeField {
-	const { attributes, identifier, value } = EnumFieldNode.destruct(node)
+	const { attributes, docComments, identifier, value } = EnumFieldNode.destruct(node)
 	return {
 		attributes: convertAttributes(attributes, ctx),
+		desc: DocCommentsNode.asText(docComments),
 		identifier: identifier.value,
 		value: convertEnumValue(value, ctx),
 	}
