@@ -48,11 +48,11 @@ export async function localeCommand(args: Args) {
 				collect(name, member)
 			})
 		} else if (type.kind === 'enum') {
-			// for (const field of type.values) {
-			// 	if (field.desc) {
-			// 		add(`${name}.${field.identifier}`, field.desc)
-			// 	}
-			// }
+			for (const field of type.values) {
+				if (field.desc) {
+					add(`${name}.${field.identifier}`, field.desc)
+				}
+			}
 		} else if (type.kind === 'list') {
 			collect(name, type.item)
 		} else if (type.kind === 'tuple') {
