@@ -612,7 +612,3 @@ export namespace McdocType {
 		return attributesString + typeString
 	}
 }
-
-export interface UseStatementBindingData {
-	target: readonly string[]
-}
