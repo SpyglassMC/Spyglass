@@ -852,7 +852,7 @@ function convertTypeArgBlock(node: TypeArgBlockNode, ctx: McdocBinderContext): M
 function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 	const { block, enumKind, identifier } = EnumNode.destruct(node)
 
-	// Return reference if the struct has been hoisted
+	// Return reference if the enum has been hoisted
 	if (identifier && !ctx.isHoisting) {
 		return { kind: 'reference', path: `${ctx.moduleIdentifier}::${identifier.value}` }
 	}
