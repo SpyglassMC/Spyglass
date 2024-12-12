@@ -217,6 +217,7 @@ export interface EnumType extends McdocBaseType {
 export interface EnumTypeField extends McdocBaseType {
 	identifier: string
 	value: string | number
+	desc?: string
 }
 
 export interface ReferenceType extends McdocBaseType {
