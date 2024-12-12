@@ -39,6 +39,7 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 				core.CompletionItem.create(key, pair?.key ?? range, {
 					kind: core.CompletionKind.Field,
 					detail: mcdoc.McdocType.toString(field.type as core.Mutable<mcdoc.McdocType>),
+					documentation: field.desc,
 					deprecated: field.deprecated,
 					sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
 					filterText: `"${key}"`,
@@ -83,11 +84,14 @@ function getValues(
 	ctx: core.CompleterContext,
 ): core.CompletionItem[] {
 	return mcdoc.runtime.completer.getValues(typeDef, ctx)
-		.map(({ value, labelSuffix, detail, kind, completionKind, insertText, sortText }) =>
+		.map((
+			{ value, labelSuffix, detail, documentation, kind, completionKind, insertText, sortText },
+		) =>
 			core.CompletionItem.create(value, range, {
 				kind: completionKind ?? core.CompletionKind.Value,
 				labelSuffix,
 				detail,
+				documentation,
 				filterText: kind === 'string' ? `"${value}"` : value,
 				insertText: kind === 'string' ? `"${insertText ?? value}"` : insertText ?? value,
 				sortText,
