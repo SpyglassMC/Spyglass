@@ -197,7 +197,7 @@ export function completionItem(
 		kind: completion.kind,
 		...(completion.labelSuffix ? { labelDetails: { detail: completion.labelSuffix } } : {}),
 		detail: completion.detail,
-		documentation: completion.documentation,
+		documentation: completion.documentation ? markupContent(completion.documentation) : undefined,
 		filterText: completion.filterText,
 		sortText: completion.sortText,
 		textEdit,
