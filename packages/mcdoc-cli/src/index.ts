@@ -17,6 +17,7 @@ await CLI.scriptName('mcdoc')
 			})
 			.option('source', { describe: 'directory containing mcdoc sources', default: '.' })
 			.option('gzip', { type: 'boolean', default: false })
+			.option('ref', { type: 'boolean', default: false })
 			.option('verbose', { alias: 'v', type: 'boolean', default: false })
 	}, exportCommand)
 	.command('locale <output>', 'Generate and upgrade locales.', () => {

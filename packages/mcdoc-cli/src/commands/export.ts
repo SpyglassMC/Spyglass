@@ -1,8 +1,11 @@
-import { fileUtil } from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
+import * as cp from 'child_process'
 import { resolve } from 'path'
 import { pathToFileURL } from 'url'
+import { promisify } from 'util'
 import { createLogger, createProject as createProject, sortMaps, writeJson } from '../common.js'
+
+const execFile = promisify(cp.execFile)
 
 interface Export {
 	mcdoc: Map<string, mcdoc.McdocType>
@@ -13,6 +16,7 @@ interface Args {
 	source: string
 	output: string
 	gzip: boolean
+	ref: boolean
 	verbose: boolean
 }
 export async function exportCommand(args: Args) {
@@ -42,6 +46,7 @@ export async function exportCommand(args: Args) {
 	}
 
 	const output = {
+		...args.ref ? { ref: (await execFile('git', ['rev-parse', 'HEAD'])).stdout.trim() } : {},
 		mcdoc: sortMaps(data.mcdoc),
 		'mcdoc/dispatcher': sortMaps(data['mcdoc/dispatcher']),
 	}
