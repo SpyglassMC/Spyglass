@@ -1,3 +1,8 @@
+# v4.3.4 (2024-12-13)
+
+### ✨ New Features
+- [`8e17b0c`](https://github.com/SpyglassMC/Spyglass/commit/8e17b0c31991a7f146dc1a26ab8bfd4952dbf0e4) Field documentation is now shown in autocomplete ([#1673](https://github.com/SpyglassMC/Spyglass/pull/1673))
+
 # v4.3.2 (2024-12-11)
 
 ### 🐛 Bug Fixes
