@@ -215,16 +215,21 @@ export const AssetsFileCategories = Object.freeze(
 		'font/ttf',
 		'font/otf',
 		'font/unihex',
+		'gpu_warnlist',
 		'item_definition', // items
 		'lang',
+		'lang/deprecated',
 		'model',
 		'particle',
 		'post_effect',
+		'regional_compliancies',
 		'shader',
 		'shader/fragment',
 		'shader/vertex',
 		'sound',
+		'sounds', // sounds.json
 		'texture',
+		'texture_meta', // *.png.mcmeta
 	] as const,
 )
 export type AssetsFileCategory = (typeof AssetsFileCategories)[number]
