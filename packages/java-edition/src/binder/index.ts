@@ -21,6 +21,7 @@ interface Resource {
 	category: FileCategory
 	ext: `.${string}`
 	pack: 'data' | 'assets'
+	identifier?: string
 	since?: ReleaseVersion
 	until?: ReleaseVersion
 }
@@ -129,13 +130,13 @@ for (const registry of TaggableResourceLocationCategories) {
 // Resource pack
 resource('atlases', { pack: 'assets', category: 'atlas', since: '1.19.3' })
 resource('blockstates', { pack: 'assets', category: 'block_definition' })
-resource('equipment', { pack: 'assets', category: 'equipment', since: '1.21.4' })
-resource('font', { pack: 'assets', category: 'font', since: '1.16' })
+resource('equipment', { pack: 'assets', since: '1.21.4' })
+resource('font', { pack: 'assets', since: '1.16' })
 resource('font', { pack: 'assets', category: 'font/ttf', since: '1.16', ext: '.ttf' })
 resource('font', { pack: 'assets', category: 'font/otf', since: '1.16', ext: '.otf' })
 resource('font', { pack: 'assets', category: 'font/unihex', since: '1.20', ext: '.zip' })
 resource('items', { pack: 'assets', category: 'item_definition', since: '1.21.4' })
-resource('lang', { pack: 'assets', category: 'lang' })
+resource('lang', { pack: 'assets' })
 resource('models', { pack: 'assets', category: 'model' })
 resource('models/equipment', {
 	pack: 'assets',
@@ -151,6 +152,16 @@ resource('shaders', { pack: 'assets', category: 'shader/fragment', ext: '.fsh' }
 resource('shaders', { pack: 'assets', category: 'shader/vertex', ext: '.vsh' })
 resource('sounds', { pack: 'assets', category: 'sound', ext: '.ogg' })
 resource('textures', { pack: 'assets', category: 'texture', ext: '.png' })
+resource('textures', { pack: 'assets', category: 'texture_meta', ext: '.png.mcmeta' })
+
+resource('lang', { pack: 'assets', category: 'lang/deprecated', identifier: 'deprecated' })
+resource('', { pack: 'assets', category: 'sounds', identifier: 'sounds' })
+resource('', {
+	pack: 'assets',
+	category: 'regional_compliancies',
+	identifier: 'regional_compliancies',
+})
+resource('', { pack: 'assets', category: 'gpu_warnlist', identifier: 'gpu_warnlist' })
 
 export function* getRels(
 	uri: string,
@@ -177,7 +188,7 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 
 	for (const rel of rels) {
 		const parts = rel.split('/')
-		if (parts.length < 4) {
+		if (parts.length < 3) {
 			continue
 		}
 		const [pack, namespace, ...rest] = parts
@@ -185,6 +196,23 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 			continue
 		}
 		const candidateResources: [Resource, string][] = []
+		if (rest.length === 1) {
+			const resources = Resources.get('')
+			for (const res of resources ?? []) {
+				if (res.pack !== pack) {
+					continue
+				}
+				let identifier = rest[0]
+				if (!identifier.endsWith(res.ext)) {
+					continue
+				}
+				identifier = identifier.slice(0, -res.ext.length)
+				if (res.identifier && identifier !== res.identifier) {
+					continue
+				}
+				candidateResources.push([res, identifier])
+			}
+		}
 		for (let i = 1; i < rest.length; i += 1) {
 			const resources = Resources.get(rest.slice(0, i).join('/'))
 			for (const res of resources ?? []) {
@@ -196,6 +224,9 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 					continue
 				}
 				identifier = identifier.slice(0, -res.ext.length)
+				if (res.identifier && identifier !== res.identifier) {
+					continue
+				}
 				candidateResources.push([res, identifier])
 			}
 		}
@@ -240,9 +271,7 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 
 export function registerCustomResources(config: Config) {
 	for (const [path, res] of Object.entries(config.env.customResources)) {
-		if (res.pack === undefined || res.pack === 'data') {
-			resource(path, { ...res, category: res.category as FileCategory })
-		}
+		resource(path, { ...res, category: res.category as FileCategory })
 	}
 }
 

@@ -43,8 +43,8 @@ export async function activate(context: vsc.ExtensionContext) {
 		{ language: 'mcdoc' },
 		{ language: 'snbt' },
 		{ language: 'mcmeta' },
-		{ language: 'json', pattern: '**/data/*/*/**/*.json' },
-		{ language: 'json', pattern: '**/assets/*/*/**/*.json' },
+		{ language: 'json', pattern: '**/data/*/**/*.json' },
+		{ language: 'json', pattern: '**/assets/*/**/*.json' },
 	]
 
 	const gameVersion = vsc.workspace.getConfiguration('spyglassmc.env').get('gameVersion')
