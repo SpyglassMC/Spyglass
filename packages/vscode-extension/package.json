@@ -277,6 +277,9 @@
           "error": [
             "invalid.illegal"
           ],
+          "escape": [
+            "constant.character.escape"
+          ],
           "literal": [
             "keyword.other"
           ],

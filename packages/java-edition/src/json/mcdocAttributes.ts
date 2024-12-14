@@ -2,7 +2,7 @@ import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { dissectUri } from '../binder/index.js'
 import type { TextureSlotKind, TextureSlotNode } from './node/index.js'
-import { textureSlotParser } from './parser/index.js'
+import { textureSlotParser, translationValueParser } from './parser/index.js'
 
 const validator = mcdoc.runtime.attribute.validator
 
@@ -82,5 +82,8 @@ export function registerMcdocAttributes(meta: core.MetaRegistry) {
 				usageType: config.definition ? 'definition' : 'reference',
 			})
 		},
+	})
+	mcdoc.runtime.registerAttribute(meta, 'translation_value', () => undefined, {
+		stringParser: () => translationValueParser,
 	})
 }
