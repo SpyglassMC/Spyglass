@@ -231,6 +231,7 @@ export type AssetsFileCategory = (typeof AssetsFileCategories)[number]
 
 export const AssetsMiscCategories = Object.freeze(
 	[
+		'texture_slot',
 		'shader_target',
 	] as const,
 )

@@ -1,6 +1,8 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { dissectUri } from '../binder/index.js'
+import type { TextureSlotKind, TextureSlotNode } from './node/index.js'
+import { textureSlotParser } from './parser/index.js'
 
 const validator = mcdoc.runtime.attribute.validator
 
@@ -9,6 +11,16 @@ const criterionValidator = validator.alternatives(
 		definition: validator.boolean,
 	}),
 	() => ({ definition: false }),
+)
+
+interface TextureSlotConfig {
+	kind: TextureSlotKind
+}
+const textureSlotValidator = validator.alternatives<TextureSlotConfig>(
+	validator.tree({
+		kind: validator.options('definition', 'value', 'reference'),
+	}),
+	() => ({ kind: 'value' }),
 )
 
 export function registerMcdocAttributes(meta: core.MetaRegistry) {
@@ -35,6 +47,19 @@ export function registerMcdocAttributes(meta: core.MetaRegistry) {
 				subcategory: 'criterion',
 				parentPath: [`${parts.namespace}:${parts.identifier}`],
 			})
+		},
+	})
+	mcdoc.runtime.registerAttribute(meta, 'texture_slot', textureSlotValidator, {
+		stringParser: (config, _, ctx) => {
+			return textureSlotParser(config.kind)
+		},
+		stringMocker: (config, _, ctx) => {
+			return {
+				type: 'java_edition:texture_slot',
+				range: core.Range.create(ctx.offset),
+				kind: config.kind,
+				children: [],
+			} satisfies TextureSlotNode
 		},
 	})
 }
