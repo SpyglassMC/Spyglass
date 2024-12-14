@@ -240,9 +240,7 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 
 export function registerCustomResources(config: Config) {
 	for (const [path, res] of Object.entries(config.env.customResources)) {
-		if (res.pack === undefined || res.pack === 'data') {
-			resource(path, { ...res, category: res.category as FileCategory })
-		}
+		resource(path, { ...res, category: res.category as FileCategory })
 	}
 }
 
