@@ -23,6 +23,13 @@ const textureSlotValidator = validator.alternatives<TextureSlotConfig>(
 	() => ({ kind: 'value' }),
 )
 
+const translationKeyValidator = validator.alternatives(
+	validator.tree({
+		definition: validator.boolean,
+	}),
+	() => ({ definition: false }),
+)
+
 export function registerMcdocAttributes(meta: core.MetaRegistry) {
 	mcdoc.runtime.registerAttribute(meta, 'criterion', criterionValidator, {
 		stringParser: (config, _, ctx) => {
@@ -60,6 +67,20 @@ export function registerMcdocAttributes(meta: core.MetaRegistry) {
 				kind: config.kind,
 				children: [],
 			} satisfies TextureSlotNode
+		},
+	})
+	mcdoc.runtime.registerAttribute(meta, 'translation_key', translationKeyValidator, {
+		stringParser: (config, _, ctx) => {
+			return core.symbol({
+				category: 'translation_key',
+				usageType: config.definition ? 'definition' : 'reference',
+			})
+		},
+		stringMocker: (config, _, ctx) => {
+			return core.SymbolNode.mock(ctx.offset, {
+				category: 'translation_key',
+				usageType: config.definition ? 'definition' : 'reference',
+			})
 		},
 	})
 }
