@@ -3,6 +3,7 @@
   "version": "0.1.0-PLACEHOLDER",
   "type": "commonjs",
   "main": "dist/extension.js",
+  "browser": "./dist/extension-web.js",
   "author": "Spyglass Contributors",
   "publisher": "SPGoding",
   "license": "MIT",
@@ -21,10 +22,12 @@
       ],
       "files": [
         "out/extension.mjs",
+        "out/extension-web.mjs",
         "../language-server/lib/server.js"
       ],
       "output": [
         "dist/extension.js",
+        "dist/extension-web.js",
         "dist/server.js"
       ]
     },
@@ -35,10 +38,12 @@
       ],
       "files": [
         "out/extension.mjs",
+        "out/extension-web.mjs",
         "../language-server/lib/server.js"
       ],
       "output": [
         "dist/extension.js",
+        "dist/extension-web.js",
         "dist/server.js"
       ]
     }
