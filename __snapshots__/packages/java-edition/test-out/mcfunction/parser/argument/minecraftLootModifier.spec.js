@@ -122,7 +122,11 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                       "quote": "\""
                     }
                   }
-                ]
+                ],
+                "innerRange": {
+                  "start": 2,
+                  "end": 26
+                }
               }
             ],
             "value": {
@@ -227,7 +231,11 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                     "quote": "\""
                   }
                 }
-              ]
+              ],
+              "innerRange": {
+                "start": 2,
+                "end": 26
+              }
             }
           }
         ],
