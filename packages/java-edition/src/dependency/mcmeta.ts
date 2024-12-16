@@ -270,8 +270,10 @@ export function symbolRegistrar(
 		}
 		symbols.query(McmetaSummaryUri, 'model', 'minecraft:builtin/generated')
 			.enter({ usage: { type: 'declaration' } })
-		symbols.query(McmetaSummaryUri, 'model', 'minecraft:builtin/entity')
-			.enter({ usage: { type: 'declaration' } })
+		if (ReleaseVersion.cmp(release, '1.21.4') < 0) {
+			symbols.query(McmetaSummaryUri, 'model', 'minecraft:builtin/entity')
+				.enter({ usage: { type: 'declaration' } })
+		}
 	}
 
 	return (symbols) => {
