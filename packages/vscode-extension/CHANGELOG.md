@@ -1,3 +1,12 @@
+# v4.4.0 (2024-12-16)
+
+### ✨ New Features
+- [`c7e1285`](https://github.com/SpyglassMC/Spyglass/commit/c7e12859a4df98cc52b00910d6a006e30617547d) Translation keys can now be autocompleted + added syntax highlighting for translation values ([#1677](https://github.com/SpyglassMC/Spyglass/pull/1677))
+- [`1bfd90e`](https://github.com/SpyglassMC/Spyglass/commit/1bfd90efd4fb63eed1a288d4ecb4312e2f6f7781) Files in resource packs like `sounds.json` and `*.png.mcmeta` are now validated ([#1676](https://github.com/SpyglassMC/Spyglass/pull/1676))
+
+### 🐛 Bug Fixes
+- [`23b1798`](https://github.com/SpyglassMC/Spyglass/commit/23b1798fa36bd571b9f2c1deee9e8c9e77052b14) Fixed validation of texture references (like `#top`) in models ([#1675](https://github.com/SpyglassMC/Spyglass/pull/1675))
+
 # v4.3.4 (2024-12-13)
 
 ### ✨ New Features
