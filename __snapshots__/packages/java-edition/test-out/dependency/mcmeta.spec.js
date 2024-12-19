@@ -26,49 +26,56 @@ exports['mcmeta resolveConfiguredVersion() Should resolve "1.16.5" 1'] = {
   "id": "1.16.5",
   "name": "1.16.5",
   "release": "1.16.5",
-  "isLatest": false
+  "isLatest": false,
+  "reason": "config"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "20w06a" 1'] = {
   "id": "20w06a",
   "name": "Snapshot 20w06a",
   "release": "1.16",
-  "isLatest": false
+  "isLatest": false,
+  "reason": "config"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "22w03a" 1'] = {
   "id": "22w03a",
   "name": "22w03a",
   "release": "1.18.2",
-  "isLatest": true
+  "isLatest": true,
+  "reason": "config"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "Auto" 1'] = {
   "id": "1.16.5",
   "name": "1.16.5",
   "release": "1.16.5",
-  "isLatest": false
+  "isLatest": false,
+  "reason": "auto"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "Latest Release" 1'] = {
   "id": "1.18.1",
   "name": "1.18.1",
   "release": "1.18.1",
-  "isLatest": false
+  "isLatest": false,
+  "reason": "config"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "Latest Snapshot" 1'] = {
   "id": "22w03a",
   "name": "22w03a",
   "release": "1.18.2",
-  "isLatest": true
+  "isLatest": true,
+  "reason": "config"
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "unknown" 1'] = {
   "id": "22w03a",
   "name": "22w03a",
   "release": "1.18.2",
-  "isLatest": true
+  "isLatest": true,
+  "reason": "config"
 }
 
 exports['mcmeta symbolRegistrar() Should register correctly 1'] = `
@@ -489,8 +496,140 @@ CATEGORY worldgen/tree_decorator_type
 + + declaration:
 + + + {"uri":"mcmeta://summary/registries.json"}
 ------------
+CATEGORY mcdoc/dispatcher
++ SYMBOL mcdoc:block_states {mcdoc/dispatcher} [Public]
++ + declaration:
++ + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + {"uri":"mcmeta://summary/registries.json"}
++ + members:
++ + + SYMBOL mcdoc:block_states.acacia_button {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"struct","fields":[{"kind":"pair","key":"face","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"floor"}},{"kind":"literal","value":{"kind":"string","value":"wall"}},{"kind":"literal","value":{"kind":"string","value":"ceiling"}}]}},{"kind":"pair","key":"facing","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"north"}},{"kind":"literal","value":{"kind":"string","value":"south"}},{"kind":"literal","value":{"kind":"string","value":"west"}},{"kind":"literal","value":{"kind":"string","value":"east"}}]}},{"kind":"pair","key":"powered","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"true"}},{"kind":"literal","value":{"kind":"string","value":"false"}}]}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + SYMBOL mcdoc:block_states.acacia_door {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"struct","fields":[{"kind":"pair","key":"facing","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"north"}},{"kind":"literal","value":{"kind":"string","value":"south"}},{"kind":"literal","value":{"kind":"string","value":"west"}},{"kind":"literal","value":{"kind":"string","value":"east"}}]}},{"kind":"pair","key":"half","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"upper"}},{"kind":"literal","value":{"kind":"string","value":"lower"}}]}},{"kind":"pair","key":"hinge","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"left"}},{"kind":"literal","value":{"kind":"string","value":"right"}}]}},{"kind":"pair","key":"open","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"true"}},{"kind":"literal","value":{"kind":"string","value":"false"}}]}},{"kind":"pair","key":"powered","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"true"}},{"kind":"literal","value":{"kind":"string","value":"false"}}]}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + SYMBOL mcdoc:block_states.acacia_fence {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"struct","fields":[{"kind":"pair","key":"east","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"true"}},{"kind":"literal","value":{"kind":"string","value":"false"}}]}},{"kind":"pair","key":"north","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"true"}},{"kind":"literal","value":{"kind":"string","value":"false"}}]}},{"kind":"pair","key":"south","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"true"}},{"kind":"literal","value":{"kind":"string","value":"false"}}]}},{"kind":"pair","key":"waterlogged","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"true"}},{"kind":"literal","value":{"kind":"string","value":"false"}}]}},{"kind":"pair","key":"west","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"true"}},{"kind":"literal","value":{"kind":"string","value":"false"}}]}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ ------------
++ SYMBOL mcdoc:block_state_keys {mcdoc/dispatcher} [Public]
++ + declaration:
++ + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + {"uri":"mcmeta://summary/registries.json"}
++ + members:
++ + + SYMBOL mcdoc:block_state_keys.acacia_button {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"face"}},{"kind":"literal","value":{"kind":"string","value":"facing"}},{"kind":"literal","value":{"kind":"string","value":"powered"}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + SYMBOL mcdoc:block_state_keys.acacia_door {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"facing"}},{"kind":"literal","value":{"kind":"string","value":"half"}},{"kind":"literal","value":{"kind":"string","value":"hinge"}},{"kind":"literal","value":{"kind":"string","value":"open"}},{"kind":"literal","value":{"kind":"string","value":"powered"}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + SYMBOL mcdoc:block_state_keys.acacia_fence {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"east"}},{"kind":"literal","value":{"kind":"string","value":"north"}},{"kind":"literal","value":{"kind":"string","value":"south"}},{"kind":"literal","value":{"kind":"string","value":"waterlogged"}},{"kind":"literal","value":{"kind":"string","value":"west"}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ ------------
++ SYMBOL mcdoc:fluid_states {mcdoc/dispatcher} [Public]
++ + declaration:
++ + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + {"uri":"mcmeta://summary/registries.json"}
++ + members:
++ + + SYMBOL mcdoc:fluid_states.flowing_lava {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"struct","fields":[{"kind":"pair","key":"falling","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"false"}},{"kind":"literal","value":{"kind":"string","value":"true"}}]}},{"kind":"pair","key":"level","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"1"}},{"kind":"literal","value":{"kind":"string","value":"2"}},{"kind":"literal","value":{"kind":"string","value":"3"}},{"kind":"literal","value":{"kind":"string","value":"4"}},{"kind":"literal","value":{"kind":"string","value":"5"}},{"kind":"literal","value":{"kind":"string","value":"6"}},{"kind":"literal","value":{"kind":"string","value":"7"}},{"kind":"literal","value":{"kind":"string","value":"8"}}]}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + SYMBOL mcdoc:fluid_states.flowing_water {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"struct","fields":[{"kind":"pair","key":"falling","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"false"}},{"kind":"literal","value":{"kind":"string","value":"true"}}]}},{"kind":"pair","key":"level","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"1"}},{"kind":"literal","value":{"kind":"string","value":"2"}},{"kind":"literal","value":{"kind":"string","value":"3"}},{"kind":"literal","value":{"kind":"string","value":"4"}},{"kind":"literal","value":{"kind":"string","value":"5"}},{"kind":"literal","value":{"kind":"string","value":"6"}},{"kind":"literal","value":{"kind":"string","value":"7"}},{"kind":"literal","value":{"kind":"string","value":"8"}}]}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + SYMBOL mcdoc:fluid_states.lava {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"struct","fields":[{"kind":"pair","key":"falling","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"false"}},{"kind":"literal","value":{"kind":"string","value":"true"}}]}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + SYMBOL mcdoc:fluid_states.water {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"struct","fields":[{"kind":"pair","key":"falling","optional":true,"type":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"false"}},{"kind":"literal","value":{"kind":"string","value":"true"}}]}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ ------------
++ SYMBOL mcdoc:fluid_state_keys {mcdoc/dispatcher} [Public]
++ + declaration:
++ + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + {"uri":"mcmeta://summary/registries.json"}
++ + members:
++ + + SYMBOL mcdoc:fluid_state_keys.flowing_lava {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"falling"}},{"kind":"literal","value":{"kind":"string","value":"level"}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + SYMBOL mcdoc:fluid_state_keys.flowing_water {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"falling"}},{"kind":"literal","value":{"kind":"string","value":"level"}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + SYMBOL mcdoc:fluid_state_keys.lava {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"falling"}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + ------------
++ + + SYMBOL mcdoc:fluid_state_keys.water {mcdoc/dispatcher} [Public]
++ + + + data: {"typeDef":{"kind":"union","members":[{"kind":"literal","value":{"kind":"string","value":"falling"}}]}}
++ + + + declaration:
++ + + + + {"uri":"mcmeta://summary/registries.json"}
++ + + + + ------------
++ + + + + {"uri":"mcmeta://summary/registries.json"}
+------------
 CATEGORY loot_table
 + SYMBOL minecraft:empty {loot_table} [Public]
++ + declaration:
++ + + {"uri":"mcmeta://summary/registries.json"}
+------------
+CATEGORY model
++ SYMBOL minecraft:builtin/generated {model} [Public]
++ + declaration:
++ + + {"uri":"mcmeta://summary/registries.json"}
++ ------------
++ SYMBOL minecraft:builtin/entity {model} [Public]
 + + declaration:
 + + + {"uri":"mcmeta://summary/registries.json"}
 `

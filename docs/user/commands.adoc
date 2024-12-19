@@ -4,6 +4,14 @@
 
 == Commands
 
+=== `spyglassmc.dataHackPubify`
+
+Data Hack Pubify a string.
+
+=== `spyglassmc.resetProjectCache`
+
+Reset the symbols cache for the current project.
+
 === `spyglassmc.showCacheRoot`
 
 Show the cache folder of Spyglass in the platform-specific explorer program.
@@ -11,11 +19,3 @@ Show the cache folder of Spyglass in the platform-specific explorer program.
 === `spyglassmc.showOutput`
 
 Show the output panel with the logs of the Spyglass Language Server.
-
-=== `spyglassmc.resetProjectCache`
-
-Reset the symbols cache for the current project.
-
-=== `spyglassmc.dataHackPubify`
-
-Data Hack Pubify a string.

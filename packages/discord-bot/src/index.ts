@@ -232,6 +232,7 @@ const ColorTokenTypeLegend: Record<ColorTokenType, Set<RenderFormat>> = {
 	enum: new Set(['foreground_white']),
 	enumMember: new Set(['foreground_white']),
 	error: new Set(['foreground_red', 'underline']),
+	escape: new Set(['foreground_green']),
 	function: new Set(['foreground_yellow']),
 	keyword: new Set(['foreground_pink']),
 	literal: new Set(['foreground_blue']),

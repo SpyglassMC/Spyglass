@@ -16,6 +16,7 @@ export type ResourceLocationOptions =
 		requireCanonical?: boolean
 		usageType?: SymbolUsageType
 		namespacePathSep?: ':' | '.'
+		implicitPath?: string
 	}
 	& ({
 		category: ResourceLocationCategory

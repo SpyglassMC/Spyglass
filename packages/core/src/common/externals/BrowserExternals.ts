@@ -9,7 +9,7 @@ import type {
 import type { ExternalEventEmitter, ExternalFileSystem, Externals, FsLocation } from './index.js'
 
 type Listener = (...args: unknown[]) => unknown
-class BrowserEventEmitter implements ExternalEventEmitter {
+export class BrowserEventEmitter implements ExternalEventEmitter {
 	readonly #listeners = new Map<string, { all: Set<Listener>; once: Set<Listener> }>()
 
 	emit(eventName: string, ...args: unknown[]): boolean {

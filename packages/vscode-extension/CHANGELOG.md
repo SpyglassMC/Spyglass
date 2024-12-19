@@ -1,3 +1,43 @@
+# v4.4.0 (2024-12-16)
+
+### ✨ New Features
+- [`c7e1285`](https://github.com/SpyglassMC/Spyglass/commit/c7e12859a4df98cc52b00910d6a006e30617547d) Translation keys can now be autocompleted + added syntax highlighting for translation values ([#1677](https://github.com/SpyglassMC/Spyglass/pull/1677))
+- [`1bfd90e`](https://github.com/SpyglassMC/Spyglass/commit/1bfd90efd4fb63eed1a288d4ecb4312e2f6f7781) Files in resource packs like `sounds.json` and `*.png.mcmeta` are now validated ([#1676](https://github.com/SpyglassMC/Spyglass/pull/1676))
+
+### 🐛 Bug Fixes
+- [`23b1798`](https://github.com/SpyglassMC/Spyglass/commit/23b1798fa36bd571b9f2c1deee9e8c9e77052b14) Fixed validation of texture references (like `#top`) in models ([#1675](https://github.com/SpyglassMC/Spyglass/pull/1675))
+
+# v4.3.4 (2024-12-13)
+
+### ✨ New Features
+- [`8e17b0c`](https://github.com/SpyglassMC/Spyglass/commit/8e17b0c31991a7f146dc1a26ab8bfd4952dbf0e4) Field documentation is now shown in autocomplete ([#1673](https://github.com/SpyglassMC/Spyglass/pull/1673))
+
+# v4.3.2 (2024-12-11)
+
+### 🐛 Bug Fixes
+- [`9a366e8`](https://github.com/SpyglassMC/Spyglass/commit/9a366e8d82c407a6f219e0ea4ebc77154115b5a0) Mcodc caching is now disabled by default, added config `env.enableMcdocCaching` to re-enable it ([#1671](https://github.com/SpyglassMC/Spyglass/pull/1671))
+- [`0565b6c`](https://github.com/SpyglassMC/Spyglass/commit/0565b6c659f558378f814560267f0f8782e3389c) Hidden `undeclaredSymbol` warnings for resource pack file references ([#1667](https://github.com/SpyglassMC/Spyglass/pull/1667))
+- [`d30e9c4`](https://github.com/SpyglassMC/Spyglass/commit/d30e9c49c0126eae5ce98f1c5f97d04eb0789cb4) Fixed `block_crumble` and `trail` particles not allowing options ([#1665](https://github.com/SpyglassMC/Spyglass/pull/1665))
+- [`cbbd65c`](https://github.com/SpyglassMC/Spyglass/commit/cbbd65c3b1fb18fb74eaeaad8ed336e3db94fd88) The size of the range in `/random` is now validated ([#1670](https://github.com/SpyglassMC/Spyglass/pull/1670))
+- [`ad20d9b`](https://github.com/SpyglassMC/Spyglass/commit/ad20d9bf5c53aa9b8454b8255f8ea1f890bde68e) Ensure the cache root exists before showing it ([#1669](https://github.com/SpyglassMC/Spyglass/pull/1669))
+- [`28a9d70`](https://github.com/SpyglassMC/Spyglass/commit/28a9d701125eb254c743a2fc40a62954e1d1b336) Fixed an issue where the language server would crash ([#1668](https://github.com/SpyglassMC/Spyglass/pull/1668))
+- [`e8d8d2b`](https://github.com/SpyglassMC/Spyglass/commit/e8d8d2b9b8545edc0e46e3b88dc4f94b1107f547) Fixed spring feature configuration ([#1666](https://github.com/SpyglassMC/Spyglass/pull/1666))
+- [`dfe4269`](https://github.com/SpyglassMC/Spyglass/commit/dfe426911c2b6a0037f701344502d135de6a53d2) Fixed "archive has not been loaded into the memory" log spam ([#1664](https://github.com/SpyglassMC/Spyglass/pull/1664))
+
+# v4.3.0 (2024-11-23)
+This release adds initial support for resource packs! This also helps with `pack_format` detection when you have both a resource pack and data pack in the same workspace.
+
+### ✨ New Features
+- [`1d62c9c`](https://github.com/SpyglassMC/Spyglass/commit/1d62c9c3330612a9c77efec960ff91c86a0b7e7e) Added support for resource packs ([#1603](https://github.com/SpyglassMC/Spyglass/pull/1603))
+- [`6e0e705`](https://github.com/SpyglassMC/Spyglass/commit/6e0e705ebbf451860d36e40331b2aabfd3d9ae12) Added validation and autocomplete for block states in JSON and NBT ([#1641](https://github.com/SpyglassMC/Spyglass/pull/1641))
+
+### 🐛 Bug Fixes
+- [`ee4fefa`](https://github.com/SpyglassMC/Spyglass/commit/ee4fefac40d84f7add20ba1ac33004433d6c7c9b) The `air` item is now disallowed in a few places ([#1615](https://github.com/SpyglassMC/Spyglass/pull/1615))
+- [`dbae237`](https://github.com/SpyglassMC/Spyglass/commit/dbae237487ed0c867d7f01ebbdd2d564a78cbecd) Packed ARGB colors now correctly wrap to negatives ([#1642](https://github.com/SpyglassMC/Spyglass/pull/1642))
+- [`74dbb91`](https://github.com/SpyglassMC/Spyglass/commit/74dbb91a8ca64101ee991e4c2abb15ba47abac9c) Fixed a few places in item predicates where whitespace was not allowed ([#1643](https://github.com/SpyglassMC/Spyglass/pull/1643))
+- [`3076009`](https://github.com/SpyglassMC/Spyglass/commit/307600953b24bca4bd25f0f9a6d7646a212253a9) The `nameOfScoreHolder` no longer complains for the special `*` score holder ([#1644](https://github.com/SpyglassMC/Spyglass/pull/1644))
+- [`89921ff`](https://github.com/SpyglassMC/Spyglass/commit/89921ff3b69d587dcfb2623c0be30d4bfa94fbe7) Component removal syntax added in 1.21 is now supported ([#1645](https://github.com/SpyglassMC/Spyglass/pull/1645))
+
 # v4.2.3 (2024-09-17)
 
 ### 🐛 Bug Fixes

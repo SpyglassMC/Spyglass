@@ -83,6 +83,17 @@
       {
         "fileMatch": [
           "pack.mcmeta",
+          "assets/*/atlases/**/*.json",
+          "assets/*/blockstates/**/*.json",
+          "assets/*/items/**/*.json",
+          "assets/*/equipment/**/*.json",
+          "assets/*/fonts/**/*.json",
+          "assets/*/lang/**/*.json",
+          "assets/*/models/**/*.json",
+          "assets/*/particles/**/*.json",
+          "assets/*/post_effect/**/*.json",
+          "assets/*/shaders/**/*.json",
+          "assets/minecraft/**/*.json",
           "data/*/advancement/**/*.json",
           "data/*/advancements/**/*.json",
           "data/*/banner_pattern/**/*.json",
@@ -265,6 +276,9 @@
         "scopes": {
           "error": [
             "invalid.illegal"
+          ],
+          "escape": [
+            "constant.character.escape"
           ],
           "literal": [
             "keyword.other"

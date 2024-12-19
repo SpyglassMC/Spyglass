@@ -954,6 +954,7 @@ export class Project implements ExternalEventEmitter {
 		}
 
 		try {
+			await fileUtil.ensureDir(this.externals, this.#cacheRoot)
 			await this.externals.fs.showFile(this.#cacheRoot)
 		} catch (e) {
 			this.logger.error('[Service#showCacheRoot]', e)

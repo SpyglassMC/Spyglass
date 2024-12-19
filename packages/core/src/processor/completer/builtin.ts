@@ -181,11 +181,10 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 		return optimizePool(declarations)
 	}
 	const optimizePool = (pool: readonly string[]) => {
-		const defaultNsPrefix =
-			`${ResourceLocation.DefaultNamespace}${ResourceLocation.NamespacePathSep}`
+		const defaultNsPrefix = ResourceLocation.DefaultNamespace + ResourceLocation.NamespacePathSep
 		const defaultNsIds: string[] = []
 		const otherIds: string[] = []
-		for (const id of pool) {
+		for (const id of filterPool(pool)) {
 			if (id.startsWith(defaultNsPrefix)) {
 				defaultNsIds.push(id)
 			} else {
@@ -204,6 +203,20 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 		]
 		if (node.options.namespacePathSep === '.') {
 			return ans.map((v) => v.replace(ResourceLocation.NamespacePathSep, '.'))
+		}
+		return ans
+	}
+	const filterPool = (pool: readonly string[]) => {
+		if (!node.options.implicitPath) {
+			return pool
+		}
+		const ans = []
+		for (const id of pool) {
+			const sep = id.indexOf(ResourceLocation.NamespacePathSep)
+			const path = id.slice(sep + 1)
+			if (path.startsWith(node.options.implicitPath)) {
+				ans.push(id.slice(0, sep + 1) + path.slice(node.options.implicitPath.length))
+			}
 		}
 		return ans
 	}

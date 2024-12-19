@@ -61,6 +61,7 @@ export function getFields(
 export type SimpleCompletionValue = {
 	value: string
 	detail?: string
+	documentation?: string
 	labelSuffix?: string
 	kind?: McdocType['kind']
 	completionKind?: core.CompletionKind
@@ -131,6 +132,7 @@ export function getValues(
 				value: `${v.value}`,
 				detail: v.identifier,
 				kind: typeDef.enumKind ?? 'string',
+				documentation: v.desc,
 			}))
 		case 'byte':
 		case 'short':

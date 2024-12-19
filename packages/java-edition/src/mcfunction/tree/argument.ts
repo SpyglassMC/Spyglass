@@ -59,8 +59,15 @@ export interface MinecraftEntityAnchorArgumentTreeNode extends mcf.ArgumentTreeN
 export interface MinecraftEntitySummonArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:entity_summon'
 }
+export interface RangeProperties extends Record<string, unknown> {
+	min: number
+	max: number
+	minSpan: number
+	maxSpan: number
+}
 export interface MinecraftFloatRangeArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:float_range'
+	properties?: RangeProperties
 }
 export interface MinecraftFunctionArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:function'
@@ -76,6 +83,7 @@ export interface MinecraftHeightmapArgumentTreeNode extends mcf.ArgumentTreeNode
 }
 export interface MinecraftIntRangeArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:int_range'
+	properties?: RangeProperties
 }
 export interface MinecraftItemEnchantmentArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:item_enchantment'
