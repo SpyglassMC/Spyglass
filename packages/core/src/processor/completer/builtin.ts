@@ -283,7 +283,10 @@ export function escapeString(value: string, quote?: Quote) {
 	if (!quote) {
 		return value
 	}
-	return value.replaceAll('\\', '\\\\').replaceAll(quote, '\\"')
+	// Un-escape and then re-escape completion
+	value = CompletionItem.unescape(value)
+	value = value.replaceAll('\\', '\\\\').replaceAll(quote, '\\"')
+	return CompletionItem.escape(value)
 }
 
 export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {

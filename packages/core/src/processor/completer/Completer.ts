@@ -92,6 +92,13 @@ export namespace CompletionItem {
 	export function escape(textToInsert: string): string {
 		return textToInsert.replace(/([\\$}])/g, '\\$1')
 	}
+
+	/**
+	 * Un-escape `$`, `\`, and `}` in `textToInsert`
+	 */
+	export function unescape(textToInsert: string): string {
+		return textToInsert.replace(/\\([\\$}])/g, '$1')
+	}
 }
 
 export class InsertTextBuilder {
