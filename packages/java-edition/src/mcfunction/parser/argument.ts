@@ -1406,8 +1406,12 @@ export function scoreHolder(
 ): core.Parser<ScoreHolderNode> {
 	return core.map<core.LiteralNode | core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
 		core.select([
-			// Technically score holders can start with *, but this doesn't account for it
-			{ prefix: '*', parser: core.literal('*') },
+			{
+				predicate: (src) =>
+					src.peek() === '*'
+					&& (!src.canRead(2) || src.matchPattern(/^\s/, 1)),
+				parser: core.literal('*'),
+			},
 			{ prefix: '@', parser: selector() },
 			{ parser: scoreHolderFakeName(usageType) },
 		]),
