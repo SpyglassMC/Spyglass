@@ -340,18 +340,35 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 					if (entries.has(archiveName)) {
 						throw new Error(`A different URI with ${archiveName} already exists`)
 					}
-
+					/// Debug message for #1609
+					logger.info(
+						`[ArchiveUriSupporter#create] Extracting archive ${archiveName} from ${uri}`,
+					)
 					const files = await externals.archive.decompressBall(
 						await externals.fs.readFile(uri),
 						{ stripLevel: typeof info?.startDepth === 'number' ? info.startDepth : 0 },
 					)
-					entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
+					const newEntries = new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f]))
+					/// Debug message for #1609
+					logger.info(
+						`[ArchiveUriSupporter#create] Extracted ${files.length} files, adding ${newEntries.size} entries`,
+					)
+					for (const [path, entry] of [...newEntries.entries()].slice(0, 20)) {
+						logger.info(`[ArchiveUriSupporter#create] ${path} (${entry.data.length} bytes)`)
+					}
+					entries.set(archiveName, newEntries)
 				}
 			} catch (e) {
-				logger.error(`[SpyglassUriSupporter#create] Bad dependency ${uri}`, e)
+				logger.error(`[ArchiveUriSupporter#create] Bad dependency ${uri}`, e)
 			}
 		}
 
+		/// Debug message for #1609
+		logger.info(
+			`[ArchiveUriSupporter#create] Finalizing with ${entries.size} archives: ${[
+				...entries.keys(),
+			]}`,
+		)
 		return new ArchiveUriSupporter(externals, entries)
 	}
 }
