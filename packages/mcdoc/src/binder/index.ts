@@ -854,7 +854,10 @@ function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 
 	// Return reference if the enum has been hoisted
 	if (identifier && !ctx.isHoisting) {
-		return { kind: 'reference', path: `${ctx.moduleIdentifier}::${identifier.value}` }
+		return wrapType(node, {
+			kind: 'reference',
+			path: `${ctx.moduleIdentifier}::${identifier.value}`,
+		}, ctx)
 	}
 
 	// Shortcut if the typeDef has been added to the enum symbol.
@@ -894,7 +897,10 @@ function convertStruct(node: StructNode, ctx: McdocBinderContext): McdocType {
 
 	// Return reference if the struct has been hoisted
 	if (identifier && !ctx.isHoisting) {
-		return { kind: 'reference', path: `${ctx.moduleIdentifier}::${identifier.value}` }
+		return wrapType(node, {
+			kind: 'reference',
+			path: `${ctx.moduleIdentifier}::${identifier.value}`,
+		}, ctx)
 	}
 
 	// Shortcut if the typeDef has been added to the struct symbol.
