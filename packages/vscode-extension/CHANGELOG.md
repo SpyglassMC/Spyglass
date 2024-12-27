@@ -1,3 +1,11 @@
+# v4.4.1 (2024-12-27)
+
+### 🐛 Bug Fixes
+- [`da60293`](https://github.com/SpyglassMC/Spyglass/commit/da60293c4dfa06517c7ea23f3241de8c586058ff) Parse score holders starting with `*` correctly ([#1692](https://github.com/SpyglassMC/Spyglass/pull/1692))
+- [`eba142e`](https://github.com/SpyglassMC/Spyglass/commit/eba142e78bc01011d536dbeafe9e70ea6956d544) Some mcdoc types were broken by the previous release ([#1688](https://github.com/SpyglassMC/Spyglass/pull/1688))
+- [`7a9f1ae`](https://github.com/SpyglassMC/Spyglass/commit/7a9f1ae27eb08303301b741f082c07e3ebe8cbfd) Improves error messages for command literals ([#1687](https://github.com/SpyglassMC/Spyglass/pull/1687))
+- [`4ebdba8`](https://github.com/SpyglassMC/Spyglass/commit/4ebdba8386aa0314535082ffe580e69cb3a2049b) Fixes autocomplete of score holders containing `$` ([#1686](https://github.com/SpyglassMC/Spyglass/pull/1686))
+
 # v4.4.0 (2024-12-16)
 
 ### ✨ New Features
