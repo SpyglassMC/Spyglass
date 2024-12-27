@@ -149,7 +149,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:color':
 			return wrap(
 				core.map(
-					core.literal(...ColorArgumentValues),
+					commandLiteral({ pool: ColorArgumentValues }),
 					(res) => ({
 						...res,
 						color: core.Color.NamedColors.has(res.value)
@@ -167,7 +167,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:entity':
 			return wrap(entity(treeNode.properties.amount, treeNode.properties.type))
 		case 'minecraft:entity_anchor':
-			return wrap(core.literal(...EntityAnchorArgumentValues))
+			return wrap(commandLiteral({ pool: EntityAnchorArgumentValues }))
 		case 'minecraft:entity_summon':
 			return wrap(core.resourceLocation({ category: 'entity_type' }))
 		case 'minecraft:float_range':
@@ -183,11 +183,11 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:function':
 			return wrap(core.resourceLocation({ category: 'function', allowTag: true }))
 		case 'minecraft:gamemode':
-			return wrap(core.literal(...GamemodeArgumentValues))
+			return wrap(commandLiteral({ pool: GamemodeArgumentValues }))
 		case 'minecraft:game_profile':
 			return wrap(entity('multiple', 'players'))
 		case 'minecraft:heightmap':
-			return wrap(core.literal(...HeightmapValues))
+			return wrap(commandLiteral({ pool: HeightmapValues }))
 		case 'minecraft:int_range':
 			return wrap(
 				range(
@@ -203,9 +203,13 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:item_predicate':
 			return wrap(itemPredicate)
 		case 'minecraft:item_slot':
-			return wrap(itemSlot)
+			return wrap((src, ctx) => {
+				return commandLiteral({ pool: getItemSlotArgumentValues(ctx) })(src, ctx)
+			})
 		case 'minecraft:item_slots':
-			return wrap(itemSlots)
+			return wrap((src, ctx) => {
+				return commandLiteral({ pool: getItemSlotsArgumentValues(ctx) })(src, ctx)
+			})
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
 		case 'minecraft:loot_modifier':
@@ -235,7 +239,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:objective_criteria':
 			return wrap(objectiveCriteria)
 		case 'minecraft:operation':
-			return wrap(core.literal({ pool: OperationArgumentValues, colorTokenType: 'operator' }))
+			return wrap(commandLiteral({ pool: OperationArgumentValues, colorTokenType: 'operator' }))
 		case 'minecraft:particle':
 			return wrap(particle)
 		case 'minecraft:resource':
@@ -262,12 +266,12 @@ export const argument: mcf.ArgumentParserGetter = (
 			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.
 			// But I do not want to spend time supporting them.
 			return wrap((src, ctx) => {
-				return core.literal(...getScoreboardSlotArgumentValues(ctx))(src, ctx)
+				return commandLiteral({ pool: getScoreboardSlotArgumentValues(ctx) })(src, ctx)
 			})
 		case 'minecraft:style':
 			return wrap(jsonParser('::java::server::util::text::TextStyle'))
 		case 'minecraft:swizzle':
-			return wrap(core.literal(...SwizzleArgumentValues))
+			return wrap(commandLiteral({ pool: SwizzleArgumentValues }))
 		case 'minecraft:team':
 			return wrap(
 				team(
@@ -277,9 +281,9 @@ export const argument: mcf.ArgumentParserGetter = (
 				),
 			)
 		case 'minecraft:template_mirror':
-			return wrap(core.literal(...MirrorValues))
+			return wrap(commandLiteral({ pool: MirrorValues }))
 		case 'minecraft:template_rotation':
-			return wrap(core.literal(...RotationValues))
+			return wrap(commandLiteral({ pool: RotationValues }))
 		case 'minecraft:time':
 			return wrap(time)
 		case 'minecraft:uuid':
@@ -463,14 +467,6 @@ const greedyString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: { blockList: new Set(['\n', '\r']) },
 })
 
-const itemSlot: core.InfallibleParser<core.LiteralNode> = (src, ctx) => {
-	return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
-}
-
-export const itemSlots: core.InfallibleParser<core.LiteralNode> = (src, ctx) => {
-	return core.literal(...getItemSlotsArgumentValues(ctx))(src, ctx)
-}
-
 const itemStack: core.InfallibleParser<ItemStackNode> = (src, ctx) => {
 	const oldFormat = shouldUseOldItemStackFormat(ctx)
 	return core.map<
@@ -538,6 +534,17 @@ export function jsonParser(typeRef: `::${string}::${string}`): core.Parser<json.
 		children: [res],
 		targetType: { kind: 'reference', path: typeRef },
 	} satisfies json.TypedJsonNode))
+}
+
+function commandLiteral(options: core.LiteralOptions): core.Parser<core.LiteralNode> {
+	return (src, ctx) => {
+		const ans = core.literal(options)(src, ctx)
+		if (ans.value.length === 0) {
+			ans.value = src.readUntil(...core.Whitespaces)
+			ans.range = core.Range.create(ans.range.start, src)
+		}
+		return ans
+	}
 }
 
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
