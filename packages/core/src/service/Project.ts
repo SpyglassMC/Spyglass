@@ -291,9 +291,16 @@ export class Project implements ExternalEventEmitter {
 	 */
 	getTrackedFiles(): string[] {
 		const extensions: string[] = this.meta.getSupportedFileExtensions()
+		this.logger.info(`[Project#getTrackedFiles] Supported file extensions: ${extensions}`)
 		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.#watchedFiles]
 			.filter((file) => extensions.includes(fileUtil.extname(file) ?? ''))
+		this.logger.info(
+			`[Project#getTrackedFiles] Listed ${supportedFiles.length} supported files`,
+		)
 		const filteredFiles = this.ignore.filter(supportedFiles)
+		this.logger.info(
+			`[Project#getTrackedFiles] After ignoring, keeping ${filteredFiles.length} tracked files`,
+		)
 		return filteredFiles
 	}
 
@@ -584,6 +591,18 @@ export class Project implements ExternalEventEmitter {
 
 			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
 			__profiler.task('Sort URIs')
+
+			const fileCountByExtension = new Map<string, number>()
+			for (const file of files) {
+				const ext = fileUtil.extname(file)?.replace(/^\./, '')
+				if (ext) {
+					fileCountByExtension.set(ext, (fileCountByExtension.get(ext) ?? 0) + 1)
+				}
+			}
+			this.logger.info(`[Project#ready] == Files to bind ==`)
+			for (const [ext, count] of fileCountByExtension.entries()) {
+				this.logger.info(`[Project#ready] File extension ${ext}: ${count}`)
+			}
 
 			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
 			for (const uri of files) {
