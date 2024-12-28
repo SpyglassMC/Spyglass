@@ -65,7 +65,7 @@ export interface EnvConfig {
 	 */
 	dependencies: string[]
 	/**
-	 * A list of file patterns to exclude. Each value in this array can either be a glob pattern or the special string `@gitignore`.
+	 * A list of file patterns to exclude.
 	 */
 	exclude: string[]
 	/**
@@ -336,7 +336,7 @@ export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
 		dependencies: ['@vanilla-datapack', '@vanilla-resourcepack', '@vanilla-mcdoc'],
-		exclude: ['@gitignore', '.vscode/', '.github/'],
+		exclude: [],
 		customResources: {},
 		feature: {
 			codeActions: true,

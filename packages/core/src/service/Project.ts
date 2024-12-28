@@ -183,7 +183,6 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	config!: Config
-	ignore: Ignore = ignore()
 	readonly downloader: Downloader
 	readonly externals: Externals
 	readonly fs: FileService
@@ -297,11 +296,7 @@ export class Project implements ExternalEventEmitter {
 		this.logger.info(
 			`[Project#getTrackedFiles] Listed ${supportedFiles.length} supported files`,
 		)
-		const filteredFiles = this.ignore.filter(supportedFiles)
-		this.logger.info(
-			`[Project#getTrackedFiles] After ignoring, keeping ${filteredFiles.length} tracked files`,
-		)
-		return filteredFiles
+		return supportedFiles
 	}
 
 	constructor(
@@ -399,20 +394,6 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	private setInitPromise(): void {
-		const loadConfig = async () => {
-			this.config = await this.#configService.load()
-			this.ignore = ignore()
-			for (const pattern of this.config.env.exclude) {
-				if (pattern === '@gitignore') {
-					const gitignore = await this.readGitignore()
-					if (gitignore) {
-						this.ignore.add(gitignore)
-					}
-				} else {
-					this.ignore.add(pattern)
-				}
-			}
-		}
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
@@ -446,29 +427,13 @@ export class Project implements ExternalEventEmitter {
 			this.symbols.buildCache()
 			__profiler.task('Load Cache')
 
-			await loadConfig()
+			this.config = await this.#configService.load()
 			__profiler.task('Load Config')
 
 			await callIntializers()
 			__profiler.task('Initialize').finalize()
 		}
 		this.#initPromise = init()
-	}
-
-	private async readGitignore() {
-		if (this.projectRoots.length === 0) {
-			return undefined
-		}
-		try {
-			const uri = this.projectRoots[0] + Project.GitIgnore
-			const contents = await this.externals.fs.readFile(uri)
-			return bufferToString(contents)
-		} catch (e) {
-			if (!this.externals.error.isKind(e, 'ENOENT')) {
-				this.logger.error(`[Project] [readGitignore]`, e)
-			}
-		}
-		return undefined
 	}
 
 	private setReadyPromise(): void {
