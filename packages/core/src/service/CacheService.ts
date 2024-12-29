@@ -174,6 +174,10 @@ export class CacheService {
 				ans.unchangedFiles.push(uri)
 				continue
 			}
+			if (this.project.shouldExclude(uri)) {
+				ans.removedFiles.push(uri)
+				continue
+			}
 
 			try {
 				const hash = await this.project.fs.hash(uri)

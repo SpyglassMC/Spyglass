@@ -1,5 +1,4 @@
-import type { Ignore } from 'ignore'
-import ignore from 'ignore'
+import * as micromatch from 'micromatch'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
@@ -158,7 +157,6 @@ export type ProjectData = Pick<
  */
 export class Project implements ExternalEventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
-	private static readonly GitIgnore = '.gitignore'
 
 	/** Prevent circular binding. */
 	readonly #bindingInProgressUris = new Set<string>()
@@ -494,15 +492,24 @@ export class Project implements ExternalEventEmitter {
 					this.#watcherReady = true
 					resolve()
 				}).on('add', (uri) => {
+					if (this.shouldExclude(uri)) {
+						return
+					}
 					this.#watchedFiles.add(uri)
 					if (this.#watcherReady) {
 						this.emit('fileCreated', { uri })
 					}
 				}).on('change', (uri) => {
+					if (this.shouldExclude(uri)) {
+						return
+					}
 					if (this.#watcherReady) {
 						this.emit('fileModified', { uri })
 					}
 				}).on('unlink', (uri) => {
+					if (this.shouldExclude(uri)) {
+						return
+					}
 					this.#watchedFiles.delete(uri)
 					if (this.#watcherReady) {
 						this.emit('fileDeleted', { uri })
@@ -868,6 +875,9 @@ export class Project implements ExternalEventEmitter {
 		if (!fileUtil.isFileUri(uri)) {
 			return // We only accept `file:` scheme for client-managed URIs.
 		}
+		if (this.shouldExclude(uri)) {
+			return
+		}
 		const doc = TextDocument.create(uri, languageID, version, content)
 		const node = this.parse(doc)
 		this.#clientManagedUris.add(uri)
@@ -891,6 +901,9 @@ export class Project implements ExternalEventEmitter {
 		this.#symbolUpToDateUris.delete(uri)
 		if (!fileUtil.isFileUri(uri)) {
 			return // We only accept `file:` scheme for client-managed URIs.
+		}
+		if (this.shouldExclude(uri)) {
+			return
 		}
 		const doc = this.#clientManagedDocAndNodes.get(uri)?.doc
 		if (!doc) {
@@ -952,6 +965,18 @@ export class Project implements ExternalEventEmitter {
 		} catch (e) {
 			this.logger.error('[Service#showCacheRoot]', e)
 		}
+	}
+
+	public shouldExclude(uri: string): boolean {
+		if (this.config.env.exclude.length === 0) {
+			return false
+		}
+		for (const rel of fileUtil.getRels(uri, this.projectRoots)) {
+			if (micromatch.any(rel, this.config.env.exclude)) {
+				return true
+			}
+		}
+		return false
 	}
 
 	private tryClearingCache(uri: string): void {

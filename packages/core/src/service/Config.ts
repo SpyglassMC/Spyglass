@@ -336,7 +336,7 @@ export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
 		dependencies: ['@vanilla-datapack', '@vanilla-resourcepack', '@vanilla-mcdoc'],
-		exclude: [],
+		exclude: ['.*/**'],
 		customResources: {},
 		feature: {
 			codeActions: true,
