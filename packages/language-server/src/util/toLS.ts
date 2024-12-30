@@ -176,6 +176,15 @@ export function inlayHints(hints: core.InlayHint[], doc: TextDocument): ls.Inlay
 	return hints.map((h) => inlayHint(h, doc))
 }
 
+export function codeAction(codeAction: core.CodeAction, doc: TextDocument): ls.CodeAction {
+	return {
+		title: codeAction.title,
+		kind: ls.CodeActionKind.QuickFix,
+		isPreferred: codeAction.isPreferred,
+		diagnostics: codeAction.errors?.map(e => diagnostic(core.LanguageError.withPosRange(e, doc))),
+	}
+}
+
 export function completionItem(
 	completion: core.CompletionItem,
 	doc: TextDocument,

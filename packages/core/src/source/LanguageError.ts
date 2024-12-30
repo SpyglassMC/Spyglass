@@ -60,8 +60,14 @@ export const enum ErrorSeverity {
 }
 
 export interface LanguageErrorInfo {
-	codeAction?: string
+	codeAction?: LanguageErrorAction
 	deprecated?: boolean
 	unnecessary?: boolean
 	related?: { location: Location; message: string }[]
+}
+
+export interface LanguageErrorAction {
+	title: string
+	isPreferred?: boolean
+	// TODO
 }

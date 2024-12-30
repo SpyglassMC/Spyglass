@@ -4,8 +4,9 @@ import { Arrayable, ResourceLocation } from '../../../common/index.js'
 import type { AstNode } from '../../../node/index.js'
 import type { LinterContext } from '../../../service/index.js'
 import { LinterSeverity, SymbolLinterConfig as Config } from '../../../service/index.js'
-import type { Symbol } from '../../../symbol/index.js'
-import { SymbolUtil, SymbolVisibility } from '../../../symbol/index.js'
+import type { LanguageErrorInfo } from '../../../source/LanguageError.js'
+import type { FileCategory, Symbol } from '../../../symbol/index.js'
+import { FileCategories, SymbolUtil, SymbolVisibility } from '../../../symbol/index.js'
 import type { Linter } from '../Linter.js'
 
 export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
@@ -20,6 +21,17 @@ export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
 		})
 	}
 	if (Config.Action.isReport(action)) {
+		const info = FileCategories.includes(node.symbol.category as FileCategory)
+			? {
+				codeAction: {
+					title: localize(
+						'code-action.create-undeclared-file',
+						node.symbol.category,
+						localeQuote(node.symbol.identifier),
+					),
+				},
+			} satisfies LanguageErrorInfo
+			: undefined
 		const severityOverride = action.report === 'inherit'
 			? undefined
 			: LinterSeverity.toErrorSeverity(action.report)
@@ -30,7 +42,7 @@ export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
 				localeQuote(node.symbol.identifier),
 			),
 			node,
-			undefined,
+			info,
 			severityOverride,
 		)
 	}
