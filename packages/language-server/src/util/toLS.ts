@@ -182,6 +182,19 @@ export function codeAction(codeAction: core.CodeAction, doc: TextDocument): ls.C
 		kind: ls.CodeActionKind.QuickFix,
 		isPreferred: codeAction.isPreferred,
 		diagnostics: codeAction.errors?.map(e => diagnostic(core.LanguageError.withPosRange(e, doc))),
+		edit: codeAction.changes
+			? {
+				documentChanges: codeAction.changes.map(change => {
+					switch (change.type) {
+						case 'edit':
+							return {
+								textDocument: { uri: doc.uri, version: doc.version },
+								edits: [{ range: range(change.range, doc), newText: change.text }],
+							} satisfies ls.TextDocumentEdit
+					}
+				}),
+			}
+			: undefined,
 	}
 }
 

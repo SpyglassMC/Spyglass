@@ -69,5 +69,11 @@ export interface LanguageErrorInfo {
 export interface LanguageErrorAction {
 	title: string
 	isPreferred?: boolean
-	// TODO
+	changes?: CodeActionChange[]
+}
+
+export type CodeActionChange = {
+	type: 'edit'
+	range: Range
+	text: string
 }

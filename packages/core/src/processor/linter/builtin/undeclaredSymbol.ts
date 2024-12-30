@@ -21,17 +21,6 @@ export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
 		})
 	}
 	if (Config.Action.isReport(action)) {
-		const info = FileCategories.includes(node.symbol.category as FileCategory)
-			? {
-				codeAction: {
-					title: localize(
-						'code-action.create-undeclared-file',
-						node.symbol.category,
-						localeQuote(node.symbol.identifier),
-					),
-				},
-			} satisfies LanguageErrorInfo
-			: undefined
 		const severityOverride = action.report === 'inherit'
 			? undefined
 			: LinterSeverity.toErrorSeverity(action.report)
@@ -42,7 +31,7 @@ export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
 				localeQuote(node.symbol.identifier),
 			),
 			node,
-			info,
+			undefined,
 			severityOverride,
 		)
 	}

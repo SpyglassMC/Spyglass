@@ -27,8 +27,7 @@ export const file: CodeActionProvider<FileNode<AstNode>> = (node, ctx) => {
 			continue
 		}
 		ans.push({
-			title: action.title,
-			isPreferred: action.isPreferred,
+			...action,
 			errors: [error],
 		})
 	}
