@@ -191,6 +191,11 @@ export function codeAction(codeAction: core.CodeAction, doc: TextDocument): ls.C
 								textDocument: { uri: doc.uri, version: doc.version },
 								edits: [{ range: range(change.range, doc), newText: change.text }],
 							} satisfies ls.TextDocumentEdit
+						case 'create':
+							return {
+								kind: 'create',
+								uri: change.uri,
+							} satisfies ls.CreateFile
 					}
 				}),
 			}

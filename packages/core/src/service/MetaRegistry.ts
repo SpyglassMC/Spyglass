@@ -25,6 +25,7 @@ import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider.j
 import type { DependencyKey, DependencyProvider } from './Dependency.js'
 import type { FileExtension } from './fileUtil.js'
 import type { SymbolRegistrar } from './SymbolRegistrar.js'
+import type { UriBuilder } from './UriBuilder.js'
 import type { UriBinder, UriSorter, UriSorterRegistration } from './UriProcessor.js'
 
 export interface LanguageOptions {
@@ -76,6 +77,7 @@ export class MetaRegistry {
 	readonly #symbolRegistrars = new Map<string, SymbolRegistrarRegistration>()
 	readonly #custom = new Map<string, Map<string, unknown>>()
 	readonly #uriBinders = new Set<UriBinder>()
+	readonly #uriBuilders = new Map<string, UriBuilder>()
 	#uriSorter: UriSorter = () => 0
 
 	constructor() {
@@ -298,6 +300,16 @@ export class MetaRegistry {
 	}
 	public get uriBinders(): Set<UriBinder> {
 		return this.#uriBinders
+	}
+
+	public hasUriBuilder(category: string): boolean {
+		return this.#uriBuilders.has(category)
+	}
+	public getUriBuilder(category: string): UriBuilder | undefined {
+		return this.#uriBuilders.get(category)
+	}
+	public registerUriBuilder(category: string, builder: UriBuilder): void {
+		this.#uriBuilders.set(category, builder)
 	}
 
 	public setUriSorter(uriSorter: UriSorterRegistration): void {

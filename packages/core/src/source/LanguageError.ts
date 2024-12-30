@@ -76,4 +76,7 @@ export type CodeActionChange = {
 	type: 'edit'
 	range: Range
 	text: string
+} | {
+	type: 'create'
+	uri: string
 }

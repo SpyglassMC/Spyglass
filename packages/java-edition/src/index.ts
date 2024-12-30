@@ -2,7 +2,7 @@ import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
-import { uriBinder } from './binder/index.js'
+import { registerUriBuilders, uriBinder } from './binder/index.js'
 import type { McmetaSummary, McmetaVersions, PackInfo } from './dependency/index.js'
 import {
 	getMcmetaSummary,
@@ -72,6 +72,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	}
 
 	meta.registerUriBinder(uriBinder)
+	registerUriBuilders(meta)
 
 	const versions = await getVersions(ctx.externals, ctx.downloader)
 	if (!versions) {
