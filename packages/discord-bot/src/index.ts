@@ -1,10 +1,5 @@
 #!/usr/bin/env node
 
-import {
-	SlashCommandBooleanOption,
-	SlashCommandBuilder,
-	SlashCommandStringOption,
-} from '@discordjs/builders'
 import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
 import {
 	ErrorSeverity,
@@ -19,8 +14,6 @@ import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import {
 	ActionRowBuilder,
-	APIActionRowComponent,
-	APIMessageActionRowComponent,
 	ButtonBuilder,
 	ButtonStyle,
 	Client,
@@ -29,7 +22,11 @@ import {
 	GatewayIntentBits,
 	REST,
 	Routes,
+	SlashCommandBooleanOption,
+	SlashCommandBuilder,
+	SlashCommandStringOption,
 } from 'discord.js'
+import type { APIActionRowComponent, APIMessageActionRowComponent } from 'discord.js'
 import { join } from 'path'
 import { env } from 'process'
 import { pathToFileURL } from 'url'
@@ -277,11 +274,13 @@ function getReplyContent(info: InteractionInfo): string {
 
 	const activeError: LanguageError | undefined = errors[activeErrorIndex]
 
-	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${activeError
-		? `\n\`${errorSeverityToChar(activeError.severity)} ${Range.toString(activeError.range)
-		} ${activeError.message}\``
-		: ''
-		}`
+	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${
+		activeError
+			? `\n\`${errorSeverityToChar(activeError.severity)} ${
+				Range.toString(activeError.range)
+			} ${activeError.message}\``
+			: ''
+	}`
 }
 
 /**
