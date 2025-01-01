@@ -9,7 +9,9 @@ module.exports = {
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"tsconfigRootDir": __dirname,
-		"project": "./packages/**/tsconfig.json"
+		// Avoid Out of Memory error
+		// https://github.com/typescript-eslint/typescript-eslint/issues/1192
+		"project": "./packages/tsconfig-eslint.json"
 	},
 	"plugins": [
 		"@typescript-eslint",
