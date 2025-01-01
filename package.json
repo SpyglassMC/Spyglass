@@ -7,6 +7,8 @@
 		"node": "^18.18.0 || >=20.0.0"
 	},
 	"scripts": {
+		"ansible:prod": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml\" ansible/playbook.yml",
+		"ansible:prod:verbose": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml\" ansible/playbook.yml -vvv",
 		"build": "wireit",
 		"build:dev": "wireit",
 		"watch": "npm run build:dev --watch",

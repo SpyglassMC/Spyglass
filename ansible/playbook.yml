@@ -1,0 +1,14 @@
+- name: Install spyglassmc.ai Cloud (TM)
+  hosts: all
+  roles:
+    # - api
+      # https://api.spyglassmc.com/
+      # GET /mcje/versions/
+      # GET /mcje/blocks/{version}
+      # GET /mcje/commands/{version}
+      # GET /mcje/registries/{version}
+      # GET /mcje/vanilla-data/{version}
+      # GET /mcje/vanilla-assets-tiny/{version}
+      # GET /vanilla-mcdoc/
+    # - discord-bot
+    - weblate

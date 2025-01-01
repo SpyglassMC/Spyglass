@@ -1,0 +1,13 @@
+- name: Install nvm
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    executable: bash
+    creates: '{{ ansible_env.HOME }}/.nvm/nvm.sh'
+
+- name: Install Node.js
+  ansible.builtin.shell:
+    cmd: . /home/ansible/.nvm/nvm.sh && nvm install --lts
+    executable: bash
+    creates: '{{ ansible_env.HOME }}/.nvm/versions/node/'
