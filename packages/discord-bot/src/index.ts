@@ -1,28 +1,38 @@
+#!/usr/bin/env node
+
 import {
 	SlashCommandBooleanOption,
 	SlashCommandBuilder,
 	SlashCommandStringOption,
 } from '@discordjs/builders'
-import { REST } from '@discordjs/rest'
 import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
 import {
-	ConfigService,
 	ErrorSeverity,
 	FileNode,
 	fileUtil,
 	ProfilerFactory,
 	Range,
 	Service,
-	VanillaConfig,
 } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import { Routes } from 'discord-api-types/rest/v9'
-import type { Snowflake } from 'discord.js'
-import { Client, Intents, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js'
-import { dirname, join } from 'path'
-import { fileURLToPath, pathToFileURL } from 'url'
+import {
+	ActionRowBuilder,
+	APIActionRowComponent,
+	APIMessageActionRowComponent,
+	ButtonBuilder,
+	ButtonStyle,
+	Client,
+	ComponentType,
+	EmbedBuilder,
+	GatewayIntentBits,
+	REST,
+	Routes,
+} from 'discord.js'
+import { join } from 'path'
+import { env } from 'process'
+import { pathToFileURL } from 'url'
 
 export declare const __dirname: undefined // Not defined in ES module scope
 const MaxContentLength = 2000
@@ -31,28 +41,31 @@ const ProfilerId = 'discord-bot#startup'
 const profilers = new ProfilerFactory(console, [ProfilerId])
 const __profiler = profilers.get(ProfilerId)
 
-const parentPath = dirname(fileURLToPath(import.meta.url))
-const cacheRoot = join(parentPath, 'cache')
-const projectPath = join(parentPath, 'project-root')
+const rootPath = env.SPYGLASSMC_DISCORD_BOT_DIR
+if (!rootPath) {
+	throw new Error('Environment variable SPYGLASSMC_DISCORD_BOT_DIR expected.')
+}
+const cacheRoot = join(rootPath, 'cache')
+const projectPath = join(rootPath, 'project-root')
 await fileUtil.ensureDir(NodeJsExternals, projectPath)
 console.log(`cacheRoot = ${cacheRoot}`)
 console.log(`projectPath = ${projectPath}`)
 
 const config = await loadConfig()
-const rest = new REST({ version: '9' }).setToken(config.token)
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+const rest = new REST({ version: '10' }).setToken(config.token)
+const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 const service = new Service({
 	logger: console,
 	profilers,
 	project: {
 		cacheRoot: fileUtil.ensureEndingSlash(pathToFileURL(cacheRoot).toString()),
-		defaultConfig: ConfigService.merge(VanillaConfig, { env: { dependencies: [] } }),
+		// defaultConfig: ConfigService.merge(VanillaConfig, { env: { dependencies: [] } }),
 		externals: NodeJsExternals,
 		initializers: [mcdoc.initialize, je.initialize],
 		projectRoots: [fileUtil.ensureEndingSlash(pathToFileURL(projectPath).toString())],
 	},
 })
-const DocumentUri = 'spyglassmc://discord-bot/file.mcfunction'
+const DocumentUri = pathToFileURL(`${rootPath}/virtual/file.mcfunction`).toString()
 
 interface InteractionInfo {
 	content: string
@@ -61,27 +74,10 @@ interface InteractionInfo {
 	tokens: readonly ColorToken[]
 	showRaw: boolean
 }
-const activeInteractions = new Map<Snowflake, InteractionInfo>()
 
 client.on('interactionCreate', async (i) => {
 	try {
-		if (i.isButton()) {
-			const info = activeInteractions.get(i.message.id)
-			if (!info) {
-				await i.update({
-					embeds: [new MessageEmbed().setDescription('The interaction has expired!')],
-					components: [],
-				})
-				return
-			}
-
-			if (i.customId === 'previous') {
-				info.activeErrorIndex--
-			} else if (i.customId === 'next') {
-				info.activeErrorIndex++
-			}
-			await i.update(getReplyOptions(info))
-		} else if (i.isCommand()) {
+		if (i.isChatInputCommand()) {
 			switch (i.commandName) {
 				case 'ping':
 					await i.reply({
@@ -94,7 +90,30 @@ client.on('interactionCreate', async (i) => {
 					const showRaw = i.options.getBoolean('showraw', false) ?? false
 					const info = await getInteractionInfo(command, showRaw)
 					const reply = await i.reply(getReplyOptions(info))
-					activeInteractions.set(reply.id, info)
+					const collector = reply.createMessageComponentCollector({
+						componentType: ComponentType.Button,
+						time: 3_600_000, // 1 hour
+					})
+					collector
+						.on('collect', async (bi) => {
+							if (bi.user.id !== i.user.id) {
+								// Only allow creator of the interaction to interact.
+								return
+							}
+
+							if (bi.customId === 'previous') {
+								info.activeErrorIndex--
+							} else if (bi.customId === 'next') {
+								info.activeErrorIndex++
+							}
+							await bi.update(getReplyOptions(info))
+						})
+						.on('end', async () => {
+							await i.editReply({
+								embeds: [new EmbedBuilder().setDescription('The interaction has expired!')],
+								components: [],
+							})
+						})
 					break
 			}
 		}
@@ -122,7 +141,7 @@ interface Config {
  * @throws
  */
 async function loadConfig(): Promise<Config> {
-	const path = join(parentPath, 'config.json')
+	const path = join(rootPath!, 'config.json')
 	const config = (await fileUtil.readJson(NodeJsExternals, path)) as Config
 	if (
 		!(typeof config.clientId === 'string'
@@ -159,10 +178,6 @@ async function registerCommands(): Promise<unknown> {
 }
 
 async function getInteractionInfo(content: string, showRaw: boolean): Promise<InteractionInfo> {
-	if (activeInteractions.has(content)) {
-		return activeInteractions.get(content)!
-	}
-
 	await service.project.onDidOpen(DocumentUri, 'mcfunction', 0, content)
 	const docAndNode = await service.project.ensureClientManagedChecked(DocumentUri)
 	service.project.onDidClose(DocumentUri)
@@ -180,20 +195,28 @@ async function getInteractionInfo(content: string, showRaw: boolean): Promise<In
 
 function getReplyOptions(
 	info: InteractionInfo,
-): { content: string; components: MessageActionRow[]; fetchReply: true } {
+): {
+	content: string
+	components: APIActionRowComponent<APIMessageActionRowComponent>[]
+	fetchReply: true
+} {
 	const content = getReplyContent(info)
 	return {
 		content: content.length > MaxContentLength
 			? `Skipped colorizing due to Discord length limit.\n\`\`\`\n${info.content}\n\`\`\``
 			: content,
 		components: info.errors.length > 1
-			? [new MessageActionRow().addComponents(
-				new MessageButton().setCustomId('previous').setLabel('Previous Error').setStyle(
-					'PRIMARY',
-				).setDisabled(info.activeErrorIndex <= 0),
-				new MessageButton().setCustomId('next').setLabel('Next Error').setStyle('PRIMARY')
-					.setDisabled(info.activeErrorIndex >= info.errors.length - 1),
-			)]
+			? [
+				new ActionRowBuilder<ButtonBuilder>().addComponents(
+					new ButtonBuilder().setCustomId('previous').setLabel('Previous Error').setStyle(
+						ButtonStyle.Primary,
+					).setDisabled(info.activeErrorIndex <= 0),
+					new ButtonBuilder().setCustomId('next').setLabel('Next Error').setStyle(
+						ButtonStyle.Primary,
+					)
+						.setDisabled(info.activeErrorIndex >= info.errors.length - 1),
+				).toJSON(),
+			]
 			: [],
 		fetchReply: true,
 	}
@@ -249,18 +272,16 @@ const ColorTokenTypeLegend: Record<ColorTokenType, Set<RenderFormat>> = {
 }
 
 function getReplyContent(info: InteractionInfo): string {
-	const { content, tokens, errors, activeErrorIndex } = info
+	const { content, errors, activeErrorIndex } = info
 	const ansiCode = getAnsiCode(content, toRenderTokens(info))
 
 	const activeError: LanguageError | undefined = errors[activeErrorIndex]
 
-	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${
-		activeError
-			? `\n\`${errorSeverityToChar(activeError.severity)} ${
-				Range.toString(activeError.range)
-			} ${activeError.message}\``
-			: ''
-	}`
+	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${activeError
+		? `\n\`${errorSeverityToChar(activeError.severity)} ${Range.toString(activeError.range)
+		} ${activeError.message}\``
+		: ''
+		}`
 }
 
 /**
