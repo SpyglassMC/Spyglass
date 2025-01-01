@@ -1,13 +1,58 @@
-- name: Install nvm
-  ansible.builtin.shell:
-    cmd: |
-      set -o pipefail
-      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-    executable: bash
-    creates: '{{ ansible_env.HOME }}/.nvm/nvm.sh'
+- name: Install n
+  become: true
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/tj/n/master/bin/n
+    dest: /usr/local/bin/n
+    mode: '755'
 
 - name: Install Node.js
-  ansible.builtin.shell:
-    cmd: . /home/ansible/.nvm/nvm.sh && nvm install --lts
-    executable: bash
-    creates: '{{ ansible_env.HOME }}/.nvm/versions/node/'
+  become: true
+  ansible.builtin.command:
+    cmd: n lts
+    creates: /usr/local/bin/node
+
+- name: Install discord bot
+  become: true
+  community.general.npm:
+    name: '@spyglassmc/discord-bot'
+    global: true
+    state: latest
+
+- name: Create user
+  become: true
+  block:
+    - name: Create group
+      ansible.builtin.group:
+        name: discord-bot
+        system: true
+
+    - name: Create user
+      ansible.builtin.user:
+        name: discord-bot
+        group: discord-bot
+        create_home: true
+        home: /var/lib/discord-bot
+        system: true
+
+- name: Create config
+  become: true
+  become_user: discord-bot
+  ansible.builtin.template:
+    src: config.json
+    dest: /var/lib/discord-bot/config.json
+    mode: '600'
+
+- name: Create service
+  become: true
+  ansible.builtin.copy:
+    src: spyglassmc-discord-bot.service
+    dest: /lib/systemd/system/spyglassmc-discord-bot.service
+    mode: '644'
+  notify: Reload systemctl daemon
+
+- name: Start service
+  become: true
+  ansible.builtin.service:
+    name: spyglassmc-discord-bot
+    enabled: true
+    state: started

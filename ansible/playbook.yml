@@ -10,5 +10,5 @@
       # GET /mcje/vanilla-data/{version}
       # GET /mcje/vanilla-assets-tiny/{version}
       # GET /vanilla-mcdoc/
-    # - discord-bot
+    - discord-bot
     - weblate

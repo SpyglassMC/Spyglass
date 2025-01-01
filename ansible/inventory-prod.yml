@@ -1,6 +1,6 @@
 ungrouped:
   hosts:
-    ssh.spyglassmc.com:
+    api.spyglassmc.com:
       ansible_user: ansible
       ansible_ssh_private_key_file: ~/.ssh/spyglassmc-ansible
   vars:
