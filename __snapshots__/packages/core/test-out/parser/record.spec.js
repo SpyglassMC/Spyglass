@@ -221,7 +221,11 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qu
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 32
+    }
   },
   "errors": [
     {
@@ -445,7 +449,11 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
           "end": 33
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 34
+    }
   },
   "errors": [
     {
@@ -681,7 +689,11 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 32
+    }
   },
   "errors": []
 }
@@ -890,7 +902,11 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 
           ]
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 26
+    }
   },
   "errors": [
     {
@@ -1104,7 +1120,11 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'
           ]
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 24
+    }
   },
   "errors": [
     {
@@ -1235,7 +1255,11 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
           "end": 17
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 18
+    }
   },
   "errors": [
     {
@@ -1370,7 +1394,11 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 16
+    }
   },
   "errors": []
 }
@@ -1478,7 +1506,11 @@ exports['record() record(no trailing comma) Parse "{ "foo" : }" 1'] = {
           ]
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 10
+    }
   },
   "errors": [
     {
@@ -1591,7 +1623,11 @@ exports['record() record(no trailing comma) Parse "{ "foo" }" 1'] = {
           ]
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 8
+    }
   },
   "errors": [
     {
@@ -1811,7 +1847,11 @@ exports['record() record(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 18
+    }
   },
   "errors": [
     {
@@ -1944,7 +1984,11 @@ exports['record() record(no trailing comma) Parse "{ : "bar" }" 1'] = {
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 10
+    }
   },
   "errors": [
     {
@@ -2059,7 +2103,11 @@ exports['record() record(no trailing comma) Parse "{ : }" 1'] = {
           ]
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 4
+    }
   },
   "errors": [
     {
@@ -2088,7 +2136,11 @@ exports['record() record(no trailing comma) Parse "{ }" 1'] = {
       "start": 0,
       "end": 3
     },
-    "children": []
+    "children": [],
+    "innerRange": {
+      "start": 1,
+      "end": 2
+    }
   },
   "errors": []
 }
@@ -2100,7 +2152,11 @@ exports['record() record(no trailing comma) Parse "{" 1'] = {
       "start": 0,
       "end": 1
     },
-    "children": []
+    "children": [],
+    "innerRange": {
+      "start": 1,
+      "end": 1
+    }
   },
   "errors": [
     {
@@ -2324,7 +2380,11 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
           "end": 33
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 34
+    }
   },
   "errors": []
 }
@@ -2535,7 +2595,11 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 32
+    }
   },
   "errors": []
 }
@@ -2649,7 +2713,11 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
           "end": 17
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 18
+    }
   },
   "errors": []
 }
@@ -2759,7 +2827,11 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
           "quote": "\""
         }
       }
-    ]
+    ],
+    "innerRange": {
+      "start": 1,
+      "end": 16
+    }
   },
   "errors": []
 }

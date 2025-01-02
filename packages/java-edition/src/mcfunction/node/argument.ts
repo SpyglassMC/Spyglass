@@ -272,6 +272,7 @@ export namespace ItemStackNode {
 export interface ComponentListNode extends core.AstNode {
 	type: 'mcfunction:component_list'
 	children: (ComponentNode | ComponentRemovalNode)[]
+	innerRange?: core.Range
 }
 
 export namespace ComponentListNode {
