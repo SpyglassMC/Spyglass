@@ -392,10 +392,11 @@ export namespace McdocType {
 			case 'byte':
 			case 'short':
 			case 'int':
-			case 'long':
 			case 'float':
 			case 'double':
 				return a.valueRange === (b as NumericType).valueRange
+			case 'long':
+				return a.valueRange === (b as LongType).valueRange
 			case 'string':
 				return a.lengthRange === (b as StringType).lengthRange
 			case 'byte_array':
