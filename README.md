@@ -1,6 +1,3 @@
-🚧 Under Heavy Construction 🚧
-
-This project is undergoing a complete rewrite. We're almost there.
 
 # Spyglass
 
