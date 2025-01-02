@@ -2,14 +2,23 @@ import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Logger } from '../common/index.js'
 import type { FileNode } from '../node/index.js'
 import { AstNode } from '../node/index.js'
-import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor/index.js'
+import type {
+	CodeAction,
+	Color,
+	ColorInfo,
+	ColorToken,
+	InlayHint,
+	SignatureHelp,
+} from '../processor/index.js'
 import { ColorPresentation, completer, traversePreOrder } from '../processor/index.js'
 import { Range } from '../source/index.js'
 import type { SymbolLocation, SymbolUsageType } from '../symbol/index.js'
 import { SymbolUsageTypes } from '../symbol/index.js'
 import {
+	CodeActionProviderContext,
 	ColorizerContext,
 	CompleterContext,
+	ContextBase,
 	FormatterContext,
 	ProcessorContext,
 	SignatureHelpProviderContext,
@@ -57,6 +66,18 @@ export class Service {
 			return colorizer(node, ColorizerContext.create(this.project, { doc, range }))
 		} catch (e) {
 			this.logger.error(`[Service] [colorize] Failed for ${doc.uri} # ${doc.version}`, e)
+		}
+		return []
+	}
+
+	getCodeActions(node: FileNode<AstNode>, doc: TextDocument, range: Range): readonly CodeAction[] {
+		try {
+			this.debug(`Getting code actions ${doc.uri} # ${doc.version} @ ${Range.toString(range)}`)
+			const codeActionProvider = this.project.meta.getCodeActionProvider(node.type)
+			const ctx = CodeActionProviderContext.create(this.project, { doc, range })
+			return codeActionProvider(node, ctx)
+		} catch (e) {
+			this.logger.error(`[Service] [getCodeActions] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 		return []
 	}

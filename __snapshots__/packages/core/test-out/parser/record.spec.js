@@ -454,7 +454,23 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
         "end": 33
       },
       "message": "Trailing separation",
-      "severity": 3
+      "severity": 3,
+      "info": {
+        "codeAction": {
+          "title": "Remove trailing separation",
+          "isPreferred": true,
+          "changes": [
+            {
+              "type": "edit",
+              "range": {
+                "start": 32,
+                "end": 33
+              },
+              "text": ""
+            }
+          ]
+        }
+      }
     }
   ]
 }
@@ -1228,7 +1244,23 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
         "end": 17
       },
       "message": "Trailing separation",
-      "severity": 3
+      "severity": 3,
+      "info": {
+        "codeAction": {
+          "title": "Remove trailing separation",
+          "isPreferred": true,
+          "changes": [
+            {
+              "type": "edit",
+              "range": {
+                "start": 16,
+                "end": 17
+              },
+              "text": ""
+            }
+          ]
+        }
+      }
     }
   ]
 }

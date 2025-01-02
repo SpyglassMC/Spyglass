@@ -11,7 +11,7 @@ import type { Project } from './Project.js'
  * The format version of the cache. Should be increased when any changes that
  * could invalidate the cache are introduced to the Spyglass codebase.
  */
-export const LatestCacheVersion = 5
+export const LatestCacheVersion = 6
 
 /**
  * Checksums of cached files or roots.
@@ -174,11 +174,11 @@ export class CacheService {
 				ans.unchangedFiles.push(uri)
 				continue
 			}
-
-			if (this.project.ignore.ignores(uri)) {
-				ans.unchangedFiles.push(uri)
+			if (this.project.shouldExclude(uri)) {
+				ans.removedFiles.push(uri)
 				continue
 			}
+
 			try {
 				const hash = await this.project.fs.hash(uri)
 				if (hash === checksum) {

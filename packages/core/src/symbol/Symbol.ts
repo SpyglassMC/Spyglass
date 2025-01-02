@@ -16,7 +16,7 @@ export type McdocCategory = (typeof McdocCategories)[number]
 export const RegistryCategories = Object.freeze(
 	[
 		'activity',
-		'armor_material',
+		'armor_material', // Removed
 		'attribute',
 		'block',
 		'block_entity_type',
@@ -25,10 +25,12 @@ export const RegistryCategories = Object.freeze(
 		'cat_variant',
 		'chunk_status',
 		'command_argument_type',
+		'consume_effect_type',
 		'creative_mode_tab',
 		'custom_stat',
 		'data_component_type',
 		'decorated_pot_pattern',
+		'decorated_pot_patterns', // Removed
 		'enchantment_effect_component_type',
 		'enchantment_entity_effect_type',
 		'enchantment_level_based_value_type',
@@ -63,12 +65,15 @@ export const RegistryCategories = Object.freeze(
 		'pos_rule_test',
 		'position_source_type',
 		'potion',
+		'recipe_book_category',
+		'recipe_display',
 		'recipe_serializer',
 		'recipe_type',
 		'rule_block_entity_modifier',
 		'rule_test',
 		'schedule',
 		'sensor_type',
+		'slot_display',
 		'sound_event',
 		'stat_type',
 		'trigger_type',
@@ -170,12 +175,12 @@ export const TagFileCategories = Object.freeze(
 )
 export type TagFileCategory = (typeof TagFileCategories)[number]
 
-export const FileCategories = Object.freeze(
+export const DataFileCategories = Object.freeze(
 	[...NormalFileCategories, ...TagFileCategories, ...WorldgenFileCategories] as const,
 )
-export type FileCategory = (typeof FileCategories)[number]
+export type DataFileCategory = (typeof DataFileCategories)[number]
 
-export const MiscCategories = Object.freeze(
+export const DataMiscCategories = Object.freeze(
 	[
 		'attribute_modifier',
 		'bossbar',
@@ -184,7 +189,7 @@ export const MiscCategories = Object.freeze(
 		'storage',
 	] as const,
 )
-export type MiscCategory = (typeof MiscCategories)[number]
+export type DataMiscCategory = (typeof DataMiscCategories)[number]
 
 export const DatapackCategories = Object.freeze(
 	[
@@ -193,22 +198,80 @@ export const DatapackCategories = Object.freeze(
 		'score_holder',
 		'tag',
 		'team',
-		...FileCategories,
-		...MiscCategories,
+		...DataFileCategories,
+		...DataMiscCategories,
 	] as const,
 )
 export type DatapackCategory = (typeof DatapackCategories)[number]
 // #endregion
 
+// #region Resource Pack Categories
+export const AssetsFileCategories = Object.freeze(
+	[
+		'atlas',
+		'block_definition', // blockstates
+		'equipment',
+		'font',
+		'font/ttf',
+		'font/otf',
+		'font/unihex',
+		'gpu_warnlist',
+		'item_definition', // items
+		'lang',
+		'lang/deprecated',
+		'model',
+		'particle',
+		'post_effect',
+		'regional_compliancies',
+		'shader',
+		'shader/fragment',
+		'shader/vertex',
+		'sound',
+		'sounds', // sounds.json
+		'texture',
+		'texture_meta', // *.png.mcmeta
+	] as const,
+)
+export type AssetsFileCategory = (typeof AssetsFileCategories)[number]
+
+export const AssetsMiscCategories = Object.freeze(
+	[
+		'texture_slot',
+		'shader_target',
+		'translation_key',
+	] as const,
+)
+export type AssetsMiscCategory = (typeof AssetsMiscCategories)[number]
+
+export const ResourcepackCategories = Object.freeze(
+	[
+		...AssetsMiscCategories,
+		...AssetsFileCategories,
+	] as const,
+)
+export type ResourcepackCategory = (typeof ResourcepackCategories)[number]
+// #endregion
+
+export const FileCategories = Object.freeze(
+	[...DataFileCategories, ...AssetsFileCategories] as const,
+)
+export type FileCategory = (typeof FileCategories)[number]
+
 export const AllCategories = Object.freeze(
-	[...DatapackCategories, ...McdocCategories, ...RegistryCategories] as const,
+	[
+		...DatapackCategories,
+		...ResourcepackCategories,
+		...McdocCategories,
+		...RegistryCategories,
+	] as const,
 )
 export type AllCategory = (typeof AllCategories)[number]
 
 export const ResourceLocationCategories = Object.freeze(
 	[
 		'mcdoc/dispatcher',
-		...MiscCategories,
+		...DataMiscCategories,
+		...AssetsMiscCategories,
 		...FileCategories,
 		...RegistryCategories,
 	] as const,

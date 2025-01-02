@@ -13,7 +13,3 @@ export function identifierToSeg(identifier: string): Segments {
 export function segToIdentifier(seg: Segments): string {
 	return `::${seg.join('::')}`
 }
-
-export interface AdditionalContext {
-	moduleIdentifier: string
-}

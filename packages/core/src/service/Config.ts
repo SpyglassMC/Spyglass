@@ -2,7 +2,7 @@ import rfdc from 'rfdc'
 import type { ExternalEventEmitter } from '../common/index.js'
 import { Arrayable, bufferToString, merge, TypePredicates } from '../common/index.js'
 import { ErrorSeverity } from '../source/index.js'
-import { FileCategories, RegistryCategories } from '../symbol/index.js'
+import { DataFileCategories, FileCategories, RegistryCategories } from '../symbol/index.js'
 import type { Project } from './Project.js'
 /* eslint-disable no-restricted-syntax */
 
@@ -65,7 +65,7 @@ export interface EnvConfig {
 	 */
 	dependencies: string[]
 	/**
-	 * A list of file patterns to exclude. Each value in this array can either be a glob pattern or the special string `@gitignore`.
+	 * A list of file patterns to exclude.
 	 */
 	exclude: string[]
 	/**
@@ -115,6 +115,12 @@ export interface EnvConfig {
 	>
 	permissionLevel: 1 | 2 | 3 | 4
 	plugins: string[]
+	/**
+	 * Whether to enable caching of mcdoc simplified types.
+	 *
+	 * May become corrupt after changing game versions, so this is currently disabled by default.
+	 */
+	enableMcdocCaching: boolean
 	/**
 	 * Makes the file-watcher use polling to watch for file changes.
 	 * Comes at a performance cost for very large datapacks.
@@ -329,8 +335,8 @@ export namespace SymbolLinterConfig {
 export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
-		dependencies: ['@vanilla-datapack', '@vanilla-mcdoc'],
-		exclude: ['@gitignore', '.vscode/', '.github/'],
+		dependencies: ['@vanilla-datapack', '@vanilla-resourcepack', '@vanilla-mcdoc'],
+		exclude: ['.*/**'],
 		customResources: {},
 		feature: {
 			codeActions: true,
@@ -362,6 +368,7 @@ export const VanillaConfig: Config = {
 		permissionLevel: 2,
 		plugins: [],
 		mcmetaSummaryOverrides: {},
+		enableMcdocCaching: false,
 		useFilePolling: false,
 	},
 	format: {
@@ -421,9 +428,13 @@ export const VanillaConfig: Config = {
 			{
 				if: [
 					{ category: RegistryCategories, namespace: 'minecraft' },
-					{ category: [...FileCategories, 'bossbar', 'objective', 'team'] },
+					{ category: [...DataFileCategories, 'bossbar', 'objective', 'team'] },
 				],
 				then: { report: 'warning' },
+			},
+			{
+				if: { category: ['attribute_modifier', 'attribute_modifier_uuid', 'tag'] },
+				then: { declare: 'public' },
 			},
 			{
 				then: { declare: 'block' },

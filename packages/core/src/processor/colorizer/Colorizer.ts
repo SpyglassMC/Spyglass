@@ -60,6 +60,7 @@ export const ColorTokenTypes = Object.freeze(
 		'comment',
 		'enum',
 		'enumMember',
+		'escape',
 		'function',
 		'keyword',
 		'modifier',

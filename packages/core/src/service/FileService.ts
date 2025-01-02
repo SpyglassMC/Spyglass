@@ -242,6 +242,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	 */
 	private constructor(
 		private readonly externals: Externals,
+		private readonly logger: Logger,
 		private readonly entries: Map<string, Map<string, DecompressedFile>>,
 	) {}
 
@@ -267,7 +268,10 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	private getDataInArchive(archiveName: string, pathInArchive: string): Uint8Array {
 		const entries = this.entries.get(archiveName)
 		if (!entries) {
-			throw new Error(`Archive “${archiveName}” has not been loaded into the memory`)
+			throw this.externals.error.createKind(
+				'ENOENT',
+				`Archive “${archiveName}” has not been loaded into the memory`,
+			)
 		}
 		const entry = entries.get(pathInArchive)
 		if (!entry) {
@@ -287,6 +291,9 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 
 	*listFiles() {
 		for (const [archiveName, files] of this.entries.entries()) {
+			this.logger.info(
+				`[ArchiveUriSupporter#listFiles] Listing ${files.size} files from ${archiveName}`,
+			)
 			for (const file of files.values()) {
 				yield ArchiveUriSupporter.getUri(archiveName, file.path)
 			}
@@ -337,19 +344,22 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 					if (entries.has(archiveName)) {
 						throw new Error(`A different URI with ${archiveName} already exists`)
 					}
-
 					const files = await externals.archive.decompressBall(
 						await externals.fs.readFile(uri),
 						{ stripLevel: typeof info?.startDepth === 'number' ? info.startDepth : 0 },
 					)
+					/// Debug message for #1609
+					logger.info(
+						`[ArchiveUriSupporter#create] Extracted ${files.length} files from ${archiveName}`,
+					)
 					entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
 				}
 			} catch (e) {
-				logger.error(`[SpyglassUriSupporter#create] Bad dependency ${uri}`, e)
+				logger.error(`[ArchiveUriSupporter#create] Bad dependency ${uri}`, e)
 			}
 		}
 
-		return new ArchiveUriSupporter(externals, entries)
+		return new ArchiveUriSupporter(externals, logger, entries)
 	}
 }
 

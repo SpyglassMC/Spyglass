@@ -93,7 +93,7 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 		stringMocker: (_, __, ctx) => ScoreHolderNode.mock(ctx.offset),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'tag', () => undefined, {
-		stringParser: () => parser.tag('definition'), // TODO: make this a config
+		stringParser: () => parser.tag('reference'),
 		stringMocker: (_, __, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'tag' }),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'block_predicate', () => undefined, {
@@ -109,7 +109,7 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 			}),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'item_slots', () => undefined, {
-		stringParser: () => parser.itemSlots,
+		stringParser: (_, __, ctx) => core.literal({ pool: getItemSlotsArgumentValues(ctx) }),
 		stringMocker: (_, __, ctx) =>
 			core.LiteralNode.mock(ctx.offset, { pool: getItemSlotsArgumentValues(ctx) }),
 	})

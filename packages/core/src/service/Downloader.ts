@@ -74,7 +74,7 @@ export class Downloader {
 							const deserializer = cache.deserializer ?? ((b) => b)
 							const ans = await transformer(deserializer(cachedBuffer))
 							this.logger.info(
-								`[Downloader] [${id}] Skipped downloading thanks to cache ${cacheChecksum}`,
+								`[Downloader] [${id}] Skipped downloading thanks to cache ${cacheChecksum} (${cachedBuffer.length} bytes)`,
 							)
 							return ans
 						} catch (e) {
@@ -132,7 +132,7 @@ export class Downloader {
 					this.logger.error(`[Downloader] [${id}] Caching file ${cacheUri}`, e)
 				}
 			}
-			this.logger.info(`[Downloader] [${id}] Downloaded from ${uri}`)
+			this.logger.info(`[Downloader] [${id}] Downloaded from ${uri} (${buffer.length} bytes)`)
 			return await transformer(buffer)
 		} catch (e) {
 			this.logger.error(`[Downloader] [${id}] Downloading ${uri}`, e)
@@ -141,7 +141,9 @@ export class Downloader {
 					const cachedBuffer = await fileUtil.readFile(this.externals, cacheUri)
 					const deserializer = cache.deserializer ?? ((b) => b)
 					const ans = await transformer(deserializer(cachedBuffer))
-					this.logger.warn(`[Downloader] [${id}] Fell back to cached file ${cacheUri}`)
+					this.logger.warn(
+						`[Downloader] [${id}] Fell back to cached file ${cacheUri} (${cachedBuffer.length} bytes)`,
+					)
 					return ans
 				} catch (e) {
 					this.logger.error(

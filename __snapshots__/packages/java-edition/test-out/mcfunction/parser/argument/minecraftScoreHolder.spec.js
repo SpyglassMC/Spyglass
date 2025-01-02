@@ -5,8 +5,8 @@ exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"mu
       "start": 0,
       "end": 1
     },
-    "fakeName": {
-      "type": "symbol",
+    "wildcard": {
+      "type": "literal",
       "range": {
         "start": 0,
         "end": 1
@@ -24,8 +24,8 @@ exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"si
       "start": 0,
       "end": 1
     },
-    "fakeName": {
-      "type": "symbol",
+    "wildcard": {
+      "type": "literal",
       "range": {
         "start": 0,
         "end": 1

@@ -8,7 +8,9 @@ interface IdConfig {
 	tags?: 'allowed' | 'implicit' | 'required'
 	definition?: boolean
 	prefix?: '!'
+	path?: string
 	empty?: 'allowed'
+	exclude?: string[]
 }
 
 const idValidator = validator.alternatives<IdConfig>(
@@ -18,13 +20,18 @@ const idValidator = validator.alternatives<IdConfig>(
 		tags: validator.optional(validator.options('allowed', 'implicit', 'required')),
 		definition: validator.optional(validator.boolean),
 		prefix: validator.optional(validator.options('!')),
+		path: validator.optional(validator.string),
 		empty: validator.optional(validator.options('allowed')),
+		exclude: validator.optional(validator.alternatives<string[]>(
+			validator.map(validator.string, v => [v]),
+			validator.list(validator.string),
+		)),
 	}),
 	() => ({}),
 )
 
 function getResourceLocationOptions(
-	{ registry, tags, definition }: IdConfig,
+	{ registry, tags, definition, path }: IdConfig,
 	requireCanonical: boolean,
 	ctx: core.ContextBase,
 	typeDef?: core.DeepReadonly<SimplifiedMcdocTypeNoUnion>,
@@ -48,23 +55,20 @@ function getResourceLocationOptions(
 		registry = `tag/${registry}`
 	}
 	if (tags === 'allowed' || tags === 'required') {
-		if (core.TaggableResourceLocationCategory.is(registry)) {
-			return {
-				category: registry,
-				requireCanonical,
-				allowTag: true,
-				requireTag: tags === 'required',
-			}
-		}
-	} else if (core.ResourceLocationCategory.is(registry)) {
 		return {
-			category: registry,
+			category: registry as core.TaggableResourceLocationCategory,
 			requireCanonical,
-			usageType: definition ? 'definition' : 'reference',
+			allowTag: true,
+			requireTag: tags === 'required',
+			implicitPath: path,
 		}
 	}
-	ctx.logger.warn(`[mcdoc id] Unhandled registry ${registry}`)
-	return undefined
+	return {
+		category: registry as core.ResourceLocationCategory,
+		requireCanonical,
+		usageType: definition ? 'definition' : 'reference',
+		implicitPath: path,
+	}
 }
 
 interface IntegerConfig {
@@ -149,7 +153,21 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				if (config.prefix) {
 					return core.prefixed({ prefix: config.prefix, child: resourceLocation })(src, ctx)
 				}
-				return resourceLocation(src, ctx)
+				const node = resourceLocation(src, ctx)
+				if (config.exclude) {
+					const resourceLocation = core.ResourceLocationNode.toString(node, 'full')
+					for (const e of config.exclude ?? []) {
+						const excluded = core.ResourceLocation.lengthen(e)
+						if (resourceLocation === excluded) {
+							ctx.err.report(
+								localize('not-allowed-here', localeQuote(excluded)),
+								node,
+								core.ErrorSeverity.Warning,
+							)
+						}
+					}
+				}
+				return node
 			}
 		},
 		stringMocker: (config, typeDef, ctx) => {
@@ -236,6 +254,25 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 						return
 					default:
 						return
+				}
+			}
+		},
+	})
+	registerAttribute(meta, 'regex_pattern', () => undefined, {
+		checker: (_, typeDef) => {
+			if (typeDef.kind !== 'literal' || typeDef.value.kind !== 'string') {
+				return undefined
+			}
+			const pattern = typeDef.value.value
+			return (node, ctx) => {
+				try {
+					RegExp(pattern)
+				} catch (e) {
+					const message = e instanceof Error ? e.message : `${e}`
+					const error = message
+						.replace(/^Invalid regular expression: /, '')
+						.replace(/^\/.+\/: /, '')
+					ctx.err.report(localize('invalid-regex-pattern', error), node, 2)
 				}
 			}
 		},

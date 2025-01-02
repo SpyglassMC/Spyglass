@@ -3,7 +3,7 @@ import { ResourceLocation } from '../common/index.js'
 import type { ResourceLocationNode, ResourceLocationOptions } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
-import { Range } from '../source/index.js'
+import { ErrorSeverity, Range } from '../source/index.js'
 import type { InfallibleParser } from './Parser.js'
 
 const Terminators = new Set([
@@ -124,7 +124,25 @@ export function resourceLocation(
 			}
 
 			if (!ans.namespace && options.requireCanonical) {
-				ctx.err.report(localize('parser.resource-location.namespace-expected'), ans)
+				ctx.err.report(
+					localize('parser.resource-location.namespace-expected'),
+					ans,
+					ErrorSeverity.Error,
+					{
+						codeAction: {
+							title: localize('code-action.add-default-namespace'),
+							isPreferred: true,
+							changes: [
+								{
+									type: 'edit',
+									range: Range.create(start),
+									text: ResourceLocation.DefaultNamespace
+										+ ResourceLocation.NamespacePathSep,
+								},
+							],
+						},
+					},
+				)
 			}
 		}
 

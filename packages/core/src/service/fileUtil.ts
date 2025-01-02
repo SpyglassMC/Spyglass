@@ -76,6 +76,23 @@ export namespace fileUtil {
 		return getRels(uri, rootUris).next().value
 	}
 
+	export function* getRoots(
+		uri: string,
+		rootUris: readonly RootUriString[],
+	): Generator<RootUriString, undefined, unknown> {
+		for (const root of rootUris) {
+			const rel = getRelativeUriFromBase(uri, root)
+			if (rel !== undefined) {
+				yield root
+			}
+		}
+		return undefined
+	}
+
+	export function getRoot(uri: string, rootUris: readonly RootUriString[]): string | undefined {
+		return getRoots(uri, rootUris).next().value
+	}
+
 	export function isRootUri(uri: string): uri is RootUriString {
 		return uri.endsWith('/')
 	}
@@ -106,6 +123,14 @@ export namespace fileUtil {
 	export function basename(uri: string): string {
 		const i = uri.lastIndexOf('/')
 		return i >= 0 ? uri.slice(i + 1) : uri
+	}
+
+	/**
+	 * @returns The part from the beginning of the URI to the last `/`.
+	 */
+	export function dirname(uri: string): string {
+		const i = uri.lastIndexOf('/')
+		return i >= 0 ? uri.slice(0, i) : uri
 	}
 
 	/* istanbul ignore next */
