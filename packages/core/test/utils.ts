@@ -66,7 +66,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 		logger,
 		meta: data.meta ?? new MetaRegistry(),
 		profilers: data.profilers ?? ProfilerFactory.noop(),
-		projectRoot: data.projectRoot ?? 'file:///',
+		projectRoots: data.projectRoots ?? ['file:///'],
 		roots: data.roots ?? [],
 		symbols: data.symbols ?? new SymbolUtil({}, externals.event.EventEmitter),
 	}
@@ -278,7 +278,7 @@ export class SimpleProject {
 				node.binderErrors = ctx.err.dump()
 			})
 		} catch (e) {
-			throw new Error(format(`[bind] Failed for “${uri}”:`, e))
+			throw new Error(format(`[bind] Failed for ${uri}:`, e))
 		} finally {
 			this.#bindingInProgressUris.delete(uri)
 		}

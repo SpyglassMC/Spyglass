@@ -567,6 +567,16 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
           },
           {
             "inner": {
+              "start": 0,
+              "end": 1
+            },
+            "outer": {
+              "start": 3,
+              "end": 9
+            }
+          },
+          {
+            "inner": {
               "start": 3,
               "end": 4
             },

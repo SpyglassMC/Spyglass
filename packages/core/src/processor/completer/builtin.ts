@@ -181,11 +181,10 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 		return optimizePool(declarations)
 	}
 	const optimizePool = (pool: readonly string[]) => {
-		const defaultNsPrefix =
-			`${ResourceLocation.DefaultNamespace}${ResourceLocation.NamespacePathSep}`
+		const defaultNsPrefix = ResourceLocation.DefaultNamespace + ResourceLocation.NamespacePathSep
 		const defaultNsIds: string[] = []
 		const otherIds: string[] = []
-		for (const id of pool) {
+		for (const id of filterPool(pool)) {
 			if (id.startsWith(defaultNsPrefix)) {
 				defaultNsIds.push(id)
 			} else {
@@ -204,6 +203,20 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 		]
 		if (node.options.namespacePathSep === '.') {
 			return ans.map((v) => v.replace(ResourceLocation.NamespacePathSep, '.'))
+		}
+		return ans
+	}
+	const filterPool = (pool: readonly string[]) => {
+		if (!node.options.implicitPath) {
+			return pool
+		}
+		const ans = []
+		for (const id of pool) {
+			const sep = id.indexOf(ResourceLocation.NamespacePathSep)
+			const path = id.slice(sep + 1)
+			if (path.startsWith(node.options.implicitPath)) {
+				ans.push(id.slice(0, sep + 1) + path.slice(node.options.implicitPath.length))
+			}
 		}
 		return ans
 	}
@@ -226,7 +239,7 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 	if (node.options.category) {
 		const symbols = ctx.symbols.getVisibleSymbols(node.options.category, ctx.doc.uri)
 		const thisKey = Object.entries(symbols).flatMap(([key, symbol]) => {
-			if ((symbol.declaration?.[0] ?? symbol.definition?.[0])?.uri == ctx.doc.uri) {
+			if ((symbol.declaration?.[0] ?? symbol.definition?.[0])?.uri === ctx.doc.uri) {
 				return [key]
 			}
 			return []
@@ -270,7 +283,10 @@ export function escapeString(value: string, quote?: Quote) {
 	if (!quote) {
 		return value
 	}
-	return value.replaceAll('\\', '\\\\').replaceAll(quote, '\\"')
+	// Un-escape and then re-escape completion
+	value = CompletionItem.unescape(value)
+	value = value.replaceAll('\\', '\\\\').replaceAll(quote, '\\"')
+	return CompletionItem.escape(value)
 }
 
 export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {

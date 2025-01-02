@@ -2,6 +2,7 @@ import type {
 	Arrayable,
 	Completer,
 	CompleterContext,
+	DeepReadonly,
 	MetaRegistry,
 	Mutable,
 	RegistryCategory,
@@ -9,6 +10,7 @@ import type {
 } from '@spyglassmc/core'
 import {
 	AstNode,
+	binarySearch,
 	BooleanNode,
 	BrigadierStringOptions,
 	completer,
@@ -47,7 +49,6 @@ import {
 import type {
 	BlockStatesNode,
 	ComponentListNode,
-	ComponentTestsAllOfNode,
 	ComponentTestsNode,
 	EntitySelectorArgumentsNode,
 } from '../node/index.js'
@@ -70,6 +71,7 @@ import type { ArgumentTreeNode } from '../tree/index.js'
 
 export const getMockNodes: mcf.completer.MockNodesGetter = (
 	rawTreeNode,
+	prevNodes,
 	ctx: CompleterContext,
 ): Arrayable<AstNode> => {
 	const range = ctx.offset
@@ -194,6 +196,18 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return VectorNode.mock(range, { dimension: 2, integersOnly: true })
 		case 'minecraft:vec3':
 			return VectorNode.mock(range, { dimension: 3 })
+		case 'spyglassmc:criterion':
+			const advancementNode = prevNodes.length > 0
+				? prevNodes[prevNodes.length - 1].children[0]
+				: undefined
+			if (ResourceLocationNode.is(advancementNode)) {
+				return SymbolNode.mock(range, {
+					category: 'advancement',
+					subcategory: 'criterion',
+					parentPath: [ResourceLocationNode.toString(advancementNode, 'full')],
+				})
+			}
+			return []
 		case 'spyglassmc:tag':
 			return SymbolNode.mock(range, { category: 'tag' })
 		// ==== Unimplemented ====
@@ -261,19 +275,39 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 }
 
 const componentList: Completer<ComponentListNode> = (node, ctx) => {
-	return completer.record<ResourceLocationNode, nbt.NbtNode, ComponentListNode>({
-		key: (_record, pair, ctx, range) => {
-			const id = pair?.key
-				?? ResourceLocationNode.mock(pair?.key ?? range, { category: 'data_component_type' })
-			return completer.resourceLocation(id, ctx)
-		},
-		value: (_record, pair, ctx) => {
-			if (!pair.value) {
-				return []
-			}
-			return completer.dispatch(pair.value, ctx)
-		},
-	})(node, ctx)
+	if (!Range.contains(Range.translate(node, 1, -1), ctx.offset, true)) {
+		return []
+	}
+
+	const completeKey = (key: DeepReadonly<ResourceLocationNode> | undefined) => {
+		const id = key
+			?? ResourceLocationNode.mock(key ?? ctx.offset, { category: 'data_component_type' })
+		return completer.resourceLocation(id, ctx)
+	}
+
+	const index = binarySearch(
+		node.children,
+		ctx.offset,
+		(n, o) => Range.compareOffset(n.range, o, true),
+	)
+	const child = index >= 0 ? node.children[index] : undefined
+	if (!child) {
+		return [
+			...completer.literal(LiteralNode.mock(ctx.offset, { pool: ['!'] }), ctx),
+			...completeKey(undefined),
+		]
+	}
+
+	if (child.type === 'mcfunction:component_removal') {
+		return completeKey(child.key)
+	}
+	if ((child.key && Range.contains(child.key, ctx.offset, true))) {
+		return completeKey(child.key)
+	}
+	if (child.value && Range.contains(child.value, ctx.offset, true)) {
+		return completer.dispatch(child.value, ctx)
+	}
+	return []
 }
 
 const componentTests: Completer<ComponentTestsNode> = (node, ctx) => {
@@ -399,6 +433,7 @@ const scoreHolder: Completer<ScoreHolderNode> = (node, ctx) => {
 			ctx,
 		)
 		ans.push(
+			...completer.literal(LiteralNode.mock(node, { pool: ['*'] }), ctx),
 			...selector(
 				EntitySelectorNode.mock(node, { pool: EntitySelectorAtVariable.filterAvailable(ctx) }),
 				ctx,

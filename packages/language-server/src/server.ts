@@ -78,10 +78,13 @@ connection.onInitialize(async (params) => {
 				'project#ready#bind',
 			]),
 			project: {
+				defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
+					env: { gameVersion: initializationOptions?.gameVersion },
+				}),
 				cacheRoot: fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRoot).toString()),
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
-				projectRoot: core.fileUtil.ensureEndingSlash(workspaceFolders[0].uri),
+				projectRoots: workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri)),
 			},
 		})
 		service.project.on('documentErrored', async ({ errors, uri, version }) => {
@@ -111,6 +114,7 @@ connection.onInitialize(async (params) => {
 	const ans: ls.InitializeResult = {
 		serverInfo: { name: 'Spyglass Language Server' },
 		capabilities: {
+			codeActionProvider: {},
 			colorProvider: {},
 			completionProvider: { triggerCharacters: service.project.meta.getTriggerCharacters() },
 			declarationProvider: {},
@@ -169,6 +173,16 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 })
 
 connection.workspace.onDidRenameFiles(({}) => {})
+
+connection.onCodeAction(async ({ textDocument: { uri }, range }) => {
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
+	const codeActions = service.getCodeActions(node, doc, toCore.range(range, doc))
+	return codeActions.map(a => toLS.codeAction(a, doc))
+})
 
 connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)

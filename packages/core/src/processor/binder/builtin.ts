@@ -25,7 +25,11 @@ export function attempt<N extends AstNode>(
 	node: N,
 	ctx: BinderContext,
 ): AttemptResult | Promise<AttemptResult> {
-	const tempCtx: BinderContext = { ...ctx, err: new ErrorReporter(), symbols: ctx.symbols.clone() }
+	const tempCtx: BinderContext = {
+		...ctx,
+		err: new ErrorReporter(ctx.err.source),
+		symbols: ctx.symbols.clone(),
+	}
 
 	const processAfterBinder = () => {
 		StateProxy.undoChanges(node as StateProxy<N>)
@@ -134,11 +138,16 @@ export const dispatchSync = SyncBinder.create<AstNode>((node, ctx) => {
 
 export const resourceLocation = SyncBinder.create<ResourceLocationNode>((node, ctx) => {
 	const raw = ResourceLocationNode.toString(node, 'full')
-	const sanitizedRaw = ResourceLocation.lengthen(
+	let sanitizedRaw = ResourceLocation.lengthen(
 		node.options.namespacePathSep === '.'
 			? raw.replace(/\./g, ResourceLocation.NamespacePathSep)
 			: raw,
 	)
+	if (node.options.implicitPath) {
+		const sepIndex = sanitizedRaw.indexOf(ResourceLocation.NamespacePathSep)
+		sanitizedRaw = sanitizedRaw.substring(0, sepIndex + 1) + node.options.implicitPath
+			+ sanitizedRaw.substring(sepIndex + 1)
+	}
 	if (node.options.category) {
 		ctx.symbols.query(
 			ctx.doc,
@@ -160,6 +169,7 @@ export const symbol = SyncBinder.create<SymbolBaseNode>((node, ctx) => {
 	if (node.value) {
 		const path = node.options.parentPath ? [...node.options.parentPath, node.value] : [node.value]
 		ctx.symbols.query(ctx.doc, node.options.category, ...path).enter({
+			data: { subcategory: node.options.subcategory },
 			usage: { type: node.options.usageType, node, accessType: node.options.accessType },
 		})
 	}

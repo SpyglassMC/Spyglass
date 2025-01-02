@@ -28,16 +28,25 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 												children: {
 													add: {
 														children: {
+															id: {
+																properties: {
+																	category: 'attribute_modifier',
+																},
+															},
 															uuid: {
 																properties: {
 																	category: 'attribute_modifier_uuid',
-																	usageType: 'definition',
 																},
 															},
 														},
 													},
 													remove: {
 														children: {
+															id: {
+																properties: {
+																	category: 'attribute_modifier',
+																},
+															},
 															uuid: {
 																properties: {
 																	category: 'attribute_modifier_uuid',
@@ -49,6 +58,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 														children: {
 															get: {
 																children: {
+																	id: {
+																		properties: {
+																			category: 'attribute_modifier',
+																		},
+																	},
 																	uuid: {
 																		properties: {
 																			category: 'attribute_modifier_uuid',
@@ -510,6 +524,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							roll: {
 								children: {
 									range: {
+										properties: {
+											minSpan: 1,
+											maxSpan: 2147483646,
+										},
 										children: {
 											sequence: {
 												properties: {
@@ -524,6 +542,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							value: {
 								children: {
 									range: {
+										properties: {
+											minSpan: 1,
+											maxSpan: 2147483646,
+										},
 										children: {
 											sequence: {
 												properties: {
@@ -644,9 +666,6 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 								children: {
 									name: {
 										parser: 'spyglassmc:tag',
-										properties: {
-											usageType: 'definition',
-										},
 									},
 								},
 							},
@@ -767,6 +786,14 @@ const AdvancementTargets: PartialTreeNode = Object.freeze({
 						advancement: {
 							properties: {
 								category: 'advancement',
+							},
+							children: {
+								criterion: {
+									parser: 'spyglassmc:criterion',
+									properties: {
+										usageType: 'reference',
+									},
+								},
 							},
 						},
 					},
@@ -969,6 +996,22 @@ const ExecuteStoreTarget: PartialTreeNode = Object.freeze({
 					properties: {
 						category: 'bossbar',
 						accessType: SymbolAccessType.Write,
+					},
+				},
+			},
+		},
+		score: {
+			children: {
+				targets: {
+					properties: {
+						usageType: 'definition',
+					},
+					children: {
+						objective: {
+							properties: {
+								accessType: SymbolAccessType.Write,
+							},
+						},
 					},
 				},
 			},

@@ -70,6 +70,12 @@ export interface StringBaseNode extends AstNode {
 	value: string
 	readonly valueMap: IndexMap
 }
+export namespace StringBaseNode {
+	export function is(obj: object | undefined): obj is StringBaseNode {
+		return Array.isArray((obj as StringBaseNode | undefined)?.valueMap)
+			&& typeof (obj as StringBaseNode | undefined)?.options === 'object'
+	}
+}
 
 export interface StringNode extends StringBaseNode {
 	readonly type: 'string'

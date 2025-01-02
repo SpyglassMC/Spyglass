@@ -271,24 +271,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               },
                               "children": [
                                 {
-                                  "type": "string",
+                                  "type": "symbol",
                                   "range": {
                                     "start": 62,
                                     "end": 65
                                   },
-                                  "value": "qux",
-                                  "valueMap": [
-                                    {
-                                      "inner": {
-                                        "start": 0,
-                                        "end": 0
-                                      },
-                                      "outer": {
-                                        "start": 62,
-                                        "end": 62
-                                      }
-                                    }
-                                  ]
+                                  "value": "qux"
                                 },
                                 {
                                   "type": "boolean",
@@ -300,24 +288,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                 }
                               ],
                               "key": {
-                                "type": "string",
+                                "type": "symbol",
                                 "range": {
                                   "start": 62,
                                   "end": 65
                                 },
-                                "value": "qux",
-                                "valueMap": [
-                                  {
-                                    "inner": {
-                                      "start": 0,
-                                      "end": 0
-                                    },
-                                    "outer": {
-                                      "start": 62,
-                                      "end": 62
-                                    }
-                                  }
-                                ]
+                                "value": "qux"
                               },
                               "sep": {
                                 "start": 66,
@@ -369,24 +345,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                             },
                             "children": [
                               {
-                                "type": "string",
+                                "type": "symbol",
                                 "range": {
                                   "start": 62,
                                   "end": 65
                                 },
-                                "value": "qux",
-                                "valueMap": [
-                                  {
-                                    "inner": {
-                                      "start": 0,
-                                      "end": 0
-                                    },
-                                    "outer": {
-                                      "start": 62,
-                                      "end": 62
-                                    }
-                                  }
-                                ]
+                                "value": "qux"
                               },
                               {
                                 "type": "boolean",
@@ -398,24 +362,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               }
                             ],
                             "key": {
-                              "type": "string",
+                              "type": "symbol",
                               "range": {
                                 "start": 62,
                                 "end": 65
                               },
-                              "value": "qux",
-                              "valueMap": [
-                                {
-                                  "inner": {
-                                    "start": 0,
-                                    "end": 0
-                                  },
-                                  "outer": {
-                                    "start": 62,
-                                    "end": 62
-                                  }
-                                }
-                              ]
+                              "value": "qux"
                             },
                             "sep": {
                               "start": 66,
@@ -573,24 +525,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                             },
                             "children": [
                               {
-                                "type": "string",
+                                "type": "symbol",
                                 "range": {
                                   "start": 62,
                                   "end": 65
                                 },
-                                "value": "qux",
-                                "valueMap": [
-                                  {
-                                    "inner": {
-                                      "start": 0,
-                                      "end": 0
-                                    },
-                                    "outer": {
-                                      "start": 62,
-                                      "end": 62
-                                    }
-                                  }
-                                ]
+                                "value": "qux"
                               },
                               {
                                 "type": "boolean",
@@ -602,24 +542,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               }
                             ],
                             "key": {
-                              "type": "string",
+                              "type": "symbol",
                               "range": {
                                 "start": 62,
                                 "end": 65
                               },
-                              "value": "qux",
-                              "valueMap": [
-                                {
-                                  "inner": {
-                                    "start": 0,
-                                    "end": 0
-                                  },
-                                  "outer": {
-                                    "start": 62,
-                                    "end": 62
-                                  }
-                                }
-                              ]
+                              "value": "qux"
                             },
                             "sep": {
                               "start": 66,
@@ -671,24 +599,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                           },
                           "children": [
                             {
-                              "type": "string",
+                              "type": "symbol",
                               "range": {
                                 "start": 62,
                                 "end": 65
                               },
-                              "value": "qux",
-                              "valueMap": [
-                                {
-                                  "inner": {
-                                    "start": 0,
-                                    "end": 0
-                                  },
-                                  "outer": {
-                                    "start": 62,
-                                    "end": 62
-                                  }
-                                }
-                              ]
+                              "value": "qux"
                             },
                             {
                               "type": "boolean",
@@ -700,24 +616,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                             }
                           ],
                           "key": {
-                            "type": "string",
+                            "type": "symbol",
                             "range": {
                               "start": 62,
                               "end": 65
                             },
-                            "value": "qux",
-                            "valueMap": [
-                              {
-                                "inner": {
-                                  "start": 0,
-                                  "end": 0
-                                },
-                                "outer": {
-                                  "start": 62,
-                                  "end": 62
-                                }
-                              }
-                            ]
+                            "value": "qux"
                           },
                           "sep": {
                             "start": 66,
@@ -893,24 +797,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                             },
                             "children": [
                               {
-                                "type": "string",
+                                "type": "symbol",
                                 "range": {
                                   "start": 62,
                                   "end": 65
                                 },
-                                "value": "qux",
-                                "valueMap": [
-                                  {
-                                    "inner": {
-                                      "start": 0,
-                                      "end": 0
-                                    },
-                                    "outer": {
-                                      "start": 62,
-                                      "end": 62
-                                    }
-                                  }
-                                ]
+                                "value": "qux"
                               },
                               {
                                 "type": "boolean",
@@ -922,24 +814,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               }
                             ],
                             "key": {
-                              "type": "string",
+                              "type": "symbol",
                               "range": {
                                 "start": 62,
                                 "end": 65
                               },
-                              "value": "qux",
-                              "valueMap": [
-                                {
-                                  "inner": {
-                                    "start": 0,
-                                    "end": 0
-                                  },
-                                  "outer": {
-                                    "start": 62,
-                                    "end": 62
-                                  }
-                                }
-                              ]
+                              "value": "qux"
                             },
                             "sep": {
                               "start": 66,
@@ -991,24 +871,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                           },
                           "children": [
                             {
-                              "type": "string",
+                              "type": "symbol",
                               "range": {
                                 "start": 62,
                                 "end": 65
                               },
-                              "value": "qux",
-                              "valueMap": [
-                                {
-                                  "inner": {
-                                    "start": 0,
-                                    "end": 0
-                                  },
-                                  "outer": {
-                                    "start": 62,
-                                    "end": 62
-                                  }
-                                }
-                              ]
+                              "value": "qux"
                             },
                             {
                               "type": "boolean",
@@ -1020,24 +888,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                             }
                           ],
                           "key": {
-                            "type": "string",
+                            "type": "symbol",
                             "range": {
                               "start": 62,
                               "end": 65
                             },
-                            "value": "qux",
-                            "valueMap": [
-                              {
-                                "inner": {
-                                  "start": 0,
-                                  "end": 0
-                                },
-                                "outer": {
-                                  "start": 62,
-                                  "end": 62
-                                }
-                              }
-                            ]
+                            "value": "qux"
                           },
                           "sep": {
                             "start": 66,
@@ -1195,24 +1051,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                           },
                           "children": [
                             {
-                              "type": "string",
+                              "type": "symbol",
                               "range": {
                                 "start": 62,
                                 "end": 65
                               },
-                              "value": "qux",
-                              "valueMap": [
-                                {
-                                  "inner": {
-                                    "start": 0,
-                                    "end": 0
-                                  },
-                                  "outer": {
-                                    "start": 62,
-                                    "end": 62
-                                  }
-                                }
-                              ]
+                              "value": "qux"
                             },
                             {
                               "type": "boolean",
@@ -1224,24 +1068,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                             }
                           ],
                           "key": {
-                            "type": "string",
+                            "type": "symbol",
                             "range": {
                               "start": 62,
                               "end": 65
                             },
-                            "value": "qux",
-                            "valueMap": [
-                              {
-                                "inner": {
-                                  "start": 0,
-                                  "end": 0
-                                },
-                                "outer": {
-                                  "start": 62,
-                                  "end": 62
-                                }
-                              }
-                            ]
+                            "value": "qux"
                           },
                           "sep": {
                             "start": 66,
@@ -1293,24 +1125,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                         },
                         "children": [
                           {
-                            "type": "string",
+                            "type": "symbol",
                             "range": {
                               "start": 62,
                               "end": 65
                             },
-                            "value": "qux",
-                            "valueMap": [
-                              {
-                                "inner": {
-                                  "start": 0,
-                                  "end": 0
-                                },
-                                "outer": {
-                                  "start": 62,
-                                  "end": 62
-                                }
-                              }
-                            ]
+                            "value": "qux"
                           },
                           {
                             "type": "boolean",
@@ -1322,24 +1142,12 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                           }
                         ],
                         "key": {
-                          "type": "string",
+                          "type": "symbol",
                           "range": {
                             "start": 62,
                             "end": 65
                           },
-                          "value": "qux",
-                          "valueMap": [
-                            {
-                              "inner": {
-                                "start": 0,
-                                "end": 0
-                              },
-                              "outer": {
-                                "start": 62,
-                                "end": 62
-                              }
-                            }
-                          ]
+                          "value": "qux"
                         },
                         "sep": {
                           "start": 66,

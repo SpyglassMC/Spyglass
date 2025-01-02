@@ -1,5 +1,6 @@
 export * from './binder/index.js'
 export * from './checker/index.js'
+export * from './codeActions/index.js'
 export * from './ColorInfoProvider.js'
 export * from './colorizer/index.js'
 export * from './completer/index.js'

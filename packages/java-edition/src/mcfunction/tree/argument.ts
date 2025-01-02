@@ -59,8 +59,15 @@ export interface MinecraftEntityAnchorArgumentTreeNode extends mcf.ArgumentTreeN
 export interface MinecraftEntitySummonArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:entity_summon'
 }
+export interface RangeProperties extends Record<string, unknown> {
+	min: number
+	max: number
+	minSpan: number
+	maxSpan: number
+}
 export interface MinecraftFloatRangeArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:float_range'
+	properties?: RangeProperties
 }
 export interface MinecraftFunctionArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:function'
@@ -76,6 +83,7 @@ export interface MinecraftHeightmapArgumentTreeNode extends mcf.ArgumentTreeNode
 }
 export interface MinecraftIntRangeArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:int_range'
+	properties?: RangeProperties
 }
 export interface MinecraftItemEnchantmentArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:item_enchantment'
@@ -238,6 +246,9 @@ export interface MinecraftVec2ArgumentTreeNode extends mcf.ArgumentTreeNode {
 export interface MinecraftVec3ArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:vec3'
 }
+export interface SpyglassmcCriterionArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'spyglassmc:criterion'
+}
 export interface SpyglassmcTagArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'spyglassmc:tag'
 }
@@ -301,4 +312,5 @@ export type ArgumentTreeNode =
 	| MinecraftUuidArgumentTreeNode
 	| MinecraftVec2ArgumentTreeNode
 	| MinecraftVec3ArgumentTreeNode
+	| SpyglassmcCriterionArgumentTreeNode
 	| SpyglassmcTagArgumentTreeNode

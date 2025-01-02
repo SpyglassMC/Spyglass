@@ -3,6 +3,7 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 import type {
 	CommandChildNode,
 	CommandNode,
+	CommandOptions,
 	LiteralCommandChildNode,
 	TrailingCommandChildNode,
 	UnknownCommandChildNode,
@@ -20,17 +21,59 @@ import { literal } from './literal.js'
 export function command(
 	tree: RootTreeNode,
 	argument: ArgumentParserGetter,
+	options: CommandOptions = {},
 ): core.InfallibleParser<CommandNode> {
 	return (src, ctx): CommandNode => {
 		const ans: CommandNode = {
 			type: 'mcfunction:command',
 			range: core.Range.create(src),
 			children: [],
+			options,
 		}
 
 		const start = src.cursor
+		const innerStart = src.innerCursor
 		if (src.trySkip('/')) {
 			ans.slash = core.Range.create(start, src.cursor)
+			if (!options.slash) {
+				ctx.err.report(
+					localize('mcfunction.parser.leading-slash.unexpected'),
+					ans.slash,
+					core.ErrorSeverity.Error,
+					{
+						codeAction: {
+							title: localize('code-action.remove-leading-slash'),
+							isPreferred: true,
+							changes: [
+								{
+									type: 'edit',
+									range: ans.slash,
+									text: '',
+								},
+							],
+						},
+					},
+				)
+			}
+		} else if (options.slash === 'required') {
+			ctx.err.report(
+				localize('expected', localize('mcfunction.parser.leading-slash')),
+				core.Range.create(start, start + 1),
+				core.ErrorSeverity.Error,
+				{
+					codeAction: {
+						title: localize('code-action.add-leading-slash'),
+						isPreferred: true,
+						changes: [
+							{
+								type: 'edit',
+								range: core.Range.create(start),
+								text: '/',
+							},
+						],
+					},
+				},
+			)
 		}
 
 		dispatch(ans.children, src, ctx, [], tree, tree, argument)
@@ -47,6 +90,16 @@ export function command(
 		}
 
 		ans.range.end = src.cursor
+
+		if (options.maxLength) {
+			const commandLength = src.innerCursor - innerStart
+			if (commandLength > options.maxLength) {
+				ctx.err.report(
+					localize('mcfunction.parser.command-too-long', commandLength, options.maxLength),
+					ans,
+				)
+			}
+		}
 
 		return ans
 	}
@@ -88,7 +141,7 @@ function dispatch(
 
 		const argumentParsers: { name: string; parser: core.Parser }[] = argumentTreeNodes.map((
 			[name, treeNode],
-		) => ({ name, parser: argument(treeNode) ?? unknown(treeNode) }))
+		) => ({ name, parser: argument(treeNode, ans) ?? unknown(treeNode) }))
 		const literalParser = literalTreeNodes.length
 			? literal(literalTreeNodes.map(([name, _treeNode]) => name), parent.type === 'root')
 			: undefined

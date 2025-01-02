@@ -1,4 +1,11 @@
-exports['Color fromCompositeInt() Should return correctly 1'] = [
+exports['Color fromCompositeARGB() Should return correctly 1'] = [
+  1,
+  0.6666666666666666,
+  0.3333333333333333,
+  0.9333333333333333
+]
+
+exports['Color fromCompositeRGB() Should return correctly 1'] = [
   1,
   0.6666666666666666,
   0.3333333333333333,

@@ -102,6 +102,7 @@ const Suites: Partial<
 	'minecraft:item_stack': [
 		{ content: ['stick', 'minecraft:stick', 'stick{foo:bar}'] },
 		{ content: ['stick', 'diamond_pickaxe[unbreakable={}]', 'apple[!food]'], version: '1.20.5' },
+		{ content: ['diamond_pickaxe[unbreakable={},rarity=epic]', 'apple[!food]'], version: '1.21' },
 	],
 	'minecraft:loot_modifier': [{ content: ['foo:bar', '[{function:"furnace_smelt"}]'] }],
 	'minecraft:loot_predicate': [{
@@ -114,7 +115,7 @@ const Suites: Partial<
 	'minecraft:nbt_tag': [{ content: ['0', '0b', '0l', '0.0', '"foo"', '{foo:bar}'] }],
 	'minecraft:objective': [{ content: ['foo', '012'] }],
 	'minecraft:objective_criteria': [{
-		content: ['dummy', 'used:spyglass', 'minecraft.used:minecraft.spyglass'],
+		content: ['dummy', 'used:spyglass', 'minecraft.used:minecraft.spyglass', 'teamkill.aqua'],
 	}],
 	'minecraft:operation': [{ content: ['=', '>', '<'] }],
 	'minecraft:particle': [{
@@ -240,7 +241,7 @@ describe('mcfunction argument parser', () => {
 								}.spec.js`,
 								import.meta.url,
 							),
-							value: testParser(argument(treeNode)!, string, {
+							value: testParser(argument(treeNode, [])!, string, {
 								project,
 								removeTopLevelChildren: RemoveExtraChildren.has(parserName),
 							}),

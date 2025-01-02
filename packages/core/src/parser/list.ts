@@ -2,7 +2,7 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 import type { AstNode, ListNode } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
-import { Range } from '../source/index.js'
+import { ErrorSeverity, Range } from '../source/index.js'
 import type { InfallibleParser, Parser } from './Parser.js'
 import { Failure } from './Parser.js'
 import { attempt } from './util.js'
@@ -73,9 +73,24 @@ export function list<V extends AstNode>(
 
 			// Trailing item sep.
 			if (hasValueSep && !trailingSep) {
+				const trailingRange = ans.children[ans.children.length - 1].sep!
 				ctx.err.report(
 					localize('parser.list.trailing-sep'),
-					ans.children[ans.children.length - 1].sep!,
+					trailingRange,
+					ErrorSeverity.Error,
+					{
+						codeAction: {
+							title: localize('code-action.remove-trailing-separation'),
+							isPreferred: true,
+							changes: [
+								{
+									type: 'edit',
+									range: trailingRange,
+									text: '',
+								},
+							],
+						},
+					},
 				)
 			}
 

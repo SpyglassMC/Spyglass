@@ -227,6 +227,7 @@ export interface EnumType extends McdocBaseType {
 export interface EnumTypeField extends McdocBaseType {
 	identifier: string
 	value: string | number | bigint
+	desc?: string
 }
 
 export interface ReferenceType extends McdocBaseType {
@@ -639,8 +640,4 @@ export namespace McdocType {
 		}
 		return attributesString + typeString
 	}
-}
-
-export interface UseStatementBindingData {
-	target: readonly string[]
 }

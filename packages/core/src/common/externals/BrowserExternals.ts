@@ -15,7 +15,7 @@ import type {
 } from './index.js'
 
 type Listener = (...args: unknown[]) => unknown
-class BrowserEventEmitter implements ExternalEventEmitter {
+export class BrowserEventEmitter implements ExternalEventEmitter {
 	readonly #listeners = new Map<string, { all: Set<Listener>; once: Set<Listener> }>()
 
 	emit(eventName: string, ...args: unknown[]): boolean {
@@ -104,9 +104,6 @@ class BrowserFileSystem implements ExternalFileSystem {
 	async chmod(_location: FsLocation, _mode: number): Promise<void> {
 		return
 	}
-	async getAllFiles(_location: FsLocation): Promise<string[]> {
-		return []
-	}
 	async mkdir(
 		location: FsLocation,
 		_options?: { mode?: number | undefined; recursive?: boolean | undefined } | undefined,
@@ -117,6 +114,10 @@ class BrowserFileSystem implements ExternalFileSystem {
 		}
 		this.states[location] = { type: 'directory' }
 		this.saveStates()
+	}
+	async readdir(_location: FsLocation) {
+		// Not implemented
+		return []
 	}
 	async readFile(location: FsLocation): Promise<Uint8Array> {
 		location = location.toString()
@@ -148,7 +149,7 @@ class BrowserFileSystem implements ExternalFileSystem {
 		delete this.states[location]
 		this.saveStates()
 	}
-	watch(_location: FsLocation): FsWatcher {
+	watch(_locations: FsLocation[]): FsWatcher {
 		return new BrowserFsWatcher()
 	}
 	async writeFile(

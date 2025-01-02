@@ -2,7 +2,9 @@
     "spyglassmc.commands.dataHackPubify.title": "Data Hack Pubify",
     "spyglassmc.commands.resetProjectCache.title": "Reset Project Cache",
     "spyglassmc.commands.showCacheRoot.title": "Open Cache Folder",
+    "spyglassmc.commands.showOutput.title": "Show Output",
     "spyglassmc.description": "Heavy language features for Minecraft: Java Edition data pack files",
     "spyglassmc.displayName": "Datapack Helper Plus by Spyglass",
+    "spyglassmc.env.gameVersion": "The Minecraft version to use. When set to auto, the version is inferred from the `pack.mcmeta`. Other versions can be specified in a `spyglass.json` config file.",
     "spyglassmc.trace.server": "Traces the communication between VS Code and the Spyglass Language Server."
 }

@@ -5,6 +5,7 @@ import type { AstNode } from './AstNode.js'
 
 export interface SymbolOptions {
 	category: string
+	subcategory?: string
 	parentPath?: string[]
 	accessType?: SymbolAccessType
 	usageType?: SymbolUsageType

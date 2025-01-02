@@ -42,8 +42,4 @@ export namespace IndexMap {
 	export function toOuterRange(map: IndexMap, inner: Range): Range {
 		return Range.create(toOuterOffset(map, inner.start), toOuterOffset(map, inner.end))
 	}
-
-	export function merge(outerMap: IndexMap, innerMap: IndexMap): IndexMap {
-		return innerMap.map((p) => ({ inner: p.inner, outer: toOuterRange(outerMap, p.outer) }))
-	}
 }

@@ -73,6 +73,25 @@ export function tree<C extends { [K in keyof C]: core.Returnable }>(
 	}
 }
 
+export function list<C extends core.Returnable>(
+	itemValidator: McdocAttributeValidator<C>,
+): McdocAttributeValidator<C[]> {
+	return (value, ctx) => {
+		if (value?.kind !== 'tree') {
+			return core.Failure
+		}
+		const result: C[] = []
+		for (const element of Object.values(value.values)) {
+			const item = itemValidator(element, ctx)
+			if (item === core.Failure) {
+				return core.Failure
+			}
+			result.push(item)
+		}
+		return result
+	}
+}
+
 export function optional<C extends core.Returnable>(
 	validator: McdocAttributeValidator<C>,
 ): McdocAttributeValidator<C | undefined> {

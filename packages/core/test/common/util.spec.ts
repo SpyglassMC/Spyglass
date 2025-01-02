@@ -1,5 +1,5 @@
 import { describe } from 'mocha'
-import type { AstNode, CommentNode, DeepReadonly, InheritReadonly } from '../../lib'
+import type { AstNode, CommentNode, DeepReadonly, InheritReadonly } from '../../lib/index.js'
 import { assertType, typing } from '../utils.js'
 
 describe('common util', () => {

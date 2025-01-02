@@ -102,7 +102,10 @@ function shouldUseOldItemStackFormat(ctx: core.ParserContext) {
  * @returns The parser for the specified argument tree node. All argument parsers used in the `mcfunction` package
  * fail on empty input.
  */
-export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | undefined => {
+export const argument: mcf.ArgumentParserGetter = (
+	rawTreeNode,
+	prevNodes,
+): core.Parser | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
 	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser =>
@@ -146,11 +149,11 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 		case 'minecraft:color':
 			return wrap(
 				core.map(
-					core.literal(...ColorArgumentValues),
+					commandLiteral({ pool: ColorArgumentValues }),
 					(res) => ({
 						...res,
 						color: core.Color.NamedColors.has(res.value)
-							? core.Color.fromCompositeInt(core.Color.NamedColors.get(res.value)!)
+							? core.Color.fromCompositeRGB(core.Color.NamedColors.get(res.value)!)
 							: undefined,
 					}),
 				),
@@ -164,29 +167,49 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 		case 'minecraft:entity':
 			return wrap(entity(treeNode.properties.amount, treeNode.properties.type))
 		case 'minecraft:entity_anchor':
-			return wrap(core.literal(...EntityAnchorArgumentValues))
+			return wrap(commandLiteral({ pool: EntityAnchorArgumentValues }))
 		case 'minecraft:entity_summon':
 			return wrap(core.resourceLocation({ category: 'entity_type' }))
 		case 'minecraft:float_range':
-			return wrap(range('float'))
+			return wrap(
+				range(
+					'float',
+					treeNode.properties?.min,
+					treeNode.properties?.max,
+					treeNode.properties?.minSpan,
+					treeNode.properties?.maxSpan,
+				),
+			)
 		case 'minecraft:function':
 			return wrap(core.resourceLocation({ category: 'function', allowTag: true }))
 		case 'minecraft:gamemode':
-			return wrap(core.literal(...GamemodeArgumentValues))
+			return wrap(commandLiteral({ pool: GamemodeArgumentValues }))
 		case 'minecraft:game_profile':
 			return wrap(entity('multiple', 'players'))
 		case 'minecraft:heightmap':
-			return wrap(core.literal(...HeightmapValues))
+			return wrap(commandLiteral({ pool: HeightmapValues }))
 		case 'minecraft:int_range':
-			return wrap(range('integer'))
+			return wrap(
+				range(
+					'integer',
+					treeNode.properties?.min,
+					treeNode.properties?.max,
+					treeNode.properties?.minSpan,
+					treeNode.properties?.maxSpan,
+				),
+			)
 		case 'minecraft:item_enchantment':
 			return wrap(core.resourceLocation({ category: 'enchantment' }))
 		case 'minecraft:item_predicate':
 			return wrap(itemPredicate)
 		case 'minecraft:item_slot':
-			return wrap(itemSlot)
+			return wrap((src, ctx) => {
+				return commandLiteral({ pool: getItemSlotArgumentValues(ctx) })(src, ctx)
+			})
 		case 'minecraft:item_slots':
-			return wrap(itemSlots)
+			return wrap((src, ctx) => {
+				return commandLiteral({ pool: getItemSlotsArgumentValues(ctx) })(src, ctx)
+			})
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
 		case 'minecraft:loot_modifier':
@@ -216,7 +239,7 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 		case 'minecraft:objective_criteria':
 			return wrap(objectiveCriteria)
 		case 'minecraft:operation':
-			return wrap(core.literal({ pool: OperationArgumentValues, colorTokenType: 'operator' }))
+			return wrap(commandLiteral({ pool: OperationArgumentValues, colorTokenType: 'operator' }))
 		case 'minecraft:particle':
 			return wrap(particle)
 		case 'minecraft:resource':
@@ -243,12 +266,12 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.
 			// But I do not want to spend time supporting them.
 			return wrap((src, ctx) => {
-				return core.literal(...getScoreboardSlotArgumentValues(ctx))(src, ctx)
+				return commandLiteral({ pool: getScoreboardSlotArgumentValues(ctx) })(src, ctx)
 			})
 		case 'minecraft:style':
 			return wrap(jsonParser('::java::server::util::text::TextStyle'))
 		case 'minecraft:swizzle':
-			return wrap(core.literal(...SwizzleArgumentValues))
+			return wrap(commandLiteral({ pool: SwizzleArgumentValues }))
 		case 'minecraft:team':
 			return wrap(
 				team(
@@ -258,9 +281,9 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 				),
 			)
 		case 'minecraft:template_mirror':
-			return wrap(core.literal(...MirrorValues))
+			return wrap(commandLiteral({ pool: MirrorValues }))
 		case 'minecraft:template_rotation':
-			return wrap(core.literal(...RotationValues))
+			return wrap(commandLiteral({ pool: RotationValues }))
 		case 'minecraft:time':
 			return wrap(time)
 		case 'minecraft:uuid':
@@ -269,6 +292,19 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 			return wrap(vector({ dimension: 2, noLocal: true }))
 		case 'minecraft:vec3':
 			return wrap(vector({ dimension: 3 }))
+		case 'spyglassmc:criterion':
+			const advancementNode = prevNodes.length > 0
+				? prevNodes[prevNodes.length - 1].children[0]
+				: undefined
+			if (core.ResourceLocationNode.is(advancementNode)) {
+				return wrap(criterion(
+					core.ResourceLocationNode.toString(advancementNode, 'full'),
+					core.SymbolUsageType.is(treeNode.properties?.usageType)
+						? treeNode.properties?.usageType
+						: undefined,
+				))
+			}
+			return wrap(greedyString)
 		case 'spyglassmc:tag':
 			return wrap(tag(
 				core.SymbolUsageType.is(treeNode.properties?.usageType)
@@ -374,6 +410,17 @@ function coordinate(integerOnly = false): core.InfallibleParser<CoordinateNode> 
 	}
 }
 
+export function criterion(
+	advancement: core.FullResourceLocation,
+	usageType?: core.SymbolUsageType,
+	terminators: string[] = [],
+): core.InfallibleParser<core.SymbolNode> {
+	return unquotableSymbol(
+		{ category: 'advancement', subcategory: 'criterion', parentPath: [advancement], usageType },
+		terminators,
+	)
+}
+
 export function entity(
 	amount: 'multiple' | 'single',
 	type: 'entities' | 'players',
@@ -419,14 +466,6 @@ export function entity(
 const greedyString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: { blockList: new Set(['\n', '\r']) },
 })
-
-const itemSlot: core.InfallibleParser<core.LiteralNode> = (src, ctx) => {
-	return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
-}
-
-export const itemSlots: core.InfallibleParser<core.LiteralNode> = (src, ctx) => {
-	return core.literal(...getItemSlotsArgumentValues(ctx))(src, ctx)
-}
 
 const itemStack: core.InfallibleParser<ItemStackNode> = (src, ctx) => {
 	const oldFormat = shouldUseOldItemStackFormat(ctx)
@@ -495,6 +534,17 @@ export function jsonParser(typeRef: `::${string}::${string}`): core.Parser<json.
 		children: [res],
 		targetType: { kind: 'reference', path: typeRef },
 	} satisfies json.TypedJsonNode))
+}
+
+function commandLiteral(options: core.LiteralOptions): core.Parser<core.LiteralNode> {
+	return (src, ctx) => {
+		const ans = core.literal(options)(src, ctx)
+		if (ans.value.length === 0) {
+			ans.value = src.readUntil(...core.Whitespaces)
+			ans.range = core.Range.create(ans.range.start, src)
+		}
+		return ans
+	}
 }
 
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
@@ -623,18 +673,24 @@ function range(
 	type: 'float',
 	min?: number,
 	max?: number,
+	minSpan?: number,
+	maxSpan?: number,
 	cycleable?: boolean,
 ): core.Parser<FloatRangeNode>
 function range(
 	type: 'integer',
 	min?: number,
 	max?: number,
+	minSpan?: number,
+	maxSpan?: number,
 	cycleable?: boolean,
 ): core.Parser<IntRangeNode>
 function range(
 	type: 'float' | 'integer',
 	min?: number,
 	max?: number,
+	minSpan?: number,
+	maxSpan?: number,
 	cycleable?: boolean,
 ): core.Parser<FloatRangeNode | IntRangeNode> {
 	const number: core.Parser<core.FloatNode | core.IntegerNode> = type === 'float'
@@ -680,6 +736,21 @@ function range(
 					localize('mcfunction.parser.range.min>max', ans.value[0], ans.value[1]),
 					res,
 				)
+			} else if (minSpan !== undefined || maxSpan !== undefined) {
+				const span = ans.value[0] !== undefined && ans.value[1] !== undefined
+					? Math.abs(ans.value[0] - ans.value[1])
+					: (ans.value[0] ?? ans.value[1] ?? Infinity)
+				if (minSpan !== undefined && span < minSpan) {
+					ctx.err.report(
+						localize('mcfunction.parser.range.span-too-small', span, minSpan),
+						res,
+					)
+				} else if (maxSpan !== undefined && span > maxSpan) {
+					ctx.err.report(
+						localize('mcfunction.parser.range.span-too-large', span, maxSpan),
+						res,
+					)
+				}
 			}
 			return ans
 		},
@@ -844,41 +915,51 @@ export function selector(ignoreInvalidPrefix = false): core.Parser<EntitySelecto
 																	category: 'advancement',
 																}),
 																sep: '=',
-																value: core.select([{
-																	predicate: (src) => src.peek() === '{',
-																	parser: core.map<
-																		core.RecordNode<
-																			core.StringNode,
-																			core.BooleanNode
-																		>,
-																		EntitySelectorAdvancementsArgumentCriteriaNode
-																	>(
-																		core.record<
-																			core.StringNode,
-																			core.BooleanNode
-																		>({
-																			start: '{',
-																			pair: {
-																				key: unquotedString,
-																				sep: '=',
-																				value: core.boolean,
-																				end: ',',
-																				trailingEnd: true,
-																			},
-																			end: '}',
-																		}),
-																		(res) => {
-																			const ans:
-																				EntitySelectorAdvancementsArgumentCriteriaNode =
-																					{
-																						...res,
-																						type:
-																							'mcfunction:entity_selector/arguments/advancements/criteria',
-																					}
-																			return ans
-																		},
-																	),
-																}, { parser: core.boolean }]),
+																value: {
+																	get: (_, key) =>
+																		core.select([{
+																			predicate: (src) => src.peek() === '{',
+																			parser: core.map<
+																				core.RecordNode<
+																					core.StringNode | core.SymbolNode,
+																					core.BooleanNode
+																				>,
+																				EntitySelectorAdvancementsArgumentCriteriaNode
+																			>(
+																				core.record<
+																					core.StringNode | core.SymbolNode,
+																					core.BooleanNode
+																				>({
+																					start: '{',
+																					pair: {
+																						key: key
+																							? criterion(
+																								core.ResourceLocationNode
+																									.toString(key, 'full'),
+																								'reference',
+																								['}', ',', '='],
+																							)
+																							: unquotedString,
+																						sep: '=',
+																						value: core.boolean,
+																						end: ',',
+																						trailingEnd: true,
+																					},
+																					end: '}',
+																				}),
+																				(res) => {
+																					const ans:
+																						EntitySelectorAdvancementsArgumentCriteriaNode =
+																							{
+																								...res,
+																								type:
+																									'mcfunction:entity_selector/arguments/advancements/criteria',
+																							}
+																					return ans
+																				},
+																			),
+																		}, { parser: core.boolean }]),
+																},
 																end: ',',
 																trailingEnd: true,
 															},
@@ -1197,7 +1278,14 @@ export function selector(ignoreInvalidPrefix = false): core.Parser<EntitySelecto
 												case 'x_rotation':
 												case 'y_rotation':
 													return core.map<FloatRangeNode>(
-														range('float', undefined, undefined, true),
+														range(
+															'float',
+															undefined,
+															undefined,
+															undefined,
+															undefined,
+															true,
+														),
 														(res, _, ctx) => {
 															if (hasKey(key.value)) {
 																ctx.err.report(
@@ -1316,10 +1404,17 @@ export function scoreHolder(
 	usageType: core.SymbolUsageType,
 	amount: 'multiple' | 'single',
 ): core.Parser<ScoreHolderNode> {
-	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
-		core.select([{ predicate: (src) => src.peek() === '@', parser: selector() }, {
-			parser: scoreHolderFakeName(usageType),
-		}]),
+	return core.map<core.LiteralNode | core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
+		core.select([
+			{
+				predicate: (src) =>
+					src.peek() === '*'
+					&& (!src.canRead(2) || src.matchPattern(/^\s/, 1)),
+				parser: core.literal('*'),
+			},
+			{ prefix: '@', parser: selector() },
+			{ parser: scoreHolderFakeName(usageType) },
+		]),
 		(res, _src, ctx) => {
 			const ans: ScoreHolderNode = {
 				type: 'mcfunction:score_holder',
@@ -1329,8 +1424,10 @@ export function scoreHolder(
 
 			if (core.SymbolNode.is(res)) {
 				ans.fakeName = res
-			} else {
+			} else if (EntitySelectorNode.is(res)) {
 				ans.selector = res
+			} else {
+				ans.wildcard = res
 			}
 
 			if (amount === 'single' && ans.selector && !ans.selector.single) {
@@ -1544,27 +1641,80 @@ function vector(options: VectorNode.Options): core.InfallibleParser<VectorNode> 
 	}
 }
 
-const components: core.InfallibleParser<ComponentListNode> = core.map(
-	core.record({
-		start: '[',
-		pair: {
-			key: core.resourceLocation({ category: 'data_component_type' }),
-			sep: '=',
-			value: nbt.parser.entry,
-			end: ',',
-			trailingEnd: true,
-		},
-		end: ']',
-	}),
-	(res) => {
-		const ans: ComponentListNode = {
-			type: 'mcfunction:component_list',
-			range: res.range,
-			children: res.children,
+const components: core.Parser<ComponentListNode> = (src, ctx) => {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	const allowComponentRemoval = !release || ReleaseVersion.cmp(release, '1.21') >= 0
+
+	const ans: ComponentListNode = {
+		type: 'mcfunction:component_list',
+		range: core.Range.create(src),
+		children: [],
+	}
+
+	if (!src.trySkip('[')) {
+		return core.Failure
+	}
+	src.skipWhitespace()
+
+	while (src.canRead() && src.peek() !== ']') {
+		const start = src.cursor
+		if (allowComponentRemoval && src.tryPeek('!')) {
+			const prefix = core.literal('!')(src, ctx)
+			src.skipWhitespace()
+			const key = core.resourceLocation({ category: 'data_component_type' })(src, ctx)
+			ans.children.push({
+				type: 'mcfunction:component_removal',
+				range: core.Range.create(start, src),
+				children: [prefix, key],
+				prefix,
+				key,
+			})
+			src.skipWhitespace()
+		} else {
+			const key = core.resourceLocation({ category: 'data_component_type' })(src, ctx)
+			src.skipWhitespace()
+			core.literal('=')(src, ctx)
+			src.skipWhitespace()
+			const value = nbt.parser.entry(src, ctx)
+			if (value === core.Failure) {
+				ctx.err.report(
+					localize('expected', localize('parser.record.value')),
+					core.Range.create(src, () => src.skipUntilOrEnd(',', ']', '\r', '\n')),
+				)
+				ans.children.push({
+					type: 'mcfunction:component',
+					range: core.Range.create(start, src),
+					children: [key],
+					key,
+					value: undefined,
+				})
+			} else {
+				ans.children.push({
+					type: 'mcfunction:component',
+					range: core.Range.create(start, src),
+					children: [key, value],
+					key,
+					value,
+				})
+			}
+			src.skipWhitespace()
 		}
-		return ans
-	},
-)
+		if (src.trySkip(',')) {
+			src.skipWhitespace()
+			if (src.peek() === ']') {
+				break
+			}
+		} else {
+			break
+		}
+	}
+
+	src.skipWhitespace()
+	core.literal(']')(src, ctx)
+
+	ans.range.end = src.cursor
+	return ans
+}
 
 const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	const start = src.cursor
@@ -1581,6 +1731,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	}
 
 	if (src.trySkip('=')) {
+		src.skipWhitespace()
 		const ans: ComponentTestExactNode = {
 			type: 'mcfunction:component_test_exact',
 			range: core.Range.create(start, src),
@@ -1589,7 +1740,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 			negated,
 		}
 		const value = nbt.parser.entry(src, ctx)
-		if (value == core.Failure) {
+		if (value === core.Failure) {
 			ctx.err.report(localize('expected', localize('nbt.node')), src)
 			src.skipUntilOrEnd(',', '|', ']')
 		} else {
@@ -1602,6 +1753,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	}
 
 	if (src.trySkip('~')) {
+		src.skipWhitespace()
 		if (key.options.category !== undefined) {
 			key.options.category = 'item_sub_predicate_type'
 		}
@@ -1613,7 +1765,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 			negated,
 		}
 		const predicate = nbt.parser.entry(src, ctx)
-		if (predicate == core.Failure) {
+		if (predicate === core.Failure) {
 			ctx.err.report(localize('expected', localize('nbt.node')), src)
 			src.skipUntilOrEnd(',', '|', ']')
 		} else {

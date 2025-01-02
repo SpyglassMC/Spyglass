@@ -2,7 +2,7 @@ import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localize } from '@spyglassmc/locales'
 import type * as mcdoc from '@spyglassmc/mcdoc'
-import * as mcf from '@spyglassmc/mcfunction'
+import type * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { dissectUri, reportDissectError } from '../../binder/index.js'
 import { getTagValues } from '../../common/index.js'
@@ -31,9 +31,6 @@ const entry: core.Checker<mcf.McfunctionNode> = (node, ctx) => {
 }
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
-	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
-		ctx.err.report(localize('unexpected-leading-slash'), node.slash)
-	}
 	rootCommand(node.children, 0, ctx)
 }
 
@@ -156,17 +153,17 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 		return
 	}
 	const groupedComponents = new Map<string, core.AstNode[]>()
-	for (const pair of node.components.children) {
-		if (!pair.key) {
+	for (const child of node.components.children) {
+		if (!child.key) {
 			continue
 		}
-		const componentId = core.ResourceLocationNode.toString(pair.key, 'full')
+		const componentId = core.ResourceLocationNode.toString(child.key, 'full')
 		if (!groupedComponents.has(componentId)) {
 			groupedComponents.set(componentId, [])
 		}
-		groupedComponents.get(componentId)!.push(pair.key)
-		if (pair.value) {
-			nbt.checker.index('minecraft:data_component', componentId)(pair.value, ctx)
+		groupedComponents.get(componentId)!.push(child.key)
+		if (child.type === 'mcfunction:component' && child.value) {
+			nbt.checker.index('minecraft:data_component', componentId)(child.value, ctx)
 		}
 	}
 	for (const [_, group] of groupedComponents) {
@@ -311,17 +308,15 @@ const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
 		return
 	}
 	const options = node.children?.find(nbt.NbtCompoundNode.is)
-	if (ParticleNode.requiresOptions(id)) {
-		if (options) {
-			nbt.checker.index('minecraft:particle', core.ResourceLocation.lengthen(id))(options, ctx)
-		} else {
-			ctx.err.report(
-				localize('expected', localize('nbt.node.compound')),
-				core.Range.create(node.id.range.end, node.id.range.end + 1),
-			)
-		}
-	} else if (options) {
-		ctx.err.report(localize('expected', localize('nothing')), options)
+	if (options) {
+		// Even if particle isn't explicitly marked as requiring options,
+		// run the type checker anyways to allow an empty compound
+		nbt.checker.index('minecraft:particle', core.ResourceLocation.lengthen(id))(options, ctx)
+	} else if (ParticleNode.requiresOptions(id)) {
+		ctx.err.report(
+			localize('expected', localize('nbt.node.compound')),
+			core.Range.create(node.id.range.end, node.id.range.end + 1),
+		)
 	}
 }
 // #endregion

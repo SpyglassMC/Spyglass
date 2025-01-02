@@ -84,7 +84,7 @@ const Suites: Record<
 				'#[]',
 				'#[uuid]',
 				'#[since=1.17]',
-				'#[color=composite_int]',
+				'#[color=composite_rgb]',
 				'#[vector(dimension=3,integer=true)]',
 				'#[advancement_criterion=(type=definition,id=test)]',
 				'#[bitfield(enum (int) {})]',

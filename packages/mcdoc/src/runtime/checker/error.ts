@@ -351,7 +351,7 @@ function condense<T, E extends McdocRuntimeError<T>>(
 
 	const distinctErrors = distinctErrorsPerNode.flatMap(e => e.errors)
 	const commonErrors = distinctErrors
-		.filter(e => e.definitions.length == validDefinitions.length)
+		.filter(e => e.definitions.length === validDefinitions.length)
 		.map(e => e.error)
 	const definitionsWithUncommonErrors = distinctErrors
 		.filter(e => e.definitions.length < validDefinitions.length)
@@ -557,10 +557,10 @@ export function getDefaultErrorReporter<T>(
 				localizedText = localize(`mcdoc.runtime.checker.${defaultTranslationKey}`)
 				break
 			case 'internal':
-				break
+				return
 			default:
 				localizedText = localize(defaultTranslationKey)
 		}
-		ctx.err.report(localizedText!, getErrorRange(error.node, error.kind), severity)
+		ctx.err.report(localizedText, getErrorRange(error.node, error.kind), severity)
 	}
 }

@@ -3,6 +3,7 @@ import type {
 	BooleanBaseNode,
 	BooleanNode,
 	CommentNode,
+	ErrorNode,
 	FileNode,
 	FloatBaseNode,
 	FloatNode,
@@ -20,6 +21,10 @@ import type { Formatter } from './Formatter.js'
 
 export const fallback: Formatter = (node) => {
 	throw new Error(`No formatter registered for type ${node.type}`)
+}
+
+export const error: Formatter<ErrorNode> = (node) => {
+	return ''
 }
 
 export const file: Formatter<FileNode<AstNode>> = (node, ctx) => {
@@ -62,6 +67,7 @@ export const string: Formatter<StringBaseNode> = (node) => {
 }
 
 export function registerFormatters(meta: MetaRegistry) {
+	meta.registerFormatter<ErrorNode>('error', error)
 	meta.registerFormatter<FileNode<AstNode>>('file', file)
 	meta.registerFormatter<BooleanNode>('boolean', boolean)
 	meta.registerFormatter<CommentNode>('comment', comment)

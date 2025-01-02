@@ -2,7 +2,6 @@
 import chokidar from 'chokidar'
 import decompress from 'decompress'
 import followRedirects from 'follow-redirects'
-import globby from 'globby'
 import { Buffer } from 'node:buffer'
 import cp from 'node:child_process'
 import crypto from 'node:crypto'
@@ -84,13 +83,11 @@ export const NodeJsExternals: Externals = {
 		chmod(location, mode) {
 			return fsp.chmod(toFsPathLike(location), mode)
 		},
-		async getAllFiles(location, depth) {
-			const path = toPath(location).replaceAll('\\', '/') + '**/*'
-			const files = await globby(path, { absolute: true, dot: true, deep: depth })
-			return files.map(uriFromPath)
-		},
 		async mkdir(location, options) {
 			return void (await fsp.mkdir(toFsPathLike(location), options))
+		},
+		readdir(location) {
+			return fsp.readdir(toFsPathLike(location), { encoding: 'utf-8', withFileTypes: true })
 		},
 		readFile(location) {
 			return fsp.readFile(toFsPathLike(location))
@@ -117,8 +114,13 @@ export const NodeJsExternals: Externals = {
 		unlink(location) {
 			return fsp.unlink(toFsPathLike(location))
 		},
-		watch(location) {
-			return new ChokidarWatcherWrapper(chokidar.watch(toPath(location)))
+		watch(locations, { usePolling = false } = {}) {
+			return new ChokidarWatcherWrapper(
+				chokidar.watch(locations.map(toPath), {
+					usePolling,
+					disableGlobbing: true,
+				}),
+			)
 		},
 		writeFile(location, data, options) {
 			return fsp.writeFile(toFsPathLike(location), data, options)

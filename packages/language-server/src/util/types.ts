@@ -1,5 +1,6 @@
 export interface CustomInitializationOptions {
 	inDevelopmentMode?: boolean
+	gameVersion?: string
 }
 
 export interface CustomServerCapabilities {

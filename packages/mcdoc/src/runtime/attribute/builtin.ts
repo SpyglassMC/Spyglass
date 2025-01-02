@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import type { SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
 import { registerAttribute, validator } from './index.js'
 
@@ -7,6 +8,9 @@ interface IdConfig {
 	tags?: 'allowed' | 'implicit' | 'required'
 	definition?: boolean
 	prefix?: '!'
+	path?: string
+	empty?: 'allowed'
+	exclude?: string[]
 }
 
 const idValidator = validator.alternatives<IdConfig>(
@@ -16,12 +20,18 @@ const idValidator = validator.alternatives<IdConfig>(
 		tags: validator.optional(validator.options('allowed', 'implicit', 'required')),
 		definition: validator.optional(validator.boolean),
 		prefix: validator.optional(validator.options('!')),
+		path: validator.optional(validator.string),
+		empty: validator.optional(validator.options('allowed')),
+		exclude: validator.optional(validator.alternatives<string[]>(
+			validator.map(validator.string, v => [v]),
+			validator.list(validator.string),
+		)),
 	}),
 	() => ({}),
 )
 
 function getResourceLocationOptions(
-	{ registry, tags, definition }: IdConfig,
+	{ registry, tags, definition, path }: IdConfig,
 	requireCanonical: boolean,
 	ctx: core.ContextBase,
 	typeDef?: core.DeepReadonly<SimplifiedMcdocTypeNoUnion>,
@@ -45,24 +55,33 @@ function getResourceLocationOptions(
 		registry = `tag/${registry}`
 	}
 	if (tags === 'allowed' || tags === 'required') {
-		if (core.TaggableResourceLocationCategory.is(registry)) {
-			return {
-				category: registry,
-				requireCanonical,
-				allowTag: true,
-				requireTag: tags === 'required',
-			}
-		}
-	} else if (core.ResourceLocationCategory.is(registry)) {
 		return {
-			category: registry,
+			category: registry as core.TaggableResourceLocationCategory,
 			requireCanonical,
-			usageType: definition ? 'definition' : 'reference',
+			allowTag: true,
+			requireTag: tags === 'required',
+			implicitPath: path,
 		}
 	}
-	ctx.logger.warn(`[mcdoc id] Unhandled registry ${registry}`)
-	return undefined
+	return {
+		category: registry as core.ResourceLocationCategory,
+		requireCanonical,
+		usageType: definition ? 'definition' : 'reference',
+		implicitPath: path,
+	}
 }
+
+interface IntegerConfig {
+	min?: number
+	max?: number
+}
+const integerValidator = validator.alternatives<IntegerConfig>(
+	validator.tree({
+		min: validator.optional(validator.number),
+		max: validator.optional(validator.number),
+	}),
+	() => ({}),
+)
 
 export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 	registerAttribute(meta, 'canonical', () => undefined, {
@@ -126,10 +145,29 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 			const resourceLocation = core.resourceLocation(options)
 			return (src, ctx) => {
+				if (config.empty && !src.canRead()) {
+					return core.string({
+						unquotable: { blockList: new Set(), allowEmpty: true },
+					})(src, ctx)
+				}
 				if (config.prefix) {
 					return core.prefixed({ prefix: config.prefix, child: resourceLocation })(src, ctx)
 				}
-				return resourceLocation(src, ctx)
+				const node = resourceLocation(src, ctx)
+				if (config.exclude) {
+					const resourceLocation = core.ResourceLocationNode.toString(node, 'full')
+					for (const e of config.exclude ?? []) {
+						const excluded = core.ResourceLocation.lengthen(e)
+						if (resourceLocation === excluded) {
+							ctx.err.report(
+								localize('not-allowed-here', localeQuote(excluded)),
+								node,
+								core.ErrorSeverity.Warning,
+							)
+						}
+					}
+				}
+				return node
 			}
 		},
 		stringMocker: (config, typeDef, ctx) => {
@@ -147,6 +185,96 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				return core.PrefixedNode.mock(ctx.offset, config.prefix, resourceLocation)
 			}
 			return resourceLocation
+		},
+	})
+	registerAttribute(meta, 'integer', integerValidator, {
+		stringParser: (config) => {
+			return core.integer({ pattern: /^-?\d+$/, min: config.min, max: config.max })
+		},
+	})
+	registerAttribute(meta, 'color', validator.string, {
+		checkInferred: (config, inferred, ctx) => {
+			if (
+				config === 'hex_rgb' && inferred.kind === 'literal' && inferred.value.kind === 'string'
+			) {
+				return inferred.value.value.startsWith('#')
+			}
+			return true
+		},
+		checker: (config, inferred) => {
+			return (node, ctx) => {
+				switch (config) {
+					case 'named':
+						if (inferred.kind !== 'literal' || inferred.value.kind !== 'string') {
+							return
+						}
+						node.color = core.Color.fromNamed(inferred.value.value)
+						return
+					case 'hex_rgb':
+						if (inferred.kind !== 'literal' || inferred.value.kind !== 'string') {
+							return
+						}
+						let range = node.range
+						if (core.StringBaseNode.is(node) && node.quote) {
+							range = core.Range.translate(range, 1, -1)
+						}
+						if (!inferred.value.value.startsWith('#')) {
+							ctx.err.report(
+								localize('expected', localeQuote('#')),
+								range,
+								core.ErrorSeverity.Warning,
+							)
+							return
+						}
+						node.color = {
+							value: core.Color.fromHexRGB(inferred.value.value),
+							format: [core.ColorFormat.HexRGB],
+							range,
+						}
+						return
+					case 'composite_rgb':
+						if (inferred.kind !== 'literal' || typeof inferred.value.value !== 'number') {
+							return
+						}
+						node.color = {
+							value: core.Color.fromCompositeRGB(inferred.value.value),
+							format: [core.ColorFormat.CompositeRGB],
+							range: node.range,
+						}
+						return
+					case 'composite_argb':
+						if (inferred.kind !== 'literal' || typeof inferred.value.value !== 'number') {
+							return
+						}
+						node.color = {
+							value: core.Color.fromCompositeARGB(inferred.value.value),
+							format: [core.ColorFormat.CompositeARGB],
+							range: node.range,
+						}
+						return
+					default:
+						return
+				}
+			}
+		},
+	})
+	registerAttribute(meta, 'regex_pattern', () => undefined, {
+		checker: (_, typeDef) => {
+			if (typeDef.kind !== 'literal' || typeDef.value.kind !== 'string') {
+				return undefined
+			}
+			const pattern = typeDef.value.value
+			return (node, ctx) => {
+				try {
+					RegExp(pattern)
+				} catch (e) {
+					const message = e instanceof Error ? e.message : `${e}`
+					const error = message
+						.replace(/^Invalid regular expression: /, '')
+						.replace(/^\/.+\/: /, '')
+					ctx.err.report(localize('invalid-regex-pattern', error), node, 2)
+				}
+			}
 		},
 	})
 }

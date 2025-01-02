@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type { MacroNode } from '../node/macro'
+import type { MacroNode } from '../node/macro.js'
 
 export const macro: core.Colorizer<MacroNode> = (node, ctx) => {
 	const tokens: core.ColorToken[] = []

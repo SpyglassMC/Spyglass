@@ -66,7 +66,7 @@ export const enum CoordinateSystem {
 }
 
 export interface EntitySelectorAdvancementsArgumentCriteriaNode
-	extends core.RecordBaseNode<core.StringNode, core.BooleanNode>
+	extends core.RecordBaseNode<core.StringNode | core.SymbolNode, core.BooleanNode>
 {
 	type: 'mcfunction:entity_selector/arguments/advancements/criteria'
 }
@@ -271,12 +271,36 @@ export namespace ItemStackNode {
 
 export interface ComponentListNode extends core.AstNode {
 	type: 'mcfunction:component_list'
-	children: core.PairNode<core.ResourceLocationNode, nbt.NbtNode>[]
+	children: (ComponentNode | ComponentRemovalNode)[]
 }
 
 export namespace ComponentListNode {
 	export function is(node: core.AstNode): node is ComponentListNode {
 		return (node as ComponentListNode).type === 'mcfunction:component_list'
+	}
+}
+
+export interface ComponentNode extends core.AstNode {
+	type: 'mcfunction:component'
+	children: (core.ResourceLocationNode | nbt.NbtNode)[]
+	key: core.ResourceLocationNode
+	value?: nbt.NbtNode
+}
+export namespace ComponentNode {
+	export function is(node: core.AstNode): node is ComponentNode {
+		return (node as ComponentNode).type === 'mcfunction:component'
+	}
+}
+
+export interface ComponentRemovalNode extends core.AstNode {
+	type: 'mcfunction:component_removal'
+	children: (core.LiteralNode | core.ResourceLocationNode)[]
+	prefix: core.LiteralNode
+	key: core.ResourceLocationNode
+}
+export namespace ComponentRemovalNode {
+	export function is(node: core.AstNode): node is ComponentRemovalNode {
+		return (node as ComponentRemovalNode).type === 'mcfunction:component_removal'
 	}
 }
 
@@ -452,6 +476,8 @@ export namespace ObjectiveCriteriaNode {
 		'totalKillCount',
 		'trigger',
 		'xp',
+		...core.Color.ColorNames.map((n) => `killedByTeam.${n}`),
+		...core.Color.ColorNames.map((n) => `teamkill.${n}`),
 	]
 	export const ComplexCategories = new Map<string, core.RegistryCategory>([
 		['broken', 'item'],
@@ -510,8 +536,10 @@ export namespace ParticleNode {
 	const OptionTypes = new Set(
 		[
 			...SpecialTypes,
+			'block_crumble',
 			'dust_pillar',
 			'entity_effect',
+			'trail',
 		],
 	)
 	export type OptionType = typeof SpecialTypes extends Set<infer T> ? T : undefined
@@ -531,9 +559,10 @@ export namespace ParticleNode {
 
 export interface ScoreHolderNode extends core.AstNode {
 	type: 'mcfunction:score_holder'
-	children: [core.SymbolNode | EntitySelectorNode]
+	children: [core.LiteralNode | core.SymbolNode | EntitySelectorNode]
 	fakeName?: core.SymbolNode
 	selector?: EntitySelectorNode
+	wildcard?: core.LiteralNode
 }
 export namespace ScoreHolderNode {
 	export function mock(range: core.RangeLike): ScoreHolderNode {

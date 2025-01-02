@@ -26,8 +26,8 @@ describe('mcfunction parser entry()', () => {
 	for (const { content } of cases) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = entry(tree, () => undefined, {
-				supportsBackslashContinuation: true,
-				supportsMacros: true,
+				lineContinuation: true,
+				macros: true,
 			})
 			snapshot(testParser(parser, content))
 		})

@@ -11,7 +11,7 @@ import type { Project } from './Project.js'
  * The format version of the cache. Should be increased when any changes that
  * could invalidate the cache are introduced to the Spyglass codebase.
  */
-export const LatestCacheVersion = 3
+export const LatestCacheVersion = 6
 
 /**
  * Checksums of cached files or roots.
@@ -35,7 +35,7 @@ type ErrorCache = Record<string, readonly PosRangeLanguageError[]>
 interface CacheFile {
 	checksums: Checksums
 	errors: ErrorCache
-	projectRoot: string
+	projectRoots: string[]
 	symbols: UnlinkedSymbolTable
 	/**
 	 * Format version of the cache. The cache should be invalidated if this number
@@ -104,28 +104,26 @@ export class CacheService {
 		})
 	}
 
-	#cacheFilePath:
-		| string
-		| undefined
-	/**
-	 * @throws
-	 *
-	 * @returns `${cacheRoot}symbols/${sha1(projectRoot)}.json`
-	 */
+	#cacheFilePath: string | undefined
 	private async getCacheFileUri(): Promise<string> {
-		return (this.#cacheFilePath ??= new Uri(
-			`symbols/${await this.project.externals.crypto.getSha1(this.project.projectRoot)}.json.gz`,
-			this.cacheRoot,
-		).toString())
+		if (!this.#cacheFilePath) {
+			const sortedRoots = [...this.project.projectRoots].sort()
+			const hash = await this.project.externals.crypto.getSha1(sortedRoots.join(':'))
+			this.#cacheFilePath = new Uri(`symbols/${hash}.json.gz`, this.cacheRoot).toString()
+		}
+		return this.#cacheFilePath
 	}
 
 	async load(): Promise<LoadResult> {
-		const __profiler = this.project.profilers.get('cache#load')
 		const ans: LoadResult = { symbols: {} }
+		if (this.project.projectRoots.length === 0) {
+			return ans
+		}
+		const __profiler = this.project.profilers.get('cache#load')
 		let filePath: string | undefined
 		try {
 			filePath = await this.getCacheFileUri()
-			this.project.logger.info(`[CacheService#load] symbolCachePath = “${filePath}”`)
+			this.project.logger.info(`[CacheService#load] symbolCachePath = ${filePath}`)
 			const cache =
 				(await fileUtil.readGzippedJson(this.project.externals, filePath)) as CacheFile
 			__profiler.task('Read File')
@@ -176,11 +174,11 @@ export class CacheService {
 				ans.unchangedFiles.push(uri)
 				continue
 			}
-
-			if (this.project.ignore.ignores(uri)) {
-				ans.unchangedFiles.push(uri)
+			if (this.project.shouldExclude(uri)) {
+				ans.removedFiles.push(uri)
 				continue
 			}
+
 			try {
 				const hash = await this.project.fs.hash(uri)
 				if (hash === checksum) {
@@ -217,13 +215,16 @@ export class CacheService {
 	 * @returns If the cache file was saved successfully.
 	 */
 	async save(): Promise<boolean> {
+		if (this.project.projectRoots.length === 0) {
+			return false
+		}
 		const __profiler = this.project.profilers.get('cache#save')
 		let filePath: string | undefined
 		try {
 			filePath = await this.getCacheFileUri()
 			const cache: CacheFile = {
 				version: LatestCacheVersion,
-				projectRoot: this.project.projectRoot,
+				projectRoots: this.project.projectRoots,
 				checksums: this.checksums,
 				symbols: SymbolTable.unlink(this.project.symbols.global),
 				errors: this.errors,
@@ -235,7 +236,7 @@ export class CacheService {
 
 			return true
 		} catch (e) {
-			this.project.logger.error(`[CacheService#save] path = “${filePath}”`, e)
+			this.project.logger.error(`[CacheService#save] path = ${filePath}`, e)
 		}
 		return false
 	}

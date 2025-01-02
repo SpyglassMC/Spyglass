@@ -129,10 +129,15 @@ export function typeDefinition(
 					}
 					return []
 				},
-				reportError: mcdoc.runtime.checker.getDefaultErrorReporter(
-					ctx,
-					mcdoc.runtime.checker.getDefaultErrorRange<NbtNode>,
-				),
+				reportError: (error) => {
+					if (options.isPredicate && error.kind === 'invalid_collection_length') {
+						return
+					}
+					mcdoc.runtime.checker.getDefaultErrorReporter(
+						ctx,
+						mcdoc.runtime.checker.getDefaultErrorRange<NbtNode>,
+					)(error)
+				},
 				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
 					node.requireCanonical = options.isPredicate

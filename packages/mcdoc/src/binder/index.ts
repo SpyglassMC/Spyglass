@@ -21,7 +21,6 @@ import {
 	traversePreOrder,
 } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { AdditionalContext } from '../common.js'
 import type {
 	AnyTypeNode,
 	AttributeValueNode,
@@ -97,10 +96,12 @@ import type {
 	StructTypeField,
 	StructTypePairField,
 	StructTypeSpreadField,
-	UseStatementBindingData,
 } from '../type/index.js'
 
-interface McdocBinderContext extends BinderContext, AdditionalContext {}
+interface McdocBinderContext extends BinderContext {
+	moduleIdentifier: string
+	isHoisting?: boolean
+}
 
 interface ModuleSymbolData {
 	nextAnonymousIndex: number
@@ -125,6 +126,10 @@ export namespace TypeDefSymbolData {
 	}
 }
 
+interface UseStatementBindingData {
+	target: readonly string[]
+}
+
 export const fileModule = AsyncBinder.create<ModuleNode>(async (node, ctx) => {
 	const moduleIdentifier = uriToIdentifier(ctx.doc.uri, ctx)
 	if (!moduleIdentifier) {
@@ -146,7 +151,7 @@ export async function module_(node: ModuleNode, ctx: McdocBinderContext): Promis
 		data: { data },
 	})
 
-	hoist(node, ctx)
+	hoist(node, { ...ctx, isHoisting: true })
 
 	for (const child of node.children) {
 		switch (child.type) {
@@ -848,6 +853,14 @@ function convertTypeArgBlock(node: TypeArgBlockNode, ctx: McdocBinderContext): M
 function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 	const { block, enumKind, identifier } = EnumNode.destruct(node)
 
+	// Return reference if the enum has been hoisted
+	if (identifier && !ctx.isHoisting) {
+		return wrapType(node, {
+			kind: 'reference',
+			path: `${ctx.moduleIdentifier}::${identifier.value}`,
+		}, ctx)
+	}
+
 	// Shortcut if the typeDef has been added to the enum symbol.
 	const symbol = identifier?.symbol ?? node.symbol
 	if (symbol && TypeDefSymbolData.is(symbol.data) && symbol.data.typeDef.kind === 'enum') {
@@ -863,9 +876,10 @@ function convertEnumBlock(node: EnumBlockNode, ctx: McdocBinderContext): EnumTyp
 }
 
 function convertEnumField(node: EnumFieldNode, ctx: McdocBinderContext): EnumTypeField {
-	const { attributes, identifier, value } = EnumFieldNode.destruct(node)
+	const { attributes, docComments, identifier, value } = EnumFieldNode.destruct(node)
 	return {
 		attributes: convertAttributes(attributes, ctx),
+		desc: DocCommentsNode.asText(docComments),
 		identifier: identifier.value,
 		value: convertEnumValue(value, ctx),
 	}
@@ -881,6 +895,14 @@ function convertEnumValue(node: EnumValueNode, ctx: McdocBinderContext): string 
 
 function convertStruct(node: StructNode, ctx: McdocBinderContext): McdocType {
 	const { block, identifier } = StructNode.destruct(node)
+
+	// Return reference if the struct has been hoisted
+	if (identifier && !ctx.isHoisting) {
+		return wrapType(node, {
+			kind: 'reference',
+			path: `${ctx.moduleIdentifier}::${identifier.value}`,
+		}, ctx)
+	}
 
 	// Shortcut if the typeDef has been added to the struct symbol.
 	const symbol = identifier?.symbol ?? node.symbol
