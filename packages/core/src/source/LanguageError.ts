@@ -60,8 +60,23 @@ export const enum ErrorSeverity {
 }
 
 export interface LanguageErrorInfo {
-	codeAction?: string
+	codeAction?: LanguageErrorAction
 	deprecated?: boolean
 	unnecessary?: boolean
 	related?: { location: Location; message: string }[]
+}
+
+export interface LanguageErrorAction {
+	title: string
+	isPreferred?: boolean
+	changes?: CodeActionChange[]
+}
+
+export type CodeActionChange = {
+	type: 'edit'
+	range: Range
+	text: string
+} | {
+	type: 'create'
+	uri: string
 }

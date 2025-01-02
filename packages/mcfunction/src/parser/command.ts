@@ -36,12 +36,43 @@ export function command(
 		if (src.trySkip('/')) {
 			ans.slash = core.Range.create(start, src.cursor)
 			if (!options.slash) {
-				ctx.err.report(localize('mcfunction.parser.leading-slash.unexpected'), ans.slash)
+				ctx.err.report(
+					localize('mcfunction.parser.leading-slash.unexpected'),
+					ans.slash,
+					core.ErrorSeverity.Error,
+					{
+						codeAction: {
+							title: localize('code-action.remove-leading-slash'),
+							isPreferred: true,
+							changes: [
+								{
+									type: 'edit',
+									range: ans.slash,
+									text: '',
+								},
+							],
+						},
+					},
+				)
 			}
 		} else if (options.slash === 'required') {
 			ctx.err.report(
 				localize('expected', localize('mcfunction.parser.leading-slash')),
 				core.Range.create(start, start + 1),
+				core.ErrorSeverity.Error,
+				{
+					codeAction: {
+						title: localize('code-action.add-leading-slash'),
+						isPreferred: true,
+						changes: [
+							{
+								type: 'edit',
+								range: core.Range.create(start),
+								text: '/',
+							},
+						],
+					},
+				},
 			)
 		}
 
