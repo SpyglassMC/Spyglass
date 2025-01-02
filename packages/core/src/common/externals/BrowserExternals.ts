@@ -14,11 +14,11 @@ import type {
 	FsWatcher,
 } from './index.js'
 
-type Listener = (...args: unknown[]) => unknown
+type Listener = (...args: any[]) => any
 export class BrowserEventEmitter implements ExternalEventEmitter {
 	readonly #listeners = new Map<string, { all: Set<Listener>; once: Set<Listener> }>()
 
-	emit(eventName: string, ...args: unknown[]): boolean {
+	emit(eventName: string, ...args: any[]): boolean {
 		const listeners = this.#listeners.get(eventName)
 		if (!listeners?.all?.size) {
 			return false
@@ -71,87 +71,227 @@ class BrowserExternalDownloader implements ExternalDownloader {
 	}
 }
 
-class BrowserFsWatcher implements FsWatcher {
-	on(event: string, listener: (...args: any[]) => unknown): this {
-		if (event === 'ready') {
-			listener()
-		}
-		return this
+class BrowserFsWatcher extends BrowserEventEmitter implements FsWatcher {
+	constructor(
+		dbPromise: Promise<IDBDatabase>,
+		private readonly locations: FsLocation[],
+	) {
+		super()
+		// eslint-disable-next-line @typescript-eslint/no-floating-promises
+		dbPromise.then((db) => {
+			const transaction = db.transaction(BrowserFileSystem.storeName, 'readonly')
+			const store = transaction.objectStore(BrowserFileSystem.storeName)
+			const request = store.openKeyCursor()
+			request.onsuccess = () => {
+				if (request.result) {
+					const uri = request.result.key.toString()
+					this.tryEmit('add', uri)
+					request.result.continue()
+				} else {
+					this.emit('ready')
+				}
+			}
+			request.onerror = () => {
+				this.emit('error', new Error('Watcher error'))
+			}
+		})
 	}
 
-	once(event: unknown, listener: (...args: any[]) => unknown): this {
-		if (event === 'ready') {
-			listener()
+	tryEmit(eventName: string, uri: string) {
+		for (const location of this.locations) {
+			if (uri.startsWith(location.toString())) {
+				this.emit(eventName, uri)
+				break
+			}
 		}
-		return this
 	}
 
 	async close(): Promise<void> {}
 }
 
-class BrowserFileSystem implements ExternalFileSystem {
-	private static readonly LocalStorageKey = 'spyglassmc-browser-fs'
-	private states: Record<string, { type: 'file'; content: string } | { type: 'directory' }>
+export class BrowserFileSystem implements ExternalFileSystem {
+	public static readonly dbName = 'spyglassmc-browser-fs'
+	public static readonly dbVersion = 1
+	public static readonly storeName = 'files'
+
+	private readonly db: Promise<IDBDatabase>
+	private watcher: BrowserFsWatcher | undefined
 
 	constructor() {
-		this.states = JSON.parse(localStorage.getItem(BrowserFileSystem.LocalStorageKey) ?? '{}')
-	}
-
-	private saveStates() {
-		localStorage.setItem(BrowserFileSystem.LocalStorageKey, JSON.stringify(this.states))
+		this.db = new Promise((res, rej) => {
+			const request = indexedDB.open(BrowserFileSystem.dbName, BrowserFileSystem.dbVersion)
+			request.onerror = (e) => {
+				console.warn('Database error', (e.target as any)?.error)
+				rej()
+			}
+			request.onsuccess = () => {
+				res(request.result)
+			}
+			request.onupgradeneeded = (event) => {
+				const db = (event.target as any).result as IDBDatabase
+				db.createObjectStore(BrowserFileSystem.storeName, { keyPath: 'uri' })
+			}
+		})
 	}
 
 	async chmod(_location: FsLocation, _mode: number): Promise<void> {
 		return
 	}
+
 	async mkdir(
 		location: FsLocation,
 		_options?: { mode?: number | undefined; recursive?: boolean | undefined } | undefined,
 	): Promise<void> {
 		location = fileUtil.ensureEndingSlash(location.toString())
-		if (this.states[location]) {
-			throw new Error(`EEXIST: ${location}`)
-		}
-		this.states[location] = { type: 'directory' }
-		this.saveStates()
+		const db = await this.db
+		return new Promise((res, rej) => {
+			const transaction = db.transaction(BrowserFileSystem.storeName, 'readwrite')
+			const store = transaction.objectStore(BrowserFileSystem.storeName)
+			const getRequest = store.get(location)
+			getRequest.onsuccess = () => {
+				const entry = getRequest.result
+				if (entry !== undefined) {
+					rej(new Error(`EEXIST: ${location}`))
+				} else {
+					const putRequest = store.put({ uri: location, type: 'directory' })
+					putRequest.onsuccess = () => {
+						res()
+					}
+					putRequest.onerror = () => {
+						rej()
+					}
+				}
+			}
+			getRequest.onerror = () => {
+				rej()
+			}
+		})
 	}
-	async readdir(_location: FsLocation) {
-		// Not implemented
-		return []
+
+	async readdir(
+		location: FsLocation,
+	): Promise<
+		{ name: string; isDirectory(): boolean; isFile(): boolean; isSymbolicLink(): boolean }[]
+	> {
+		location = fileUtil.ensureEndingSlash(location.toString())
+		const db = await this.db
+		return new Promise((res, rej) => {
+			const transaction = db.transaction(BrowserFileSystem.storeName, 'readonly')
+			const store = transaction.objectStore(BrowserFileSystem.storeName)
+			const request = store.openCursor(IDBKeyRange.bound(location, location + '\uffff'))
+			const result: {
+				name: string
+				isDirectory(): boolean
+				isFile(): boolean
+				isSymbolicLink(): boolean
+			}[] = []
+			request.onsuccess = () => {
+				if (request.result) {
+					const entry = request.result.value
+					result.push({
+						name: request.result.key.toString(),
+						isDirectory: () => entry.type === 'directory',
+						isFile: () => entry.type === 'file',
+						isSymbolicLink: () => false,
+					})
+					request.result.continue()
+				} else {
+					res(result)
+				}
+			}
+			request.onerror = () => {
+				rej()
+			}
+		})
 	}
+
 	async readFile(location: FsLocation): Promise<Uint8Array> {
 		location = location.toString()
-		const entry = this.states[location]
-		if (!entry) {
-			throw new Error(`ENOENT: ${location}`)
-		} else if (entry.type === 'directory') {
-			throw new Error(`EISDIR: ${location}`)
-		}
-		return new Uint8Array(arrayBufferFromBase64(entry.content))
+		const db = await this.db
+		return new Promise((res, rej) => {
+			const transaction = db.transaction(BrowserFileSystem.storeName, 'readonly')
+			const store = transaction.objectStore(BrowserFileSystem.storeName)
+			const request = store.get(location)
+			request.onsuccess = () => {
+				const entry = request.result
+				if (!entry) {
+					rej(new Error(`ENOENT: ${location}`))
+				} else if (entry.type === 'directory') {
+					rej(new Error(`EISDIR: ${location}`))
+				} else {
+					res(entry.content)
+				}
+			}
+			request.onerror = () => {
+				rej()
+			}
+		})
 	}
-	async showFile(_path: FsLocation): Promise<void> {
-		throw new Error('showFile not supported on browser')
+
+	async showFile(_location: FsLocation): Promise<void> {
+		throw new Error('showFile not supported on browser.')
 	}
+
 	async stat(location: FsLocation): Promise<{ isDirectory(): boolean; isFile(): boolean }> {
 		location = location.toString()
-		const entry = this.states[location]
-		if (!entry) {
-			throw new Error(`ENOENT: ${location}`)
-		}
-		return { isDirectory: () => entry.type === 'directory', isFile: () => entry.type === 'file' }
+		const db = await this.db
+		return new Promise((res, rej) => {
+			const transaction = db.transaction(BrowserFileSystem.storeName, 'readonly')
+			const store = transaction.objectStore(BrowserFileSystem.storeName)
+			const request = store.get(location)
+			request.onsuccess = () => {
+				const entry = request.result
+				if (!entry) {
+					rej(new Error(`ENOENT: ${location}`))
+				} else {
+					res({
+						isDirectory: () => entry.type === 'directory',
+						isFile: () => entry.type === 'file',
+					})
+				}
+			}
+			request.onerror = () => {
+				rej()
+			}
+		})
 	}
+
 	async unlink(location: FsLocation): Promise<void> {
 		location = location.toString()
-		const entry = this.states[location]
-		if (!entry) {
-			throw new Error(`ENOENT: ${location}`)
-		}
-		delete this.states[location]
-		this.saveStates()
+		const db = await this.db
+		return new Promise((res, rej) => {
+			const transaction = db.transaction(BrowserFileSystem.storeName, 'readwrite')
+			const store = transaction.objectStore(BrowserFileSystem.storeName)
+			const getRequest = store.get(location)
+			getRequest.onsuccess = () => {
+				const entry = getRequest.result
+				if (!entry) {
+					rej(new Error(`ENOENT: ${location}`))
+				} else {
+					const deleteRequest = store.delete(location)
+					deleteRequest.onsuccess = () => {
+						this.watcher?.tryEmit('unlink', location)
+						res()
+					}
+					deleteRequest.onerror = () => {
+						rej()
+					}
+				}
+			}
+			getRequest.onerror = () => {
+				rej()
+			}
+		})
 	}
-	watch(_locations: FsLocation[]): FsWatcher {
-		return new BrowserFsWatcher()
+
+	watch(
+		locations: FsLocation[],
+		_options: { usePolling?: boolean | undefined },
+	): FsWatcher {
+		this.watcher = new BrowserFsWatcher(this.db, locations)
+		return this.watcher
 	}
+
 	async writeFile(
 		location: FsLocation,
 		data: string | Uint8Array,
@@ -161,9 +301,30 @@ class BrowserFileSystem implements ExternalFileSystem {
 		if (typeof data === 'string') {
 			data = new TextEncoder().encode(data)
 		}
-		data = arrayBufferToBase64(data)
-		this.states[location] = { type: 'file', content: data }
-		this.saveStates()
+		const db = await this.db
+		return new Promise((res, rej) => {
+			const transaction = db.transaction(BrowserFileSystem.storeName, 'readwrite')
+			const store = transaction.objectStore(BrowserFileSystem.storeName)
+			const getRequest = store.get(location)
+			getRequest.onsuccess = () => {
+				const entry = getRequest.result
+				const putRequest = store.put({ uri: location, type: 'file', content: data })
+				putRequest.onsuccess = () => {
+					if (entry) {
+						this.watcher?.tryEmit('change', location)
+					} else {
+						this.watcher?.tryEmit('add', location)
+					}
+					res()
+				}
+				putRequest.onerror = () => {
+					rej()
+				}
+			}
+			getRequest.onerror = () => {
+				rej()
+			}
+		})
 	}
 }
 
