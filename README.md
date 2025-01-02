@@ -1,13 +1,11 @@
-
 # Spyglass
 
-<div align="center"><img src="https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png" height="256px"></div>
+<div align="center"><img src="https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png"></div>
 
 Spyglass aims at improving users' editing experience of Minecraft data packs by providing IntelliSense features like
 real-time error reporting, auto-completion, semantic coloring, code navigation tools, and refactor utilities.
 
-![](https://github.com/SpyglassMC/vscode-datapack/blob/master/img/nbt-tag-completions.gif?raw=true)  \
-_Sample image is from the legacy version of the project_
+![Completions in an NBT tag](https://raw.githubusercontent.com/SpyglassMC/Spyglass/main/packages/vscode-extension/img/nbt-tag-completions.gif)
 
 ## Documentation
 
