@@ -2,6 +2,7 @@
 */**
 
 !bin/*.js
+!favicon.ico
 !lib/**/*.js
 !lib/**/*.d.ts
 !package.json

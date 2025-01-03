@@ -15,14 +15,13 @@
   "dependencies": {
     "discord.js": "^14.16.3"
   },
-  "devDependencies": {},
   "scripts": {
     "release": "npm publish",
     "release:dry": "npm publish --dry-run",
     "start": "node lib/index.js"
   },
   "engines": {
-    "node": ">=16.9.0"
+    "node": ">=22.12.0"
   },
   "publishConfig": {
     "access": "public"

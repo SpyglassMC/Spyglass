@@ -1,0 +1,44 @@
+{
+  "name": "@spyglassmc/web-api-server",
+  "version": "0.1.0-PLACEHOLDER",
+  "type": "module",
+  "description": "api.spyglassmc.com server",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "bin": {
+    "spyglassmc-web-api-server": "./bin/server.js"
+  },
+  "author": "SPGoding",
+  "license": "MIT",
+  "scripts": {
+    "release": "npm publish",
+    "release:dry": "npm publish --dry-run",
+    "start": "./bin/server.js"
+  },
+  "dependencies": {
+    "async-mutex": "^0.5.0",
+    "chalk": "^5.4.1",
+    "cors": "^2.8.5",
+    "express": "^5.0.1",
+    "express-slow-down": "^2.0.3",
+    "rate-limiter-flexible": "^5.0.4",
+    "simple-git": "^3.27.0",
+    "tar-fs": "^3.0.6"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/tar-fs": "^2.0.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SpyglassMC/Spyglass.git"
+  },
+  "homepage": "https://api.spyglassmc.com",
+  "bugs": {
+    "url": "https://github.com/SpyglassMC/Spyglass/issues"
+  }
+}
