@@ -490,10 +490,27 @@ export class Project implements ExternalEventEmitter {
 				}
 
 				this.#watcher
-					.on('add', (uri) => this.emit('fileCreated', { uri }))
-					.on('change', (uri) => this.emit('fileModified', { uri }))
-					.on('unlink', (uri) => this.emit('fileDeleted', { uri }))
-					.on('error', (e) => this.logger.error('[Project#watcher]', e))
+					.on('add', (uri) => {
+						if (this.shouldExclude(uri)) {
+							return
+						}
+						this.emit('fileCreated', { uri })
+					})
+					.on('change', (uri) => {
+						if (this.shouldExclude(uri)) {
+							return
+						}
+						this.emit('fileModified', { uri })
+					})
+					.on('unlink', (uri) => {
+						if (this.shouldExclude(uri)) {
+							return
+						}
+						this.emit('fileDeleted', { uri })
+					})
+					.on('error', (e) => {
+						this.logger.error('[Project#watcher]', e)
+					})
 
 				if (this.#watcher.isReady) {
 					resolve()
