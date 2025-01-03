@@ -1,7 +1,7 @@
 import { Mutex } from 'async-mutex'
 import chalk from 'chalk'
 import { createHmac, timingSafeEqual } from 'crypto'
-import { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import fs from 'fs/promises'
 import path from 'path'
 import { RateLimiterMemory, RateLimiterRes } from 'rate-limiter-flexible'
@@ -68,12 +68,8 @@ export async function initGitRepos(rootDir: string) {
 				`https://github.com/${owner}/${repo}.git`,
 				path.join(rootDir, repoDirName),
 				singleBranch
-					? {
-						'--single-branch': null,
-						'--branch': singleBranch,
-						'--progress': null,
-					}
-					: { '--progress': null },
+					? ['--single-branch', `--branch ${singleBranch}`, '--progress']
+					: ['--progress'],
 			)
 			console.info(chalk.green(`Repo ${owner}/${repoDirName} cloned.`))
 		}
@@ -123,8 +119,8 @@ export async function sendGitFile(
 	const hash = (await git.log(['--format=%H', '-1', branch, '--', path])).latest!.hash
 	res.setHeader('ETag', hash)
 	if (req.headers['if-none-match'] === hash) {
-		rateLimiter.reward(req.ip!, CHEAP_REQUEST_POINTS)
 		res.status(304).end()
+		await rateLimiter.reward(req.ip!, CHEAP_REQUEST_POINTS)
 	} else {
 		res.send(await git.show(`${branch}:${path}`))
 	}
@@ -142,8 +138,8 @@ export async function sendGitTarball(
 	const hash = (await git.log(['--format=%H', '-1', branch])).latest!.hash
 	res.setHeader('ETag', hash)
 	if (req.headers['if-none-match'] === hash) {
-		rateLimiter.reward(req.ip!, EXPENSIVE_REQUEST_POINTS)
 		res.status(304).end()
+		await rateLimiter.reward(req.ip!, EXPENSIVE_REQUEST_POINTS)
 	} else {
 		res.contentType('application/gzip')
 		res.appendHeader('Content-Disposition', `attachment; filename="${branch}.tar.gz"`)
@@ -241,7 +237,7 @@ const getRateLimiter =
 		}
 	}
 
-const CHEAP_REQUEST_POINTS = 2
+const CHEAP_REQUEST_POINTS = 1
 const EXPENSIVE_REQUEST_POINTS = 5
 
 export const cheapRateLimiter = getRateLimiter(CHEAP_REQUEST_POINTS)

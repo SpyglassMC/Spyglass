@@ -42,7 +42,7 @@ the last response.
 
 Each API endpoint has a point cost depending on how expensive it is to serve the request. Each IP
 address can consume up to 100 points per one hour window before receiving `429 Too Many Requests`
-responses. Additionally, the response time will be degraded starting from 20 requests per 15 minute
+responses. Additionally, the response time will be degraded starting from 50 requests per 15 minute
 window.
 
 .Point Costs
@@ -50,7 +50,7 @@ window.
 |Type |Points
 
 |Conditional requests that end up with `304 Not Modified` responses |0
-|Non-tarball requests |2
+|Non-tarball requests |1
 |Tarball requests |5
 |===
 

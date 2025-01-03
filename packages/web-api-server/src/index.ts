@@ -50,6 +50,8 @@ const versionRoute = express.Router({ mergeParams: true })
 		await sendGitTarball(req, res, git, mutex, repoDir, `${version}-data`)
 	})
 
+const DELAY_AFTER = 50
+
 const app = express()
 	.set('trust proxy', 1)
 	.set('etag', 'strong')
@@ -65,8 +67,8 @@ const app = express()
 	.use(userAgentEnforcer)
 	.use(slowDown({
 		windowMs: 15 * 60 * 1000,
-		delayAfter: 20,
-		delayMs: (hits) => (1.03 ** (hits - 20) - 1) * 1000,
+		delayAfter: DELAY_AFTER,
+		delayMs: (hits) => (1.03 ** (hits - DELAY_AFTER) - 1) * 1000,
 		keyGenerator: (req) => req.ip!.replace(/:\d+[^:]*$/, ''),
 	}))
 	.get('/mcje/versions', cheapRateLimiter, async (req, res) => {
