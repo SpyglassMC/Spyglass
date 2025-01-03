@@ -6,7 +6,7 @@
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "bin": {
-    "spyglassmc-web-api-server": "./bin/server.js"
+    "spyglassmc-web-api-server": "bin/server.js"
   },
   "author": "SPGoding",
   "license": "MIT",
@@ -35,7 +35,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/SpyglassMC/Spyglass.git"
+    "url": "git+https://github.com/SpyglassMC/Spyglass.git"
   },
   "homepage": "https://api.spyglassmc.com",
   "bugs": {
