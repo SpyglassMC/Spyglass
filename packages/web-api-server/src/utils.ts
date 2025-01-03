@@ -142,7 +142,7 @@ export async function sendGitTarball(
 		await rateLimiter.reward(req.ip!, EXPENSIVE_REQUEST_POINTS)
 	} else {
 		res.contentType('application/gzip')
-		res.appendHeader('Content-Disposition', `attachment; filename="${branch}.tar.gz"`)
+		res.appendHeader('Content-Disposition', `attachment; filename="${fileName}.tar.gz"`)
 		await mutex.runExclusive(async () => {
 			await git.checkout(branch)
 			await pipeline(packTar(repoDir), createGzip(), res)
