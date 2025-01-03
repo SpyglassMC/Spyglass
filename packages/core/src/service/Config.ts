@@ -336,7 +336,11 @@ export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
 		dependencies: ['@vanilla-datapack', '@vanilla-resourcepack', '@vanilla-mcdoc'],
-		exclude: ['.*/**'],
+		exclude: [
+			'.*/**',
+			'**/node_modules/**',
+			'**/__pycache__/**',
+		],
 		customResources: {},
 		feature: {
 			codeActions: true,
