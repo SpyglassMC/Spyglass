@@ -6,7 +6,7 @@ services:
       # Admin
       WEBLATE_ADMIN_EMAIL: '{{ weblate_admin_email }}'
       WEBLATE_ADMIN_NAME: '{{ weblate_admin_name }}'
-      WEBLATE_ADMIN_NOTIFY_ERROR: 1
+      WEBLATE_ADMIN_NOTIFY_ERROR: 0
 
       # Email: completely disabled
       WEBLATE_EMAIL_BACKEND: django.core.mail.backends.dummy.EmailBackend
@@ -27,7 +27,7 @@ services:
       SENTRY_DSN: '{{ weblate_sentry_dsn }}'
 
       # GPG
-      WEBLATE_GPG_IDENTITY: 'SpyglassCrafter <bot@spyglassmc.com>'
+      WEBLATE_GPG_IDENTITY: '{{ weblate_default_commiter_name }} <{{ weblate_default_commiter_email }}>'
 
       # Git
       WEBLATE_DEFAULT_COMMITER_EMAIL: '{{ weblate_default_commiter_email }}'
