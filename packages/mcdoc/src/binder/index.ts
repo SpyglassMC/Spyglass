@@ -54,6 +54,7 @@ import {
 	ListTypeNode,
 	LiteralNode,
 	LiteralTypeNode,
+	LongRangeNode,
 	NumericTypeNode,
 	PathNode,
 	PrimitiveArrayTypeNode,
@@ -854,7 +855,10 @@ function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 
 	// Return reference if the enum has been hoisted
 	if (identifier && !ctx.isHoisting) {
-		return { kind: 'reference', path: `${ctx.moduleIdentifier}::${identifier.value}` }
+		return wrapType(node, {
+			kind: 'reference',
+			path: `${ctx.moduleIdentifier}::${identifier.value}`,
+		}, ctx)
 	}
 
 	// Shortcut if the typeDef has been added to the enum symbol.
@@ -881,7 +885,7 @@ function convertEnumField(node: EnumFieldNode, ctx: McdocBinderContext): EnumTyp
 	}
 }
 
-function convertEnumValue(node: EnumValueNode, ctx: McdocBinderContext): string | number {
+function convertEnumValue(node: EnumValueNode, ctx: McdocBinderContext): string | number | bigint {
 	if (TypedNumberNode.is(node)) {
 		const { value } = TypedNumberNode.destruct(node)
 		return value.value
@@ -894,7 +898,10 @@ function convertStruct(node: StructNode, ctx: McdocBinderContext): McdocType {
 
 	// Return reference if the struct has been hoisted
 	if (identifier && !ctx.isHoisting) {
-		return { kind: 'reference', path: `${ctx.moduleIdentifier}::${identifier.value}` }
+		return wrapType(node, {
+			kind: 'reference',
+			path: `${ctx.moduleIdentifier}::${identifier.value}`,
+		}, ctx)
 	}
 
 	// Shortcut if the typeDef has been added to the struct symbol.
@@ -980,23 +987,30 @@ function convertList(node: ListTypeNode, ctx: McdocBinderContext): McdocType {
 	return wrapType(node, {
 		kind: 'list',
 		item: convertType(item, ctx),
-		lengthRange: convertRange(lengthRange, ctx),
+		lengthRange: convertRange(lengthRange),
 	}, ctx)
 }
 
-function convertRange(node: FloatRangeNode | IntRangeNode, ctx: McdocBinderContext): NumericRange
+function convertRange(node: FloatRangeNode | IntRangeNode): NumericRange<number>
+function convertRange(node: LongRangeNode): NumericRange<bigint>
 function convertRange(
 	node: FloatRangeNode | IntRangeNode | undefined,
-	ctx: McdocBinderContext,
-): NumericRange | undefined
+): NumericRange<number> | undefined
+function convertRange(node: LongRangeNode | undefined): NumericRange<bigint> | undefined
 function convertRange(
-	node: FloatRangeNode | IntRangeNode | undefined,
-	ctx: McdocBinderContext,
-): NumericRange | undefined {
+	node: FloatRangeNode | IntRangeNode | LongRangeNode | undefined,
+): NumericRange<number> | NumericRange<bigint> | undefined
+function convertRange(
+	node: FloatRangeNode | IntRangeNode | LongRangeNode | undefined,
+): NumericRange | NumericRange<bigint> | undefined {
 	if (!node) {
 		return undefined
 	}
 
+	if (LongRangeNode.is(node)) {
+		const { kind, min, max } = LongRangeNode.destruct(node)
+		return { kind, min: min?.value, max: max?.value }
+	}
 	const { kind, min, max } = FloatRangeNode.is(node)
 		? FloatRangeNode.destruct(node)
 		: IntRangeNode.destruct(node)
@@ -1017,7 +1031,7 @@ function convertLiteralValue(node: LiteralTypeValueNode, ctx: McdocBinderContext
 			kind: convertLiteralNumberSuffix(suffix, ctx)
 				?? (value.type === 'integer' ? 'int' : 'double'),
 			value: value.value,
-		}
+		} as LiteralValue
 	} else {
 		return { kind: 'string', value: node.value }
 	}
@@ -1048,22 +1062,22 @@ function convertNumericType(node: NumericTypeNode, ctx: McdocBinderContext): Mcd
 	const { numericKind, valueRange } = NumericTypeNode.destruct(node)
 	return wrapType(node, {
 		kind: numericKind.value as NumericTypeKind,
-		valueRange: convertRange(valueRange, ctx),
-	}, ctx)
+		valueRange: convertRange(valueRange),
+	} as McdocType, ctx)
 }
 
 function convertPrimitiveArray(node: PrimitiveArrayTypeNode, ctx: McdocBinderContext): McdocType {
 	const { arrayKind, lengthRange, valueRange } = PrimitiveArrayTypeNode.destruct(node)
 	return wrapType(node, {
 		kind: `${arrayKind.value as PrimitiveArrayValueKind}_array`,
-		lengthRange: convertRange(lengthRange, ctx),
-		valueRange: convertRange(valueRange, ctx),
-	}, ctx)
+		lengthRange: convertRange(lengthRange),
+		valueRange: convertRange(valueRange),
+	} as McdocType, ctx)
 }
 
 function convertString(node: StringTypeNode, ctx: McdocBinderContext): McdocType {
 	const { lengthRange } = StringTypeNode.destruct(node)
-	return wrapType(node, { kind: 'string', lengthRange: convertRange(lengthRange, ctx) }, ctx)
+	return wrapType(node, { kind: 'string', lengthRange: convertRange(lengthRange) }, ctx)
 }
 
 function convertReference(node: ReferenceTypeNode, ctx: McdocBinderContext): McdocType {

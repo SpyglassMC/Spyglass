@@ -72,6 +72,16 @@ export class ReadonlySource {
 		return this.string.slice(this.innerCursor + offset, this.innerCursor + offset + length)
 	}
 
+	canRead(length = 1) {
+		const needed = this.innerCursor + length
+		const available = this.string.length
+		return this.innerCursor + length <= this.string.length
+	}
+
+	canReadInLine() {
+		return this.canRead() && this.peek() !== CR && this.peek() !== LF
+	}
+
 	/**
 	 * If the `expectedValue` is right after the cursor, returns `true`. Otherwise returns `false`.
 	 *
@@ -109,12 +119,12 @@ export class ReadonlySource {
 		return this.peekUntil(CR, LF)
 	}
 
-	peekRemaining(): string {
-		return this.string.slice(this.innerCursor)
+	peekRemaining(offset = 0): string {
+		return this.string.slice(this.innerCursor + offset)
 	}
 
-	matchPattern(regex: RegExp): boolean {
-		return regex.test(this.peekRemaining())
+	matchPattern(regex: RegExp, offset = 0): boolean {
+		return regex.test(this.peekRemaining(offset))
 	}
 
 	/**
@@ -170,14 +180,6 @@ export class Source extends ReadonlySource {
 		const ans = new Source(this.string, this.indexMap)
 		ans.innerCursor = this.innerCursor
 		return ans
-	}
-
-	canRead(length = 1) {
-		return this.innerCursor + length <= this.string.length
-	}
-
-	canReadInLine() {
-		return this.canRead() && this.peek() !== CR && this.peek() !== LF
 	}
 
 	read() {

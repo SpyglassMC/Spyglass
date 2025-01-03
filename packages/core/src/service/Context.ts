@@ -188,6 +188,21 @@ export namespace FormatterContext {
 	}
 }
 
+export interface CodeActionProviderContext extends ProcessorContext {
+	range: Range
+}
+export interface CodeActionProviderContextOptions extends ProcessorContextOptions {
+	range: Range
+}
+export namespace CodeActionProviderContext {
+	export function create(
+		project: ProjectData,
+		opts: CodeActionProviderContextOptions,
+	): CodeActionProviderContext {
+		return { ...ProcessorContext.create(project, opts), range: opts.range }
+	}
+}
+
 export interface ColorizerContext extends ProcessorWithRangeContext {}
 export interface ColorizerContextOptions extends ProcessorWithRangeContextOptions {}
 export namespace ColorizerContext {

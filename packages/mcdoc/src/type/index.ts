@@ -76,9 +76,16 @@ export namespace AttributeValue {
 	}
 }
 
-export type NumericRange = { kind: RangeKind; min?: number; max?: number }
+export interface NumericRange<T extends (number | bigint) = (number | bigint)> {
+	kind: RangeKind
+	min?: T
+	max?: T
+}
 export namespace NumericRange {
-	export function isInRange(range: NumericRange, val: number): boolean {
+	export function isInRange<T extends (number | bigint) = (number | bigint)>(
+		range: NumericRange<T>,
+		val: T,
+	): boolean {
 		const { min = -Infinity, max = Infinity } = range
 		if (RangeKind.isLeftExclusive(range.kind) ? val <= min : val < min) {
 			return false
@@ -95,14 +102,17 @@ export namespace NumericRange {
 			&& a.max === b.max
 	}
 
-	export function intersect(a: NumericRange, b: NumericRange): NumericRange {
-		const min: number | undefined = a.min !== undefined && b.min !== undefined
-			? Math.max(a.min, b.min)
+	export function intersect<T extends (number | bigint) = number>(
+		a: NumericRange<T>,
+		b: NumericRange<T>,
+	): NumericRange<T> {
+		const min: T | undefined = a.min !== undefined && b.min !== undefined
+			? (a.min > b.min ? a.min : b.min)
 			: a.min !== undefined
 			? a.min
 			: b.min
-		const max: number | undefined = a.max !== undefined && b.max !== undefined
-			? Math.min(a.max, b.max)
+		const max: T | undefined = a.max !== undefined && b.max !== undefined
+			? (a.max < b.max ? a.max : b.max)
 			: a.max !== undefined
 			? a.max
 			: b.max
@@ -216,7 +226,7 @@ export interface EnumType extends McdocBaseType {
 }
 export interface EnumTypeField extends McdocBaseType {
 	identifier: string
-	value: string | number
+	value: string | number | bigint
 	desc?: string
 }
 
@@ -268,10 +278,14 @@ export interface KeywordType extends McdocBaseType {
 
 export interface StringType extends McdocBaseType {
 	kind: 'string'
-	lengthRange?: NumericRange
+	lengthRange?: NumericRange<number>
 }
 
-export type LiteralValue = LiteralBooleanValue | LiteralStringValue | LiteralNumericValue
+export type LiteralValue =
+	| LiteralBooleanValue
+	| LiteralStringValue
+	| LiteralNumericValue
+	| LiteralLongNumberValue
 export interface LiteralBooleanValue {
 	kind: 'boolean'
 	value: boolean
@@ -281,8 +295,12 @@ export interface LiteralStringValue {
 	value: string
 }
 export interface LiteralNumericValue {
-	kind: NumericTypeKind
+	kind: Exclude<NumericTypeKind, 'long'>
 	value: number
+}
+export interface LiteralLongNumberValue {
+	kind: 'long'
+	value: bigint
 }
 export interface LiteralType extends McdocBaseType {
 	kind: 'literal'
@@ -290,8 +308,12 @@ export interface LiteralType extends McdocBaseType {
 }
 
 export interface NumericType extends McdocBaseType {
-	kind: NumericTypeKind
-	valueRange?: NumericRange
+	kind: Exclude<NumericTypeKind, 'long'>
+	valueRange?: NumericRange<number>
+}
+export interface LongType extends McdocBaseType {
+	kind: 'long'
+	valueRange?: NumericRange<bigint>
 }
 export const NumericTypeIntKinds = Object.freeze(['byte', 'short', 'int', 'long'] as const)
 export type NumericTypeIntKind = (typeof NumericTypeIntKinds)[number]
@@ -302,10 +324,16 @@ export const NumericTypeKinds = Object.freeze(
 )
 export type NumericTypeKind = (typeof NumericTypeKinds)[number]
 
-export interface PrimitiveArrayType extends McdocBaseType {
-	kind: 'byte_array' | 'int_array' | 'long_array'
-	valueRange?: NumericRange
-	lengthRange?: NumericRange
+export type PrimitiveArrayType = SmallIntArrayType | LongArrayType
+export interface SmallIntArrayType extends McdocBaseType {
+	kind: 'byte_array' | 'int_array'
+	valueRange?: NumericRange<number>
+	lengthRange?: NumericRange<number>
+}
+export interface LongArrayType extends McdocBaseType {
+	kind: 'long_array'
+	valueRange?: NumericRange<bigint>
+	lengthRange?: NumericRange<number>
 }
 export const PrimitiveArrayValueKinds = Object.freeze(['byte', 'int', 'long'] as const)
 export type PrimitiveArrayValueKind = (typeof PrimitiveArrayValueKinds)[number]
@@ -317,7 +345,7 @@ export type PrimitiveArrayKind = (typeof PrimitiveArrayKinds)[number]
 export interface ListType extends McdocBaseType {
 	kind: 'list'
 	item: McdocType
-	lengthRange?: NumericRange
+	lengthRange?: NumericRange<number>
 }
 
 export interface TupleType extends McdocBaseType {
@@ -336,6 +364,7 @@ export type McdocType =
 	| ListType
 	| LiteralType
 	| NumericType
+	| LongType
 	| PrimitiveArrayType
 	| ReferenceType
 	| StringType
@@ -363,10 +392,11 @@ export namespace McdocType {
 			case 'byte':
 			case 'short':
 			case 'int':
-			case 'long':
 			case 'float':
 			case 'double':
 				return a.valueRange === (b as NumericType).valueRange
+			case 'long':
+				return a.valueRange === (b as LongType).valueRange
 			case 'string':
 				return a.lengthRange === (b as StringType).lengthRange
 			case 'byte_array':
@@ -490,7 +520,7 @@ export namespace McdocType {
 	}
 
 	export function toString(type: McdocType | undefined): string {
-		const rangeToString = (range: NumericRange | undefined): string => {
+		const rangeToString = (range: NumericRange<any> | undefined): string => {
 			return range ? ` @ ${NumericRange.toString(range)}` : ''
 		}
 

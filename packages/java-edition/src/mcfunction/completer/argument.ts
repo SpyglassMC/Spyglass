@@ -433,6 +433,7 @@ const scoreHolder: Completer<ScoreHolderNode> = (node, ctx) => {
 			ctx,
 		)
 		ans.push(
+			...completer.literal(LiteralNode.mock(node, { pool: ['*'] }), ctx),
 			...selector(
 				EntitySelectorNode.mock(node, { pool: EntitySelectorAtVariable.filterAvailable(ctx) }),
 				ctx,

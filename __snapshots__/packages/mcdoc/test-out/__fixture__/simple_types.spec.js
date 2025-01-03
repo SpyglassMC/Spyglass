@@ -391,7 +391,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
             "kind": "literal",
             "value": {
               "kind": "long",
-              "value": 42
+              "value": "42"
             }
           }
         },
@@ -577,7 +577,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
             "kind": "long_array",
             "valueRange": {
               "kind": 0,
-              "min": 1
+              "min": "1"
             }
           }
         },
@@ -1497,12 +1497,12 @@ exports['mcdoc __fixture__ simple types 1'] = {
                       "type": "mcdoc:typed_number",
                       "children": [
                         {
-                          "type": "integer",
+                          "type": "long",
                           "range": {
                             "start": 249,
                             "end": 251
                           },
-                          "value": 42
+                          "value": "42"
                         },
                         {
                           "type": "mcdoc:literal",
@@ -1777,15 +1777,15 @@ exports['mcdoc __fixture__ simple types 1'] = {
                       "value": "long"
                     },
                     {
-                      "type": "mcdoc:int_range",
+                      "type": "mcdoc:long_range",
                       "children": [
                         {
-                          "type": "integer",
+                          "type": "long",
                           "range": {
                             "start": 380,
                             "end": 381
                           },
-                          "value": 1
+                          "value": "1"
                         },
                         {
                           "type": "mcdoc:literal",

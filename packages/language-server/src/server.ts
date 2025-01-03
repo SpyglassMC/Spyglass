@@ -127,6 +127,7 @@ connection.onInitialize(async (params) => {
 	const ans: ls.InitializeResult = {
 		serverInfo: { name: 'Spyglass Language Server' },
 		capabilities: {
+			codeActionProvider: {},
 			colorProvider: {},
 			completionProvider: { triggerCharacters: service.project.meta.getTriggerCharacters() },
 			declarationProvider: {},
@@ -197,6 +198,16 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 connection.onDidChangeWatchedFiles((params) => {
 	logger.info('[FsWatcher] raw LSP changes', params)
 	void fsWatcher!.onLspDidChangeWatchedFiles(params)
+})
+
+connection.onCodeAction(async ({ textDocument: { uri }, range }) => {
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
+	const codeActions = service.getCodeActions(node, doc, toCore.range(range, doc))
+	return codeActions.map(a => toLS.codeAction(a, doc))
 })
 
 connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) => {

@@ -626,7 +626,23 @@ exports['JSON array parser array() Parse "[1,2,]" 1'] = {
         "end": 5
       },
       "message": "Trailing separation",
-      "severity": 3
+      "severity": 3,
+      "info": {
+        "codeAction": {
+          "title": "Remove trailing separation",
+          "isPreferred": true,
+          "changes": [
+            {
+              "type": "edit",
+              "range": {
+                "start": 4,
+                "end": 5
+              },
+              "text": ""
+            }
+          ]
+        }
+      }
     }
   ]
 }

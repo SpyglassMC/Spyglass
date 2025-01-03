@@ -1,5 +1,4 @@
-import type { Ignore } from 'ignore'
-import ignore from 'ignore'
+import * as micromatch from 'micromatch'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, IntervalId } from '../common/index.js'
@@ -160,7 +159,6 @@ export type ProjectData = Pick<
  */
 export class Project implements ExternalEventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
-	private static readonly GitIgnore = '.gitignore'
 
 	/** Prevent circular binding. */
 	readonly #bindingInProgressUris = new Set<string>()
@@ -186,7 +184,6 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	config!: Config
-	ignore: Ignore = ignore()
 	readonly downloader: Downloader
 	readonly externals: Externals
 	readonly fs: FileService
@@ -294,10 +291,13 @@ export class Project implements ExternalEventEmitter {
 	 */
 	getTrackedFiles(): string[] {
 		const extensions: string[] = this.meta.getSupportedFileExtensions()
+		this.logger.info(`[Project#getTrackedFiles] Supported file extensions: ${extensions}`)
 		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.watchedFiles]
 			.filter((file) => extensions.includes(fileUtil.extname(file) ?? ''))
-		const filteredFiles = this.ignore.filter(supportedFiles)
-		return filteredFiles
+		this.logger.info(
+			`[Project#getTrackedFiles] Listed ${supportedFiles.length} supported files`,
+		)
+		return supportedFiles
 	}
 
 	constructor(
@@ -397,20 +397,6 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	private setInitPromise(): void {
-		const loadConfig = async () => {
-			this.config = await this.#configService.load()
-			this.ignore = ignore()
-			for (const pattern of this.config.env.exclude) {
-				if (pattern === '@gitignore') {
-					const gitignore = await this.readGitignore()
-					if (gitignore) {
-						this.ignore.add(gitignore)
-					}
-				} else {
-					this.ignore.add(pattern)
-				}
-			}
-		}
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
@@ -444,29 +430,13 @@ export class Project implements ExternalEventEmitter {
 			this.symbols.buildCache()
 			__profiler.task('Load Cache')
 
-			await loadConfig()
+			this.config = await this.#configService.load()
 			__profiler.task('Load Config')
 
 			await callIntializers()
 			__profiler.task('Initialize').finalize()
 		}
 		this.#initPromise = init()
-	}
-
-	private async readGitignore() {
-		if (this.projectRoots.length === 0) {
-			return undefined
-		}
-		try {
-			const uri = this.projectRoots[0] + Project.GitIgnore
-			const contents = await this.externals.fs.readFile(uri)
-			return bufferToString(contents)
-		} catch (e) {
-			if (!this.externals.error.isKind(e, 'ENOENT')) {
-				this.logger.error(`[Project] [readGitignore]`, e)
-			}
-		}
-		return undefined
 	}
 
 	private setReadyPromise(): void {
@@ -576,6 +546,18 @@ export class Project implements ExternalEventEmitter {
 
 			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
 			__profiler.task('Sort URIs')
+
+			const fileCountByExtension = new Map<string, number>()
+			for (const file of files) {
+				const ext = fileUtil.extname(file)?.replace(/^\./, '')
+				if (ext) {
+					fileCountByExtension.set(ext, (fileCountByExtension.get(ext) ?? 0) + 1)
+				}
+			}
+			this.logger.info(`[Project#ready] == Files to bind ==`)
+			for (const [ext, count] of fileCountByExtension.entries()) {
+				this.logger.info(`[Project#ready] File extension ${ext}: ${count}`)
+			}
 
 			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
 			for (const uri of files) {
@@ -875,6 +857,9 @@ export class Project implements ExternalEventEmitter {
 		if (!fileUtil.isFileUri(uri)) {
 			return // We only accept `file:` scheme for client-managed URIs.
 		}
+		if (this.shouldExclude(uri)) {
+			return
+		}
 		const doc = TextDocument.create(uri, languageID, version, content)
 		const node = this.parse(doc)
 		this.#clientManagedUris.add(uri)
@@ -898,6 +883,9 @@ export class Project implements ExternalEventEmitter {
 		this.#symbolUpToDateUris.delete(uri)
 		if (!fileUtil.isFileUri(uri)) {
 			return // We only accept `file:` scheme for client-managed URIs.
+		}
+		if (this.shouldExclude(uri)) {
+			return
 		}
 		const doc = this.#clientManagedDocAndNodes.get(uri)?.doc
 		if (!doc) {
@@ -959,6 +947,18 @@ export class Project implements ExternalEventEmitter {
 		} catch (e) {
 			this.logger.error('[Service#showCacheRoot]', e)
 		}
+	}
+
+	public shouldExclude(uri: string): boolean {
+		if (this.config.env.exclude.length === 0) {
+			return false
+		}
+		for (const rel of fileUtil.getRels(uri, this.projectRoots)) {
+			if (micromatch.any(rel, this.config.env.exclude)) {
+				return true
+			}
+		}
+		return false
 	}
 
 	private tryClearingCache(uri: string): void {
