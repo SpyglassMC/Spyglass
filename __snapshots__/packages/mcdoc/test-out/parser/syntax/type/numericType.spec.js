@@ -213,45 +213,6 @@ exports['mcdoc numericType Parse "int @ 0..1" 1'] = {
   "errors": []
 }
 
-exports['mcdoc numericType Parse "int @ 10000000000000001" 1'] = {
-  "node": {
-    "type": "mcdoc:type/numeric_type",
-    "children": [
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "value": "int",
-        "colorTokenType": "type"
-      },
-      {
-        "type": "mcdoc:int_range",
-        "children": [
-          {
-            "type": "integer",
-            "range": {
-              "start": 6,
-              "end": 23
-            },
-            "value": 10000000000000000
-          }
-        ],
-        "range": {
-          "start": 6,
-          "end": 23
-        }
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 23
-    }
-  },
-  "errors": []
-}
-
 exports['mcdoc numericType Parse "int @ 4" 1'] = {
   "node": {
     "type": "mcdoc:type/numeric_type",
@@ -333,45 +294,6 @@ exports['mcdoc numericType Parse "int @ 4.." 1'] = {
     "range": {
       "start": 0,
       "end": 9
-    }
-  },
-  "errors": []
-}
-
-exports['mcdoc numericType Parse "long @ 10000000000000001" 1'] = {
-  "node": {
-    "type": "mcdoc:type/numeric_type",
-    "children": [
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 0,
-          "end": 4
-        },
-        "value": "long",
-        "colorTokenType": "type"
-      },
-      {
-        "type": "mcdoc:long_range",
-        "children": [
-          {
-            "type": "long",
-            "range": {
-              "start": 7,
-              "end": 24
-            },
-            "value": "10000000000000001"
-          }
-        ],
-        "range": {
-          "start": 7,
-          "end": 24
-        }
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 24
     }
   },
   "errors": []

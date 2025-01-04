@@ -123,15 +123,7 @@ function inferType(node: JsonNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 		case 'json:number':
 			return {
 				kind: 'literal',
-				value: node.value.type === 'float'
-					? {
-						kind: node.value.type,
-						value: node.value.value,
-					}
-					: {
-						kind: node.value.type,
-						value: node.value.value,
-					},
+				value: { kind: node.value.type, value: Number(node.value.value) },
 			}
 		case 'json:null':
 			return { kind: 'any' } // null is always invalid?
