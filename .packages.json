@@ -16,8 +16,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "67587ee15935b2dab927bd1450e7e816a44aa530",
-			"version": "0.3.27"
+			"commit": "52b4eca91f54211865046833bcb796847ae49027",
+			"version": "0.3.28"
 		}
 	},
 	"java-edition": {
@@ -53,8 +53,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "242684bde1de3c868d1b9cf76447d60ac218c2f5",
-			"version": "0.4.26"
+			"commit": "52b4eca91f54211865046833bcb796847ae49027",
+			"version": "0.4.27"
 		}
 	},
 	"locales": {
@@ -122,8 +122,13 @@
 		],
 		"released": {
 			"commit": "f222cd48f53a3dfb73506bba8ce259cf6ad3fc5f",
-			"version": "4.4.4"
+			"version": "4.4.5"
 		}
 	},
-	"web-api-server": {}
+	"web-api-server": {
+		"released": {
+			"commit": "52b4eca91f54211865046833bcb796847ae49027",
+			"version": "0.1.0"
+		}
+	}
 }
