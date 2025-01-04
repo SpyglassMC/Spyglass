@@ -2,13 +2,10 @@
   become: true
   block:
     - name: Add signing key
-      ansible.builtin.uri:
+      ansible.builtin.get_url:
         url: https://download.docker.com/linux/debian/gpg
         dest: /etc/apt/keyrings/docker.asc
         mode: '644'
-        status_code:
-          - 200 # OK
-          - 304 # Not Modified
 
     - name: Add repository
       ansible.builtin.apt_repository:
