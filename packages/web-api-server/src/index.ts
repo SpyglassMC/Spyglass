@@ -51,7 +51,6 @@ const DELAY_AFTER = 50
 
 const app = express()
 	.set('trust proxy', 1)
-	.set('etag', 'strong')
 	.use(cors({
 		exposedHeaders: [
 			'ETag',

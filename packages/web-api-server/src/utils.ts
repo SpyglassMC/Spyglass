@@ -92,7 +92,11 @@ export async function sendGitFile(
 	path: string,
 ) {
 	const hash = (await git.log(['--format=%H', '-1', branch, '--', path])).latest!.hash
-	res.setHeader('ETag', hash)
+	// Git commit sha is a [weak validator](https://datatracker.ietf.org/doc/html/rfc2616#section-3.11),
+	// since the same value is used for different representations of the same resource (e.g. gzip
+	// compressed v.s. no compression). It can only guarantee semantic equivalence, not byte-for-byte
+	// equivalence.
+	res.setHeader('ETag', `W/"${hash}"`)
 	if (req.headers['if-none-match'] === hash) {
 		res.status(304).end()
 		await rateLimiter.reward(req.ip!, CHEAP_REQUEST_POINTS)
@@ -117,7 +121,8 @@ export async function sendGitTarball(
 	fileName = branch,
 ) {
 	const hash = (await git.log(['--format=%H', '-1', branch])).latest!.hash
-	res.setHeader('ETag', hash)
+	// See comments in sendGitFile() for why this is a weak validator.
+	res.setHeader('ETag', `W/"${hash}"`)
 	if (req.headers['if-none-match'] === hash) {
 		res.status(304).end()
 		await rateLimiter.reward(req.ip!, EXPENSIVE_REQUEST_POINTS)
