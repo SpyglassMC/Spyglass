@@ -1,3 +1,12 @@
+# v4.4.4 (2025-01-04)
+
+### ✨ New Features
+- [`242684b`](https://github.com/SpyglassMC/Spyglass/commit/242684bde1de3c868d1b9cf76447d60ac218c2f5) Add quick fixes, for example to create new files ([#1697](https://github.com/SpyglassMC/Spyglass/pull/1697))
+
+### 🐛 Bug Fixes
+- [`5a91439`](https://github.com/SpyglassMC/Spyglass/commit/5a91439a418c313dbf57293f16ff65b9b278b899) Fixes the `env.exclude` config, which could in some cases cause strange errors ([#1695](https://github.com/SpyglassMC/Spyglass/pull/1695))
+- [`49e23c4`](https://github.com/SpyglassMC/Spyglass/commit/49e23c40125259324e7695b42522fdce530af14c) Fixes autocomplete in unclosed objects ([#1583](https://github.com/SpyglassMC/Spyglass/pull/1583))
+
 # v4.4.1 (2024-12-27)
 
 ### 🐛 Bug Fixes
