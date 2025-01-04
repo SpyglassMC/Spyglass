@@ -68,7 +68,7 @@ export async function initGitRepos(rootDir: string) {
 				`https://github.com/${owner}/${repo}.git`,
 				path.join(rootDir, repoDirName),
 				singleBranch
-					? ['--single-branch', `--branch ${singleBranch}`, '--progress']
+					? ['--single-branch', `--branch=${singleBranch}`, '--progress']
 					: ['--progress'],
 			)
 			console.info(chalk.green(`Repo ${owner}/${repoDirName} cloned.`))
