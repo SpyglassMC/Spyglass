@@ -16,19 +16,16 @@
     "start": "./bin/server.js"
   },
   "dependencies": {
-    "async-mutex": "^0.5.0",
     "chalk": "^5.4.1",
     "cors": "^2.8.5",
     "express": "^5.0.1",
     "express-slow-down": "^2.0.3",
     "rate-limiter-flexible": "^5.0.4",
-    "simple-git": "^3.27.0",
-    "tar-fs": "^3.0.6"
+    "simple-git": "^3.27.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/tar-fs": "^2.0.4"
+    "@types/express": "^5.0.0"
   },
   "publishConfig": {
     "access": "public"

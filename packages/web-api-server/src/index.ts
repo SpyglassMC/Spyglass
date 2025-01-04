@@ -12,6 +12,7 @@ import {
 	initGitRepos,
 	loadConfig,
 	loggerMiddleware as logger,
+	MemCache,
 	sendGitFile,
 	sendGitTarball,
 	userAgentEnforcer,
@@ -20,34 +21,30 @@ import {
 
 const { hookSecret, port, rootDir } = loadConfig()
 await assertRootDir(rootDir)
-const repos = await initGitRepos(rootDir)
+const gits = await initGitRepos(rootDir)
+const cache = new MemCache(gits.mcmeta)
 
 const versionRoute = express.Router({ mergeParams: true })
-	.use(getVersionValidator(repos.summary.git))
+	.use(getVersionValidator(cache))
 	.get('/block_states', cheapRateLimiter, async (req, res) => {
 		const { version } = req.params
-		const { git } = repos.summary
-		await sendGitFile(req, res, git, `${version}-summary`, 'blocks/data.json')
+		await sendGitFile(req, res, gits.mcmeta, `${version}-summary`, 'blocks/data.json')
 	})
 	.get('/commands', cheapRateLimiter, async (req, res) => {
 		const { version } = req.params
-		const { git } = repos.summary
-		await sendGitFile(req, res, git, `${version}-summary`, 'commands/data.json')
+		await sendGitFile(req, res, gits.mcmeta, `${version}-summary`, 'commands/data.json')
 	})
 	.get('/registries', cheapRateLimiter, async (req, res) => {
 		const { version } = req.params
-		const { git } = repos.summary
-		await sendGitFile(req, res, git, `${version}-summary`, 'registries/data.json')
+		await sendGitFile(req, res, gits.mcmeta, `${version}-summary`, 'registries/data.json')
 	})
 	.get('/vanilla-assets-tiny/tarball', expensiveRateLimiter, async (req, res) => {
 		const { version } = req.params
-		const { git, mutex, repoDir } = repos.assets
-		await sendGitTarball(req, res, git, mutex, repoDir, `${version}-assets-tiny`)
+		await sendGitTarball(req, res, gits.mcmeta, `${version}-assets-tiny`)
 	})
 	.get('/vanilla-data/tarball', expensiveRateLimiter, async (req, res) => {
 		const { version } = req.params
-		const { git, mutex, repoDir } = repos.data
-		await sendGitTarball(req, res, git, mutex, repoDir, `${version}-data`)
+		await sendGitTarball(req, res, gits.mcmeta, `${version}-data`)
 	})
 
 const DELAY_AFTER = 50
@@ -72,17 +69,14 @@ const app = express()
 		keyGenerator: (req) => req.ip!.replace(/:\d+[^:]*$/, ''),
 	}))
 	.get('/mcje/versions', cheapRateLimiter, async (req, res) => {
-		const { git } = repos.summary
-		await sendGitFile(req, res, git, 'summary', 'versions/data.json')
+		await sendGitFile(req, res, gits.mcmeta, 'summary', 'versions/data.json')
 	})
 	.use('/mcje/versions/:version', versionRoute)
 	.get('/vanilla-mcdoc/symbols', cheapRateLimiter, async (req, res) => {
-		const { git } = repos.mcdoc
-		await sendGitFile(req, res, git, `generated`, 'symbols.json')
+		await sendGitFile(req, res, gits.mcdoc, `generated`, 'symbols.json')
 	})
 	.get('/vanilla-mcdoc/tarball', expensiveRateLimiter, async (req, res) => {
-		const { git, mutex, repoDir } = repos.mcdoc
-		await sendGitTarball(req, res, git, mutex, repoDir, 'main', 'vanilla-mcdoc')
+		await sendGitTarball(req, res, gits.mcdoc, 'main', 'vanilla-mcdoc')
 	})
 	.post(
 		'/hooks/github',
@@ -98,25 +92,17 @@ const app = express()
 			}
 			res.status(202).send(JSON.stringify({ message: 'Accepted' }))
 
-			// if (req.headers['x-github-event'] !== 'push') {
-			// 	return
-			// }
+			if (req.headers['x-github-event'] !== 'push') {
+				return
+			}
 
 			const { repository: { name } } = JSON.parse(req.body.toString()) as {
 				repository: { name: string }
 			}
-			const reposToUpdate = name === 'mcmeta'
-				? [repos.assets, repos.data, repos.summary]
-				: name === 'vanilla-mcdoc'
-				? [repos.mcdoc]
-				: []
-			for (const { git, mutex, repoDir } of reposToUpdate) {
-				await mutex.runExclusive(async () => {
-					console.info(chalk.yellow(`Pulling into ${repoDir}...`))
-					await git.pull()
-					console.info(chalk.green(`Pulled into ${repoDir}`))
-				})
-			}
+			const git = gits[name === 'vanilla-mcdoc' ? 'mcdoc' : 'mcmeta']
+			console.info(chalk.yellow(`Updating ${name}...`))
+			await git.remote(['update', '--prune'])
+			console.info(chalk.green(`Updated ${name}`))
 		},
 	)
 	.get('/favicon.ico', cheapRateLimiter, (_req, res) => {

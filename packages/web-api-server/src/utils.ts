@@ -1,4 +1,3 @@
-import { Mutex } from 'async-mutex'
 import chalk from 'chalk'
 import { createHmac, timingSafeEqual } from 'crypto'
 import type { NextFunction, Request, Response } from 'express'
@@ -7,9 +6,6 @@ import path from 'path'
 import { RateLimiterMemory, RateLimiterRes } from 'rate-limiter-flexible'
 import simpleGit from 'simple-git'
 import type { SimpleGit } from 'simple-git'
-import { pipeline } from 'stream/promises'
-import tar from 'tar-fs'
-import { createGzip } from 'zlib'
 
 export function loadConfig() {
 	if (
@@ -46,6 +42,14 @@ async function doesPathExist(path: string) {
 	}
 }
 
+const defaultOutputHandler = (
+	_command: string,
+	_stdout: NodeJS.ReadableStream,
+	stderr: NodeJS.ReadableStream,
+) => {
+	stderr.pipe(process.stderr)
+}
+
 /**
  * Ensures the local git repositories exist and returns a simple-git instance, a mutex, and the
  * directory path for each of the local repos.
@@ -57,56 +61,27 @@ export async function initGitRepos(rootDir: string) {
 			stderr.pipe(process.stderr)
 		})
 
-	async function initGitRepo(owner: string, repo: string, singleBranch?: string) {
-		const repoDirName = singleBranch ? `${repo}-${singleBranch}` : repo
-		const repoDir = path.join(rootDir, repoDirName)
-		if (await doesPathExist(path.join(repoDir, '.git'))) {
-			console.info(chalk.green(`Repo ${owner}/${repoDirName} already cloned.`))
+	async function initGitRepo(owner: string, repo: string) {
+		const repoDir = path.join(rootDir, repo)
+		if (await doesPathExist(repoDir)) {
+			console.info(chalk.green(`Repo ${owner}/${repo} already cloned.`))
 		} else {
-			console.info(chalk.yellow(`Cloning ${owner}/${repoDirName}...`))
+			console.info(chalk.yellow(`Cloning ${owner}/${repo}...`))
 			await gitCloner.clone(
-				`https://github.com/${owner}/${repo}.git`,
-				path.join(rootDir, repoDirName),
-				singleBranch
-					? ['--single-branch', `--branch=${singleBranch}`, '--progress']
-					: ['--progress'],
+				`git@github.com:${owner}/${repo}.git`,
+				path.join(rootDir, repo),
+				['--mirror', '--progress'],
 			)
-			console.info(chalk.green(`Repo ${owner}/${repoDirName} cloned.`))
+			console.info(chalk.green(`Repo ${owner}/${repo} cloned.`))
 		}
 
-		const git = simpleGit({ baseDir: repoDir })
-			.outputHandler((_command, _stdout, stderr) => {
-				stderr.pipe(process.stderr)
-			})
-		const mutex = new Mutex()
-
-		return { git, mutex, repoDir }
+		return simpleGit({ baseDir: repoDir }).outputHandler(defaultOutputHandler)
 	}
 
-	const ans = {
-		assets: await initGitRepo('misode', 'mcmeta', 'assets-tiny'),
-		data: await initGitRepo('misode', 'mcmeta', 'data'),
+	return {
+		mcmeta: await initGitRepo('misode', 'mcmeta'),
 		mcdoc: await initGitRepo('SpyglassMC', 'vanilla-mcdoc'),
-		summary: await initGitRepo('misode', 'mcmeta', 'summary'),
 	}
-
-	// Make sure the `generated` branch of `vanilla-mcdoc` exists locally
-	try {
-		await ans.mcdoc.git.show('generated:symbols.json')
-	} catch {
-		console.info(chalk.yellow('Missing generated branch for vanilla-mcdoc...'))
-		await ans.mcdoc.git.checkoutBranch('generated', 'origin/generated')
-		await ans.mcdoc.git.checkout('main')
-		console.info(chalk.green('Checked out generated branch for vanilla-mcdoc'))
-	}
-
-	return ans
-}
-
-export function packTar(dirPath: string) {
-	return tar.pack(dirPath, {
-		ignore: (name) => /\/\.git\b/.test(name),
-	})
 }
 
 export async function sendGitFile(
@@ -122,7 +97,15 @@ export async function sendGitFile(
 		res.status(304).end()
 		await rateLimiter.reward(req.ip!, CHEAP_REQUEST_POINTS)
 	} else {
-		res.send(await git.show(`${branch}:${path}`))
+		git.outputHandler((_command, stdout, stderr) => {
+			stdout.pipe(res)
+			stderr.pipe(process.stderr)
+		})
+		try {
+			await git.show(`${branch}:${path}`)
+		} finally {
+			git.outputHandler(defaultOutputHandler)
+		}
 	}
 }
 
@@ -130,8 +113,6 @@ export async function sendGitTarball(
 	req: Request,
 	res: Response,
 	git: SimpleGit,
-	mutex: Mutex,
-	repoDir: string,
 	branch: string,
 	fileName = branch,
 ) {
@@ -143,10 +124,15 @@ export async function sendGitTarball(
 	} else {
 		res.contentType('application/gzip')
 		res.appendHeader('Content-Disposition', `attachment; filename="${fileName}.tar.gz"`)
-		await mutex.runExclusive(async () => {
-			await git.checkout(branch)
-			await pipeline(packTar(repoDir), createGzip(), res)
+		git.outputHandler((_command, stdout, stderr) => {
+			stdout.pipe(res)
+			stderr.pipe(process.stderr)
 		})
+		try {
+			await git.raw(['archive', '--format=tar.gz', branch])
+		} finally {
+			git.outputHandler(defaultOutputHandler)
+		}
 	}
 }
 
@@ -201,9 +187,9 @@ export const errorHandler = (err: Error, _req: Request, res: Response, next: Nex
 }
 
 export const getVersionValidator =
-	(summaryGit: SimpleGit) => async (req: Request, res: Response, next: NextFunction) => {
+	(cache: MemCache) => async (req: Request, res: Response, next: NextFunction) => {
 		const { version } = req.params
-		const versions = JSON.parse(await summaryGit.show('summary:versions/data.json'))
+		const versions = await cache.getVersions()
 		const entry = versions.find((v: any) => v.id === req.params.version)
 		if (entry) {
 			next()
@@ -242,3 +228,22 @@ const EXPENSIVE_REQUEST_POINTS = 5
 
 export const cheapRateLimiter = getRateLimiter(CHEAP_REQUEST_POINTS)
 export const expensiveRateLimiter = getRateLimiter(EXPENSIVE_REQUEST_POINTS)
+
+export class MemCache {
+	#versions: { id: string }[] | undefined
+
+	constructor(private readonly mcmetaGit: SimpleGit) {}
+
+	async getVersions() {
+		if (!this.#versions) {
+			this.#versions = JSON.parse(await this.mcmetaGit.show('summary:versions/data.json')) as {
+				id: string
+			}[]
+		}
+		return this.#versions
+	}
+
+	invalidate() {
+		this.#versions = undefined
+	}
+}
