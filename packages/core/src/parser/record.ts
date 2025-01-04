@@ -3,7 +3,7 @@ import type { AstNode } from '../node/index.js'
 import type { RecordNode } from '../node/RecordNode.js'
 import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
-import { Range } from '../source/index.js'
+import { ErrorSeverity, Range } from '../source/index.js'
 import type { InfallibleParser, Parser } from './Parser.js'
 import { Failure } from './Parser.js'
 import { attempt } from './util.js'
@@ -33,6 +33,7 @@ export function record<K extends AstNode, V extends AstNode>(
 		const ans: RecordNode<K, V> = { type: 'record', range: Range.create(src), children: [] }
 
 		if (src.trySkip(start)) {
+			ans.innerRange = Range.create(src)
 			src.skipWhitespace()
 
 			let requiresPairEnd = false
@@ -127,13 +128,29 @@ export function record<K extends AstNode, V extends AstNode>(
 
 			// Trailing pair end.
 			if (hasPairEnd && !pair.trailingEnd) {
+				const trailingRange = ans.children[ans.children.length - 1].end!
 				ctx.err.report(
 					localize('parser.record.trailing-end'),
-					ans.children[ans.children.length - 1].end!,
+					trailingRange,
+					ErrorSeverity.Error,
+					{
+						codeAction: {
+							title: localize('code-action.remove-trailing-separation'),
+							isPreferred: true,
+							changes: [
+								{
+									type: 'edit',
+									range: trailingRange,
+									text: '',
+								},
+							],
+						},
+					},
 				)
 			}
 
 			// End.
+			ans.innerRange.end = src.cursor
 			if (!src.trySkip(end)) {
 				ctx.err.report(localize('expected', localeQuote(end)), src)
 			}

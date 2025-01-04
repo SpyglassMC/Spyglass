@@ -6,16 +6,26 @@ import type { Formatter } from '../processor/formatter/index.js'
 import type {
 	Binder,
 	Checker,
+	CodeActionProvider,
 	Colorizer,
 	Completer,
 	InlayHintProvider,
 } from '../processor/index.js'
-import { binder, checker, colorizer, completer, formatter, linter } from '../processor/index.js'
+import {
+	binder,
+	checker,
+	codeActions,
+	colorizer,
+	completer,
+	formatter,
+	linter,
+} from '../processor/index.js'
 import type { Linter } from '../processor/linter/Linter.js'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider.js'
 import type { DependencyKey, DependencyProvider } from './Dependency.js'
 import type { FileExtension } from './fileUtil.js'
 import type { SymbolRegistrar } from './SymbolRegistrar.js'
+import type { UriBuilder } from './UriBuilder.js'
 import type { UriBinder, UriSorter, UriSorterRegistration } from './UriProcessor.js'
 
 export interface LanguageOptions {
@@ -56,6 +66,7 @@ export class MetaRegistry {
 	readonly #binders = new Map<string, Binder<any>>()
 	readonly #checkers = new Map<string, Checker<any>>()
 	readonly #colorizers = new Map<string, Colorizer<any>>()
+	readonly #codeActionProviders = new Map<string, CodeActionProvider<any>>()
 	readonly #completers = new Map<string, Completer<any>>()
 	readonly #dependencyProviders = new Map<DependencyKey, DependencyProvider>()
 	readonly #formatters = new Map<string, Formatter<any>>()
@@ -66,11 +77,13 @@ export class MetaRegistry {
 	readonly #symbolRegistrars = new Map<string, SymbolRegistrarRegistration>()
 	readonly #custom = new Map<string, Map<string, unknown>>()
 	readonly #uriBinders = new Set<UriBinder>()
+	readonly #uriBuilders = new Map<string, UriBuilder>()
 	#uriSorter: UriSorter = () => 0
 
 	constructor() {
 		binder.registerBinders(this)
 		checker.registerCheckers(this)
+		codeActions.registerProviders(this)
 		colorizer.registerColorizers(this)
 		completer.registerCompleters(this)
 		formatter.registerFormatters(this)
@@ -142,6 +155,19 @@ export class MetaRegistry {
 	}
 	public registerChecker<N extends AstNode>(type: N['type'], checker: Checker<N>): void {
 		this.#checkers.set(type, checker)
+	}
+
+	public hasCodeActionProvider<N extends AstNode>(type: N['type']): boolean {
+		return this.#codeActionProviders.has(type)
+	}
+	public getCodeActionProvider<N extends AstNode>(type: N['type']): CodeActionProvider<N> {
+		return this.#codeActionProviders.get(type) ?? codeActions.fallback
+	}
+	public registerCodeActionProvider<N extends AstNode>(
+		type: N['type'],
+		codeActionProvider: CodeActionProvider<N>,
+	): void {
+		this.#codeActionProviders.set(type, codeActionProvider)
 	}
 
 	public hasColorizer<N extends AstNode>(type: N['type']): boolean {
@@ -274,6 +300,16 @@ export class MetaRegistry {
 	}
 	public get uriBinders(): Set<UriBinder> {
 		return this.#uriBinders
+	}
+
+	public hasUriBuilder(category: string): boolean {
+		return this.#uriBuilders.has(category)
+	}
+	public getUriBuilder(category: string): UriBuilder | undefined {
+		return this.#uriBuilders.get(category)
+	}
+	public registerUriBuilder(category: string, builder: UriBuilder): void {
+		this.#uriBuilders.set(category, builder)
 	}
 
 	public setUriSorter(uriSorter: UriSorterRegistration): void {

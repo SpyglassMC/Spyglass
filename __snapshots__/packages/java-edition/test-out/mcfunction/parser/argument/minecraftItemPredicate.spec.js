@@ -138,7 +138,11 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 7,
+        "end": 14
+      }
     }
   },
   "errors": []

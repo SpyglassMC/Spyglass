@@ -2,10 +2,12 @@ import type {
 	CheckerContext,
 	Config,
 	FileCategory,
+	MetaRegistry,
 	RootUriString,
 	TaggableResourceLocationCategory,
 	UriBinder,
 	UriBinderContext,
+	UriBuilder,
 } from '@spyglassmc/core'
 import {
 	ErrorSeverity,
@@ -163,6 +165,13 @@ resource('', {
 })
 resource('', { pack: 'assets', category: 'gpu_warnlist', identifier: 'gpu_warnlist' })
 
+export function* getResources() {
+	for (const resources of Resources.values()) {
+		yield* resources
+	}
+	return undefined
+}
+
 export function* getRels(
 	uri: string,
 	rootUris: readonly RootUriString[],
@@ -173,6 +182,22 @@ export function* getRels(
 	for (let i = parts.length - 2; i >= 0; i--) {
 		if (parts[i] === 'data' || parts[i] === 'assets') {
 			yield parts.slice(i).join('/')
+		}
+	}
+
+	return undefined
+}
+
+export function* getRoots(
+	uri: string,
+	rootUris: readonly RootUriString[],
+): Generator<RootUriString, undefined, unknown> {
+	yield* fileUtil.getRoots(uri, rootUris)
+
+	const parts = uri.split('/')
+	for (let i = parts.length - 2; i >= 0; i--) {
+		if (parts[i] === 'data' || parts[i] === 'assets') {
+			yield `${parts.slice(0, i).join('/')}/`
 		}
 	}
 
@@ -319,5 +344,39 @@ export function reportDissectError(
 			Range.Beginning,
 			ErrorSeverity.Hint,
 		)
+	}
+}
+
+function uriBuilder(resources: Resource[]): UriBuilder {
+	return (identifier, ctx) => {
+		const root = getRoots(ctx.doc.uri, ctx.roots).next().value
+		if (!root) {
+			return undefined
+		}
+		const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+		if (!release) {
+			return undefined
+		}
+		const resource = resources.find(r => matchVersion(release, r.since, r.until))
+		if (!resource) {
+			return undefined
+		}
+		const sepIndex = identifier.indexOf(':')
+		const namespace = sepIndex > 0 ? identifier.slice(0, sepIndex) : 'minecraft'
+		const path = identifier.slice(sepIndex + 1)
+		return `${root}${resource.pack}/${namespace}/${resource.path}/${path}${resource.ext}`
+	}
+}
+
+export function registerUriBuilders(meta: MetaRegistry) {
+	const resourcesByCategory = new Map<string, Resource[]>()
+	for (const resource of getResources()) {
+		resourcesByCategory.set(resource.category, [
+			...resourcesByCategory.get(resource.category) ?? [],
+			resource,
+		])
+	}
+	for (const [category, resources] of resourcesByCategory.entries()) {
+		meta.registerUriBuilder(category, uriBuilder(resources))
 	}
 }

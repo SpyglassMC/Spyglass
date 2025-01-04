@@ -1654,6 +1654,7 @@ const components: core.Parser<ComponentListNode> = (src, ctx) => {
 	if (!src.trySkip('[')) {
 		return core.Failure
 	}
+	ans.innerRange = core.Range.create(src)
 	src.skipWhitespace()
 
 	while (src.canRead() && src.peek() !== ']') {
@@ -1710,6 +1711,7 @@ const components: core.Parser<ComponentListNode> = (src, ctx) => {
 	}
 
 	src.skipWhitespace()
+	ans.innerRange.end = src.cursor
 	core.literal(']')(src, ctx)
 
 	ans.range.end = src.cursor

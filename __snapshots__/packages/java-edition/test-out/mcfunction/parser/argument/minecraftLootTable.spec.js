@@ -98,7 +98,11 @@ exports['mcfunction argument minecraft:loot_table Parse "{pools:[]}" 1'] = {
               "children": []
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 1,
+          "end": 9
+        }
       }
     ],
     "category": "loot_table"

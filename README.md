@@ -1,21 +1,11 @@
-🚧 Under Heavy Construction 🚧
-
-This project is undergoing a complete rewrite. We're almost there.
-
-For the legacy VS Code extension known as [Data-pack Helper Plus](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server), check out
-* [Branch `release/3.3.0`](https://github.com/SpyglassMC/Spyglass/tree/release/3.3.0) for server-side code;
-* [SpyglassMC/vscode-extension](https://github.com/SpyglassMC/vscode-datapack/tree/release/3.3.0) for client-side code;
-* [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) for use.
-
 # Spyglass
 
-<div align="center"><img src="https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png" height="256px"></div>
+<div align="center"><img src="https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png"></div>
 
 Spyglass aims at improving users' editing experience of Minecraft data packs by providing IntelliSense features like
 real-time error reporting, auto-completion, semantic coloring, code navigation tools, and refactor utilities.
 
-![](https://github.com/SpyglassMC/vscode-datapack/blob/master/img/nbt-tag-completions.gif?raw=true)  \
-_Sample image is from the legacy version of the project_
+![Completions in an NBT tag](https://raw.githubusercontent.com/SpyglassMC/Spyglass/main/packages/vscode-extension/img/nbt-tag-completions.gif)
 
 ## Documentation
 
