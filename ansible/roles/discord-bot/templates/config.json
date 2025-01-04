@@ -1,0 +1,6 @@
+{
+  "clientId": "{{ discord_bot_client_id }}",
+  "guildId": "{{ discord_bot_guild_id }}",
+  "token": "{{ discord_bot_token }}"
+}
+

@@ -106,10 +106,7 @@ client.on('interactionCreate', async (i) => {
 							await bi.update(getReplyOptions(info))
 						})
 						.on('end', async () => {
-							await i.editReply({
-								embeds: [new EmbedBuilder().setDescription('The interaction has expired!')],
-								components: [],
-							})
+							await i.editReply(getReplyOptions(info, true))
 						})
 					break
 			}
@@ -192,6 +189,7 @@ async function getInteractionInfo(content: string, showRaw: boolean): Promise<In
 
 function getReplyOptions(
 	info: InteractionInfo,
+	expired = false,
 ): {
 	content: string
 	components: APIActionRowComponent<APIMessageActionRowComponent>[]
@@ -202,7 +200,7 @@ function getReplyOptions(
 		content: content.length > MaxContentLength
 			? `Skipped colorizing due to Discord length limit.\n\`\`\`\n${info.content}\n\`\`\``
 			: content,
-		components: info.errors.length > 1
+		components: !expired && info.errors.length > 1
 			? [
 				new ActionRowBuilder<ButtonBuilder>().addComponents(
 					new ButtonBuilder().setCustomId('previous').setLabel('Previous Error').setStyle(
@@ -210,8 +208,7 @@ function getReplyOptions(
 					).setDisabled(info.activeErrorIndex <= 0),
 					new ButtonBuilder().setCustomId('next').setLabel('Next Error').setStyle(
 						ButtonStyle.Primary,
-					)
-						.setDisabled(info.activeErrorIndex >= info.errors.length - 1),
+					).setDisabled(info.activeErrorIndex >= info.errors.length - 1),
 				).toJSON(),
 			]
 			: [],

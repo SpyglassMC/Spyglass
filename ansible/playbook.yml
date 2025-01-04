@@ -1,0 +1,6 @@
+- name: Install spyglassmc.ai Cloud (TM)
+  hosts: all
+  roles:
+    - api-server
+    - discord-bot
+    - weblate

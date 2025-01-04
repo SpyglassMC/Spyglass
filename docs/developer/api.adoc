@@ -1,0 +1,82 @@
+:page-layout: default
+:page-title: API
+:page-parent: Developer Guides
+
+:toc:
+
+== Introduction
+
+The Spyglass API provides access to various information that is helpful for data pack/resource pack
+toolings. It uses https://github.com/misode/mcmeta:[misode/mcmeta] and
+https://github.com/SpyglassMC/vanilla-mcdoc:[SpyglassMC/vanilla-mcdoc] under the hood and provides a
+few advantages over using the GitHub API directly:
+
+* Accessible within mainland China.
+* Cache invalidation is handled through standard HTTP headers like `ETag` and `If-None-Match`;
+  no more git commit sha hackery needed on client side.
+* Cleaner?
+
+== General Usage
+
+The Spyglass API root endpoint is `https://api.spyglassmc.com/`. Clients must identify themselves
+using the `User-Agent` HTTP header; requests without the `User-Agent` header will be rejected.
+
+=== Error Handling
+
+All error responses (HTTP status code `4xx` and `5xx`) will include a JSON body with the following
+structure:
+
+* `message`: (`str`) A human readable message describing the error details.
+
+=== Conditional Requests
+
+All API endpoints include an https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag[`ETag`]
+header in the response. Clients should cache the value of `ETag` along with the response
+body if possible, which can be achieved using the https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage[CacheStorage API]
+on browsers. For future requests at the same endpoint, clients should include the value of `ETag` in
+the https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match[`If-None-Match`] request
+header. A `304 Not Modified` response will be returned if the resource has not changed since
+the last response.
+
+=== Ratelimiting
+
+Each API endpoint has a point cost depending on how expensive it is to serve the request. Each IP
+address can consume up to 100 points per one hour window before receiving `429 Too Many Requests`
+responses. Additionally, the response time will be degraded starting from 50 requests per 15 minute
+window.
+
+.Point Costs
+|===
+|Type |Points
+
+|Conditional requests that end up with `304 Not Modified` responses |0
+|Non-tarball requests |1
+|Tarball requests |5
+|===
+
+Number of remaining points is provided through the `RateLimit-Remaining` response header. When
+`429 Too Many Requests` responses are received, the client must wait at least `Retry-After` seconds
+before trying again.
+
+== Endpoints
+
+=== `GET` https://api.spyglassmc.com/mcje/versions:[`/mcje/versions`]
+
+=== `GET` https://api.spyglassmc.com/mcje/versions/:version/block_states:[`/mcje/versions/:version/block_states`]
+
+=== `GET` https://api.spyglassmc.com/mcje/versions/:version/commands:[`/mcje/versions/:version/commands`]
+
+=== `GET` https://api.spyglassmc.com/mcje/versions/:version/registries:[`/mcje/versions/:version/registries`]
+
+=== `GET` https://api.spyglassmc.com/mcje/versions/:version/vanilla-assets-tiny/tarball:[`/mcje/versions/:version/vanilla-assets-tiny/tarball`]
+
+=== `GET` https://api.spyglassmc.com/mcje/versions/:version/vanilla-data/tarball:[`/mcje/versions/:version/vanilla-data/tarball`]
+
+=== `GET` https://api.spyglassmc.com/vanilla-mcdoc/symbols:[`/vanilla-mcdoc/symbols`]
+
+=== `GET` https://api.spyglassmc.com/vanilla-mcdoc/tarball:[`/vanilla-mcdoc/tarball`]
+
+=== `POST` `/hooks/github`
+
+Not for third party use. This endpoint accepts GitHub Webhook deliveries to update the local Git
+repositories.

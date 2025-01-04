@@ -1,0 +1,14 @@
+[Unit]
+Description=SpyglassMC Discord bot service
+After=network.target
+
+[Service]
+User=discord-bot
+Group=discord-bot
+WorkingDirectory=/var/lib/discord-bot
+Environment="SPYGLASSMC_DISCORD_BOT_DIR=/var/lib/discord-bot"
+ExecStart=/usr/local/bin/spyglassmc-discord-bot
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

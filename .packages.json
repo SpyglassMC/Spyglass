@@ -124,5 +124,6 @@
 			"commit": "f222cd48f53a3dfb73506bba8ce259cf6ad3fc5f",
 			"version": "4.4.4"
 		}
-	}
+	},
+	"web-api-server": {}
 }

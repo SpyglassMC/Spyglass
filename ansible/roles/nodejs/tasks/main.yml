@@ -1,0 +1,12 @@
+- name: Install n
+  become: true
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/tj/n/master/bin/n
+    dest: /usr/local/bin/n
+    mode: '755'
+
+- name: Install Node.js
+  become: true
+  ansible.builtin.command:
+    cmd: n lts
+    creates: /usr/local/bin/node

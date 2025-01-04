@@ -1,0 +1,40 @@
+- name: Uninstall apache
+  become: true
+  ansible.builtin.apt:
+    name: apache2
+    state: absent
+
+- name: Install nginx
+  become: true
+  ansible.builtin.apt:
+    name: nginx
+
+- name: Disable example site
+  become: true
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload nginx
+
+- name: Download DH parameters
+  become: true
+  ansible.builtin.get_url:
+    url: https://ssl-config.mozilla.org/ffdhe2048.txt
+    dest: /etc/nginx/ssl/ffdhe2048.txt
+    mode: '644'
+
+- name: Create nginx config
+  become: true
+  ansible.builtin.copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    mode: '644'
+  notify: Reload nginx
+
+- name: Create common config
+  become: true
+  ansible.builtin.copy:
+    src: common.conf
+    dest: /etc/nginx/conf.d/common.conf
+    mode: '644'
+  notify: Reload nginx
