@@ -48,7 +48,7 @@
 - name: Create nginx reverse proxy
   become: true
   ansible.builtin.template:
-    src: weblate.conf
+    src: api-server.conf
     dest: /etc/nginx/conf.d/api-server.conf
     mode: '644'
   notify: Reload nginx
