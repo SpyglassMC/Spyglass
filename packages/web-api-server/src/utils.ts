@@ -96,8 +96,9 @@ export async function sendGitFile(
 	// since the same value is used for different representations of the same resource (e.g. gzip
 	// compressed v.s. no compression). It can only guarantee semantic equivalence, not byte-for-byte
 	// equivalence.
-	res.setHeader('ETag', `W/"${hash}"`)
-	if (req.headers['if-none-match'] === hash) {
+	const etag = `W/"${hash}"`
+	res.setHeader('ETag', etag)
+	if (req.headers['if-none-match'] === etag) {
 		res.status(304).end()
 		await rateLimiter.reward(req.ip!, CHEAP_REQUEST_POINTS)
 	} else {
@@ -122,8 +123,9 @@ export async function sendGitTarball(
 ) {
 	const hash = (await git.log(['--format=%H', '-1', branch])).latest!.hash
 	// See comments in sendGitFile() for why this is a weak validator.
-	res.setHeader('ETag', `W/"${hash}"`)
-	if (req.headers['if-none-match'] === hash) {
+	const etag = `W/"${hash}"`
+	res.setHeader('ETag', etag)
+	if (req.headers['if-none-match'] === etag) {
 		res.status(304).end()
 		await rateLimiter.reward(req.ip!, EXPENSIVE_REQUEST_POINTS)
 	} else {
