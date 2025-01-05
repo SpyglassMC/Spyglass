@@ -59,6 +59,10 @@ const app = express()
 			'Retry-After',
 		],
 	}))
+	.use((_req, res, next) => {
+		res.appendHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
+		next()
+	})
 	.use(logger)
 	.use(userAgentEnforcer)
 	.use(slowDown({

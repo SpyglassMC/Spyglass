@@ -168,8 +168,7 @@ export const loggerMiddleware = (req: Request, res: Response, next: NextFunction
 	const start = new Date()
 	console.info(
 		chalk.yellow(
-			`[${start.toISOString()}] ${req.method} ${req.path} by ${req.ip} - ${
-				req.headers['user-agent']
+			`[${start.toISOString()}] ${req.method} ${req.path} by ${req.ip} - ${req.headers['user-agent']
 			}...`,
 		),
 	)
@@ -177,8 +176,7 @@ export const loggerMiddleware = (req: Request, res: Response, next: NextFunction
 	res.on('finish', () => {
 		const end = new Date()
 		const message =
-			`[${end.toISOString()}] ${req.method} ${req.path} by ${req.ip} - ${res.statusCode} - ${
-				end.getTime() - start.getTime()
+			`[${end.toISOString()}] ${req.method} ${req.path} by ${req.ip} - ${res.statusCode} - ${end.getTime() - start.getTime()
 			}ms`
 		console.info(res.statusCode < 400 ? chalk.green(message) : chalk.red(message))
 	})
@@ -216,6 +214,10 @@ const getRateLimiter =
 		try {
 			const result = await rateLimiter.consume(req.ip!, points)
 			res.appendHeader('RateLimit-Remaining', `${result.remainingPoints}`)
+			res.appendHeader(
+				'RateLimit-Reset',
+				`${new Date(Date.now() + result.msBeforeNext).toUTCString()}`,
+			)
 			next()
 		} catch (e) {
 			if (e instanceof RateLimiterRes) {
@@ -239,7 +241,7 @@ export const expensiveRateLimiter = getRateLimiter(EXPENSIVE_REQUEST_POINTS)
 export class MemCache {
 	#versions: { id: string }[] | undefined
 
-	constructor(private readonly mcmetaGit: SimpleGit) {}
+	constructor(private readonly mcmetaGit: SimpleGit) { }
 
 	async getVersions() {
 		if (!this.#versions) {
