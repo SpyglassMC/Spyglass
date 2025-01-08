@@ -109,6 +109,7 @@
           "data/*/loot_table/**/*.json",
           "data/*/loot_tables/**/*.json",
           "data/*/painting_variant/**/*.json",
+          "data/*/pig_variant/**/*.json",
           "data/*/predicate/**/*.json",
           "data/*/predicates/**/*.json",
           "data/*/recipe/**/*.json",
