@@ -13,7 +13,7 @@ import {
 } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
-export const typed: core.Checker<TypedNbtNode> = (node, ctx) => {
+export const typed: core.SyncChecker<TypedNbtNode> = (node, ctx) => {
 	typeDefinition(node.targetType)(node.children[0], ctx)
 }
 
