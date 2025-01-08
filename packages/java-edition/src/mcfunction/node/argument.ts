@@ -1,5 +1,4 @@
 import * as core from '@spyglassmc/core'
-import type * as json from '@spyglassmc/json'
 import type * as nbt from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../../dependency/common.js'
 import type { NbtParserProperties } from '../tree/argument.js'
