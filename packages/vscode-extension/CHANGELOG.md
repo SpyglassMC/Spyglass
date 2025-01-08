@@ -1,3 +1,8 @@
+# v4.5.0 (2025-01-08)
+
+### ✨ New Features
+- [`b9bec63`](https://github.com/SpyglassMC/Spyglass/commit/b9bec63e6736e230f803a35bde522c5580ce0fb5) Added support for 25w02a ([#1714](https://github.com/SpyglassMC/Spyglass/pull/1714))
+
 # v4.4.4 (2025-01-04)
 
 ### ✨ New Features
