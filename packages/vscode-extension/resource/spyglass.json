@@ -1,0 +1,263 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"type": "object",
+	"title": "Spyglass Config",
+	"description": "https://spyglassmc.com/user/config",
+	"definitions": {
+		"SummaryOverride": {
+			"type": "object",
+			"properties": {
+				"path": {
+					"type": "string"
+				},
+				"replace": {
+					"type": "boolean"
+				}
+			},
+			"required": ["path"]
+		},
+		"NameLint": {
+			"anyOf": [
+				{
+					"type": ["string", "null"]
+				},
+				{
+					"type": "array",
+					"minItems": 2,
+					"maxItems": 2,
+					"default": ["error", "VALUE"]
+				}
+			]
+		},
+		"Patterns": {
+			"type": ["string", "array"],
+			"items": {
+				"type": "string",
+				"format": "regex"
+			}
+		},
+		"Action": {
+			"title": "Action",
+			"type": "object",
+			"oneOf": [{ "required": ["declare"] }, { "required": ["report"] }],
+			"properties": {
+				"declare": {
+					"enum": ["block", "file", "public"]
+				},
+				"report": {
+					"enum": ["inherit", "hint", "information", "warning", "error"]
+				}
+			},
+			"additionalProperties": false
+		},
+		"Complex": {
+			"title": "Complex",
+			"type": "object",
+			"properties": {
+				"if": {
+					"type": ["object", "array"],
+					"properties": {
+						"category": {
+							"$ref": "#/definitions/Patterns"
+						},
+						"pattern": {
+							"$ref": "#/definitions/Patterns"
+						},
+						"excludePattern": {
+							"$ref": "#/definitions/Patterns"
+						},
+						"namespace": {
+							"$ref": "#/definitions/Patterns"
+						},
+						"excludeNamespace": {
+							"$ref": "#/definitions/Patterns"
+						}
+					},
+					"additionalProperties": false,
+					"items": {
+						"$ref": "#/definitions/Complex/properties/if"
+					}
+				},
+				"then": {
+					"$ref": "#/definitions/Action"
+				},
+				"override": {
+					"anyOf": [
+						{ "$ref": "#/definitions/Complex" },
+						{ "type": "array", "items": { "$ref": "#/definitions/Complex" } }
+					]
+				}
+			},
+			"additionalProperties": false
+		}
+	},
+	"properties": {
+		"env": {
+			"type": "object",
+			"properties": {
+				"dataSource": {
+					"type": "string",
+					"examples": ["GitHub", "fastly", "jsDelivr"]
+				},
+				"dependencies": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"exclude": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"customResources": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"category": {
+								"type": "string"
+							},
+							"ext": {
+								"type": "string",
+								"pattern": "^\\.",
+								"examples": [".json"]
+							},
+							"pack": {
+								"enum": ["data", "assets"]
+							},
+							"since": {
+								"type": "string",
+								"pattern": "^1\\.\\d+(\\.\\d+)?$"
+							},
+							"until": {
+								"type": "string",
+								"pattern": "^1\\.\\d+(\\.\\d+)$"
+							}
+						},
+						"additionalProperties": false,
+						"required": ["category"]
+					}
+				},
+				"feature": {
+					"type": "object",
+					"properties": {
+						"codeActions": { "type": "boolean" },
+						"colors": { "type": "boolean" },
+						"completions": { "type": "boolean" },
+						"documentHighlighting": { "type": "boolean" },
+						"documentLinks": { "type": "boolean" },
+						"foldingRanges": { "type": "boolean" },
+						"formatting": { "type": "boolean" },
+						"hover": { "type": "boolean" },
+						"inlayHint": {
+							"type": "object",
+							"properties": {
+								"enabledNodes": {
+									"type": "array",
+									"items": { "type": "string" }
+								}
+							},
+							"additionalProperties": false
+						},
+						"semanticColoring": { "type": "boolean" },
+						"selectionRanges": { "type": "boolean" },
+						"signatures": { "type": "boolean" }
+					},
+					"additionalProperties": false
+				},
+				"gameVersion": {
+					"type": "string",
+					"examples": ["Auto", "Latest release", "Latest snapshot"]
+				},
+				"language": {
+					"type": "string",
+					"examples": ["Default"]
+				},
+				"permissionLevel": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 4
+				},
+				"plugins": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"mcmetaSummaryOverrides": {
+					"type": "object",
+					"properties": {
+						"blocks": {
+							"$ref": "#/definitions/SummaryOverride"
+						},
+						"commands": {
+							"$ref": "#/definitions/SummaryOverride"
+						},
+						"fluids": {
+							"$ref": "#/definitions/SummaryOverride"
+						},
+						"registries": {
+							"$ref": "#/definitions/SummaryOverride"
+						}
+					},
+					"additionalProperties": false
+				},
+				"enableMcdocCaching": {
+					"type": "boolean"
+				},
+				"useFilePolling": {
+					"type": "boolean"
+				}
+			},
+			"additionalProperties": false
+		},
+		"format": {
+			"type": "object",
+			"additionalProperties": {
+				"title": "UNDOCUMENTED"
+			}
+		},
+		"lint": {
+			"type": "object",
+			"properties": {
+				"nameOfNbtKey": {
+					"$ref": "#/definitions/NameLint"
+				},
+				"nameOfObjective": {
+					"$ref": "#/definitions/NameLint"
+				},
+				"nameOfScoreHolder": {
+					"$ref": "#/definitions/NameLint"
+				},
+				"nameOfTag": {
+					"$ref": "#/definitions/NameLint"
+				},
+				"nameOfTeam": {
+					"$ref": "#/definitions/NameLint"
+				},
+				"undeclaredSymbol": {
+					"type": "array",
+					"items": {
+						"oneOf": [
+							{ "$ref": "#/definitions/NameLint" },
+							{ "$ref": "#/definitions/Action" },
+							{ "$ref": "#/definitions/Complex" }
+						]
+					}
+				}
+			},
+			"additionalProperties": {
+				"title": "UNDOCUMENTED"
+			}
+		},
+		"snippet": {
+			"type": "object",
+			"additionalProperties": {
+				"type": "string"
+			}
+		}
+	},
+	"additionalProperties": false
+}
