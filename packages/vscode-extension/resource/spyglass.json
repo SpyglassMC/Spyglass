@@ -4,6 +4,18 @@
 	"title": "Spyglass Config",
 	"description": "https://spyglassmc.com/user/config",
 	"definitions": {
+		"SummaryOverride": {
+			"type": "object",
+			"properties": {
+				"path": {
+					"type": "string"
+				},
+				"replace": {
+					"type": "boolean"
+				}
+			},
+			"required": ["path"]
+		},
 		"NameLint": {
 			"anyOf": [
 				{
@@ -84,12 +96,48 @@
 			"type": "object",
 			"properties": {
 				"dataSource": {
-					"enum": ["GitHub"]
+					"type": "string",
+					"examples": ["GitHub", "fastly", "jsDelivr"]
 				},
 				"dependencies": {
 					"type": "array",
 					"items": {
 						"type": "string"
+					}
+				},
+				"exclude": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"customResources": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"category": {
+								"type": "string"
+							},
+							"ext": {
+								"type": "string",
+								"pattern": "^\\.",
+								"examples": [".json"]
+							},
+							"pack": {
+								"enum": ["data", "assets"]
+							},
+							"since": {
+								"type": "string",
+								"pattern": "^1\\.\\d+(\\.\\d+)?$"
+							},
+							"until": {
+								"type": "string",
+								"pattern": "^1\\.\\d+(\\.\\d+)$"
+							}
+						},
+						"additionalProperties": false,
+						"required": ["category"]
 					}
 				},
 				"feature": {
@@ -121,14 +169,16 @@
 				},
 				"gameVersion": {
 					"type": "string",
-					"examples": ["Auto"]
+					"examples": ["Auto", "Latest release", "Latest snapshot"]
 				},
 				"language": {
 					"type": "string",
 					"examples": ["Default"]
 				},
 				"permissionLevel": {
-					"type": "integer"
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 4
 				},
 				"plugins": {
 					"type": "array",
@@ -137,7 +187,25 @@
 					}
 				},
 				"mcmetaSummaryOverrides": {
-					"type": "object"
+					"type": "object",
+					"properties": {
+						"blocks": {
+							"$ref": "#/definitions/SummaryOverride"
+						},
+						"commands": {
+							"$ref": "#/definitions/SummaryOverride"
+						},
+						"fluids": {
+							"$ref": "#/definitions/SummaryOverride"
+						},
+						"registries": {
+							"$ref": "#/definitions/SummaryOverride"
+						}
+					},
+					"additionalProperties": false
+				},
+				"enableMcdocCaching": {
+					"type": "boolean"
 				},
 				"useFilePolling": {
 					"type": "boolean"

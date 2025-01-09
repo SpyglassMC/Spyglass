@@ -126,7 +126,7 @@
       {
         "fileMatch": [
           "spyglass.json",
-          "*.spyglassrc.json"
+          ".spyglassrc.json"
         ],
         "url": "./resource/spyglass.json"
       }
