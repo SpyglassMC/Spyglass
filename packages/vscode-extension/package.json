@@ -122,6 +122,13 @@
           "data/minecraft/**/*.json"
         ],
         "url": "./resource/empty-object.json"
+      },
+      {
+        "fileMatch": [
+          "spyglass.json",
+          "*.spyglassrc.json"
+        ],
+        "url": "./resource/spyglass.json"
       }
     ],
     "languages": [
