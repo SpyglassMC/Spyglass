@@ -172,7 +172,6 @@ export const loggerMiddleware = (req: Request, res: Response, next: NextFunction
 			}...`,
 		),
 	)
-	res.contentType('application/json')
 	res.on('finish', () => {
 		const end = new Date()
 		const message =

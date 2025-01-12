@@ -56,11 +56,18 @@ const app = express()
 			'ETag',
 			'RateLimit-Limit',
 			'RateLimit-Remaining',
+			'RateLimit-Reset',
 			'Retry-After',
 		],
 	}))
 	.use((_req, res, next) => {
+		// Force revalidation of cached responses
+		res.appendHeader('Cache-Control', 'no-cache')
+
+		res.contentType('application/json')
+		res.appendHeader('X-Content-Type-Options', 'nosniff')
 		res.appendHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
+
 		next()
 	})
 	.use(logger)
