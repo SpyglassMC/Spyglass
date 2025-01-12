@@ -61,8 +61,9 @@ const app = express()
 		],
 	}))
 	.use((_req, res, next) => {
-		// Force revalidation of cached responses
-		res.appendHeader('Cache-Control', 'no-cache')
+		// 'max-age=0' instead of 'no-cache' is used, as 'no-cache' disallows the use of stale
+		// response in cases where the origin server is unreachable.
+		res.setHeader('Cache-Control', 'max-age=0')
 
 		res.contentType('application/json')
 		res.appendHeader('X-Content-Type-Options', 'nosniff')
@@ -117,7 +118,7 @@ const app = express()
 	)
 	.get('/favicon.ico', cheapRateLimiter, (_req, res) => {
 		res.contentType('image/x-icon')
-		res.appendHeader('Cache-Control', 'public, max-age=604800')
+		res.setHeader('Cache-Control', 'max-age=604800, public')
 		res.sendFile(fileURLToPath(new URL('../favicon.ico', import.meta.url)))
 	})
 	.all('*catchall', cheapRateLimiter, (_req, res) => {
