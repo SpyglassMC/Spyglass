@@ -115,6 +115,8 @@
           "data/*/recipe/**/*.json",
           "data/*/recipes/**/*.json",
           "data/*/tags/**/*.json",
+          "data/*/test_instance/**/*.json",
+          "data/*/test_environment/**/*.json",
           "data/*/trim_material/**/*.json",
           "data/*/trim_pattern/**/*.json",
           "data/*/wolf_variant/**/*.json",

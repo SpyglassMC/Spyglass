@@ -159,7 +159,8 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 				&& !n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
 
-	registerMcdocAttributes(meta, release)
+	registerMcdocAttributes(meta, summary.commands, release)
+	registerPackFormatAttribute(meta, release, versions, packs)
 	registerPackFormatAttribute(meta, release, versions, packs)
 
 	meta.registerLanguage('zip', { extensions: ['.zip'] })
