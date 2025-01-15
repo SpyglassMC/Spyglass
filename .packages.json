@@ -4,8 +4,8 @@
 			"locales"
 		],
 		"released": {
-			"commit": "b9bec63e6736e230f803a35bde522c5580ce0fb5",
-			"version": "0.4.22"
+			"commit": "7035f51a9019362ada69be009092a511311e91b9",
+			"version": "0.4.23"
 		}
 	},
 	"discord-bot": {
@@ -17,7 +17,7 @@
 		],
 		"released": {
 			"commit": "52b4eca91f54211865046833bcb796847ae49027",
-			"version": "0.3.29"
+			"version": "0.3.30"
 		}
 	},
 	"java-edition": {
@@ -30,8 +30,8 @@
 			"nbt"
 		],
 		"released": {
-			"commit": "b9bec63e6736e230f803a35bde522c5580ce0fb5",
-			"version": "0.3.28"
+			"commit": "7035f51a9019362ada69be009092a511311e91b9",
+			"version": "0.3.29"
 		}
 	},
 	"json": {
@@ -42,7 +42,7 @@
 		],
 		"released": {
 			"commit": "2c69062d94401eac8fc06cdec45a80025c02bab3",
-			"version": "0.3.25"
+			"version": "0.3.26"
 		}
 	},
 	"language-server": {
@@ -54,7 +54,7 @@
 		],
 		"released": {
 			"commit": "52b4eca91f54211865046833bcb796847ae49027",
-			"version": "0.4.28"
+			"version": "0.4.29"
 		}
 	},
 	"locales": {
@@ -70,7 +70,7 @@
 		],
 		"released": {
 			"commit": "2c69062d94401eac8fc06cdec45a80025c02bab3",
-			"version": "0.3.26"
+			"version": "0.3.27"
 		}
 	},
 	"mcdoc-cli": {
@@ -80,7 +80,7 @@
 		],
 		"released": {
 			"commit": "8e17b0c31991a7f146dc1a26ab8bfd4952dbf0e4",
-			"version": "0.1.27"
+			"version": "0.1.28"
 		}
 	},
 	"mcfunction": {
@@ -90,7 +90,7 @@
 		],
 		"released": {
 			"commit": "242684bde1de3c868d1b9cf76447d60ac218c2f5",
-			"version": "0.2.24"
+			"version": "0.2.25"
 		}
 	},
 	"nbt": {
@@ -101,7 +101,7 @@
 		],
 		"released": {
 			"commit": "4b6afdad9c9c0c0a3cdea3f42465e18034ae9547",
-			"version": "0.3.26"
+			"version": "0.3.27"
 		}
 	},
 	"playground": {
@@ -113,7 +113,7 @@
 		],
 		"released": {
 			"commit": "330eb95cb684cee0b8754b20a42caa70199a106d",
-			"version": "0.2.28"
+			"version": "0.2.29"
 		}
 	},
 	"vscode-extension": {
@@ -121,8 +121,8 @@
 			"language-server"
 		],
 		"released": {
-			"commit": "2dcccac33f98d9a8a6ec35195e176d297b1a3937",
-			"version": "4.5.0"
+			"commit": "7035f51a9019362ada69be009092a511311e91b9",
+			"version": "4.5.1"
 		}
 	},
 	"web-api-server": {
