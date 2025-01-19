@@ -56,9 +56,21 @@ const app = express()
 			'ETag',
 			'RateLimit-Limit',
 			'RateLimit-Remaining',
+			'RateLimit-Reset',
 			'Retry-After',
 		],
 	}))
+	.use((_req, res, next) => {
+		// 'max-age=0' instead of 'no-cache' is used, as 'no-cache' disallows the use of stale
+		// response in cases where the origin server is unreachable.
+		res.setHeader('Cache-Control', 'max-age=0')
+
+		res.contentType('application/json')
+		res.appendHeader('X-Content-Type-Options', 'nosniff')
+		res.appendHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
+
+		next()
+	})
 	.use(logger)
 	.use(userAgentEnforcer)
 	.use(slowDown({
@@ -106,7 +118,7 @@ const app = express()
 	)
 	.get('/favicon.ico', cheapRateLimiter, (_req, res) => {
 		res.contentType('image/x-icon')
-		res.appendHeader('Cache-Control', 'public, max-age=604800')
+		res.setHeader('Cache-Control', 'max-age=604800, public')
 		res.sendFile(fileURLToPath(new URL('../favicon.ico', import.meta.url)))
 	})
 	.all('*catchall', cheapRateLimiter, (_req, res) => {
