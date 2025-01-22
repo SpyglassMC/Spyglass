@@ -24,12 +24,16 @@ export const list: core.Parser<NbtListNode> = (src, ctx) => {
 
 	// Check if every element is of the same type.
 	if (ans.valueType) {
-		for (const { value } of ans.children) {
-			if (value && value.type !== ans.valueType) {
-				ctx.err.report(
-					localize('expected-got', localizeTag(ans.valueType), localizeTag(value.type)),
-					value,
-				)
+		// TODO: don't have this inline java-edition version check
+		const release = ctx.project['loadedVersion'] as string | undefined
+		if (release && Number(release.slice(2)) < Number('1.21.5'.slice(2))) {
+			for (const { value } of ans.children) {
+				if (value && value.type !== ans.valueType) {
+					ctx.err.report(
+						localize('expected-got', localizeTag(ans.valueType), localizeTag(value.type)),
+						value,
+					)
+				}
 			}
 		}
 	}
