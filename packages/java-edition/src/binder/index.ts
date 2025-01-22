@@ -78,10 +78,12 @@ resource('tags/item', { category: 'tag/item', since: '1.21' })
 
 // Data pack
 resource('banner_pattern', { since: '1.20.5' })
+resource('cat_variant', { since: '1.21.5' })
 resource('chat_type', { since: '1.19' })
 resource('damage_type', { since: '1.19.4' })
 resource('enchantment', { since: '1.21' })
 resource('enchantment_provider', { since: '1.21' })
+resource('frog_variant', { since: '1.21.5' })
 resource('instrument', { since: '1.21.2' })
 resource('jukebox_song', { since: '1.21' })
 resource('painting_variant', { since: '1.21' })
