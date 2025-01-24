@@ -71,6 +71,9 @@ export class CacheService {
 				return
 			}
 			this.dirtyFiles.add(doc.uri)
+			if (this.dirtyFiles.size > 100) {
+				await this.flushDirtyFiles()
+			}
 		})
 		this.project.on('rootsUpdated', async ({ roots }) => {
 			if (!this.#hasValidatedFiles) {
@@ -104,6 +107,19 @@ export class CacheService {
 			this.#cacheFilePath = new Uri(`symbols/${hash}.json.gz`, this.cacheRoot).toString()
 		}
 		return this.#cacheFilePath
+	}
+
+	private async flushDirtyFiles() {
+		for (const uri of this.dirtyFiles) {
+			try {
+				this.checksums.files[uri] = await this.project.fs.hash(uri)
+			} catch (e) {
+				if (!this.project.externals.error.isKind(e, 'EISDIR')) {
+					this.project.logger.error(`[CacheService#flushDirtyFiles] ${uri}`, e)
+				}
+			}
+		}
+		this.dirtyFiles.clear()
 	}
 
 	async load(): Promise<LoadResult> {
@@ -215,16 +231,7 @@ export class CacheService {
 		try {
 			filePath = await this.getCacheFileUri()
 
-			for (const uri of this.dirtyFiles) {
-				try {
-					this.checksums.files[uri] = await this.project.fs.hash(uri)
-				} catch (e) {
-					if (!this.project.externals.error.isKind(e, 'EISDIR')) {
-						this.project.logger.error(`[CacheService#hash-file] ${uri}`, e)
-					}
-				}
-			}
-			this.dirtyFiles.clear()
+			await this.flushDirtyFiles()
 			__profiler.task('Hash Files')
 
 			const cache: CacheFile = {
