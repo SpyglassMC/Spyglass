@@ -18,7 +18,7 @@ const array: core.Completer<JsonArrayNode> = (node, ctx) => {
 	}
 	if (node.typeDef?.kind === 'list') {
 		const completions = getValues(node.typeDef.item, ctx.offset, ctx)
-		if (ctx.offset < node.children[node.children.length - 1]?.range.start ?? 0) {
+		if (ctx.offset < (node.children[node.children.length - 1]?.range.start ?? 0)) {
 			return completions.map(c => ({ ...c, insertText: c.insertText + ',' }))
 		}
 		return completions
