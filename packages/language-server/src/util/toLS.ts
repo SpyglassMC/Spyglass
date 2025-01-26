@@ -132,7 +132,7 @@ export function documentSymbols(
 				...(s.typeDefinition ?? []),
 			].find((l) => l.uri === doc.uri),
 		] as const
-	).filter(([_s, l]) => !!l).map(([s, l]) =>
+	).filter(([s, l]) => !!l && s.identifier).map(([s, l]) =>
 		documentSymbol(s, l!, doc, hierarchicalSupport, supportedKinds)
 	)
 }
