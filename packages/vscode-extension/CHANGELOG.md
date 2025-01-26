@@ -1,3 +1,13 @@
+# v4.5.4 (2025-01-26)
+
+### 🐛 Bug Fixes
+- [`971546e`](https://github.com/SpyglassMC/Spyglass/commit/971546e1628180b1126c287f7e4a99946b54565c) Fixes `documentSymbol` request errors ([#1732](https://github.com/SpyglassMC/Spyglass/pull/1732))
+
+# v4.5.2 (2025-01-21)
+
+### ✨ New Features
+- [`1dbb8c1`](https://github.com/SpyglassMC/Spyglass/commit/1dbb8c1923904e589ff39031d96dbd7aeaf2fa8c) Added a json-schema file for the `spyglass.json` config ([#1716](https://github.com/SpyglassMC/Spyglass/pull/1716))
+
 # v4.5.0 (2025-01-08)
 
 ### ✨ New Features
