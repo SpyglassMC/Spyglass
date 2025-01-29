@@ -99,6 +99,7 @@
           "data/*/banner_pattern/**/*.json",
           "data/*/cat_variant/**/*.json",
           "data/*/chat_type/**/*.json",
+          "data/*/cow_variant/**/*.json",
           "data/*/damage_type/**/*.json",
           "data/*/dimension/**/*.json",
           "data/*/dimension_type/**/*.json",
