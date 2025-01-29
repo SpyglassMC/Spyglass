@@ -1778,7 +1778,12 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	if (src.trySkip('~')) {
 		src.skipWhitespace()
 		if (key.options.category !== undefined) {
-			key.options.category = 'item_sub_predicate_type'
+			const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+			if (release && ReleaseVersion.cmp(release, '1.21.5') < 0) {
+				key.options.category = 'item_sub_predicate_type'
+			} else {
+				key.options.category = 'data_component_predicate_type'
+			}
 		}
 		const ans: ComponentTestSubpredicateNode = {
 			type: 'mcfunction:component_test_sub_predicate',
