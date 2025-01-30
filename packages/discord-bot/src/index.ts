@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
 import {
 	ErrorSeverity,
@@ -32,6 +30,7 @@ import { env } from 'process'
 import { pathToFileURL } from 'url'
 
 export declare const __dirname: undefined // Not defined in ES module scope
+const MaxCommandLength = 1000
 const MaxContentLength = 2000
 
 const ProfilerId = 'discord-bot#startup'
@@ -155,11 +154,11 @@ async function registerCommands(): Promise<unknown> {
 		'Ping the Spyglass Bot',
 	).toJSON()
 	const spyCommand = new SlashCommandBuilder().setName('spy').setDescription(
-		'Renders a mcfunction command. Error reporting coming soon™',
+		'Renders a mcfunction command.',
 	).addStringOption(
 		new SlashCommandStringOption().setName('command').setDescription(
 			'Put a single mcfunction command here',
-		).setRequired(true),
+		).setAutocomplete(true).setMaxLength(MaxCommandLength).setRequired(true),
 	).addBooleanOption(
 		new SlashCommandBooleanOption().setName('showraw').setDescription(
 			'Whether to show the result ANSI code in raw code blocks',
