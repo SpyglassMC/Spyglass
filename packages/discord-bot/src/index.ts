@@ -26,7 +26,12 @@ import {
 	SlashCommandBuilder,
 	SlashCommandStringOption,
 } from 'discord.js'
-import type { APIActionRowComponent, APIMessageActionRowComponent } from 'discord.js'
+import type {
+	APIActionRowComponent,
+	APIEmbed,
+	APIMessageActionRowComponent,
+	ApplicationCommandOptionChoiceData,
+} from 'discord.js'
 import { join } from 'path'
 import { env } from 'process'
 import { pathToFileURL } from 'url'
@@ -89,12 +94,16 @@ client.on('interactionCreate', async (i) => {
 					const reply = await i.reply(getReplyOptions(info))
 					const collector = reply.createMessageComponentCollector({
 						componentType: ComponentType.Button,
-						time: 3_600_000, // 1 hour
+						time: 600_000, // 10 minutes
 					})
 					collector
 						.on('collect', async (bi) => {
 							if (bi.user.id !== i.user.id) {
-								// Only allow creator of the interaction to interact.
+								await bi.reply({
+									content:
+										'Only the original initiator of this interaction may switch to other diagnostics.',
+									ephemeral: true,
+								})
 								return
 							}
 
@@ -230,6 +239,7 @@ function getReplyOptions(
 ): {
 	content: string
 	components: APIActionRowComponent<APIMessageActionRowComponent>[]
+	embeds: APIEmbed[]
 	fetchReply: true
 } {
 	const content = getReplyContent(info)
@@ -247,6 +257,11 @@ function getReplyOptions(
 						ButtonStyle.Primary,
 					).setDisabled(info.activeErrorIndex >= info.errors.length - 1),
 				).toJSON(),
+			]
+			: [],
+		embeds: expired
+			? [
+				new EmbedBuilder({ description: 'The interaction has expired.' }).data,
 			]
 			: [],
 		fetchReply: true,
@@ -308,13 +323,11 @@ function getReplyContent(info: InteractionInfo): string {
 
 	const activeError: LanguageError | undefined = errors[activeErrorIndex]
 
-	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${
-		activeError
-			? `\n\`${errorSeverityToChar(activeError.severity)} ${
-				Range.toString(activeError.range)
+	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${activeError
+			? `\n\`${errorSeverityToChar(activeError.severity)} ${Range.toString(activeError.range)
 			} ${activeError.message}\``
 			: ''
-	}`
+		}`
 }
 
 /**
