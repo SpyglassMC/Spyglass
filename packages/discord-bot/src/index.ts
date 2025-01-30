@@ -1,5 +1,6 @@
 import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
 import {
+	CompletionItem,
 	ErrorSeverity,
 	FileNode,
 	fileUtil,
@@ -109,6 +110,10 @@ client.on('interactionCreate', async (i) => {
 						})
 					break
 			}
+		} else if (i.isAutocomplete()) {
+			const content = i.options.getFocused()
+			const options = await getAutocomplete(content)
+			await i.respond(options)
 		}
 	} catch (e) {
 		console.error('[interactionCreate]', e)
@@ -174,6 +179,34 @@ function generateRandomUri(): string {
 	const uuid = webcrypto.randomUUID()
 	return pathToFileURL(`${rootPath}/virtual/file-${uuid}.mcfunction`).toString()
 }
+
+async function getAutocomplete(
+	content: string,
+): Promise<readonly ApplicationCommandOptionChoiceData<string>[]> {
+	const uri = generateRandomUri()
+	await service.project.onDidOpen(uri, 'mcfunction', 0, content)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	service.project.onDidClose(uri)
+	if (!docAndNode) {
+		throw new Error('docAndNode is undefined')
+	}
+
+	const { node, doc } = docAndNode
+
+	return service.complete(node, doc, content.length)
+		.sort((a, b) => (a.sortText ?? a.label).localeCompare(b.sortText ?? b.label))
+		// Convert autocomplete options into full text options
+		.map((i) => {
+			const insertText = i.insertText ?? i.label
+			return `${content.slice(0, i.range.start)}${insertText}${content.slice(i.range.end)}`
+		})
+		// Filter to the texts starting with the user input
+		.filter((v) => v.startsWith(content))
+		.map((v) => ({ name: v, value: v }))
+		// Limit to a maximum of 25 options
+		.slice(0, 25)
+}
+
 async function getInteractionInfo(content: string, showRaw: boolean): Promise<InteractionInfo> {
 	const uri = generateRandomUri()
 	await service.project.onDidOpen(uri, 'mcfunction', 0, content)
