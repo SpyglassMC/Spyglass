@@ -323,11 +323,13 @@ function getReplyContent(info: InteractionInfo): string {
 
 	const activeError: LanguageError | undefined = errors[activeErrorIndex]
 
-	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${activeError
-			? `\n\`${errorSeverityToChar(activeError.severity)} ${Range.toString(activeError.range)
+	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${
+		activeError
+			? `\n\`${errorSeverityToChar(activeError.severity)} ${
+				Range.toString(activeError.range)
 			} ${activeError.message}\``
 			: ''
-		}`
+	}`
 }
 
 /**
