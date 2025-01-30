@@ -10,6 +10,7 @@ import {
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
+import { webcrypto } from 'crypto'
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
@@ -61,7 +62,6 @@ const service = new Service({
 		projectRoots: [fileUtil.ensureEndingSlash(pathToFileURL(projectPath).toString())],
 	},
 })
-const DocumentUri = pathToFileURL(`${rootPath}/virtual/file.mcfunction`).toString()
 
 interface InteractionInfo {
 	content: string
@@ -170,10 +170,15 @@ async function registerCommands(): Promise<unknown> {
 	})
 }
 
+function generateRandomUri(): string {
+	const uuid = webcrypto.randomUUID()
+	return pathToFileURL(`${rootPath}/virtual/file-${uuid}.mcfunction`).toString()
+}
 async function getInteractionInfo(content: string, showRaw: boolean): Promise<InteractionInfo> {
-	await service.project.onDidOpen(DocumentUri, 'mcfunction', 0, content)
-	const docAndNode = await service.project.ensureClientManagedChecked(DocumentUri)
-	service.project.onDidClose(DocumentUri)
+	const uri = generateRandomUri()
+	await service.project.onDidOpen(uri, 'mcfunction', 0, content)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	service.project.onDidClose(uri)
 	if (!docAndNode) {
 		throw new Error('docAndNode is undefined')
 	}
