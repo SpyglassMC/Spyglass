@@ -16,8 +16,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "52b4eca91f54211865046833bcb796847ae49027",
-			"version": "0.3.35"
+			"commit": "0edada7417e5999f932f7afebc88759818d1aff9",
+			"version": "0.3.36"
 		}
 	},
 	"java-edition": {
