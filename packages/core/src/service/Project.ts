@@ -36,7 +36,7 @@ import { fileUtil } from './fileUtil.js'
 import { MetaRegistry } from './MetaRegistry.js'
 import { ProfilerFactory } from './Profiler.js'
 
-const CacheAutoSaveInterval = 300_000 // 5 Minutes.
+const CacheAutoSaveInterval = 600_000 // 10 Minutes.
 
 export type ProjectInitializerContext = Pick<
 	Project,
@@ -160,7 +160,7 @@ export class Project implements ExternalEventEmitter {
 
 	/** Prevent circular binding. */
 	readonly #bindingInProgressUris = new Set<string>()
-	#cacheSaverIntervalId: IntervalId | undefined = undefined
+	readonly #cacheSaverIntervalId: IntervalId
 	readonly cacheService: CacheService
 	/** URI of files that are currently managed by the language client. */
 	readonly #clientManagedUris = new Set<string>()
@@ -341,6 +341,10 @@ export class Project implements ExternalEventEmitter {
 
 		this.setInitPromise()
 		this.setReadyPromise()
+		this.#cacheSaverIntervalId = setInterval(
+			() => this.cacheService.save(),
+			CacheAutoSaveInterval,
+		)
 
 		this.on('documentUpdated', ({ doc, node }) => {
 			// if (!this.#isReady) {
@@ -582,13 +586,6 @@ export class Project implements ExternalEventEmitter {
 
 			__profiler.finalize()
 			this.emit('ready', {})
-
-			// Save the cache after ready and start the auto-cache interval
-			await this.cacheService.save()
-			this.#cacheSaverIntervalId = setInterval(
-				() => this.cacheService.save(),
-				CacheAutoSaveInterval,
-			)
 		}
 		this.#isReady = false
 		this.#readyPromise = ready()
