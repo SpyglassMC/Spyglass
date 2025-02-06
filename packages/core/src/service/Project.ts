@@ -28,7 +28,6 @@ import {
 } from './Context.js'
 import type { Dependency } from './Dependency.js'
 import { DependencyKey } from './Dependency.js'
-import { Downloader } from './Downloader.js'
 import { LinterErrorReporter } from './ErrorReporter.js'
 import { ArchiveUriSupporter, FileService, FileUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
@@ -42,7 +41,6 @@ export type ProjectInitializerContext = Pick<
 	Project,
 	| 'cacheRoot'
 	| 'config'
-	| 'downloader'
 	| 'externals'
 	| 'isDebugging'
 	| 'logger'
@@ -62,7 +60,6 @@ export type ProjectInitializer = SyncProjectInitializer | AsyncProjectInitialize
 export interface ProjectOptions {
 	cacheRoot: RootUriString
 	defaultConfig?: Config
-	downloader?: Downloader
 	externals: Externals
 	fs?: FileService
 	initializers?: readonly ProjectInitializer[]
@@ -81,7 +78,7 @@ export interface DocAndNode {
 	node: FileNode<AstNode>
 }
 
-interface DocumentEvent extends DocAndNode {}
+interface DocumentEvent extends DocAndNode { }
 interface DocumentErrorEvent {
 	errors: readonly PosRangeLanguageError[]
 	uri: string
@@ -90,7 +87,7 @@ interface DocumentErrorEvent {
 interface FileEvent {
 	uri: string
 }
-interface EmptyEvent {}
+interface EmptyEvent { }
 interface RootsEvent {
 	roots: readonly RootUriString[]
 }
@@ -103,7 +100,6 @@ export type ProjectData = Pick<
 	Project,
 	| 'cacheRoot'
 	| 'config'
-	| 'downloader'
 	| 'ensureBindingStarted'
 	| 'externals'
 	| 'fs'
@@ -181,7 +177,6 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	config!: Config
-	readonly downloader: Downloader
 	readonly externals: Externals
 	readonly fs: FileService
 	readonly isDebugging: boolean
@@ -301,7 +296,6 @@ export class Project implements ExternalEventEmitter {
 		{
 			cacheRoot,
 			defaultConfig,
-			downloader,
 			externals,
 			fs = FileService.create(externals, cacheRoot),
 			initializers = [],
@@ -323,7 +317,6 @@ export class Project implements ExternalEventEmitter {
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
-		this.downloader = downloader ?? new Downloader(cacheRoot, externals, logger)
 		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
 
 		this.#ctx = {}
@@ -396,7 +389,6 @@ export class Project implements ExternalEventEmitter {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
 				config: this.config,
-				downloader: this.downloader,
 				externals: this.externals,
 				isDebugging: this.isDebugging,
 				logger: this.logger,
@@ -437,28 +429,29 @@ export class Project implements ExternalEventEmitter {
 	private setReadyPromise(): void {
 		const getDependencies = async () => {
 			const ans: Dependency[] = []
-			for (const dependency of this.config.env.dependencies) {
-				if (DependencyKey.is(dependency)) {
-					const provider = this.meta.getDependencyProvider(dependency)
+			for (const input of this.config.env.dependencies) {
+				if (DependencyKey.is(input)) {
+					const provider = this.meta.getDependencyProvider(input)
 					if (provider) {
 						try {
 							ans.push(await provider())
 							this.logger.info(
-								`[Project] [getDependencies] Executed provider “${dependency}”`,
+								`[Project] [getDependencies] Executed provider “${input}”`,
 							)
 						} catch (e) {
 							this.logger.error(
-								`[Project] [getDependencies] Bad provider “${dependency}”`,
+								`[Project] [getDependencies] Bad provider “${input}”`,
 								e,
 							)
 						}
 					} else {
 						this.logger.error(
-							`[Project] [getDependencies] Bad dependency “${dependency}”: no associated provider`,
+							`[Project] [getDependencies] Bad dependency “${input}”: no associated provider`,
 						)
 					}
 				} else {
-					ans.push({ uri: dependency })
+					// FIXME: recognize tarball
+					ans.push({ type: 'directory', uri: input })
 				}
 			}
 			return ans
@@ -823,7 +816,7 @@ export class Project implements ExternalEventEmitter {
 						linter(proxy, ctx)
 					}
 				})
-				;(node.linterErrors as LanguageError[]).push(...ctx.err.dump())
+					; (node.linterErrors as LanguageError[]).push(...ctx.err.dump())
 			}
 		} catch (e) {
 			this.logger.error(`[Project] [lint] Failed for ${doc.uri} # ${doc.version}`, e)

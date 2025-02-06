@@ -25,7 +25,7 @@ export * from './mcdocAttributes.js'
 export * as mcf from './mcfunction/index.js'
 
 export const initialize: core.ProjectInitializer = async (ctx) => {
-	const { config, downloader, externals, logger, meta, projectRoots } = ctx
+	const { config, externals, logger, meta, projectRoots } = ctx
 
 	async function readPackMcmeta(uri: string): Promise<PackMcmeta | undefined> {
 		try {
@@ -74,7 +74,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	meta.registerUriBinder(uriBinder)
 	registerUriBuilders(meta)
 
-	const versions = await getVersions(ctx.externals, ctx.downloader)
+	const versions = await getVersions(externals, logger)
 	if (!versions) {
 		ctx.logger.error(
 			'[je-initialize] Failed loading game version list. Expect everything to be broken.',
@@ -97,13 +97,12 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		const reasonMessage = pack && version.reason === 'auto'
 			? `using ${pack.type} pack format ${pack.packMcmeta?.pack.pack_format} to select`
 			: version.reason === 'config'
-			? `but using config override "${config.env.gameVersion}" to select`
-			: version.reason === 'fallback'
-			? 'using fallback'
-			: 'impossible' // should never occur
-		const versionMessage = `version ${version.release}${
-			version.id === version.release ? '' : ` (${version.id})`
-		}`
+				? `but using config override "${config.env.gameVersion}" to select`
+				: version.reason === 'fallback'
+					? 'using fallback'
+					: 'impossible' // should never occur
+		const versionMessage = `version ${version.release}${version.id === version.release ? '' : ` (${version.id})`
+			}`
 		ctx.logger.info(`[je.initialize] ${packMessage}, ${reasonMessage} ${versionMessage}`)
 		return version
 	}
@@ -112,23 +111,20 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 
 	meta.registerDependencyProvider(
 		'@vanilla-datapack',
-		() => getVanillaDatapack(downloader, version.id, version.isLatest),
+		() => getVanillaDatapack(externals, logger, version.id),
 	)
 
 	meta.registerDependencyProvider(
 		'@vanilla-resourcepack',
-		() => getVanillaResourcepack(downloader, version.id, version.isLatest),
+		() => getVanillaResourcepack(externals, logger, version.id),
 	)
 
-	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader))
+	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(externals, logger))
 
 	const summary = await getMcmetaSummary(
 		ctx.externals,
-		downloader,
 		logger,
 		version.id,
-		version.isLatest,
-		config.env.dataSource,
 		config.env.mcmetaSummaryOverrides,
 	)
 	if (!summary.blocks || !summary.commands || !summary.fluids || !summary.registries) {
@@ -139,7 +135,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	}
 
 	meta.registerSymbolRegistrar('mcmeta-summary', {
-		checksum: `${summary.checksum}_v3`,
+		checksum: `${summary.checksum}-v4`,
 		registrar: symbolRegistrar(summary as McmetaSummary, release),
 	})
 

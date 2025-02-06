@@ -2,11 +2,6 @@ import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from '
 import pako from 'pako'
 import { fileUtil } from '../../service/fileUtil.js'
 import type {
-	ExternalDownloader,
-	ExternalDownloaderOptions,
-	RemoteUriString,
-} from './downloader.js'
-import type {
 	ExternalEventEmitter,
 	ExternalFileSystem,
 	Externals,
@@ -53,24 +48,6 @@ export class BrowserEventEmitter implements ExternalEventEmitter {
 	}
 }
 
-class BrowserExternalDownloader implements ExternalDownloader {
-	async get(uri: RemoteUriString, options: ExternalDownloaderOptions = {}): Promise<Uint8Array> {
-		const headers = new Headers()
-		for (const [name, value] of Object.entries(options?.headers ?? {})) {
-			const values = typeof value === 'string' ? [value] : value
-			for (const v of values) {
-				headers.append(name, v)
-			}
-		}
-		const res = await fetch(uri, { headers, redirect: 'follow' })
-		if (!res.ok) {
-			throw new Error(`Status code ${res.status}: ${res.ok}`)
-		} else {
-			return new Uint8Array(await res.arrayBuffer())
-		}
-	}
-}
-
 class BrowserFsWatcher implements FsWatcher {
 	on(event: string, listener: (...args: any[]) => unknown): this {
 		if (event === 'ready') {
@@ -86,7 +63,7 @@ class BrowserFsWatcher implements FsWatcher {
 		return this
 	}
 
-	async close(): Promise<void> {}
+	async close(): Promise<void> { }
 }
 
 class BrowserFileSystem implements ExternalFileSystem {
@@ -188,7 +165,6 @@ export const BrowserExternals: Externals = {
 			return uint8ArrayToHex(new Uint8Array(hash))
 		},
 	},
-	downloader: new BrowserExternalDownloader(),
 	error: {
 		createKind(kind, message) {
 			return new Error(`${kind}: ${message}`)
@@ -199,6 +175,10 @@ export const BrowserExternals: Externals = {
 	},
 	event: { EventEmitter: BrowserEventEmitter },
 	fs: new BrowserFileSystem(),
+	web: {
+		fetch,
+		getCache: () => window.caches.open('spyglassmc'),
+	},
 }
 
 function uint8ArrayToHex(array: Uint8Array) {

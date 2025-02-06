@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
-import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
+import { getNodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as locales from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
@@ -24,15 +24,15 @@ if (process.argv.length === 2) {
 	process.argv.push('--stdio')
 }
 
-const { cache: cacheRoot } = envPaths('spyglassmc')
+const { cache: cacheRootPath } = envPaths('spyglassmc')
+const cacheRoot = fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRootPath).toString())
 
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
 let workspaceFolders!: ls.WorkspaceFolder[]
 let hasShutdown = false
-let progressReporter: ls.WorkDoneProgressReporter | undefined
 
-const externals = NodeJsExternals
+const externals = getNodeJsExternals({ cacheRoot })
 const logger: core.Logger = {
 	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
 	info: (msg: any, ...args: any[]): void => connection.console.info(util.format(msg, ...args)),
@@ -81,7 +81,7 @@ connection.onInitialize(async (params) => {
 				defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
 					env: { gameVersion: initializationOptions?.gameVersion },
 				}),
-				cacheRoot: fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRoot).toString()),
+				cacheRoot,
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
 				projectRoots: workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri)),
@@ -172,7 +172,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	service.project.onDidClose(uri)
 })
 
-connection.workspace.onDidRenameFiles(({}) => {})
+connection.workspace.onDidRenameFiles(({ }) => { })
 
 connection.onCodeAction(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)

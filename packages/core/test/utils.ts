@@ -11,7 +11,6 @@ import type {
 import {
 	AstNode,
 	BinderContext,
-	Downloader,
 	Failure,
 	file,
 	FileService,
@@ -53,12 +52,10 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 	const cacheRoot: RootUriString = data.cacheRoot ?? 'file:///cache/'
 	const externals = data.externals ?? NodeJsExternals
 	const logger = data.logger ?? Logger.create()
-	const downloader = data.downloader ?? new Downloader(cacheRoot, externals, logger)
 	return {
 		cacheRoot,
 		config: data.config ?? VanillaConfig,
 		ctx: data.ctx ?? {},
-		downloader,
 		ensureBindingStarted: data.ensureBindingStarted!,
 		externals,
 		fs: data.fs ?? FileService.create(externals, cacheRoot),
@@ -154,7 +151,7 @@ export function testParser(
  * This function has a signature similar to mocha's `describe` and `it` methods.
  * The method passed into this function is never actually executed.
  */
-export function typing(_title: string, _fn: () => void): void {}
+export function typing(_title: string, _fn: () => void): void { }
 
 /**
  * Assert the type of `_value` is `T`.
@@ -168,7 +165,7 @@ export function assertType<T>(_value: T): void {
 	)
 }
 
-export function assertError(fn: () => void, errorCallback: (e: unknown) => void = () => {}) {
+export function assertError(fn: () => void, errorCallback: (e: unknown) => void = () => { }) {
 	try {
 		fn()
 		fail('Expected an error to be thrown.')

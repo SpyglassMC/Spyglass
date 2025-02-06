@@ -111,42 +111,6 @@ export function resolveConfiguredVersion(
 	)
 }
 
-const DataSources: Partial<Record<string, string>> = {
-	fastly: 'https://fastly.jsdelivr.net/gh/${user}/${repo}@${tag}/${path}',
-	github: 'https://raw.githubusercontent.com/${user}/${repo}/${tag}/${path}',
-	jsdelivr: 'https://cdn.jsdelivr.net/gh/${user}/${repo}@${tag}/${path}',
-}
-
-export function getMcmetaSummaryUris(
-	version: string,
-	isLatest: boolean,
-	source: string,
-): {
-	blocks: core.RemoteUriString
-	commands: core.RemoteUriString
-	registries: core.RemoteUriString
-} {
-	const tag = isLatest ? 'summary' : `${version}-summary`
-
-	function getUri(path: string): core.RemoteUriString {
-		const template = DataSources[source.toLowerCase()] ?? source
-		const ans = template.replace(/\${user}/g, 'misode').replace(/\${repo}/g, 'mcmeta').replace(
-			/\${tag}/g,
-			tag,
-		).replace(/\${path}/g, path)
-		if (!core.RemoteUriString.is(ans)) {
-			throw new Error(`Expected a remote URI from data source template but got ${ans}`)
-		}
-		return ans
-	}
-
-	return {
-		blocks: getUri('blocks/data.json.gz'),
-		commands: getUri('commands/data.json.gz'),
-		registries: getUri('registries/data.json.gz'),
-	}
-}
-
 export function symbolRegistrar(
 	summary: McmetaSummary,
 	release: ReleaseVersion,

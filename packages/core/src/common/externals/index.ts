@@ -1,7 +1,4 @@
 import type { Uri } from '../util.js'
-import type { ExternalDownloader } from './downloader.js'
-
-export * from './downloader.js'
 
 export interface Externals {
 	archive: {
@@ -18,7 +15,6 @@ export interface Externals {
 		 */
 		getSha1: (data: string | Uint8Array) => Promise<string>
 	}
-	downloader: ExternalDownloader
 	error: {
 		/**
 		 * @returns an error of the specified kind
@@ -29,8 +25,12 @@ export interface Externals {
 		 */
 		isKind: (e: unknown, kind: ExternalErrorKind) => boolean
 	}
-	event: { EventEmitter: new() => ExternalEventEmitter }
+	event: { EventEmitter: new () => ExternalEventEmitter }
 	fs: ExternalFileSystem
+	web: {
+		fetch: typeof fetch,
+		getCache: () => Promise<Cache>,
+	}
 }
 
 export interface DecompressedFile {
