@@ -428,33 +428,34 @@ export class Project implements ExternalEventEmitter {
 
 	private setReadyPromise(): void {
 		const getDependencies = async () => {
-			const ans: Dependency[] = []
+			const dependencies: Dependency[] = []
 			for (const input of this.config.env.dependencies) {
-				if (DependencyKey.is(input)) {
-					const provider = this.meta.getDependencyProvider(input)
-					if (provider) {
-						try {
-							ans.push(await provider())
-							this.logger.info(
-								`[Project] [getDependencies] Executed provider “${input}”`,
-							)
-						} catch (e) {
-							this.logger.error(
-								`[Project] [getDependencies] Bad provider “${input}”`,
-								e,
-							)
+				try {
+					if (DependencyKey.is(input)) {
+						const provider = this.meta.getDependencyProvider(input)
+						if (!provider) {
+							throw new Error(`No provider for ${input}`)
 						}
-					} else {
-						this.logger.error(
-							`[Project] [getDependencies] Bad dependency “${input}”: no associated provider`,
+
+						dependencies.push(await provider())
+						this.logger.info(
+							`[Project] [getDependencies] Executed provider “${input}”`,
 						)
+					} else {
+						const stats = await this.externals.fs.stat(input)
+						if (stats.isDirectory()) {
+							dependencies.push({ type: 'directory', uri: input })
+						} else if (stats.isFile()) {
+							dependencies.push({ type: 'tarball-file', uri: input })
+						} else {
+							throw new Error('Unsupported file entry type')
+						}
 					}
-				} else {
-					// FIXME: recognize tarball
-					ans.push({ type: 'directory', uri: input })
+				} catch (e) {
+					this.logger.error(`[Project] [getDependencies] Bad dependency “${input}”`, e)
 				}
 			}
-			return ans
+			return dependencies
 		}
 		const listDependencyFiles = async () => {
 			const dependencies = await getDependencies()
