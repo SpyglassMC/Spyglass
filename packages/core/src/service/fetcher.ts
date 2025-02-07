@@ -1,6 +1,12 @@
-import { Dev, Externals, Logger } from "../common/index.js"
+import { Dev } from '../common/index.js'
+import type { Externals, Logger } from '../common/index.js'
 
-export async function fetchWithCache({ web }: Externals, logger: Logger, input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+export async function fetchWithCache(
+	{ web }: Externals,
+	logger: Logger,
+	input: RequestInfo | URL,
+	init?: RequestInit,
+): Promise<Response> {
 	const cache = await web.getCache()
 	const request = new Request(input, init)
 	const cachedResponse = await cache.match(request)

@@ -78,7 +78,7 @@ export interface DocAndNode {
 	node: FileNode<AstNode>
 }
 
-interface DocumentEvent extends DocAndNode { }
+interface DocumentEvent extends DocAndNode {}
 interface DocumentErrorEvent {
 	errors: readonly PosRangeLanguageError[]
 	uri: string
@@ -87,7 +87,7 @@ interface DocumentErrorEvent {
 interface FileEvent {
 	uri: string
 }
-interface EmptyEvent { }
+interface EmptyEvent {}
 interface RootsEvent {
 	roots: readonly RootUriString[]
 }
@@ -816,7 +816,7 @@ export class Project implements ExternalEventEmitter {
 						linter(proxy, ctx)
 					}
 				})
-					; (node.linterErrors as LanguageError[]).push(...ctx.err.dump())
+				;(node.linterErrors as LanguageError[]).push(...ctx.err.dump())
 			}
 		} catch (e) {
 			this.logger.error(`[Project] [lint] Failed for ${doc.uri} # ${doc.version}`, e)

@@ -97,12 +97,13 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		const reasonMessage = pack && version.reason === 'auto'
 			? `using ${pack.type} pack format ${pack.packMcmeta?.pack.pack_format} to select`
 			: version.reason === 'config'
-				? `but using config override "${config.env.gameVersion}" to select`
-				: version.reason === 'fallback'
-					? 'using fallback'
-					: 'impossible' // should never occur
-		const versionMessage = `version ${version.release}${version.id === version.release ? '' : ` (${version.id})`
-			}`
+			? `but using config override "${config.env.gameVersion}" to select`
+			: version.reason === 'fallback'
+			? 'using fallback'
+			: 'impossible' // should never occur
+		const versionMessage = `version ${version.release}${
+			version.id === version.release ? '' : ` (${version.id})`
+		}`
 		ctx.logger.info(`[je.initialize] ${packMessage}, ${reasonMessage} ${versionMessage}`)
 		return version
 	}

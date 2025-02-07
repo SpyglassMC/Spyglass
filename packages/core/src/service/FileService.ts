@@ -78,7 +78,7 @@ export class FileServiceImpl implements FileService {
 	constructor(
 		private readonly externals: Externals,
 		private readonly virtualUrisRoot?: RootUriString,
-	) { }
+	) {}
 
 	register(protocol: Protocol, supporter: UriProtocolSupporter, force = false): void {
 		if (!force && this.supporters.has(protocol)) {
@@ -183,7 +183,7 @@ export class FileUriSupporter implements UriProtocolSupporter {
 		private readonly externals: Externals,
 		private readonly roots: RootUriString[],
 		private readonly files: Map<string, string[]>,
-	) { }
+	) {}
 
 	async hash(uri: string): Promise<string> {
 		return hashFile(this.externals, uri)
@@ -249,7 +249,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		private readonly externals: Externals,
 		private readonly logger: Logger,
 		private readonly entries: Map<string, Map<string, DecompressedFile>>,
-	) { }
+	) {}
 
 	async hash(uri: string): Promise<string> {
 		const { archiveName, pathInArchive } = ArchiveUriSupporter.decodeUri(new Uri(uri))

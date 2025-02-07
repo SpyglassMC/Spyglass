@@ -25,11 +25,11 @@ export interface Externals {
 		 */
 		isKind: (e: unknown, kind: ExternalErrorKind) => boolean
 	}
-	event: { EventEmitter: new () => ExternalEventEmitter }
+	event: { EventEmitter: new() => ExternalEventEmitter }
 	fs: ExternalFileSystem
 	web: {
-		fetch: typeof fetch,
-		getCache: () => Promise<Cache>,
+		fetch: typeof fetch
+		getCache: () => Promise<Cache>
 	}
 }
 

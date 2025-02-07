@@ -5,109 +5,114 @@ import { Buffer } from 'node:buffer'
 import cp from 'node:child_process'
 import crypto from 'node:crypto'
 import { EventEmitter } from 'node:events'
-import os from 'node:os'
 import fs, { promises as fsp } from 'node:fs'
+import os from 'node:os'
 import process from 'node:process'
 import stream from 'node:stream'
-import streamWeb from 'node:stream/web'
+import type streamWeb from 'node:stream/web'
 import url from 'node:url'
 import { promisify } from 'node:util'
 import zlib from 'node:zlib'
+import type { RootUriString } from '../../index.js'
 import { Uri } from '../util.js'
 import type { Externals, FsLocation, FsWatcher } from './index.js'
-import type { RootUriString } from '../../index.js'
 
 const gunzip = promisify(zlib.gunzip)
 const gzip = promisify(zlib.gzip)
 
 export function getNodeJsExternals({ cacheRoot }: { cacheRoot?: RootUriString } = {}) {
-	return Object.freeze({
-		archive: {
-			decompressBall(buffer, options) {
-				if (!(buffer instanceof Buffer)) {
-					buffer = Buffer.from(buffer)
-				}
-				return decompress(buffer as Buffer, { strip: options?.stripLevel })
+	return Object.freeze(
+		{
+			archive: {
+				decompressBall(buffer, options) {
+					if (!(buffer instanceof Buffer)) {
+						buffer = Buffer.from(buffer)
+					}
+					return decompress(buffer as Buffer, { strip: options?.stripLevel })
+				},
+				gunzip(buffer) {
+					return gunzip(buffer)
+				},
+				gzip(buffer) {
+					return gzip(buffer)
+				},
 			},
-			gunzip(buffer) {
-				return gunzip(buffer)
+			crypto: {
+				async getSha1(data) {
+					const hash = crypto.createHash('sha1')
+					hash.update(data)
+					return hash.digest('hex')
+				},
 			},
-			gzip(buffer) {
-				return gzip(buffer)
+			error: {
+				createKind(kind, message) {
+					const error = new Error(message)
+					;(error as NodeJS.ErrnoException).code = kind
+					return error
+				},
+				isKind(e, kind) {
+					return e instanceof Error && (e as NodeJS.ErrnoException).code === kind
+				},
 			},
-		},
-		crypto: {
-			async getSha1(data) {
-				const hash = crypto.createHash('sha1')
-				hash.update(data)
-				return hash.digest('hex')
+			event: { EventEmitter },
+			fs: {
+				chmod(location, mode) {
+					return fsp.chmod(toFsPathLike(location), mode)
+				},
+				async mkdir(location, options) {
+					return void (await fsp.mkdir(toFsPathLike(location), options))
+				},
+				readdir(location) {
+					return fsp.readdir(toFsPathLike(location), {
+						encoding: 'utf-8',
+						withFileTypes: true,
+					})
+				},
+				readFile(location) {
+					return fsp.readFile(toFsPathLike(location))
+				},
+				async showFile(location): Promise<void> {
+					const execFile = promisify(cp.execFile)
+					let command: string
+					switch (process.platform) {
+						case 'darwin':
+							command = 'open'
+							break
+						case 'win32':
+							command = 'explorer'
+							break
+						default:
+							command = 'xdg-open'
+							break
+					}
+					return void (await execFile(command, [toPath(location)]))
+				},
+				stat(location) {
+					return fsp.stat(toFsPathLike(location))
+				},
+				unlink(location) {
+					return fsp.unlink(toFsPathLike(location))
+				},
+				watch(locations, { usePolling = false } = {}) {
+					return new ChokidarWatcherWrapper(
+						chokidar.watch(locations.map(toPath), {
+							usePolling,
+							disableGlobbing: true,
+						}),
+					)
+				},
+				writeFile(location, data, options) {
+					return fsp.writeFile(toFsPathLike(location), data, options)
+				},
 			},
-		},
-		error: {
-			createKind(kind, message) {
-				const error = new Error(message)
-					; (error as NodeJS.ErrnoException).code = kind
-				return error
+			web: {
+				fetch,
+				getCache: async () => {
+					return new HttpCache(cacheRoot)
+				},
 			},
-			isKind(e, kind) {
-				return e instanceof Error && (e as NodeJS.ErrnoException).code === kind
-			},
-		},
-		event: { EventEmitter },
-		fs: {
-			chmod(location, mode) {
-				return fsp.chmod(toFsPathLike(location), mode)
-			},
-			async mkdir(location, options) {
-				return void (await fsp.mkdir(toFsPathLike(location), options))
-			},
-			readdir(location) {
-				return fsp.readdir(toFsPathLike(location), { encoding: 'utf-8', withFileTypes: true })
-			},
-			readFile(location) {
-				return fsp.readFile(toFsPathLike(location))
-			},
-			async showFile(location): Promise<void> {
-				const execFile = promisify(cp.execFile)
-				let command: string
-				switch (process.platform) {
-					case 'darwin':
-						command = 'open'
-						break
-					case 'win32':
-						command = 'explorer'
-						break
-					default:
-						command = 'xdg-open'
-						break
-				}
-				return void (await execFile(command, [toPath(location)]))
-			},
-			stat(location) {
-				return fsp.stat(toFsPathLike(location))
-			},
-			unlink(location) {
-				return fsp.unlink(toFsPathLike(location))
-			},
-			watch(locations, { usePolling = false } = {}) {
-				return new ChokidarWatcherWrapper(
-					chokidar.watch(locations.map(toPath), {
-						usePolling,
-						disableGlobbing: true,
-					}),
-				)
-			},
-			writeFile(location, data, options) {
-				return fsp.writeFile(toFsPathLike(location), data, options)
-			},
-		},
-		web: {
-			fetch,
-			getCache: async () => {
-				return new HttpCache(cacheRoot)
-			}
-		},
-	} satisfies Externals)
+		} satisfies Externals,
+	)
 }
 
 export const NodeJsExternals = getNodeJsExternals()
@@ -169,14 +174,18 @@ class HttpCache implements Cache {
 		}
 	}
 
-	async match(request: RequestInfo | URL, _options?: CacheQueryOptions | undefined): Promise<Response | undefined> {
+	async match(
+		request: RequestInfo | URL,
+		_options?: CacheQueryOptions | undefined,
+	): Promise<Response | undefined> {
 		if (!this.#cacheRoot) {
 			return undefined
 		}
 
 		const fileName = this.#getFileName(request)
 		try {
-			const etag = (await fsp.readFile(new URL(`${fileName}.etag`, this.#cacheRoot), 'utf8')).trim()
+			const etag = (await fsp.readFile(new URL(`${fileName}.etag`, this.#cacheRoot), 'utf8'))
+				.trim()
 			const bodyStream = fs.createReadStream(new URL(`${fileName}.bin`, this.#cacheRoot))
 			return new Response(
 				stream.Readable.toWeb(bodyStream) as ReadableStream,
@@ -207,12 +216,12 @@ class HttpCache implements Cache {
 		await Promise.all([
 			fsp.writeFile(
 				new URL(`${fileName}.bin`, this.#cacheRoot),
-				stream.Readable.fromWeb(clonedResponse.body as streamWeb.ReadableStream)
+				stream.Readable.fromWeb(clonedResponse.body as streamWeb.ReadableStream),
 				//              \_____/                     \_________________________/
 				//                 |             DOM ReadableStream -> stream/web ReadableStream
 				// stream/web ReadableStream -> stream Readable
 			),
-			fsp.writeFile(new URL(`${fileName}.etag`, this.#cacheRoot), `${etag}${os.EOL}`)
+			fsp.writeFile(new URL(`${fileName}.etag`, this.#cacheRoot), `${etag}${os.EOL}`),
 		])
 	}
 

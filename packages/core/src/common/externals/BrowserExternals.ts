@@ -63,7 +63,7 @@ class BrowserFsWatcher implements FsWatcher {
 		return this
 	}
 
-	async close(): Promise<void> { }
+	async close(): Promise<void> {}
 }
 
 class BrowserFileSystem implements ExternalFileSystem {

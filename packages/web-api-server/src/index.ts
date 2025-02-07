@@ -1,8 +1,8 @@
+import { Mutex } from 'async-mutex'
 import chalk from 'chalk'
 import cors from 'cors'
 import express from 'express'
 import { slowDown } from 'express-slow-down'
-import { Mutex } from 'async-mutex'
 import { fileURLToPath } from 'node:url'
 import {
 	assertRootDir,

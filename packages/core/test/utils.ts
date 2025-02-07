@@ -151,7 +151,7 @@ export function testParser(
  * This function has a signature similar to mocha's `describe` and `it` methods.
  * The method passed into this function is never actually executed.
  */
-export function typing(_title: string, _fn: () => void): void { }
+export function typing(_title: string, _fn: () => void): void {}
 
 /**
  * Assert the type of `_value` is `T`.
@@ -165,7 +165,7 @@ export function assertType<T>(_value: T): void {
 	)
 }
 
-export function assertError(fn: () => void, errorCallback: (e: unknown) => void = () => { }) {
+export function assertError(fn: () => void, errorCallback: (e: unknown) => void = () => {}) {
 	try {
 		fn()
 		fail('Expected an error to be thrown.')

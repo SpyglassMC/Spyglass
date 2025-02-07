@@ -21,7 +21,8 @@ export async function getVersions(
 	externals: core.Externals,
 	logger: core.Logger,
 ): Promise<McmetaVersions | undefined> {
-	return (await core.fetchWithCache(externals, logger, 'https://api.spyglassmc.com/mcje/versions')).json()
+	return (await core.fetchWithCache(externals, logger, 'https://api.spyglassmc.com/mcje/versions'))
+		.json()
 }
 
 interface GetMcmetaSummaryResult extends Partial<McmetaSummary> {
@@ -69,7 +70,7 @@ export async function getMcmetaSummary(
 		const response = await core.fetchWithCache(
 			externals,
 			logger,
-			`https://api.spyglassmc.com/mcje/versions/${encodeURIComponent(version)}/${type}`
+			`https://api.spyglassmc.com/mcje/versions/${encodeURIComponent(version)}/${type}`,
 		)
 		return {
 			data: await handleOverride(await response.json(), overrideConfig),
@@ -92,7 +93,7 @@ export async function getMcmetaSummary(
 		commands: commands.data,
 		fluids: fluids.data,
 		registries: registries.data,
-		checksum: `${blocks.checksum}-${commands.checksum}-${fluids.checksum}-${registries.checksum}`
+		checksum: `${blocks.checksum}-${commands.checksum}-${fluids.checksum}-${registries.checksum}`,
 	}
 }
 
@@ -108,11 +109,15 @@ export async function getVanillaDatapack(
 	return {
 		type: 'tarball-ram',
 		name: 'vanilla-datapack',
-		data: new Uint8Array(await (await core.fetchWithCache(
-			externals,
-			logger,
-			`https://api.spyglassmc.com/mcje/versions/${encodeURIComponent(version)}/vanilla-data/tarball`
-		)).arrayBuffer()),
+		data: new Uint8Array(
+			await (await core.fetchWithCache(
+				externals,
+				logger,
+				`https://api.spyglassmc.com/mcje/versions/${
+					encodeURIComponent(version)
+				}/vanilla-data/tarball`,
+			)).arrayBuffer(),
+		),
 		stripLevel: 1,
 	}
 }
@@ -129,11 +134,15 @@ export async function getVanillaResourcepack(
 	return {
 		type: 'tarball-ram',
 		name: 'vanilla-assets-tiny',
-		data: new Uint8Array(await (await core.fetchWithCache(
-			externals,
-			logger,
-			`https://api.spyglassmc.com/mcje/versions/${encodeURIComponent(version)}/vanilla-assets-tiny/tarball`
-		)).arrayBuffer()),
+		data: new Uint8Array(
+			await (await core.fetchWithCache(
+				externals,
+				logger,
+				`https://api.spyglassmc.com/mcje/versions/${
+					encodeURIComponent(version)
+				}/vanilla-assets-tiny/tarball`,
+			)).arrayBuffer(),
+		),
 		stripLevel: 1,
 	}
 }
@@ -148,9 +157,13 @@ export async function getVanillaMcdoc(
 	return {
 		type: 'tarball-ram',
 		name: 'vanilla-mcdoc',
-		data: new Uint8Array(await (await core.fetchWithCache(
-			externals, logger, `https://api.spyglassmc.com/vanilla-mcdoc/tarball`
-		)).arrayBuffer()),
+		data: new Uint8Array(
+			await (await core.fetchWithCache(
+				externals,
+				logger,
+				`https://api.spyglassmc.com/vanilla-mcdoc/tarball`,
+			)).arrayBuffer(),
+		),
 		stripLevel: 1,
 	}
 }
