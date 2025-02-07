@@ -18,10 +18,12 @@ export async function fetchWithCache(
 		const response = await web.fetch(request)
 		if (response.status === 304) {
 			Dev.assertDefined(cachedResponse)
+			logger.info(`[fetchWithCache] reusing cache for ${request.url}`)
 			return cachedResponse
 		} else {
 			try {
 				await cache.put(request, response)
+				logger.info(`[fetchWithCache] updated cache for ${request.url}`)
 			} catch (e) {
 				logger.warn('[fetchWithCache] put cache', e)
 			}
@@ -30,6 +32,7 @@ export async function fetchWithCache(
 	} catch (e) {
 		logger.warn('[fetchWithCache] fetch', e)
 		if (cachedResponse) {
+			logger.info(`[fetchWithCache] falling back to cache for ${request.url}`)
 			return cachedResponse
 		}
 		throw e
