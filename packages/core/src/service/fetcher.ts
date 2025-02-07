@@ -35,3 +35,5 @@ export async function fetchWithCache(
 		throw e
 	}
 }
+
+// Fetchr? I hardly know her: https://github.com/NeunEinser/bingo
