@@ -2,7 +2,8 @@ import chalk from 'chalk'
 import cors from 'cors'
 import express from 'express'
 import { slowDown } from 'express-slow-down'
-import { fileURLToPath } from 'url'
+import { Mutex } from 'async-mutex'
+import { fileURLToPath } from 'node:url'
 import {
 	assertRootDir,
 	cheapRateLimiter,
@@ -23,6 +24,7 @@ const { hookSecret, port, rootDir } = loadConfig()
 await assertRootDir(rootDir)
 const gits = await initGitRepos(rootDir)
 const cache = new MemCache(gits.mcmeta)
+const gitMutex = new Mutex()
 
 const versionRoute = express.Router({ mergeParams: true })
 	.use(getVersionValidator(cache))
@@ -111,9 +113,13 @@ const app = express()
 				repository: { name: string }
 			}
 			const git = gits[name === 'vanilla-mcdoc' ? 'mcdoc' : 'mcmeta']
-			console.info(chalk.yellow(`Updating ${name}...`))
-			await git.remote(['update', '--prune'])
-			console.info(chalk.green(`Updated ${name}`))
+
+			await gitMutex.runExclusive(async () => {
+				console.info(chalk.yellow(`Updating ${name}...`))
+				await git.remote(['update', '--prune'])
+				cache.invalidate()
+				console.info(chalk.green(`Updated ${name}`))
+			})
 		},
 	)
 	.get('/favicon.ico', cheapRateLimiter, (_req, res) => {
