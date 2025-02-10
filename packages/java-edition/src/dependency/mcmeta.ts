@@ -41,7 +41,6 @@ export function resolveConfiguredVersion(
 			id: version.id,
 			name: version.name,
 			release: findReleaseTarget(version) as ReleaseVersion,
-			isLatest: version === versions[0],
 			reason,
 		}
 	}

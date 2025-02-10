@@ -31,7 +31,6 @@ export interface VersionInfo {
 	release: ReleaseVersion
 	id: string
 	name: string
-	isLatest: boolean
 	reason: VersionInfoReason
 }
 
