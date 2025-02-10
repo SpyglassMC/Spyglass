@@ -88,7 +88,7 @@ connection.onInitialize(async (params) => {
 			},
 		})
 		service.project.on('documentErrored', async ({ errors, uri, version }) => {
-			if (!uri.startsWith("file://")) {
+			if (!uri.startsWith('file://')) {
 				return
 			}
 
