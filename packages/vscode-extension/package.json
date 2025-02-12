@@ -267,6 +267,10 @@
         "description": "An error."
       },
       {
+        "id": "escape",
+        "description": "An escape sequence."
+      },
+      {
         "id": "literal",
         "description": "A literal."
       },
