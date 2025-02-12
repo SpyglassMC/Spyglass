@@ -64,7 +64,8 @@ export const translationValueParser: core.InfallibleParser<TranslationValueNode>
 					localize(
 						'java-edition.translation-value.percent-escape-hint',
 						localize('expected', localeQuote('$')),
-					), src
+					),
+					src,
 				)
 			}
 			if (!src.trySkip('s')) {
@@ -72,7 +73,8 @@ export const translationValueParser: core.InfallibleParser<TranslationValueNode>
 					localize(
 						'java-edition.translation-value.percent-escape-hint',
 						localize('expected', localeQuote('s')),
-					), src
+					),
+					src,
 				)
 			}
 			const token = src.sliceToCursor(argStart)
