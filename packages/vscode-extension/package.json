@@ -49,7 +49,7 @@
   "devDependencies": {
     "@types/vscode": "1.67.0",
     "@vscode/vsce": "^2.29.0",
-    "esbuild": "^0.17.18",
+    "esbuild": "^0.25.0",
     "ovsx": "^0.9.1",
     "vscode-languageclient": "^9.0.1",
     "vscode-test": "^1.5.2"
