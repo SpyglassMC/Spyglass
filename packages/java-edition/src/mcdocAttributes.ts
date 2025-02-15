@@ -42,15 +42,15 @@ export function registerMcdocAttributes(
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) == 0
 		},
 	})
-	mcdoc.runtime.registerAttribute(meta, 'between', validator.string, {
+	mcdoc.runtime.registerAttribute(meta, 'except', validator.string, {
 		filterElement: (config, ctx) => {
 			const range = config.split("-")
 			if (range.length != 2 || !range[0].startsWith('1.')|| !range[1].startsWith('1.')) {
 				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
 				return true
 			}
-			return ReleaseVersion.cmp(release, range[0] as ReleaseVersion) >= 0
-				&& ReleaseVersion.cmp(release, range[1] as ReleaseVersion) <= 0
+			return ReleaseVersion.cmp(release, range[0] as ReleaseVersion) <= 0
+				|| ReleaseVersion.cmp(release, range[1] as ReleaseVersion) >= 0
 		},
 	})
 	mcdoc.runtime.registerAttribute(meta, 'deprecated', validator.optional(validator.string), {
