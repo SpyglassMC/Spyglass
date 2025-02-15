@@ -36,17 +36,17 @@ export function registerMcdocAttributes(
 	mcdoc.runtime.registerAttribute(meta, 'only', validator.string, {
 		filterElement: (config, ctx) => {
 			if (!config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
+				ctx.logger.warn(`Invalid mcdoc attribute for "only": ${config}`)
 				return true
 			}
-			return ReleaseVersion.cmp(release, config as ReleaseVersion) == 0
+			return ReleaseVersion.cmp(release, config as ReleaseVersion) === 0
 		},
 	})
 	mcdoc.runtime.registerAttribute(meta, 'except', validator.string, {
 		filterElement: (config, ctx) => {
 			const range = config.split("-")
-			if (range.length != 2 || !range[0].startsWith('1.')|| !range[1].startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
+			if (range.length !== 2 || !range[0].startsWith('1.')|| !range[1].startsWith('1.')) {
+				ctx.logger.warn(`Invalid mcdoc attribute for "except": ${config}`)
 				return true
 			}
 			return ReleaseVersion.cmp(release, range[0] as ReleaseVersion) <= 0
