@@ -41,7 +41,6 @@ const regexMatchValidator = validator.alternatives<RegexConfig>(
 		regex: validator.string,
 		error: validator.optional(validator.string),
 	}),
-	() => ({}),
 )
 
 function getResourceLocationOptions(
