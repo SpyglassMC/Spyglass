@@ -872,8 +872,8 @@ export class Project implements ExternalEventEmitter {
 		content: string,
 	): Promise<void> {
 		uri = this.normalizeUri(uri)
-		if (!fileUtil.isFileUri(uri)) {
-			return // We only accept `file:` scheme for client-managed URIs.
+		if (uri.startsWith(ArchiveUriSupporter.Protocol)) {
+			return // We do not accept `archive:` scheme for client-managed URIs.
 		}
 		if (this.shouldExclude(uri)) {
 			return
@@ -899,11 +899,10 @@ export class Project implements ExternalEventEmitter {
 	): Promise<void> {
 		uri = this.normalizeUri(uri)
 		this.#symbolUpToDateUris.delete(uri)
-		if (!fileUtil.isFileUri(uri)) {
-			return // We only accept `file:` scheme for client-managed URIs.
-		}
 		if (this.shouldExclude(uri)) {
 			return
+		if (uri.startsWith(ArchiveUriSupporter.Protocol)) {
+			return // We do not accept `archive:` scheme for client-managed URIs.
 		}
 		const doc = this.#clientManagedDocAndNodes.get(uri)?.doc
 		if (!doc) {
@@ -925,8 +924,8 @@ export class Project implements ExternalEventEmitter {
 	 */
 	onDidClose(uri: string): void {
 		uri = this.normalizeUri(uri)
-		if (!fileUtil.isFileUri(uri)) {
-			return // We only accept `file:` scheme for client-managed URIs.
+		if (uri.startsWith(ArchiveUriSupporter.Protocol)) {
+			return // We do not accept `archive:` scheme for client-managed URIs.
 		}
 		this.#clientManagedUris.delete(uri)
 		this.#clientManagedDocAndNodes.delete(uri)
