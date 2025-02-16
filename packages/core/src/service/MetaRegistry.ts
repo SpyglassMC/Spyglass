@@ -45,6 +45,7 @@ export interface LanguageOptions {
 }
 
 export type UriPredicate = (uri: string, ctx: UriPredicateContext) => boolean
+
 interface LinterRegistration {
 	configValidator: (ruleName: string, ruleValue: unknown, logger: Logger) => unknown
 	linter: Linter<AstNode>
@@ -113,15 +114,8 @@ export class MetaRegistry {
 		return Array.from(this.#languages.keys())
 	}
 
-	public isSupportedLanguage(language: string): boolean {
-		return this.#languages.has(language)
-	}
-
-	/**
-	 * An array of file extensions (including the leading dot (`.`)) that are supported.
-	 */
-	public getSupportedFileExtensions(): FileExtension[] {
-		return [...this.#languages.values()].flatMap((v) => v.extensions)
+	public getLanguageOptions(language: string): LanguageOptions | undefined {
+		return this.#languages.get(language)
 	}
 
 	/**
