@@ -223,7 +223,7 @@ describe('mcfunction argument parser', () => {
 					properties,
 				}
 				const project = mockProjectData({ ctx: { loadedVersion: version } })
-				json.initialize(project)
+				json.getInitializer()(project)
 				nbt.initialize(project)
 
 				for (const string of content) {
