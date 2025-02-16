@@ -13,6 +13,11 @@ interface IdConfig {
 	exclude?: string[]
 }
 
+interface RegexConfig {
+	regex: string
+	error?: string
+}
+
 const idValidator = validator.alternatives<IdConfig>(
 	validator.map(validator.string, v => ({ registry: v })),
 	validator.tree({
@@ -267,6 +272,38 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			return (node, ctx) => {
 				try {
 					RegExp(pattern)
+				} catch (e) {
+					const message = e instanceof Error ? e.message : `${e}`
+					const error = message
+						.replace(/^Invalid regular expression: /, '')
+						.replace(/^\/.+\/: /, '')
+					ctx.err.report(localize('invalid-regex-pattern', error), node, 2)
+				}
+			}
+		},
+	})
+	registerAttribute(meta, 'match_regex', () => undefined, {
+		checker: (config, typeDef, _) => {
+			if (typeDef.kind !== 'literal' || typeDef.value.kind !== 'string') {
+				return undefined
+			}
+			const conf = config as RegexConfig
+			const pattern = conf.regex
+			const value = typeDef.value.value
+			return (node, ctx) => {
+				try {
+					const regex = RegExp(pattern)
+					if (!regex.test(value)) {
+						if (conf.error) {
+							ctx.err.report(conf.error, node, 2)
+						} else {
+							ctx.err.report(
+								localize('mismatching-regex-pattern', typeDef.value.value),
+								node,
+								2,
+							)
+						}
+					}
 				} catch (e) {
 					const message = e instanceof Error ? e.message : `${e}`
 					const error = message
