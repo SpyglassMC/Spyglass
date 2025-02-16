@@ -292,7 +292,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	*listFiles() {
 		for (const [archiveName, entries] of this.entries.entries()) {
 			this.logger.info(
-				`[ArchiveUriSupporter#listFiles] Listing ${entries.size} files from ${archiveName}`,
+				`[ArchiveUriSupporter#listFiles] Listing ${entries.size} entries from ${archiveName}`,
 			)
 			for (const entry of entries.values()) {
 				if (entry.type === 'file') {
