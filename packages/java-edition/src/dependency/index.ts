@@ -164,6 +164,6 @@ export async function getVanillaMcdoc(
 				`https://api.spyglassmc.com/vanilla-mcdoc/tarball`,
 			)).arrayBuffer(),
 		),
-		stripLevel: 1,
+		stripLevel: 0,
 	}
 }
