@@ -13,11 +13,6 @@ interface IdConfig {
 	exclude?: string[]
 }
 
-interface RegexConfig {
-	regex: string
-	error?: string
-}
-
 const idValidator = validator.alternatives<IdConfig>(
 	validator.map(validator.string, v => ({ registry: v })),
 	validator.tree({
@@ -31,6 +26,20 @@ const idValidator = validator.alternatives<IdConfig>(
 			validator.map(validator.string, v => [v]),
 			validator.list(validator.string),
 		)),
+	}),
+	() => ({}),
+)
+
+interface RegexConfig {
+	regex: string
+	error?: string
+}
+
+const regexMatchValidator = validator.alternatives<RegexConfig>(
+	validator.map(validator.string, v => ({ regex: v })),
+	validator.tree({
+		regex: validator.string,
+		error: validator.optional(validator.string),
 	}),
 	() => ({}),
 )
@@ -282,20 +291,19 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 		},
 	})
-	registerAttribute(meta, 'match_regex', () => undefined, {
+	registerAttribute(meta, 'match_regex', regexMatchValidator, {
 		checker: (config, typeDef, _) => {
 			if (typeDef.kind !== 'literal' || typeDef.value.kind !== 'string') {
 				return undefined
 			}
-			const conf = config as RegexConfig
-			const pattern = conf.regex
+			const pattern = config.regex
 			const value = typeDef.value.value
 			return (node, ctx) => {
 				try {
 					const regex = RegExp(pattern)
 					if (!regex.test(value)) {
-						if (conf.error) {
-							ctx.err.report(conf.error, node, 2)
+						if (config.error) {
+							ctx.err.report(config.error, node, 2)
 						} else {
 							ctx.err.report(
 								localize('mismatching-regex-pattern', typeDef.value.value),
