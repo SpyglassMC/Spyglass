@@ -22,6 +22,7 @@ import {
 } from '../processor/index.js'
 import type { Linter } from '../processor/linter/Linter.js'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider.js'
+import type { UriPredicateContext } from '../service/index.js'
 import type { DependencyKey, DependencyProvider } from './Dependency.js'
 import type { FileExtension } from './fileUtil.js'
 import type { SymbolRegistrar } from './SymbolRegistrar.js'
@@ -33,11 +34,17 @@ export interface LanguageOptions {
 	 * An array of extensions of files corresponding to the language. Each extension should include the leading dot (`.`).
 	 */
 	extensions: FileExtension[]
+	/**
+	 * If specified, the URI of the file must pass the predicate for it to be considered to be a file
+	 * of this language.
+	 */
+	uriPredicate?: UriPredicate
 	triggerCharacters?: string[]
 	parser?: Parser<AstNode>
 	completer?: Completer<any>
 }
 
+export type UriPredicate = (uri: string, ctx: UriPredicateContext) => boolean
 interface LinterRegistration {
 	configValidator: (ruleName: string, ruleValue: unknown, logger: Logger) => unknown
 	linter: Linter<AstNode>

@@ -8,6 +8,7 @@ import type {
 	UriBinder,
 	UriBinderContext,
 	UriBuilder,
+	UriPredicate,
 } from '@spyglassmc/core'
 import {
 	ErrorSeverity,
@@ -210,6 +211,53 @@ export function* getRoots(
 	return undefined
 }
 
+function getCandidateResourcesForRel(rel: string): [res: Resource, identifier: string][] {
+	const parts = rel.split('/')
+	if (parts.length < 3) {
+		return []
+	}
+	const [pack, _namespace, ...rest] = parts
+	if (pack !== 'data' && pack !== 'assets') {
+		return []
+	}
+	const candidateResources: [Resource, string][] = []
+	if (rest.length === 1) {
+		const resources = Resources.get('')
+		for (const res of resources ?? []) {
+			if (res.pack !== pack) {
+				continue
+			}
+			let identifier = rest[0]
+			if (!identifier.endsWith(res.ext)) {
+				continue
+			}
+			identifier = identifier.slice(0, -res.ext.length)
+			if (res.identifier && identifier !== res.identifier) {
+				continue
+			}
+			candidateResources.push([res, identifier])
+		}
+	}
+	for (let i = 1; i < rest.length; i += 1) {
+		const resources = Resources.get(rest.slice(0, i).join('/'))
+		for (const res of resources ?? []) {
+			if (res.pack !== pack) {
+				continue
+			}
+			let identifier = rest.slice(i).join('/')
+			if (!identifier.endsWith(res.ext)) {
+				continue
+			}
+			identifier = identifier.slice(0, -res.ext.length)
+			if (res.identifier && identifier !== res.identifier) {
+				continue
+			}
+			candidateResources.push([res, identifier])
+		}
+	}
+	return candidateResources
+}
+
 export function dissectUri(uri: string, ctx: UriBinderContext) {
 	const rels = getRels(uri, ctx.roots)
 	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
@@ -226,41 +274,7 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 		if (pack !== 'data' && pack !== 'assets') {
 			continue
 		}
-		const candidateResources: [Resource, string][] = []
-		if (rest.length === 1) {
-			const resources = Resources.get('')
-			for (const res of resources ?? []) {
-				if (res.pack !== pack) {
-					continue
-				}
-				let identifier = rest[0]
-				if (!identifier.endsWith(res.ext)) {
-					continue
-				}
-				identifier = identifier.slice(0, -res.ext.length)
-				if (res.identifier && identifier !== res.identifier) {
-					continue
-				}
-				candidateResources.push([res, identifier])
-			}
-		}
-		for (let i = 1; i < rest.length; i += 1) {
-			const resources = Resources.get(rest.slice(0, i).join('/'))
-			for (const res of resources ?? []) {
-				if (res.pack !== pack) {
-					continue
-				}
-				let identifier = rest.slice(i).join('/')
-				if (!identifier.endsWith(res.ext)) {
-					continue
-				}
-				identifier = identifier.slice(0, -res.ext.length)
-				if (res.identifier && identifier !== res.identifier) {
-					continue
-				}
-				candidateResources.push([res, identifier])
-			}
-		}
+		const candidateResources = getCandidateResourcesForRel(rel)
 		if (candidateResources.length === 0) {
 			continue
 		}
@@ -385,4 +399,14 @@ export function registerUriBuilders(meta: MetaRegistry) {
 	for (const [category, resources] of resourcesByCategory.entries()) {
 		meta.registerUriBuilder(category, uriBuilder(resources))
 	}
+}
+
+/**
+ * Returns true for JSON file URIs that belong to any known resource category. No version check is
+ * performed as we would like to provide errors even for files in the wrong folder or files for the
+ * wrong version.
+ */
+export const jsonUriPredicate: UriPredicate = (uri, ctx) => {
+	const rels = [...getRels(uri, ctx.roots)]
+	return rels.some((rel) => getCandidateResourcesForRel(rel).length > 0)
 }
