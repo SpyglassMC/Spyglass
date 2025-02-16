@@ -2,7 +2,7 @@ import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
-import { registerUriBuilders, uriBinder } from './binder/index.js'
+import { jsonUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
 import type { McmetaSummary, McmetaVersions, PackInfo } from './dependency/index.js'
 import {
 	getMcmetaSummary,
@@ -161,7 +161,6 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 
 	registerMcdocAttributes(meta, summary.commands, release)
 	registerPackFormatAttribute(meta, release, versions, packs)
-	registerPackFormatAttribute(meta, release, versions, packs)
 
 	meta.registerLanguage('zip', { extensions: ['.zip'] })
 	meta.registerLanguage('png', { extensions: ['.png'] })
@@ -171,7 +170,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	meta.registerLanguage('fsh', { extensions: ['.fsh'] })
 	meta.registerLanguage('vsh', { extensions: ['.vsh'] })
 
-	json.initialize(ctx)
+	json.getInitializer(jsonUriPredicate)(ctx)
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)

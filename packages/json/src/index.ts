@@ -14,22 +14,29 @@ export * as formatter from './formatter/index.js'
 export * from './node/index.js'
 export * as parser from './parser/index.js'
 
-export const initialize: core.SyncProjectInitializer = ({ meta }) => {
-	meta.registerLanguage('json', {
-		extensions: ['.json'],
-		triggerCharacters: ['\n', ':', '"'],
-		parser: parser.file,
-	})
-	meta.registerLanguage('mcmeta', {
-		extensions: ['.mcmeta'],
-		triggerCharacters: ['\n', ':', '"'],
-		parser: parser.file,
-	})
+/**
+ * @param jsonUriPredicate If provided, JSON file URIs must pass this predicate for them to be of
+ * proper `json` language.
+ */
+export function getInitializer(jsonUriPredicate?: core.UriPredicate): core.SyncProjectInitializer {
+	return ({ meta }) => {
+		meta.registerLanguage('json', {
+			extensions: ['.json'],
+			uriPredicate: jsonUriPredicate,
+			triggerCharacters: ['\n', ':', '"'],
+			parser: parser.file,
+		})
+		meta.registerLanguage('mcmeta', {
+			extensions: ['.mcmeta'],
+			triggerCharacters: ['\n', ':', '"'],
+			parser: parser.file,
+		})
 
-	meta.registerParser('json:entry' as any, parser.entry)
+		meta.registerParser('json:entry' as any, parser.entry)
 
-	checker.register(meta)
-	colorizer.register(meta)
-	completer.register(meta)
-	formatter.register(meta)
+		checker.register(meta)
+		colorizer.register(meta)
+		completer.register(meta)
+		formatter.register(meta)
+	}
 }
