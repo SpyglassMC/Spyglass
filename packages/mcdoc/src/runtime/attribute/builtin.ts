@@ -31,15 +31,15 @@ const idValidator = validator.alternatives<IdConfig>(
 )
 
 interface RegexConfig {
-	regex: string
-	error?: string
+	pattern: string
+	message?: string
 }
 
 const regexMatchValidator = validator.alternatives<RegexConfig>(
-	validator.map(validator.string, v => ({ regex: v })),
+	validator.map(validator.string, v => ({ pattern: v })),
 	validator.tree({
-		regex: validator.string,
-		error: validator.optional(validator.string),
+		pattern: validator.string,
+		message: validator.optional(validator.string),
 	}),
 )
 
@@ -285,7 +285,11 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 					const error = message
 						.replace(/^Invalid regular expression: /, '')
 						.replace(/^\/.+\/: /, '')
-					ctx.err.report(localize('invalid-regex-pattern', error), node, 2)
+					ctx.err.report(
+						localize('invalid-regex-pattern', error),
+						node,
+						core.ErrorSeverity.Warning,
+					)
 				}
 			}
 		},
@@ -295,19 +299,19 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			if (typeDef.kind !== 'literal' || typeDef.value.kind !== 'string') {
 				return undefined
 			}
-			const pattern = config.regex
+			const pattern = config.pattern
 			const value = typeDef.value.value
 			return (node, ctx) => {
 				try {
 					const regex = RegExp(pattern)
 					if (!regex.test(value)) {
-						if (config.error) {
-							ctx.err.report(config.error, node, 2)
+						if (config.message) {
+							ctx.err.report(config.message, node, 2)
 						} else {
 							ctx.err.report(
 								localize('mismatching-regex-pattern', typeDef.value.value),
 								node,
-								2,
+								core.ErrorSeverity.Warning,
 							)
 						}
 					}
