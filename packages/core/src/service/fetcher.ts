@@ -20,6 +20,12 @@ export async function fetchWithCache(
 			Dev.assertDefined(cachedResponse)
 			logger.info(`[fetchWithCache] reusing cache for ${request.url}`)
 			return cachedResponse
+		} else if (!response.ok) {
+			let message = response.statusText
+			try {
+				message = (await response.json()).message
+			} catch (e) {}
+			throw new TypeError(`${response.status} ${message}`)
 		} else {
 			try {
 				await cache.put(request, response)
