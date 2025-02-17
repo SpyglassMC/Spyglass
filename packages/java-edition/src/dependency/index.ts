@@ -118,7 +118,7 @@ export async function getVanillaDatapack(
 				}/vanilla-data/tarball`,
 			)).arrayBuffer(),
 		),
-		stripLevel: 1,
+		stripLevel: 0,
 	}
 }
 
@@ -143,7 +143,7 @@ export async function getVanillaResourcepack(
 				}/vanilla-assets-tiny/tarball`,
 			)).arrayBuffer(),
 		),
-		stripLevel: 1,
+		stripLevel: 0,
 	}
 }
 
