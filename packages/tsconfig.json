@@ -39,6 +39,9 @@
 		},
 		{
 			"path": "vscode-extension"
+		},
+		{
+			"path": "web-api-server"
 		}
 	]
 }

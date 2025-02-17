@@ -71,6 +71,8 @@ const rootCommand = (
 			nbtResource(node, ctx)
 		} else if (json.TypedJsonNode.is(node)) {
 			json.checker.typed(node, ctx)
+		} else if (nbt.TypedNbtNode.is(node)) {
+			nbt.checker.typed(node, ctx)
 		} else if (NbtNode.is(node) && node.properties) {
 			const dispatchedBy = getEarlierNode(nodes, i, node.properties.dispatchedBy)
 			const indexedBy = getEarlierNode(nodes, i, node.properties.indexedBy)
@@ -138,7 +140,7 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 			} else if (ComponentTestExactNode.is(test) && test.value) {
 				nbt.checker.index('minecraft:data_component', key)(test.value, ctx)
 			} else if (ComponentTestSubpredicateNode.is(test) && test.value) {
-				nbt.checker.index('minecraft:item_sub_predicate', key)(test.value, ctx)
+				nbt.checker.index('minecraft:data_component_predicate', key)(test.value, ctx)
 			}
 		}
 	}

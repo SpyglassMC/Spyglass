@@ -1,3 +1,27 @@
+# v4.5.4 (2025-01-26)
+
+### 🐛 Bug Fixes
+- [`971546e`](https://github.com/SpyglassMC/Spyglass/commit/971546e1628180b1126c287f7e4a99946b54565c) Fixes `documentSymbol` request errors ([#1732](https://github.com/SpyglassMC/Spyglass/pull/1732))
+
+# v4.5.2 (2025-01-21)
+
+### ✨ New Features
+- [`1dbb8c1`](https://github.com/SpyglassMC/Spyglass/commit/1dbb8c1923904e589ff39031d96dbd7aeaf2fa8c) Added a json-schema file for the `spyglass.json` config ([#1716](https://github.com/SpyglassMC/Spyglass/pull/1716))
+
+# v4.5.0 (2025-01-08)
+
+### ✨ New Features
+- [`b9bec63`](https://github.com/SpyglassMC/Spyglass/commit/b9bec63e6736e230f803a35bde522c5580ce0fb5) Added support for 25w02a ([#1714](https://github.com/SpyglassMC/Spyglass/pull/1714))
+
+# v4.4.4 (2025-01-04)
+
+### ✨ New Features
+- [`242684b`](https://github.com/SpyglassMC/Spyglass/commit/242684bde1de3c868d1b9cf76447d60ac218c2f5) Add quick fixes, for example to create new files ([#1697](https://github.com/SpyglassMC/Spyglass/pull/1697))
+
+### 🐛 Bug Fixes
+- [`5a91439`](https://github.com/SpyglassMC/Spyglass/commit/5a91439a418c313dbf57293f16ff65b9b278b899) Fixes the `env.exclude` config, which could in some cases cause strange errors ([#1695](https://github.com/SpyglassMC/Spyglass/pull/1695))
+- [`49e23c4`](https://github.com/SpyglassMC/Spyglass/commit/49e23c40125259324e7695b42522fdce530af14c) Fixes autocomplete in unclosed objects ([#1583](https://github.com/SpyglassMC/Spyglass/pull/1583))
+
 # v4.4.1 (2024-12-27)
 
 ### 🐛 Bug Fixes

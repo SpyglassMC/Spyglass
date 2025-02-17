@@ -1,7 +1,6 @@
-#!/usr/bin/env node
-
 import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
 import {
+	CompletionItem,
 	ErrorSeverity,
 	FileNode,
 	fileUtil,
@@ -12,6 +11,7 @@ import {
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
+import { webcrypto } from 'crypto'
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
@@ -26,12 +26,18 @@ import {
 	SlashCommandBuilder,
 	SlashCommandStringOption,
 } from 'discord.js'
-import type { APIActionRowComponent, APIMessageActionRowComponent } from 'discord.js'
+import type {
+	APIActionRowComponent,
+	APIEmbed,
+	APIMessageActionRowComponent,
+	ApplicationCommandOptionChoiceData,
+} from 'discord.js'
 import { join } from 'path'
 import { env } from 'process'
 import { pathToFileURL } from 'url'
 
 export declare const __dirname: undefined // Not defined in ES module scope
+const MaxCommandLength = 1000
 const MaxContentLength = 2000
 
 const ProfilerId = 'discord-bot#startup'
@@ -62,7 +68,6 @@ const service = new Service({
 		projectRoots: [fileUtil.ensureEndingSlash(pathToFileURL(projectPath).toString())],
 	},
 })
-const DocumentUri = pathToFileURL(`${rootPath}/virtual/file.mcfunction`).toString()
 
 interface InteractionInfo {
 	content: string
@@ -89,12 +94,16 @@ client.on('interactionCreate', async (i) => {
 					const reply = await i.reply(getReplyOptions(info))
 					const collector = reply.createMessageComponentCollector({
 						componentType: ComponentType.Button,
-						time: 3_600_000, // 1 hour
+						time: 600_000, // 10 minutes
 					})
 					collector
 						.on('collect', async (bi) => {
 							if (bi.user.id !== i.user.id) {
-								// Only allow creator of the interaction to interact.
+								await bi.reply({
+									content:
+										'Only the original initiator of this interaction may switch to other diagnostics.',
+									ephemeral: true,
+								})
 								return
 							}
 
@@ -106,13 +115,14 @@ client.on('interactionCreate', async (i) => {
 							await bi.update(getReplyOptions(info))
 						})
 						.on('end', async () => {
-							await i.editReply({
-								embeds: [new EmbedBuilder().setDescription('The interaction has expired!')],
-								components: [],
-							})
+							await i.editReply(getReplyOptions(info, true))
 						})
 					break
 			}
+		} else if (i.isAutocomplete()) {
+			const content = i.options.getFocused()
+			const options = await getAutocomplete(content)
+			await i.respond(options)
 		}
 	} catch (e) {
 		console.error('[interactionCreate]', e)
@@ -158,11 +168,11 @@ async function registerCommands(): Promise<unknown> {
 		'Ping the Spyglass Bot',
 	).toJSON()
 	const spyCommand = new SlashCommandBuilder().setName('spy').setDescription(
-		'Renders a mcfunction command. Error reporting coming soon™',
+		'Renders a mcfunction command.',
 	).addStringOption(
 		new SlashCommandStringOption().setName('command').setDescription(
 			'Put a single mcfunction command here',
-		).setRequired(true),
+		).setAutocomplete(true).setMaxLength(MaxCommandLength).setRequired(true),
 	).addBooleanOption(
 		new SlashCommandBooleanOption().setName('showraw').setDescription(
 			'Whether to show the result ANSI code in raw code blocks',
@@ -174,10 +184,43 @@ async function registerCommands(): Promise<unknown> {
 	})
 }
 
+function generateRandomUri(): string {
+	const uuid = webcrypto.randomUUID()
+	return pathToFileURL(`${rootPath}/virtual/file-${uuid}.mcfunction`).toString()
+}
+
+async function getAutocomplete(
+	content: string,
+): Promise<readonly ApplicationCommandOptionChoiceData<string>[]> {
+	const uri = generateRandomUri()
+	await service.project.onDidOpen(uri, 'mcfunction', 0, content)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	service.project.onDidClose(uri)
+	if (!docAndNode) {
+		throw new Error('docAndNode is undefined')
+	}
+
+	const { node, doc } = docAndNode
+
+	return service.complete(node, doc, content.length)
+		.sort((a, b) => (a.sortText ?? a.label).localeCompare(b.sortText ?? b.label))
+		// Convert autocomplete options into full text options
+		.map((i) => {
+			const insertText = i.insertText ?? i.label
+			return `${content.slice(0, i.range.start)}${insertText}${content.slice(i.range.end)}`
+		})
+		// Filter to the texts starting with the user input
+		.filter((v) => v.startsWith(content))
+		.map((v) => ({ name: v, value: v }))
+		// Limit to a maximum of 25 options
+		.slice(0, 25)
+}
+
 async function getInteractionInfo(content: string, showRaw: boolean): Promise<InteractionInfo> {
-	await service.project.onDidOpen(DocumentUri, 'mcfunction', 0, content)
-	const docAndNode = await service.project.ensureClientManagedChecked(DocumentUri)
-	service.project.onDidClose(DocumentUri)
+	const uri = generateRandomUri()
+	await service.project.onDidOpen(uri, 'mcfunction', 0, content)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	service.project.onDidClose(uri)
 	if (!docAndNode) {
 		throw new Error('docAndNode is undefined')
 	}
@@ -192,9 +235,11 @@ async function getInteractionInfo(content: string, showRaw: boolean): Promise<In
 
 function getReplyOptions(
 	info: InteractionInfo,
+	expired = false,
 ): {
 	content: string
 	components: APIActionRowComponent<APIMessageActionRowComponent>[]
+	embeds: APIEmbed[]
 	fetchReply: true
 } {
 	const content = getReplyContent(info)
@@ -202,7 +247,7 @@ function getReplyOptions(
 		content: content.length > MaxContentLength
 			? `Skipped colorizing due to Discord length limit.\n\`\`\`\n${info.content}\n\`\`\``
 			: content,
-		components: info.errors.length > 1
+		components: !expired && info.errors.length > 1
 			? [
 				new ActionRowBuilder<ButtonBuilder>().addComponents(
 					new ButtonBuilder().setCustomId('previous').setLabel('Previous Error').setStyle(
@@ -210,9 +255,13 @@ function getReplyOptions(
 					).setDisabled(info.activeErrorIndex <= 0),
 					new ButtonBuilder().setCustomId('next').setLabel('Next Error').setStyle(
 						ButtonStyle.Primary,
-					)
-						.setDisabled(info.activeErrorIndex >= info.errors.length - 1),
+					).setDisabled(info.activeErrorIndex >= info.errors.length - 1),
 				).toJSON(),
+			]
+			: [],
+		embeds: expired
+			? [
+				new EmbedBuilder({ description: 'The interaction has expired.' }).data,
 			]
 			: [],
 		fetchReply: true,

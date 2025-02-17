@@ -21,7 +21,6 @@ export function getItemSlotArgumentValues(ctx: core.ContextBase) {
 		'armor.head',
 		'armor.legs',
 		'horse.chest',
-		'horse.saddle',
 		'weapon',
 		'weapon.mainhand',
 		'weapon.offhand',
@@ -35,6 +34,11 @@ export function getItemSlotArgumentValues(ctx: core.ContextBase) {
 		)
 	} else {
 		output.push('horse.armor')
+	}
+	if (ReleaseVersion.cmp(release, '1.21.5') >= 0) {
+		output.push('saddle')
+	} else {
+		output.push('horse.saddle')
 	}
 	return output
 }

@@ -4,7 +4,6 @@ import {
 	CommentNode,
 	FloatNode,
 	IntegerNode,
-	LongNode,
 	ResourceLocationNode,
 	StringNode,
 } from '@spyglassmc/core'
@@ -330,21 +329,6 @@ export namespace IntRangeNode {
 	}
 }
 
-export interface LongRangeNode extends AstNode {
-	type: 'mcdoc:long_range'
-	children: (LongNode | LiteralNode)[]
-}
-export namespace LongRangeNode {
-	export function destruct(
-		node: LongRangeNode,
-	): { kind: RangeKind; min?: LongNode; max?: LongNode } {
-		return destructRangeNode(node)
-	}
-	export function is(node: AstNode | undefined): node is LongRangeNode {
-		return (node as LongRangeNode | undefined)?.type === 'mcdoc:long_range'
-	}
-}
-
 export interface LiteralTypeNode extends TypeBaseNode<LiteralTypeValueNode> {
 	type: 'mcdoc:type/literal'
 }
@@ -366,16 +350,14 @@ export namespace LiteralTypeValueNode {
 
 export interface TypedNumberNode extends AstNode {
 	type: 'mcdoc:typed_number'
-	children: (FloatNode | IntegerNode | LongNode | LiteralNode)[]
+	children: (FloatNode | IntegerNode | LiteralNode)[]
 }
 export namespace TypedNumberNode {
 	export function destruct(
 		node: TypedNumberNode,
-	): { value: FloatNode | IntegerNode | LongNode; suffix?: LiteralNode } {
+	): { value: FloatNode | IntegerNode; suffix?: LiteralNode } {
 		return {
-			value: node.children.find(FloatNode.is)
-				?? node.children.find(IntegerNode.is)
-				?? node.children.find(LongNode.is)!,
+			value: node.children.find(FloatNode.is) ?? node.children.find(IntegerNode.is)!,
 			suffix: node.children.find(LiteralNode.is),
 		}
 	}
@@ -384,20 +366,16 @@ export namespace TypedNumberNode {
 	}
 }
 
-export interface NumericTypeNode
-	extends TypeBaseNode<LiteralNode | FloatRangeNode | IntRangeNode | LongRangeNode>
-{
+export interface NumericTypeNode extends TypeBaseNode<LiteralNode | FloatRangeNode | IntRangeNode> {
 	type: 'mcdoc:type/numeric_type'
 }
 export namespace NumericTypeNode {
 	export function destruct(
 		node: NumericTypeNode,
-	): { numericKind: LiteralNode; valueRange?: FloatRangeNode | IntRangeNode | LongRangeNode } {
+	): { numericKind: LiteralNode; valueRange?: FloatRangeNode | IntRangeNode } {
 		return {
 			numericKind: node.children.find(LiteralNode.is)!,
-			valueRange: node.children.find(FloatRangeNode.is)
-				|| node.children.find(IntRangeNode.is)
-				|| node.children.find(LongRangeNode.is),
+			valueRange: node.children.find(FloatRangeNode.is) || node.children.find(IntRangeNode.is),
 		}
 	}
 	export function is(node: AstNode | undefined): node is NumericTypeNode {
@@ -428,33 +406,33 @@ export function getRangeDelimiter(kind: RangeKind): string {
 	return `${prefix}..${suffix}`
 }
 
-function destructRangeNode<N extends FloatRangeNode | IntRangeNode | LongRangeNode>(
+function destructRangeNode<N extends FloatRangeNode | IntRangeNode>(
 	node: N,
 ): {
 	kind: RangeKind
-	min?: N extends IntRangeNode ? IntegerNode : N extends LongRangeNode ? LongNode : FloatNode
-	max?: N extends IntRangeNode ? IntegerNode : N extends LongRangeNode ? LongNode : FloatNode
+	min?: N extends FloatRangeNode ? FloatNode : IntegerNode
+	max?: N extends FloatRangeNode ? FloatNode : IntegerNode
 } {
 	let kind: RangeKind
-	let min: (FloatNode & IntegerNode & LongNode) | undefined
-	let max: (FloatNode & IntegerNode & LongNode) | undefined
+	let min: (FloatNode & IntegerNode) | undefined
+	let max: (FloatNode & IntegerNode) | undefined
 	if (node.children.length === 1) {
 		// a
 		kind = 0b00
-		min = max = node.children[0] as FloatNode & IntegerNode & LongNode
+		min = max = node.children[0] as FloatNode & IntegerNode
 	} else if (node.children.length === 3) {
 		// a..b
 		kind = getKind(node.children[1] as LiteralNode)
-		min = node.children[0] as FloatNode & IntegerNode & LongNode
-		max = node.children[2] as FloatNode & IntegerNode & LongNode
+		min = node.children[0] as FloatNode & IntegerNode
+		max = node.children[2] as FloatNode & IntegerNode
 	} else if (LiteralNode.is(node.children[0])) {
 		// ..b
 		kind = getKind(node.children[0])
-		max = node.children[1] as FloatNode & IntegerNode & LongNode
+		max = node.children[1] as FloatNode & IntegerNode
 	} else {
 		// a..
 		kind = getKind(node.children[1] as LiteralNode)
-		min = node.children[0] as FloatNode & IntegerNode & LongNode
+		min = node.children[0] as FloatNode & IntegerNode
 	}
 	return { kind, min, max }
 
@@ -485,27 +463,19 @@ export namespace FloatRangeNode {
 	}
 }
 
-export interface PrimitiveArrayTypeNode
-	extends TypeBaseNode<LiteralNode | IntRangeNode | LongRangeNode>
-{
+export interface PrimitiveArrayTypeNode extends TypeBaseNode<LiteralNode | IntRangeNode> {
 	type: 'mcdoc:type/primitive_array'
 }
 export namespace PrimitiveArrayTypeNode {
 	export function destruct(
 		node: PrimitiveArrayTypeNode,
-	): {
-		arrayKind: LiteralNode
-		lengthRange?: IntRangeNode
-		valueRange?: IntRangeNode | LongRangeNode
-	} {
+	): { arrayKind: LiteralNode; lengthRange?: IntRangeNode; valueRange?: IntRangeNode } {
 		let lengthRange: IntRangeNode | undefined
-		let valueRange: IntRangeNode | LongRangeNode | undefined
+		let valueRange: IntRangeNode | undefined
 		let afterBrackets = false
 		for (const child of node.children) {
 			if (LiteralNode.is(child) && child.value === '[]') {
 				afterBrackets = true
-			} else if (LongRangeNode.is(child)) {
-				valueRange = child
 			} else if (IntRangeNode.is(child)) {
 				if (afterBrackets) {
 					lengthRange = child

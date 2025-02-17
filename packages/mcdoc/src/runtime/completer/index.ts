@@ -2,7 +2,6 @@ import type * as core from '@spyglassmc/core'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import type {
 	LiteralType,
-	LongType,
 	McdocType,
 	NumericType,
 	StringType,
@@ -177,7 +176,7 @@ function getStringCompletions(
 }
 
 function getNumericCompletions(
-	typeDef: core.DeepReadonly<NumericType | LongType>,
+	typeDef: core.DeepReadonly<NumericType>,
 	ctx: McdocCompleterContext,
 ) {
 	const ans: SimpleCompletionValue[] = []

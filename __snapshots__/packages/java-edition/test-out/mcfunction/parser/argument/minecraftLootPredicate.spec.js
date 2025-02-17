@@ -196,7 +196,11 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
               "value": 0.2
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 1,
+          "end": 37
+        }
       }
     ],
     "category": "predicate"

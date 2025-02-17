@@ -161,7 +161,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:column_pos':
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
-			return wrap(jsonParser('::java::server::util::text::Text'))
+			return wrap(typeRefParser('::java::server::util::text::Text'))
 		case 'minecraft:dimension':
 			return wrap(core.resourceLocation({ category: 'dimension' }))
 		case 'minecraft:entity':
@@ -223,11 +223,11 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:mob_effect':
 			return wrap(core.resourceLocation({ category: 'mob_effect' }))
 		case 'minecraft:nbt_compound_tag':
-			return wrap(nbtParser(nbt.parser.compound, treeNode.properties))
+			return wrap(nbtDispatchedParser(nbt.parser.compound, treeNode.properties))
 		case 'minecraft:nbt_path':
 			return wrap(nbtPathParser(nbt.parser.path, treeNode.properties))
 		case 'minecraft:nbt_tag':
-			return wrap(nbtParser(nbt.parser.entry, treeNode.properties))
+			return wrap(nbtDispatchedParser(nbt.parser.entry, treeNode.properties))
 		case 'minecraft:objective':
 			return wrap(
 				objective(
@@ -269,7 +269,7 @@ export const argument: mcf.ArgumentParserGetter = (
 				return commandLiteral({ pool: getScoreboardSlotArgumentValues(ctx) })(src, ctx)
 			})
 		case 'minecraft:style':
-			return wrap(jsonParser('::java::server::util::text::TextStyle'))
+			return wrap(typeRefParser('::java::server::util::text::TextStyle'))
 		case 'minecraft:swizzle':
 			return wrap(commandLiteral({ pool: SwizzleArgumentValues }))
 		case 'minecraft:team':
@@ -527,6 +527,18 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 	)(src, ctx)
 }
 
+export function typeRefParser(
+	typeRef: `::${string}::${string}`,
+): core.Parser<json.TypedJsonNode | nbt.TypedNbtNode> {
+	return (src, ctx) => {
+		const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+		if (!release || ReleaseVersion.cmp(release, '1.21.5') < 0) {
+			return jsonParser(typeRef)(src, ctx)
+		}
+		return nbtParser(typeRef)(src, ctx)
+	}
+}
+
 export function jsonParser(typeRef: `::${string}::${string}`): core.Parser<json.TypedJsonNode> {
 	return core.map(json.parser.entry, (res) => ({
 		type: 'json:typed',
@@ -534,6 +546,15 @@ export function jsonParser(typeRef: `::${string}::${string}`): core.Parser<json.
 		children: [res],
 		targetType: { kind: 'reference', path: typeRef },
 	} satisfies json.TypedJsonNode))
+}
+
+export function nbtParser(typeRef: `::${string}::${string}`): core.Parser<nbt.TypedNbtNode> {
+	return core.map(nbt.parser.entry, (res) => ({
+		type: 'nbt:typed',
+		range: res.range,
+		children: [res],
+		targetType: { kind: 'reference', path: typeRef },
+	} satisfies nbt.TypedNbtNode))
 }
 
 function commandLiteral(options: core.LiteralOptions): core.Parser<core.LiteralNode> {
@@ -570,7 +591,7 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	return ans
 }
 
-function nbtParser(
+function nbtDispatchedParser(
 	parser: core.Parser<nbt.NbtNode>,
 	properties?: NbtParserProperties,
 ): core.Parser<NbtNode> {
@@ -1654,6 +1675,7 @@ const components: core.Parser<ComponentListNode> = (src, ctx) => {
 	if (!src.trySkip('[')) {
 		return core.Failure
 	}
+	ans.innerRange = core.Range.create(src)
 	src.skipWhitespace()
 
 	while (src.canRead() && src.peek() !== ']') {
@@ -1710,6 +1732,7 @@ const components: core.Parser<ComponentListNode> = (src, ctx) => {
 	}
 
 	src.skipWhitespace()
+	ans.innerRange.end = src.cursor
 	core.literal(']')(src, ctx)
 
 	ans.range.end = src.cursor
@@ -1755,7 +1778,12 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	if (src.trySkip('~')) {
 		src.skipWhitespace()
 		if (key.options.category !== undefined) {
-			key.options.category = 'item_sub_predicate_type'
+			const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+			if (release && ReleaseVersion.cmp(release, '1.21.5') < 0) {
+				key.options.category = 'item_sub_predicate_type'
+			} else {
+				key.options.category = 'data_component_predicate_type'
+			}
 		}
 		const ans: ComponentTestSubpredicateNode = {
 			type: 'mcfunction:component_test_sub_predicate',

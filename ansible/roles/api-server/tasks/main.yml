@@ -1,0 +1,54 @@
+- name: Install API server
+  become: true
+  community.general.npm:
+    name: '@spyglassmc/web-api-server'
+    global: true
+    state: latest
+
+- name: Create user
+  become: true
+  block:
+    - name: Create group
+      ansible.builtin.group:
+        name: api-server
+        system: true
+
+    - name: Create user
+      ansible.builtin.user:
+        name: api-server
+        group: api-server
+        create_home: true
+        home: /var/lib/api-server
+        system: true
+
+- name: Create launcher script
+  become: true
+  ansible.builtin.template:
+    src: start.sh
+    dest: /var/lib/api-server/start.sh
+    owner: api-server
+    group: api-server
+    mode: '700'
+
+- name: Create service
+  become: true
+  ansible.builtin.copy:
+    src: spyglassmc-api-server.service
+    dest: /lib/systemd/system/spyglassmc-api-server.service
+    mode: '644'
+  notify: Reload systemctl daemon
+
+- name: Start service
+  become: true
+  ansible.builtin.service:
+    name: spyglassmc-api-server
+    enabled: true
+    state: started
+
+- name: Create nginx reverse proxy
+  become: true
+  ansible.builtin.template:
+    src: api-server.conf
+    dest: /etc/nginx/conf.d/api-server.conf
+    mode: '644'
+  notify: Reload nginx

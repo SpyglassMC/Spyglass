@@ -2,10 +2,20 @@ import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { NEXT_RELEASE_VERSION, ReleaseVersion } from './dependency/index.js'
-import type { McmetaVersions, PackInfo } from './dependency/index.js'
+import type { McmetaCommands, McmetaVersions, PackInfo } from './dependency/index.js'
 
-export function registerMcdocAttributes(meta: core.MetaRegistry, release: ReleaseVersion) {
-	mcdoc.runtime.registerAttribute(meta, 'since', mcdoc.runtime.attribute.validator.string, {
+const validator = mcdoc.runtime.attribute.validator
+
+const gameRuleValidator = validator.tree({
+	type: validator.options('boolean', 'int'),
+})
+
+export function registerMcdocAttributes(
+	meta: core.MetaRegistry,
+	commands: McmetaCommands,
+	release: ReleaseVersion,
+) {
+	mcdoc.runtime.registerAttribute(meta, 'since', validator.string, {
 		filterElement: (config, ctx) => {
 			if (!config.startsWith('1.')) {
 				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
@@ -14,7 +24,7 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, release: Releas
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
 		},
 	})
-	mcdoc.runtime.registerAttribute(meta, 'until', mcdoc.runtime.attribute.validator.string, {
+	mcdoc.runtime.registerAttribute(meta, 'until', validator.string, {
 		filterElement: (config, ctx) => {
 			if (!config.startsWith('1.')) {
 				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
@@ -23,26 +33,44 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, release: Releas
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
 		},
 	})
-	mcdoc.runtime.registerAttribute(
-		meta,
-		'deprecated',
-		mcdoc.runtime.attribute.validator.optional(mcdoc.runtime.attribute.validator.string),
-		{
-			mapField: (config, field, ctx) => {
-				if (config === undefined) {
-					return { ...field, deprecated: true }
-				}
-				if (!config.startsWith('1.')) {
-					ctx.logger.warn(`Invalid mcdoc attribute for "deprecated": ${config}`)
-					return field
-				}
-				if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
-					return { ...field, deprecated: true }
-				}
+	mcdoc.runtime.registerAttribute(meta, 'deprecated', validator.optional(validator.string), {
+		mapField: (config, field, ctx) => {
+			if (config === undefined) {
+				return { ...field, deprecated: true }
+			}
+			if (!config.startsWith('1.')) {
+				ctx.logger.warn(`Invalid mcdoc attribute for "deprecated": ${config}`)
 				return field
-			},
+			}
+			if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
+				return { ...field, deprecated: true }
+			}
+			return field
 		},
-	)
+	})
+	const gameRuleNode = commands.children.gamerule?.children
+	if (gameRuleNode) {
+		const [boolGameRules, intGameRules] = ['brigadier:bool', 'brigadier:integer'].map((type) =>
+			Object.entries(gameRuleNode).flatMap(([key, node]) =>
+				node.children?.value?.type === 'argument' && node.children.value.parser === type
+					? [key]
+					: []
+			)
+		)
+		mcdoc.runtime.registerAttribute(meta, 'game_rule', gameRuleValidator, {
+			stringParser: (config, _, ctx) => {
+				return core.literal({
+					pool: config.type === 'boolean' ? boolGameRules : intGameRules,
+					colorTokenType: 'string',
+				})
+			},
+			stringMocker: (config, _, ctx) => {
+				return core.LiteralNode.mock(ctx.offset, {
+					pool: config.type === 'boolean' ? boolGameRules : intGameRules,
+				})
+			},
+		})
+	}
 }
 
 export function registerPackFormatAttribute(

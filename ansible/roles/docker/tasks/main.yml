@@ -1,0 +1,23 @@
+- name: Add Docker apt repository
+  become: true
+  block:
+    - name: Add signing key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/debian/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '644'
+
+    - name: Add repository
+      ansible.builtin.apt_repository:
+        repo: 'deb [arch=arm64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable'
+        filename: docker
+
+- name: Install Docker Engine
+  become: true
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin

@@ -1,4 +1,4 @@
-import * as micromatch from 'micromatch'
+import picomatch from 'picomatch'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, IntervalId } from '../common/index.js'
@@ -971,7 +971,7 @@ export class Project implements ExternalEventEmitter {
 			return false
 		}
 		for (const rel of fileUtil.getRels(uri, this.projectRoots)) {
-			if (micromatch.any(rel, this.config.env.exclude)) {
+			if (picomatch(this.config.env.exclude, { dot: true, posixSlashes: false })(rel)) {
 				return true
 			}
 		}

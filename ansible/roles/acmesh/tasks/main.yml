@@ -1,0 +1,40 @@
+- name: Install acme.sh
+  become: true
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      curl https://get.acme.sh | sh -s email={{ acmesh_email }}
+    executable: /bin/bash
+    creates: /root/.acme.sh/acme.sh
+
+- name: Create certificate directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/nginx/ssl/spyglassmc.com/
+    state: directory
+    mode: '755'
+
+- name: Add Hurricane Electric dynamic DNS integration
+  become: true
+  ansible.builtin.copy:
+    src: dns_hedyn.sh
+    dest: /root/.acme.sh/dnsapi/dns_hedyn.sh
+    mode: '755'
+
+- name: Issue certificate
+  become: true
+  ansible.builtin.shell:
+    cmd: |
+      set -e
+      set -o pipefail
+      (umask 066; touch /etc/nginx/ssl/spyglassmc.com/key.pem)
+      (umask 022; touch /etc/nginx/ssl/spyglassmc.com/cert.pem)
+      export HEdyn_key={{ acmesh_dynamic_dns_key }}
+      /root/.acme.sh/acme.sh --issue --server letsencrypt \
+        -d *.spyglassmc.com --dns dns_hedyn
+      /root/.acme.sh/acme.sh --install-cert -d *.spyglassmc.com \
+        --key-file /etc/nginx/ssl/spyglassmc.com/key.pem \
+        --fullchain-file /etc/nginx/ssl/spyglassmc.com/cert.pem \
+        --reloadcmd "service nginx reload"
+    executable: /bin/bash
+    creates: /etc/nginx/ssl/spyglassmc.com/key.pem

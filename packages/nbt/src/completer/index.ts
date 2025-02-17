@@ -23,7 +23,7 @@ const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 			...ctx,
 			requireCanonical: node.requireCanonical,
 		})
-		if (ctx.offset < node.children[node.children.length - 1]?.range.start ?? 0) {
+		if (ctx.offset < (node.children[node.children.length - 1]?.range.start ?? 0)) {
 			return completions.map(c => ({ ...c, insertText: c.insertText + ',' }))
 		}
 		return completions

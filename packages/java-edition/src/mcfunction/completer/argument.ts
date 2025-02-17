@@ -225,10 +225,10 @@ const block: Completer<BlockNode> = (node, ctx) => {
 	if (Range.contains(node.id, ctx.offset, true)) {
 		ans.push(...completer.resourceLocation(node.id, ctx))
 	}
-	if (node.states && Range.contains(Range.translate(node.states, 1, -1), ctx.offset, true)) {
+	if (node.states?.innerRange && Range.contains(node.states.innerRange, ctx.offset, true)) {
 		ans.push(...blockStates(node.states, ctx))
 	}
-	if (node.nbt && Range.contains(Range.translate(node.nbt, 1, -1), ctx.offset, true)) {
+	if (node.nbt?.innerRange && Range.contains(node.nbt.innerRange, ctx.offset, true)) {
 		ans.push(...completer.dispatch(node.nbt, ctx))
 	}
 	return ans
@@ -275,7 +275,7 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 }
 
 const componentList: Completer<ComponentListNode> = (node, ctx) => {
-	if (!Range.contains(Range.translate(node, 1, -1), ctx.offset, true)) {
+	if (!node.innerRange || !Range.contains(node.innerRange, ctx.offset, true)) {
 		return []
 	}
 
@@ -447,7 +447,7 @@ const selector: Completer<EntitySelectorNode> = (node, ctx) => {
 	if (Range.contains(node.children[0], ctx.offset, true)) {
 		return completer.literal(node.children[0], ctx)
 	}
-	if (node.arguments && Range.contains(Range.translate(node.arguments, 1, -1), ctx.offset, true)) {
+	if (node.arguments?.innerRange && Range.contains(node.arguments.innerRange, ctx.offset, true)) {
 		return selectorArguments(node.arguments, ctx)
 	}
 	return []

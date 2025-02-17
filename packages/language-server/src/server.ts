@@ -101,6 +101,10 @@ connection.onInitialize(async (params) => {
 			},
 		})
 		service.project.on('documentErrored', async ({ errors, uri, version }) => {
+			if (uri.startsWith('archive://')) {
+				return
+			}
+
 			try {
 				await connection.sendDiagnostics({
 					diagnostics: toLS.diagnostics(errors),

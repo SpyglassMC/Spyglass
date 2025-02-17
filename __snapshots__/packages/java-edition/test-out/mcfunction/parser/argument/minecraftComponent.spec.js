@@ -263,7 +263,11 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
               "quote": "\""
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 1,
+          "end": 21
+        }
       }
     ],
     "targetType": {
