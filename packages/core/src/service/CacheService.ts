@@ -3,6 +3,7 @@ import { Uri } from '../common/index.js'
 import type { PosRangeLanguageError } from '../source/index.js'
 import type { UnlinkedSymbolTable } from '../symbol/index.js'
 import { SymbolTable } from '../symbol/index.js'
+import { ArchiveUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
 import type { Project } from './Project.js'
@@ -66,7 +67,12 @@ export class CacheService {
 	 */
 	constructor(private readonly cacheRoot: RootUriString, private readonly project: Project) {
 		this.project.on('documentUpdated', async ({ doc }) => {
-			if (!this.#hasValidatedFiles) {
+			if (
+				!this.#hasValidatedFiles
+				// Do not save checksums for file schemes that we cannot map to disk (e.g. 'untitled:'
+				// for untitled files in VS Code)
+				|| !(doc.uri.startsWith(ArchiveUriSupporter.Protocol) || doc.uri.startsWith('file:'))
+			) {
 				return
 			}
 			try {
