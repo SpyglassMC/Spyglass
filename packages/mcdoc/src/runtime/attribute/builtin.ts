@@ -320,7 +320,11 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 					const error = message
 						.replace(/^Invalid regular expression: /, '')
 						.replace(/^\/.+\/: /, '')
-					ctx.err.report(localize('invalid-regex-pattern', error), node, 2)
+					ctx.err.report(
+						localize('invalid-regex-pattern', error),
+						node,
+						core.ErrorSeverity.Warning,
+					)
 				}
 			}
 		},
