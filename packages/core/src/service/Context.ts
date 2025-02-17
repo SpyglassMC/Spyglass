@@ -249,3 +249,10 @@ export namespace UriBinderContext {
 		return { ...ContextBase.create(project), config: project.config, symbols: project.symbols }
 	}
 }
+
+export interface UriPredicateContext extends ContextBase {}
+export namespace UriPredicateContext {
+	export function create(project: ProjectData): UriPredicateContext {
+		return { ...ContextBase.create(project) }
+	}
+}
