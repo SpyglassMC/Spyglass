@@ -141,6 +141,7 @@ export const NormalFileCategories = Object.freeze(
 		'trial_spawner',
 		'trim_material',
 		'trim_pattern',
+		'wolf_sound_variant',
 		'wolf_variant',
 	] as const,
 )
