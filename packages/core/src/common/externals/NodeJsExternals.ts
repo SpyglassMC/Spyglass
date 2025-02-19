@@ -125,11 +125,6 @@ Object.freeze(NodeJsExternals)
  * @returns A {@link fs.PathLike}.
  */
 function toFsPathLike(path: FsLocation): fs.PathLike {
-	if (path instanceof Uri) {
-		// Convert WHATWG URL to string so that it will be converted
-		// to Node.js URL by the next if-block.
-		path = path.toString()
-	}
 	if (typeof path === 'string' && path.startsWith('file:')) {
 		return new url.URL(path)
 	}
@@ -143,5 +138,4 @@ function toPath(path: FsLocation): string {
 	return uriToPath(path)
 }
 
-const uriToPath = (uri: string | Uri) =>
-	url.fileURLToPath(uri instanceof Uri ? new url.URL(uri.toString()) : uri)
+const uriToPath = (uri: string | Uri) => url.fileURLToPath(uri)
