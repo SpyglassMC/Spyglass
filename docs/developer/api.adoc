@@ -1,12 +1,12 @@
 :page-layout: default
-:page-title: API
+:page-title: Web API
 :page-parent: Developer Guides
 
 :toc:
 
 == Introduction
 
-The Spyglass API provides access to various information that is helpful for data pack/resource pack
+The Spyglass Web API provides access to various information that is helpful for data pack/resource pack
 toolings. It uses https://github.com/misode/mcmeta[misode/mcmeta] and
 https://github.com/SpyglassMC/vanilla-mcdoc[SpyglassMC/vanilla-mcdoc] under the hood and provides a
 few advantages over using the GitHub API directly:
