@@ -58,6 +58,7 @@ interface ValidateResult {
 export class CacheService {
 	checksums = Checksums.create()
 	errors: ErrorCache = {}
+	dirtyFiles = new Set<string>()
 	#hasValidatedFiles = false
 
 	/**
@@ -69,15 +70,9 @@ export class CacheService {
 			if (!this.#hasValidatedFiles) {
 				return
 			}
-			try {
-				// TODO: Don't update this for every single change.
-				this.checksums.files[doc.uri] = await this.project.externals.crypto.getSha1(
-					doc.getText(),
-				)
-			} catch (e) {
-				if (!this.project.externals.error.isKind(e, 'EISDIR')) {
-					this.project.logger.error(`[CacheService#hash-file] ${doc.uri}`)
-				}
+			this.dirtyFiles.add(doc.uri)
+			if (this.dirtyFiles.size > 100) {
+				await this.flushDirtyFiles()
 			}
 		})
 		this.project.on('rootsUpdated', async ({ roots }) => {
@@ -89,7 +84,7 @@ export class CacheService {
 					this.checksums.roots[root] = await this.project.fs.hash(root)
 				} catch (e) {
 					if (!this.project.externals.error.isKind(e, 'EISDIR')) {
-						this.project.logger.error(`[CacheService#hash-root] ${root}`)
+						this.project.logger.error(`[CacheService#hash-root] ${root}`, e)
 					}
 				}
 			}
@@ -112,6 +107,19 @@ export class CacheService {
 			this.#cacheFilePath = new Uri(`symbols/${hash}.json.gz`, this.cacheRoot).toString()
 		}
 		return this.#cacheFilePath
+	}
+
+	private async flushDirtyFiles() {
+		for (const uri of this.dirtyFiles) {
+			try {
+				this.checksums.files[uri] = await this.project.fs.hash(uri)
+			} catch (e) {
+				if (!this.project.externals.error.isKind(e, 'EISDIR')) {
+					this.project.logger.error(`[CacheService#flushDirtyFiles] ${uri}`, e)
+				}
+			}
+		}
+		this.dirtyFiles.clear()
 	}
 
 	async load(): Promise<LoadResult> {
@@ -163,7 +171,7 @@ export class CacheService {
 				}
 			} catch (e) {
 				if (!this.project.externals.error.isKind(e, 'EISDIR')) {
-					this.project.logger.error(`[CacheService#hash-file] ${uri}`)
+					this.project.logger.error(`[CacheService#hash-file] ${uri}`, e)
 				}
 				// Failed calculating hash. Assume the root has changed.
 			}
@@ -222,6 +230,10 @@ export class CacheService {
 		let filePath: string | undefined
 		try {
 			filePath = await this.getCacheFileUri()
+
+			await this.flushDirtyFiles()
+			__profiler.task('Hash Files')
+
 			const cache: CacheFile = {
 				version: LatestCacheVersion,
 				projectRoots: this.project.projectRoots,
