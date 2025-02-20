@@ -122,6 +122,7 @@
           "data/*/test_environment/**/*.json",
           "data/*/trim_material/**/*.json",
           "data/*/trim_pattern/**/*.json",
+          "data/*/wolf_sound_variant/**/*.json",
           "data/*/wolf_variant/**/*.json",
           "data/*/worldgen/**/*.json",
           "data/minecraft/**/*.json"
@@ -265,6 +266,10 @@
       {
         "id": "error",
         "description": "An error."
+      },
+      {
+        "id": "escape",
+        "description": "An escape sequence."
       },
       {
         "id": "literal",

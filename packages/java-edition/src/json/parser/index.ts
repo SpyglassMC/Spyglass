@@ -60,10 +60,22 @@ export const translationValueParser: core.InfallibleParser<TranslationValueNode>
 				hasInteger = true
 			}
 			if (hasInteger && !src.trySkip('$')) {
-				ctx.err.report(localize('expected', localeQuote('$')), src)
+				ctx.err.report(
+					localize(
+						'java-edition.translation-value.percent-escape-hint',
+						localize('expected', localeQuote('$')),
+					),
+					src,
+				)
 			}
 			if (!src.trySkip('s')) {
-				ctx.err.report(localize('expected', localeQuote('s')), src)
+				ctx.err.report(
+					localize(
+						'java-edition.translation-value.percent-escape-hint',
+						localize('expected', localeQuote('s')),
+					),
+					src,
+				)
 			}
 			const token = src.sliceToCursor(argStart)
 			ans.children.push({

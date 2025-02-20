@@ -94,6 +94,7 @@ resource('test_environment', { since: '1.21.5' })
 resource('trial_spawner', { since: '1.21.2' })
 resource('trim_pattern', { since: '1.19.4' })
 resource('trim_material', { since: '1.19.4' })
+resource('wolf_sound_variant', { since: '1.21.5' })
 resource('wolf_variant', { since: '1.20.5' })
 
 // Worldgen
