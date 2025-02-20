@@ -211,16 +211,18 @@ export function* getRoots(
 	return undefined
 }
 
-function getCandidateResourcesForRel(rel: string): [res: Resource, identifier: string][] {
+function getCandidateResourcesForRel(
+	rel: string,
+): { res: Resource; namespace: string; identifier: string }[] {
 	const parts = rel.split('/')
 	if (parts.length < 3) {
 		return []
 	}
-	const [pack, _namespace, ...rest] = parts
+	const [pack, namespace, ...rest] = parts
 	if (pack !== 'data' && pack !== 'assets') {
 		return []
 	}
-	const candidateResources: [Resource, string][] = []
+	const candidateResources: ReturnType<typeof getCandidateResourcesForRel> = []
 	if (rest.length === 1) {
 		const resources = Resources.get('')
 		for (const res of resources ?? []) {
@@ -235,7 +237,7 @@ function getCandidateResourcesForRel(rel: string): [res: Resource, identifier: s
 			if (res.identifier && identifier !== res.identifier) {
 				continue
 			}
-			candidateResources.push([res, identifier])
+			candidateResources.push({ res, namespace, identifier })
 		}
 	}
 	for (let i = 1; i < rest.length; i += 1) {
@@ -252,7 +254,7 @@ function getCandidateResourcesForRel(rel: string): [res: Resource, identifier: s
 			if (res.identifier && identifier !== res.identifier) {
 				continue
 			}
-			candidateResources.push([res, identifier])
+			candidateResources.push({ res, namespace, identifier })
 		}
 	}
 	return candidateResources
@@ -279,16 +281,18 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 			continue
 		}
 		// Finding the last, because that will be the deepest match
-		let res = candidateResources.findLast(([res]) => matchVersion(release, res.since, res.until))
+		let res = candidateResources.findLast(({ res }) =>
+			matchVersion(release, res.since, res.until)
+		)
 		if (res !== undefined) {
-			return { ok: true, ...res[0], namespace, identifier: res[1], expected: undefined }
+			return { ok: true, ...res.res, namespace, identifier: res.identifier, expected: undefined }
 		}
 		// Try to find the expected path that matches the current version
 		res = candidateResources[candidateResources.length - 1]
 		let expected: string | undefined = undefined
 		for (const [path, others] of Resources) {
 			for (const other of others) {
-				if (other.category !== res[0].category) {
+				if (other.category !== res.res.category) {
 					continue
 				}
 				if (matchVersion(release, other.since, other.until)) {
@@ -297,7 +301,7 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 				}
 			}
 		}
-		return { ok: false, ...res[0], namespace, identifier: res[1], expected }
+		return { ok: false, ...res.res, namespace, identifier: res.identifier, expected }
 	}
 
 	return undefined
