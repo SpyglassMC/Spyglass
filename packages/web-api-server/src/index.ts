@@ -49,7 +49,7 @@ const versionRoute = express.Router({ mergeParams: true })
 		await sendGitTarball(req, res, gits.mcmeta, `${version}-data`)
 	})
 
-const DELAY_AFTER = 50
+const DELAY_AFTER = 150
 
 const app = express()
 	.set('trust proxy', 1)
