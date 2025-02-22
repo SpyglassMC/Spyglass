@@ -306,7 +306,7 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 					const regex = RegExp(pattern)
 					if (!regex.test(value)) {
 						if (config.message) {
-							ctx.err.report(config.message, node, 2)
+							ctx.err.report(config.message, node, core.ErrorSeverity.Warning)
 						} else {
 							ctx.err.report(
 								localize('mismatching-regex-pattern', typeDef.value.value),
