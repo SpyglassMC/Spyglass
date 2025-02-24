@@ -10,7 +10,7 @@ import * as ls from 'vscode-languageserver/node.js'
 export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 	#ready = false
 	readonly #readyPromise: Promise<void>
-	readonly #watchedFiles = new Set<string>()
+	readonly #watchedFiles = new core.UriStore()
 	#lspListener: ls.Disposable | undefined
 
 	get isReady() {
@@ -87,11 +87,10 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 							this.#watchedFiles.delete(uri)
 						} else {
 							// Find all files under the deleted URI and send 'unlink' events for them as well.
-							for (const watchedUri of this.#watchedFiles) {
-								if (core.fileUtil.isSubUriOf(watchedUri, uri)) {
-									this.emit('unlink', watchedUri)
-									this.#watchedFiles.delete(watchedUri)
-								}
+							const dirUri = core.fileUtil.ensureEndingSlash(uri)
+							for (const watchedUri of this.#watchedFiles.getSubFiles(dirUri)) {
+								this.emit('unlink', watchedUri)
+								this.#watchedFiles.delete(watchedUri)
 							}
 						}
 						break

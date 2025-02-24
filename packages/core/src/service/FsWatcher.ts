@@ -1,10 +1,12 @@
+import type { UriStore } from '../common/index.js'
+
 /**
  * A file system watcher that reports additions, changes, and deletions of files.
  * Changes to directories should not be reported.
  */
 export interface FsWatcher {
 	get isReady(): boolean
-	get watchedFiles(): Set<string>
+	get watchedFiles(): UriStore
 
 	on(eventName: 'ready', listener: () => unknown): this
 	once(eventName: 'ready', listener: () => unknown): this

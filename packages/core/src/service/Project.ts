@@ -8,6 +8,7 @@ import {
 	normalizeUri,
 	SingletonPromise,
 	StateProxy,
+	UriStore,
 } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import { FileNode } from '../node/index.js'
@@ -175,7 +176,7 @@ export class Project implements ExternalEventEmitter {
 	#readyPromise!: Promise<void>
 	readonly #watcher: FsWatcher | undefined
 	get watchedFiles() {
-		return this.#watcher?.watchedFiles ?? new Set()
+		return this.#watcher?.watchedFiles ?? new UriStore()
 	}
 
 	#isReady = false
