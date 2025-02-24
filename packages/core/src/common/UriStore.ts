@@ -51,7 +51,7 @@ export class UriStore {
 			}
 			node = node.get(part)
 		}
-		return true
+		return node !== undefined
 	}
 
 	/**
