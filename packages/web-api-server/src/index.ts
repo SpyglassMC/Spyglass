@@ -123,7 +123,9 @@ const app = express()
 	})
 	.all('*catchall', cheapRateLimiter, (_req, res) => {
 		res.status(404).send(
-			JSON.stringify({ message: 'Not Found. See https://spyglassmc.com/developer/api.html.' }),
+			JSON.stringify({
+				message: 'Not Found. See https://spyglassmc.com/developer/web-api.html',
+			}),
 		)
 	})
 	.use(errorHandler)
