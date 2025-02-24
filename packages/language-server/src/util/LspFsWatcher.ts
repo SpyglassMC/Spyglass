@@ -90,8 +90,8 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 							const dirUri = core.fileUtil.ensureEndingSlash(uri)
 							for (const watchedUri of this.#watchedFiles.getSubFiles(dirUri)) {
 								this.emit('unlink', watchedUri)
-								this.#watchedFiles.delete(watchedUri)
 							}
+							this.#watchedFiles.delete(dirUri)
 						}
 						break
 					}

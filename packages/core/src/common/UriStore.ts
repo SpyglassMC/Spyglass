@@ -40,10 +40,11 @@ export class UriStore {
 	}
 
 	/**
-	 * Returns true if the specified URI exists in the store.
+	 * Returns true if the specified URI exists in the store and is of the expected type.
+	 * Directory URIs must end with a slash (`/`), otherwise it will be treated as a file URI.
 	 */
 	has(uri: string): boolean {
-		const [parts, _isDir] = this.#dissectUri(uri)
+		const [parts, isDir] = this.#dissectUri(uri)
 		let node: DirectoryNode | FileNode | undefined = this.#trie
 		for (const part of parts) {
 			if (!(node instanceof Map)) {
@@ -51,7 +52,9 @@ export class UriStore {
 			}
 			node = node.get(part)
 		}
-		return node !== undefined
+		return isDir
+			? node instanceof Map
+			: !!node && typeof node === 'object' && !(node instanceof Map)
 	}
 
 	/**
