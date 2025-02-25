@@ -305,22 +305,12 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				try {
 					const regex = RegExp(pattern)
 					if (!regex.test(value)) {
-						const message = config.message ?? localize('mismatching-regex-pattern', typeDef.value.value)
-						ctx.err.report(
-							message,
-							node,
-							core.ErrorSeverity.Warning,
-						)
+						const message = config.message ?? localize('mismatching-regex-pattern', pattern)
+						ctx.err.report(message, node, core.ErrorSeverity.Warning)
 					}
 				} catch (e) {
-					const message = e instanceof Error ? e.message : `${e}`
-					const error = message
-						.replace(/^Invalid regular expression: /, '')
-						.replace(/^\/.+\/: /, '')
 					ctx.logger.warn(
-						localize('invalid-regex-pattern', error),
-						node,
-						core.ErrorSeverity.Warning,
+						`Invalid regular expression in "match_regex" mcdoc attribute: ${pattern}`,
 					)
 				}
 			}
