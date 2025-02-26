@@ -30,6 +30,19 @@ const idValidator = validator.alternatives<IdConfig>(
 	() => ({}),
 )
 
+interface MatchRegexConfig {
+	pattern: string
+	message?: string
+}
+
+const matchRegexValidator = validator.alternatives<MatchRegexConfig>(
+	validator.map(validator.string, v => ({ pattern: v })),
+	validator.tree({
+		pattern: validator.string,
+		message: validator.optional(validator.string),
+	}),
+)
+
 function getResourceLocationOptions(
 	{ registry, tags, definition, path }: IdConfig,
 	requireCanonical: boolean,
@@ -272,7 +285,33 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 					const error = message
 						.replace(/^Invalid regular expression: /, '')
 						.replace(/^\/.+\/: /, '')
-					ctx.err.report(localize('invalid-regex-pattern', error), node, 2)
+					ctx.err.report(
+						localize('invalid-regex-pattern', error),
+						node,
+						core.ErrorSeverity.Warning,
+					)
+				}
+			}
+		},
+	})
+	registerAttribute(meta, 'match_regex', matchRegexValidator, {
+		checker: (config, typeDef, _) => {
+			if (typeDef.kind !== 'literal' || typeDef.value.kind !== 'string') {
+				return undefined
+			}
+			const pattern = config.pattern
+			const value = typeDef.value.value
+			return (node, ctx) => {
+				try {
+					const regex = RegExp(pattern)
+					if (!regex.test(value)) {
+						const message = config.message ?? localize('mismatching-regex-pattern', pattern)
+						ctx.err.report(message, node, core.ErrorSeverity.Warning)
+					}
+				} catch (e) {
+					ctx.logger.warn(
+						`Invalid regular expression in "match_regex" mcdoc attribute: ${pattern}`,
+					)
 				}
 			}
 		},
