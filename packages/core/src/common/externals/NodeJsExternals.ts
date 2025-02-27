@@ -216,8 +216,8 @@ class HttpCache implements Cache {
 			fsp.writeFile(
 				new URL(`${fileName}.bin`, this.#cacheRoot),
 				stream.Readable.fromWeb(response.body as streamWeb.ReadableStream),
-				//              \_____/                     \_________________________/
-				//                 |             DOM ReadableStream -> stream/web ReadableStream
+				//              \_____/               \_________________________/
+				//                 |       DOM ReadableStream -> stream/web ReadableStream
 				// stream/web ReadableStream -> stream Readable
 			),
 			fsp.writeFile(new URL(`${fileName}.etag`, this.#cacheRoot), `${etag}${os.EOL}`),
