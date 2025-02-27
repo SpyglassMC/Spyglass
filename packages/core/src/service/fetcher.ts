@@ -26,11 +26,11 @@ export async function fetchWithCache(
 			let message = response.statusText
 			try {
 				message = (await response.json()).message
-			} catch (e) {}
+			} catch {}
 			throw new TypeError(`${response.status} ${message}`)
 		} else {
 			try {
-				await cache.put(request, response)
+				await cache.put(request, response.clone())
 				logger.info(`[fetchWithCache] updated cache for ${request.url}`)
 			} catch (e) {
 				logger.warn('[fetchWithCache] put cache', e)

@@ -205,9 +205,8 @@ class HttpCache implements Cache {
 	}
 
 	async put(request: RequestInfo | URL, response: Response): Promise<void> {
-		const clonedResponse = response.clone()
-		const etag = clonedResponse.headers.get('etag')
-		if (!(this.#cacheRoot && clonedResponse.body && etag)) {
+		const etag = response.headers.get('etag')
+		if (!(this.#cacheRoot && response.body && etag)) {
 			return
 		}
 
@@ -216,7 +215,7 @@ class HttpCache implements Cache {
 		await Promise.all([
 			fsp.writeFile(
 				new URL(`${fileName}.bin`, this.#cacheRoot),
-				stream.Readable.fromWeb(clonedResponse.body as streamWeb.ReadableStream),
+				stream.Readable.fromWeb(response.body as streamWeb.ReadableStream),
 				//              \_____/                     \_________________________/
 				//                 |             DOM ReadableStream -> stream/web ReadableStream
 				// stream/web ReadableStream -> stream Readable
