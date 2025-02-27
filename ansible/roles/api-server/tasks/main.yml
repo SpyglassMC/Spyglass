@@ -4,6 +4,7 @@
     name: '@spyglassmc/web-api-server'
     global: true
     state: latest
+  notify: Restart API server service
 
 - name: Create user
   become: true
@@ -29,6 +30,7 @@
     owner: api-server
     group: api-server
     mode: '700'
+  notify: Restart API server service
 
 - name: Create service
   become: true

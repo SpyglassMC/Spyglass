@@ -1,8 +1,8 @@
-import { Mutex } from 'async-mutex'
 import chalk from 'chalk'
 import cors from 'cors'
 import express from 'express'
 import { slowDown } from 'express-slow-down'
+import assert from 'node:assert'
 import { fileURLToPath } from 'node:url'
 import {
 	assertRootDir,
@@ -16,6 +16,7 @@ import {
 	MemCache,
 	sendGitFile,
 	sendGitTarball,
+	updateGitRepo,
 	userAgentEnforcer,
 	verifySignature,
 } from './utils.js'
@@ -24,7 +25,6 @@ const { hookSecret, port, rootDir } = loadConfig()
 await assertRootDir(rootDir)
 const gits = await initGitRepos(rootDir)
 const cache = new MemCache(gits.mcmeta)
-const gitMutex = new Mutex()
 
 const versionRoute = express.Router({ mergeParams: true })
 	.use(getVersionValidator(cache))
@@ -49,7 +49,7 @@ const versionRoute = express.Router({ mergeParams: true })
 		await sendGitTarball(req, res, gits.mcmeta, `${version}-data`)
 	})
 
-const DELAY_AFTER = 50
+const DELAY_AFTER = 150
 
 const app = express()
 	.set('trust proxy', 1)
@@ -86,10 +86,10 @@ const app = express()
 	})
 	.use('/mcje/versions/:version', versionRoute)
 	.get('/vanilla-mcdoc/symbols', cheapRateLimiter, async (req, res) => {
-		await sendGitFile(req, res, gits.mcdoc, `generated`, 'symbols.json')
+		await sendGitFile(req, res, gits['vanilla-mcdoc'], `generated`, 'symbols.json')
 	})
 	.get('/vanilla-mcdoc/tarball', expensiveRateLimiter, async (req, res) => {
-		await sendGitTarball(req, res, gits.mcdoc, 'main', 'vanilla-mcdoc')
+		await sendGitTarball(req, res, gits['vanilla-mcdoc'], 'main', 'vanilla-mcdoc')
 	})
 	.post(
 		'/hooks/github',
@@ -112,14 +112,9 @@ const app = express()
 			const { repository: { name } } = JSON.parse(req.body.toString()) as {
 				repository: { name: string }
 			}
-			const git = gits[name === 'vanilla-mcdoc' ? 'mcdoc' : 'mcmeta']
-
-			await gitMutex.runExclusive(async () => {
-				console.info(chalk.yellow(`Updating ${name}...`))
-				await git.remote(['update', '--prune'])
-				cache.invalidate()
-				console.info(chalk.green(`Updated ${name}`))
-			})
+			assert(name === 'vanilla-mcdoc' || name === 'mcmeta')
+			await updateGitRepo(name, gits[name])
+			cache.invalidate()
 		},
 	)
 	.get('/favicon.ico', cheapRateLimiter, (_req, res) => {
