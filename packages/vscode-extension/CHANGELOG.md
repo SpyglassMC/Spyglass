@@ -1,3 +1,14 @@
+# v4.5.10 (2025-03-28)
+
+### ✨ New Features
+- [`b7d9e3e`](https://github.com/SpyglassMC/Spyglass/commit/b7d9e3e345653fe9629204e2954b560c857cb91e) Added `match_regex` mcdoc attribute ([#1760](https://github.com/SpyglassMC/Spyglass/pull/1760))
+
+### 🐛 Bug Fixes
+- [`00a1c07`](https://github.com/SpyglassMC/Spyglass/commit/00a1c0786e33f5448cad5ee7d2e4914be3701eaf) Added support for escape sequences in SNBT ([#1785](https://github.com/SpyglassMC/Spyglass/pull/1785))
+- [`cd453ae`](https://github.com/SpyglassMC/Spyglass/commit/cd453aee35666f25cc590ae294982ff6e24add30) Fixes canonical union filtering when combined with other attribute filters ([#1786](https://github.com/SpyglassMC/Spyglass/pull/1786))
+- [`69d493e`](https://github.com/SpyglassMC/Spyglass/commit/69d493e82cef3fd05cc0d39a9bdf020f7aaf496f) Added support for untitled mcfunction files
+- [`adec33f`](https://github.com/SpyglassMC/Spyglass/commit/adec33f11fcc9895a8ab4e453302e9239b0316e1) Fixes listing directories from archives as files
+
 # v4.5.4 (2025-01-26)
 
 ### 🐛 Bug Fixes
