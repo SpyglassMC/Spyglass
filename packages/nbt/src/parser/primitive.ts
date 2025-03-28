@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { NbtByteNode, NbtNumberNode, NbtPrimitiveNode, NbtStringNode } from '../node/index.js'
-import { localizeTag } from '../util.js'
+import { localizeTag, newSyntax } from '../util.js'
 
 const enum Group {
 	Boolean,
@@ -95,7 +95,16 @@ const NumeralPatterns:
 		{ pattern: /^false$/i, type: 'nbt:byte', value: 0, group: Group.Boolean },
 	]
 
-export const string = core.setType('nbt:string', core.brigadierString)
+const NbtStringOptions: core.StringOptions = {
+	escapable: { characters: ['b', 'f', 'n', 'r', 's', 't'], unicode: true },
+	quotes: ['"', "'"],
+	unquotable: core.BrigadierUnquotableOption,
+}
+
+export const string: core.InfallibleParser<NbtStringNode> = (src, ctx) => {
+	const options = newSyntax(ctx) ? NbtStringOptions : core.BrigadierStringOptions
+	return core.setType('nbt:string', core.string(options))(src, ctx)
+}
 
 export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 	src: core.Source,
