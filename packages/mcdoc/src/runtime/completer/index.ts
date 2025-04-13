@@ -51,7 +51,8 @@ export function getFields(
 					return getStringCompletions(field.key, ctx)
 						.map(c => ({ key: c.value, field }))
 				}
-				return []
+				return getValues(field.key, ctx)
+					.map(c => ({ key: c.value, field }))
 			})
 		default:
 			return []
