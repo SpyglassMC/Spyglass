@@ -65,44 +65,25 @@ export function resolveConfiguredVersion(
 			)
 			return toVersionInfo(latestRelease)
 		}
-		const maxData = Math.max(...packs.filter(p => p.type === 'data').map(p => p.format))
-		const maxAssets = Math.max(...packs.filter(p => p.type === 'assets').map(p => p.format))
+		packs.sort((a, b) => b.format - a.format)
+		const maxData = packs.filter(p => p.type === 'data')[0]
+		const maxAssets = packs.filter(p => p.type === 'assets')[0]
 		// Look for versions from recent to oldest, picking the most recent release that matches
 		let oldestRelease = versions[0]
 		const releases = versions.filter(v => v.type === 'release')
 		for (const version of releases) {
 			// If we already passed the pack format, use the oldest release so far
-			if (maxData > version.data_pack_version) {
+			if (maxData && maxData.format > version.data_pack_version) {
 				logger.info(
-					`[resolveConfiguredVersion] Detected data pack format ${maxData} in ${
-						packs.find(p => p.type === 'data' && p.format === maxData)?.packRoot
-					}, selecting version ${oldestRelease.id}`,
+					`[resolveConfiguredVersion] Detected data pack format ${maxData.format} in ${maxData.packRoot}, selecting version ${oldestRelease.id}`,
 				)
 				return toVersionInfo(oldestRelease)
 			}
-			if (maxAssets > version.resource_pack_version) {
+			if (maxAssets && maxAssets.format > version.resource_pack_version) {
 				logger.info(
-					`[resolveConfiguredVersion] Detected resource pack format ${maxAssets} in ${
-						packs.find(p => p.type === 'assets' && p.format === maxAssets)?.packRoot
-					}, selecting version ${oldestRelease.id}`,
+					`[resolveConfiguredVersion] Detected resource pack format ${maxAssets.format} in ${maxAssets.packRoot}, selecting version ${oldestRelease.id}`,
 				)
 				return toVersionInfo(oldestRelease)
-			}
-			if (maxData === version.data_pack_version) {
-				logger.info(
-					`[resolveConfiguredVersion] Detected data pack format ${maxData} in ${
-						packs.find(p => p.type === 'data' && p.format === maxData)?.packRoot
-					}, selecting version ${version.id}`,
-				)
-				return toVersionInfo(version)
-			}
-			if (maxAssets === version.resource_pack_version) {
-				logger.info(
-					`[resolveConfiguredVersion] Detected resource pack format ${maxAssets} in ${
-						packs.find(p => p.type === 'assets' && p.format === maxAssets)?.packRoot
-					}, selecting version ${version.id}`,
-				)
-				return toVersionInfo(version)
 			}
 			oldestRelease = version
 		}
