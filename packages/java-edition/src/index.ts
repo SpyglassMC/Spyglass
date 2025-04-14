@@ -132,7 +132,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	})
 
 	registerMcdocAttributes(meta, summary.commands, release)
-	registerPackFormatAttribute(meta, release, versions, packs)
+	registerPackFormatAttribute(meta, versions, packs)
 
 	meta.registerLanguage('zip', { extensions: ['.zip'] })
 	meta.registerLanguage('png', { extensions: ['.png'] })

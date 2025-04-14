@@ -1,5 +1,4 @@
 import * as core from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { NEXT_RELEASE_VERSION, ReleaseVersion } from './dependency/index.js'
 import type { McmetaCommands, McmetaVersions, PackInfo } from './dependency/index.js'
@@ -75,7 +74,6 @@ export function registerMcdocAttributes(
 
 export function registerPackFormatAttribute(
 	meta: core.MetaRegistry,
-	release: ReleaseVersion,
 	versions: McmetaVersions,
 	packs: PackInfo[],
 ) {
@@ -102,28 +100,6 @@ export function registerPackFormatAttribute(
 		return thisPack?.type === 'assets' ? assetsFormats : dataFormats
 	}
 	mcdoc.runtime.registerAttribute(meta, 'pack_format', () => undefined, {
-		checker: (_, typeDef) => {
-			if (typeDef.kind !== 'literal' || typeof typeDef.value.value !== 'number') {
-				return undefined
-			}
-			const target = typeDef.value.value
-			return (node, ctx) => {
-				const targetVersions = getFormats(ctx.doc.uri).get(target)
-				if (!targetVersions) {
-					ctx.err.report(
-						localize('java-edition.pack-format.unsupported', target),
-						node,
-						core.ErrorSeverity.Warning,
-					)
-				} else if (!targetVersions.some(v => v === release)) {
-					ctx.err.report(
-						localize('java-edition.pack-format.not-loaded', target, release),
-						node,
-						core.ErrorSeverity.Warning,
-					)
-				}
-			}
-		},
 		numericCompleter: (_, ctx) => {
 			return [...getFormats(ctx.doc.uri).entries()].map(([k, v], i) => ({
 				range: core.Range.create(ctx.offset),
