@@ -513,7 +513,10 @@ function checkShallowly<T>(
 				typeDef.lengthRange
 				&& simplifiedInferred.kind === 'literal'
 				&& simplifiedInferred.value.kind === 'string'
-				&& !NumericRange.isInRange(typeDef.lengthRange, simplifiedInferred.value.value.length)
+				&& !NumericRange.isInRange(
+					typeDef.lengthRange,
+					[...simplifiedInferred.value.value].length,
+				)
 			) {
 				errors.push({
 					kind: 'invalid_string_length',
