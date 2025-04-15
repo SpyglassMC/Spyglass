@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import type { TypeDefSymbolData } from '@spyglassmc/mcdoc/lib/binder/index.js'
-import type { PackMcmeta, VersionInfo, VersionInfoReason } from './common.js'
+import type { PackInfo, VersionInfo } from './common.js'
 import { ReleaseVersion } from './common.js'
 
 // DOCS: Update this when a new snapshot cycle begins
@@ -12,8 +12,7 @@ export const NEXT_RELEASE_VERSION = '1.21.6'
 export function resolveConfiguredVersion(
 	inputVersion: string,
 	versions: McmetaVersions,
-	packMcmeta: PackMcmeta | undefined,
-	packType: 'assets' | 'data' | undefined,
+	packs: PackInfo[],
 	logger: core.Logger,
 ): VersionInfo {
 	function findReleaseTarget(version: McmetaVersion): string {
@@ -34,7 +33,6 @@ export function resolveConfiguredVersion(
 
 	function toVersionInfo(
 		version: McmetaVersion | undefined,
-		reason: VersionInfoReason,
 	): VersionInfo {
 		version = version ?? versions[0]
 		return {
@@ -42,7 +40,6 @@ export function resolveConfiguredVersion(
 			name: version.name,
 			release: findReleaseTarget(version) as ReleaseVersion,
 			isLatest: version === versions[0],
-			reason,
 		}
 	}
 
@@ -61,54 +58,72 @@ export function resolveConfiguredVersion(
 	versions = versions.sort((a, b) => b.data_version - a.data_version)
 	const latestRelease = versions.find((v) => v.type === 'release')
 	if (inputVersion === 'auto') {
-		const packFormat = packMcmeta?.pack.pack_format
-		if (packFormat && latestRelease) {
-			// If the pack format is larger than the latest release, use the latest snapshot
-			if (
-				packFormat > (packType === 'assets'
-					? latestRelease.resource_pack_version
-					: latestRelease.data_pack_version)
-			) {
-				return toVersionInfo(versions[0], 'auto')
-			}
-			// Look for versions from recent to oldest, picking the most recent release that matches
-			let oldestRelease = undefined
-			for (const version of versions) {
-				if (version.type === 'release') {
-					// If we already passed the pack format, use the oldest release so far
-					if (
-						packFormat > (packType === 'assets'
-							? version.resource_pack_version
-							: version.data_pack_version)
-					) {
-						return toVersionInfo(oldestRelease, 'auto')
-					}
-					if (
-						packFormat === (packType === 'assets'
-							? version.resource_pack_version
-							: version.data_pack_version)
-					) {
-						return toVersionInfo(version, 'auto')
-					}
-					oldestRelease = version
-				}
-			}
-			// If the pack format is still lower, use the oldest known release version
-			return toVersionInfo(oldestRelease, 'auto')
+		if (packs.length === 0) {
+			// Fall back to the latest release if pack mcmeta is not available
+			logger.info(
+				`[resolveConfiguredVersion] No pack format detected, selecting latest release ${latestRelease?.id}`,
+			)
+			return toVersionInfo(latestRelease)
 		}
-		// Fall back to the latest release if pack mcmeta is not available
-		return toVersionInfo(latestRelease, 'fallback')
+		packs.sort((a, b) => b.format - a.format)
+		const maxData = packs.filter(p => p.type === 'data')[0]
+		const maxAssets = packs.filter(p => p.type === 'assets')[0]
+		// Look for versions from recent to oldest, picking the most recent release that matches
+		let oldestRelease = versions[0]
+		const releases = versions.filter(v => v.type === 'release')
+		for (const version of releases) {
+			// If we already passed the pack format, use the oldest release so far
+			if (maxData && maxData.format > version.data_pack_version) {
+				logger.info(
+					`[resolveConfiguredVersion] Detected data pack format ${maxData.format} in ${maxData.packRoot}, selecting version ${oldestRelease.id}`,
+				)
+				return toVersionInfo(oldestRelease)
+			}
+			if (maxAssets && maxAssets.format > version.resource_pack_version) {
+				logger.info(
+					`[resolveConfiguredVersion] Detected resource pack format ${maxAssets.format} in ${maxAssets.packRoot}, selecting version ${oldestRelease.id}`,
+				)
+				return toVersionInfo(oldestRelease)
+			}
+			if (maxData && maxData.format === version.data_pack_version) {
+				logger.info(
+					`[resolveConfiguredVersion] Detected data pack format ${maxData.format} in ${maxData.packRoot}, selecting version ${version.id}`,
+				)
+				return toVersionInfo(version)
+			}
+			if (maxAssets && maxAssets.format === version.resource_pack_version) {
+				logger.info(
+					`[resolveConfiguredVersion] Detected resource pack format ${maxAssets.format} in ${maxAssets.packRoot}, selecting version ${version.id}`,
+				)
+				return toVersionInfo(version)
+			}
+			oldestRelease = version
+		}
+		// If the pack format is still lower, use the oldest known release version
+		logger.info(
+			`[resolveConfiguredVersion] Detected pack format too low, selecting oldest supported release ${oldestRelease?.id}`,
+		)
+		return toVersionInfo(oldestRelease)
 	} else if (inputVersion === 'latest release') {
-		return toVersionInfo(latestRelease, 'config')
+		logger.info(
+			`[resolveConfiguredVersion] Using config "${inputVersion}", selecting version ${latestRelease?.id}`,
+		)
+		return toVersionInfo(latestRelease)
 	} else if (inputVersion === 'latest snapshot') {
-		return toVersionInfo(versions[0], 'config')
+		logger.info(
+			`[resolveConfiguredVersion] Using config "${inputVersion}", selecting version ${
+				versions[0]?.id
+			}`,
+		)
+		return toVersionInfo(versions[0])
 	}
-	return toVersionInfo(
-		versions.find((v) =>
-			inputVersion === v.id.toLowerCase() || inputVersion === v.name.toLowerCase()
-		),
-		'config',
+	const configVersion = versions.find((v) =>
+		inputVersion === v.id.toLowerCase() || inputVersion === v.name.toLowerCase()
 	)
+	logger.info(
+		`[resolveConfiguredVersion] Using config "${inputVersion}", selecting version ${configVersion?.id}`,
+	)
+	return toVersionInfo(configVersion)
 }
 
 const DataSources: Partial<Record<string, string>> = {
