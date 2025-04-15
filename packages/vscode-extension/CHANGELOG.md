@@ -1,3 +1,13 @@
+# v4.5.12 (2025-04-15)
+
+### ✨ New Features
+- [`f26605d`](https://github.com/SpyglassMC/Spyglass/commit/f26605d21468730ab77baa3b24d895052963a0cd) Improved version detection with supported_formats and multiple pack.mcmeta files ([#1794](https://github.com/SpyglassMC/Spyglass/pull/1794))
+
+### 🐛 Bug Fixes
+- [`5fff82b`](https://github.com/SpyglassMC/Spyglass/commit/5fff82bb5aa3ca5de4f6dd67bf0725f51e0f1175) Fixes completions of mcdoc enum keys ([#1793](https://github.com/SpyglassMC/Spyglass/pull/1793))
+- [`daa9df5`](https://github.com/SpyglassMC/Spyglass/commit/daa9df55de6a8934615a5ab56923db5f9779c255) Incomplete suggest commands are no longer marked as an error ([#1791](https://github.com/SpyglassMC/Spyglass/pull/1791))
+- [`fd57b02`](https://github.com/SpyglassMC/Spyglass/commit/fd57b0297dff12caa36a78f68c07e9367f1b1d6b) Fixes mcdoc string length check with surrogate pairs ([#1792](https://github.com/SpyglassMC/Spyglass/pull/1792))
+
 # v4.5.10 (2025-03-28)
 
 ### ✨ New Features
