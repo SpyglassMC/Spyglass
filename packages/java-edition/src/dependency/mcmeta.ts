@@ -85,6 +85,18 @@ export function resolveConfiguredVersion(
 				)
 				return toVersionInfo(oldestRelease)
 			}
+			if (maxData && maxData.format === version.data_pack_version) {
+				logger.info(
+					`[resolveConfiguredVersion] Detected data pack format ${maxData.format} in ${maxData.packRoot}, selecting version ${version.id}`,
+				)
+				return toVersionInfo(version)
+			}
+			if (maxAssets && maxAssets.format === version.resource_pack_version) {
+				logger.info(
+					`[resolveConfiguredVersion] Detected resource pack format ${maxAssets.format} in ${maxAssets.packRoot}, selecting version ${version.id}`,
+				)
+				return toVersionInfo(version)
+			}
 			oldestRelease = version
 		}
 		// If the pack format is still lower, use the oldest known release version
