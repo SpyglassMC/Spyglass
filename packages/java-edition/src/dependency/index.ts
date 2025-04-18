@@ -11,9 +11,6 @@ import type {
 } from './mcmeta.js'
 import { Fluids, getMcmetaSummaryUris } from './mcmeta.js'
 
-// Memory cache TTL in milliseconds
-const DownloaderTtl = 15_000
-
 /* istanbul ignore next */
 /**
  * Return the deserialized [`versions.json`][versions.json].
@@ -28,8 +25,8 @@ export async function getVersions(
 		id: 'mc-je/versions.json.gz',
 		uri: 'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
 		transformer: (buffer) => core.parseGzippedJson(externals, buffer) as Promise<McmetaVersions>,
-		cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', 'refs/heads/summary'),
-		ttl: DownloaderTtl,
+		cache: core.getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', 'refs/heads/summary'),
+		ttl: core.DownloaderTtl,
 	})
 }
 
@@ -54,7 +51,7 @@ export async function getMcmetaSummary(
 ): Promise<GetMcmetaSummaryResult> {
 	type OverrideConfig =
 		core.EnvConfig['mcmetaSummaryOverrides'][keyof core.EnvConfig['mcmetaSummaryOverrides']]
-	const ref = getGitRef({
+	const ref = core.getGitRef({
 		defaultBranch: 'summary',
 		getTag: (v) => `${v}-summary`,
 		isLatest,
@@ -91,8 +88,8 @@ export async function getMcmetaSummary(
 			id: `mc-je/${version}/${type}.json.gz`,
 			uri: uris[type],
 			transformer: (buffer) => core.parseGzippedJson(externals, buffer) as Promise<T>,
-			cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', ref),
-			ttl: DownloaderTtl,
+			cache: core.getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', ref),
+			ttl: core.DownloaderTtl,
 		}, out)
 		checksum ||= out.checksum
 		return handleOverride(data, overrideConfig)
@@ -106,83 +103,6 @@ export async function getMcmetaSummary(
 	]
 
 	return { blocks, commands, fluids, registries, checksum }
-}
-
-type GitHubRefResponse = { message: string } | {
-	message?: undefined
-	ref: string
-	object: { sha: string }
-} | { message?: undefined; ref: string; object: { sha: string } }[]
-
-function getGitRef(
-	{ defaultBranch, getTag, isLatest, version }: {
-		defaultBranch: string
-		getTag: (version: string) => string
-		isLatest: boolean
-		version: string
-	},
-): string {
-	return isLatest ? `refs/heads/${defaultBranch}` : `refs/tags/${getTag(version)}`
-}
-
-const GitHubApiDownloadOptions = {
-	headers: { Accept: 'application/vnd.github.v3+json', 'User-Agent': 'SpyglassMC' },
-}
-
-function getCacheOptionsBasedOnGitHubCommitSha(owner: string, repo: string, ref: string) {
-	return {
-		checksumExtension: '.commit-sha' as const,
-		checksumJob: {
-			uri: `https://api.github.com/repos/${owner}/${repo}/git/${ref}` as const,
-			transformer: (buffer: Uint8Array) => {
-				const response = JSON.parse(core.bufferToString(buffer)) as GitHubRefResponse
-				if (Array.isArray(response)) {
-					return response[0].object.sha
-				} else if (response.message === undefined) {
-					return response.object.sha
-				} else {
-					throw new Error(response.message)
-				}
-			},
-			options: GitHubApiDownloadOptions,
-			ttl: DownloaderTtl,
-		},
-	}
-}
-
-/**
- * Download data from a GitHub repository with tags corresponding to Minecraft versions.
- * The downloaded data will be cached based on the commit SHA of the respective tag.
- *
- * If `isLatest` if `true`, instead of finding the tag corresponding to the given version, the default branch will be used.
- *
- * @returns The URI to the `.tar.gz` file.
- */
-async function downloadGitHubRepo(
-	{ defaultBranch, downloader, getTag, repo, isLatest, owner, version, suffix }: {
-		defaultBranch: string
-		downloader: core.Downloader
-		getTag: (version: string) => string
-		owner: string
-		repo: string
-		isLatest: boolean
-		version: string
-		suffix?: string
-	},
-): Promise<string> {
-	const ref = getGitRef({ defaultBranch, getTag, isLatest, version })
-
-	const out: core.DownloaderDownloadOut = {}
-	await downloader.download<Uint8Array>({
-		id: `mc-je/${version}/${repo}${suffix ?? ''}.tar.gz`,
-		uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
-		transformer: (b) => b,
-		cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
-		options: GitHubApiDownloadOptions,
-		ttl: DownloaderTtl,
-	}, out)
-
-	return out.cacheUri!
 }
 
 /* istanbul ignore next */
@@ -223,7 +143,7 @@ export async function getVanillaResourcepack(
 	version: string,
 	isLatest: boolean,
 ): Promise<core.Dependency> {
-	const uri = await downloadGitHubRepo({
+	const uri = await core.downloadGitHubRepo({
 		defaultBranch: 'assets-tiny',
 		downloader,
 		getTag: (v) => `${v}-assets-tiny`,
@@ -252,9 +172,9 @@ export async function getVanillaMcdoc(downloader: core.Downloader): Promise<core
 		id: 'mc-je/vanilla-mcdoc.tar.gz',
 		uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
 		transformer: (b) => b,
-		cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
-		options: GitHubApiDownloadOptions,
-		ttl: DownloaderTtl,
+		cache: core.getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
+		options: core.GitHubApiDownloadOptions,
+		ttl: core.DownloaderTtl,
 	}, out)
 
 	return { info: { startDepth: 1 }, uri: out.cacheUri! }
