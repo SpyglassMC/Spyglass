@@ -60,8 +60,23 @@ export interface EnvConfig {
 	 */
 	dataSource: string
 	/**
-	 * A list of data packs the current project depends on. Each value in this array can be either an absolute file path
-	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@vanilla-mcdoc`.
+	 * A list of data packs the current project depends on. 
+	 * Each value in this array can be either:
+	 * - An absolute file path to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`)
+	 * - A hardcoded provider like `@vanilla-mcdoc`.
+	 * - A Git repository provider, formatted as `$github:(owner)/(repo)[@(branch)][/(folder path)]` 
+	 *   or `$gitlab/gitea/srht[:(instance)]:(owner)/(repo)[@(branch)][/(folder path)]`,
+	 *   where the root or folder path will be considered a spyglass project (should have spyglass.json and/or pack.mcmeta).
+	 * 
+	 *   Notes: Branches with `/` are not supported, default Gitea instance is codeberg.org, specifying Sourcehut `~` before user/org is optional.
+	 * 
+	 *   Examples: `$github:SpyglassMC/vanilla-mcdoc`, `$gitlab:gitlab.futo.org:polycentric/harbor@main/lol/mcdoc`
+	 * 
+	 *   Disclaimer: This isn't advanced enough to detect changes in commit hash of a scoped folder, it will just invalidate cache based on the contained branch last SHA.
+	 * - A raw link to a Git hosted zip or tar.gz spyglass project (should have spyglass.json and/or pack.mcmeta in the root), supports GitHub, GitLab, Gitea, & Sourcehut.
+	 *   
+	 *   Disclaimer: This isn't advanced enough to detect changes in commit hash of the linked file, it will just invalidate cache based on the contained branch last SHA.
+	 * - A direct link to a zip or tar.gz spyglass project (should have spyglass.json and/or pack.mcmeta in the root), caching behavior unknown // TODO
 	 */
 	dependencies: string[]
 	/**

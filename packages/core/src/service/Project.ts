@@ -31,7 +31,7 @@ import type { Dependency } from './Dependency.js'
 import { DependencyKey } from './Dependency.js'
 import { Downloader } from './Downloader.js'
 import { LinterErrorReporter } from './ErrorReporter.js'
-import { ArchiveUriSupporter, FileService, FileUriSupporter } from './FileService.js'
+import { ArchiveUriSupporter, FileService, FileUriSupporter, GitRepoSupporter, RemoteUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
 import { MetaRegistry } from './MetaRegistry.js'
@@ -473,8 +473,25 @@ export class Project implements ExternalEventEmitter {
 				this.externals,
 				this.logger,
 			)
+			const remoteUriSupporter = await RemoteUriSupporter.create(
+				dependencies,
+				this.externals,
+				this.downloader,
+				this.logger
+			)
+			const gitRepoSupporter = await GitRepoSupporter.create(
+				dependencies,
+				this.externals,
+				this.downloader,
+				this.logger
+			)
 			this.fs.register('file:', fileUriSupporter, true)
 			this.fs.register(ArchiveUriSupporter.Protocol, archiveUriSupporter, true)
+			this.fs.register(RemoteUriSupporter.Protocols[0], remoteUriSupporter, true)
+			this.fs.register(RemoteUriSupporter.Protocols[1], remoteUriSupporter, true)
+			for (const provider of GitRepoSupporter.Protocols) {
+				this.fs.register(provider, gitRepoSupporter, true)
+			}
 		}
 		const listProjectFiles = () =>
 			new Promise<void>((resolve) => {
