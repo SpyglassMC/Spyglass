@@ -93,6 +93,7 @@
           "assets/*/particles/**/*.json",
           "assets/*/post_effect/**/*.json",
           "assets/*/shaders/**/*.json",
+          "assets/*/waypoint_style/**/*.json",
           "assets/minecraft/**/*.json",
           "data/*/advancement/**/*.json",
           "data/*/advancements/**/*.json",
