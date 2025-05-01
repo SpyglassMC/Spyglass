@@ -241,6 +241,7 @@ export const AssetsFileCategories = Object.freeze(
 		'sounds', // sounds.json
 		'texture',
 		'texture_meta', // *.png.mcmeta
+		'waypoint_style',
 	] as const,
 )
 export type AssetsFileCategory = (typeof AssetsFileCategories)[number]

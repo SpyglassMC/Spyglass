@@ -163,6 +163,7 @@ resource('shaders', { pack: 'assets', category: 'shader/vertex', ext: '.vsh' })
 resource('sounds', { pack: 'assets', category: 'sound', ext: '.ogg' })
 resource('textures', { pack: 'assets', category: 'texture', ext: '.png' })
 resource('textures', { pack: 'assets', category: 'texture_meta', ext: '.png.mcmeta' })
+resource('waypoint_style', { pack: 'assets', since: '1.21.6' })
 
 resource('lang', { pack: 'assets', category: 'lang/deprecated', identifier: 'deprecated' })
 resource('', { pack: 'assets', category: 'sounds', identifier: 'sounds' })
