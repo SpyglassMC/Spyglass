@@ -37,6 +37,7 @@
 	"conjunction.or_2": "oder",
 	"conjunction.or_3+_1": ",",
 	"conjunction.or_3+_2": ", oder",
+	"datafix.error.command-replaceitem": "/replaceitem wurde in 20w46a (the second snapshot of 1.17) entfernt und durch /item ersetzt",
 	"duplicate-key": "Doppelter Schlüssel %0%",
 	"ending-quote": "ein schließendes Anführungszeichen %0%",
 	"entity": "ein Objekt",
