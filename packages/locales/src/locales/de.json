@@ -30,7 +30,7 @@
 	"code-action.string-unquote": "Anführungszeichen von dieser Zeichenkette entfernen",
 	"code-action.vector-align-0.0": "Diesen Vektor am Ursprung des Blocks ausrichten",
 	"code-action.vector-align-0.5": "Diesen Vektor am Zentrum des Blocks ausrichten",
-	"comment": "ein Kommentar, der mit %0% started",
+	"comment": "ein Kommentar, der mit %0% beginnt",
 	"conjunction.and_2": "und",
 	"conjunction.and_3+_1": ",",
 	"conjunction.and_3+_2": ", und",
