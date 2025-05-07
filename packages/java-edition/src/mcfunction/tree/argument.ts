@@ -205,6 +205,10 @@ export interface MinecraftResourceOrTagKeyArgumentTreeNode extends mcf.ArgumentT
 	parser: 'minecraft:resource_or_tag_key'
 	properties: { registry: string }
 }
+export interface MinecraftResourceSelectorTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:resource_selector'
+	properties: { registry: string }
+}
 export interface MinecraftRotationArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:rotation'
 }
@@ -300,6 +304,7 @@ export type ArgumentTreeNode =
 	| MinecraftResourceLocationArgumentTreeNode
 	| MinecraftResourceOrTagArgumentTreeNode
 	| MinecraftResourceOrTagKeyArgumentTreeNode
+	| MinecraftResourceSelectorTreeNode
 	| MinecraftRotationArgumentTreeNode
 	| MinecraftScoreHolderArgumentTreeNode
 	| MinecraftScoreboardSlotArgumentTreeNode
