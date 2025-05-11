@@ -4,7 +4,7 @@ import type { IndexMap, RangeLike } from '../source/index.js'
 import { Range } from '../source/index.js'
 import type { AstNode } from './AstNode.js'
 
-export const EscapeChars = ['"', "'", '\\', 'b', 'f', 'n', 'r', 't'] as const
+export const EscapeChars = ['"', "'", '\\', 'b', 'f', 'n', 'r', 's', 't'] as const
 export type EscapeChar = (typeof EscapeChars)[number]
 export namespace EscapeChar {
 	/* istanbul ignore next */
@@ -21,6 +21,7 @@ export const EscapeTable = new Map<EscapeChar, string>([
 	['f', '\f'],
 	['n', '\n'],
 	['r', '\r'],
+	['s', ' '],
 	['t', '\t'],
 ])
 

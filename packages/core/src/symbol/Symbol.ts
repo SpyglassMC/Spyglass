@@ -141,6 +141,7 @@ export const NormalFileCategories = Object.freeze(
 		'trial_spawner',
 		'trim_material',
 		'trim_pattern',
+		'wolf_sound_variant',
 		'wolf_variant',
 	] as const,
 )
@@ -240,6 +241,7 @@ export const AssetsFileCategories = Object.freeze(
 		'sounds', // sounds.json
 		'texture',
 		'texture_meta', // *.png.mcmeta
+		'waypoint_style',
 	] as const,
 )
 export type AssetsFileCategory = (typeof AssetsFileCategories)[number]

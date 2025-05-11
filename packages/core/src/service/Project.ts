@@ -26,6 +26,7 @@ import {
 	LinterContext,
 	ParserContext,
 	UriBinderContext,
+	UriPredicateContext,
 } from './Context.js'
 import type { Dependency } from './Dependency.js'
 import { DependencyKey } from './Dependency.js'
@@ -291,10 +292,7 @@ export class Project implements ExternalEventEmitter {
 	 * are not loaded into the memory.
 	 */
 	getTrackedFiles(): string[] {
-		const extensions: string[] = this.meta.getSupportedFileExtensions()
-		this.logger.info(`[Project#getTrackedFiles] Supported file extensions: ${extensions}`)
 		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.watchedFiles]
-			.filter((file) => extensions.includes(fileUtil.extname(file) ?? ''))
 		this.logger.info(
 			`[Project#getTrackedFiles] Listed ${supportedFiles.length} supported files`,
 		)
@@ -526,7 +524,8 @@ export class Project implements ExternalEventEmitter {
 
 			await Promise.all([listDependencyFiles(), listProjectFiles()])
 
-			this.#dependencyFiles = new Set(this.fs.listFiles())
+			this.#dependencyFiles = new Set([...this.fs.listFiles()]
+				.filter((uri) => !this.shouldExclude(uri)))
 			this.#dependencyRoots = new Set(this.fs.listRoots())
 
 			this.updateRoots()
@@ -659,13 +658,9 @@ export class Project implements ExternalEventEmitter {
 		this.#textDocumentCache.delete(uri)
 	}
 	private async read(uri: string): Promise<TextDocument | undefined> {
-		const getLanguageID = (uri: string): string => {
-			const ext = fileUtil.extname(uri) ?? '.plaintext'
-			return this.meta.getLanguageID(ext) ?? ext.slice(1)
-		}
 		const createTextDocument = async (uri: string): Promise<TextDocument | undefined> => {
-			const languageId = getLanguageID(uri)
-			if (!this.meta.isSupportedLanguage(languageId)) {
+			const languageId = this.guessLanguageID(uri)
+			if (!this.isSupportedLanguage(uri, languageId)) {
 				return undefined
 			}
 
@@ -872,10 +867,10 @@ export class Project implements ExternalEventEmitter {
 		content: string,
 	): Promise<void> {
 		uri = this.normalizeUri(uri)
-		if (!fileUtil.isFileUri(uri)) {
-			return // We only accept `file:` scheme for client-managed URIs.
+		if (uri.startsWith(ArchiveUriSupporter.Protocol)) {
+			return // We do not accept `archive:` scheme for client-managed URIs.
 		}
-		if (this.shouldExclude(uri)) {
+		if (this.shouldExclude(uri, languageID)) {
 			return
 		}
 		const doc = TextDocument.create(uri, languageID, version, content)
@@ -899,17 +894,16 @@ export class Project implements ExternalEventEmitter {
 	): Promise<void> {
 		uri = this.normalizeUri(uri)
 		this.#symbolUpToDateUris.delete(uri)
-		if (!fileUtil.isFileUri(uri)) {
-			return // We only accept `file:` scheme for client-managed URIs.
-		}
-		if (this.shouldExclude(uri)) {
-			return
+		if (uri.startsWith(ArchiveUriSupporter.Protocol)) {
+			return // We do not accept `archive:` scheme for client-managed URIs.
 		}
 		const doc = this.#clientManagedDocAndNodes.get(uri)?.doc
-		if (!doc) {
-			throw new Error(
-				`TextDocument for ${uri} is not cached. This should not happen. Did the language client send a didChange notification without sending a didOpen one, or is there a logic error on our side resulting the 'read' function overriding the 'TextDocument' created in the 'didOpen' notification handler?`,
-			)
+		if (!doc || this.shouldExclude(uri, doc.languageId)) {
+			// If doc is undefined, it means the document was previously excluded by onDidOpen()
+			// based on the language ID supplied by the client, in which case we should return early.
+			// Otherwise, we perform the shouldExclude() check with the URI and the saved language ID
+			// as usual.
+			return
 		}
 		TextDocument.update(doc, changes, version)
 		const node = this.parse(doc)
@@ -925,8 +919,8 @@ export class Project implements ExternalEventEmitter {
 	 */
 	onDidClose(uri: string): void {
 		uri = this.normalizeUri(uri)
-		if (!fileUtil.isFileUri(uri)) {
-			return // We only accept `file:` scheme for client-managed URIs.
+		if (uri.startsWith(ArchiveUriSupporter.Protocol)) {
+			return // We do not accept `archive:` scheme for client-managed URIs.
 		}
 		this.#clientManagedUris.delete(uri)
 		this.#clientManagedDocAndNodes.delete(uri)
@@ -967,7 +961,38 @@ export class Project implements ExternalEventEmitter {
 		}
 	}
 
-	public shouldExclude(uri: string): boolean {
+	/**
+	 * Returns true iff the URI should be excluded from all Spyglass language support.
+	 *
+	 * @param language Optional. If ommitted, a language will be derived from the URI according to
+	 *                 its file extension.
+	 */
+	public shouldExclude(uri: string, language?: string): boolean {
+		return !this.isSupportedLanguage(uri, language) || this.isUserExcluded(uri)
+	}
+
+	private isSupportedLanguage(uri: string, language?: string): boolean {
+		language ??= this.guessLanguageID(uri)
+
+		const languageOptions = this.meta.getLanguageOptions(language)
+		if (!languageOptions) {
+			// Unsupported language.
+			return false
+		}
+
+		const { uriPredicate } = languageOptions
+		return uriPredicate?.(uri, UriPredicateContext.create(this)) ?? true
+	}
+
+	/**
+	 * Guess a language ID from a URI. The guessed language ID may or may not actually be supported.
+	 */
+	private guessLanguageID(uri: string): string {
+		const ext = fileUtil.extname(uri) ?? '.spyglassmc-unknown'
+		return this.meta.getLanguageID(ext) ?? ext.slice(1)
+	}
+
+	private isUserExcluded(uri: string): boolean {
 		if (this.config.env.exclude.length === 0) {
 			return false
 		}

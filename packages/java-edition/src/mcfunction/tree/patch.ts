@@ -169,6 +169,18 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					}),
 				},
 			},
+			datapack: {
+				children: {
+					...(ReleaseVersion.cmp(release, '1.21.6') >= 0
+						? {
+							// Added in 21w15a (1.21.6, pack format 72)
+							create: {
+								permission: 4,
+							},
+						}
+						: {}),
+				},
+			},
 			debug: {
 				permission: 3,
 			},

@@ -2,7 +2,7 @@ import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
-import { registerUriBuilders, uriBinder } from './binder/index.js'
+import { jsonUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
 import type { McmetaSummary, McmetaVersions, PackInfo } from './dependency/index.js'
 import {
 	getMcmetaSummary,
@@ -27,11 +27,10 @@ export * as mcf from './mcfunction/index.js'
 export const initialize: core.ProjectInitializer = async (ctx) => {
 	const { config, downloader, externals, logger, meta, projectRoots } = ctx
 
-	async function readPackMcmeta(uri: string): Promise<PackMcmeta | undefined> {
+	async function readPackFormat(uri: string): Promise<number | undefined> {
 		try {
 			const data = await core.fileUtil.readJson(externals, uri)
-			PackMcmeta.assert(data)
-			return data
+			return PackMcmeta.readPackFormat(data)
 		} catch (e) {
 			if (!externals.error.isKind(e, 'ENOENT')) {
 				// `pack.mcmeta` exists but broken. Log an error.
@@ -41,7 +40,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return undefined
 	}
 
-	async function findPackMcmetas(versions: McmetaVersions): Promise<PackInfo[]> {
+	async function findPackMcmetas(): Promise<PackInfo[]> {
 		const searchedUris = new Set<string>()
 		const packs: PackInfo[] = []
 		for (let depth = 0; depth <= 2; depth += 1) {
@@ -53,18 +52,13 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 					}
 					searchedUris.add(uri)
 					const packRoot = core.fileUtil.dirname(uri)
-					const [packMcmeta, type] = await Promise.all([
-						readPackMcmeta(uri),
+					const [format, type] = await Promise.all([
+						readPackFormat(uri),
 						PackMcmeta.getType(packRoot, externals),
 					])
-					const versionInfo = resolveConfiguredVersion(
-						config.env.gameVersion,
-						versions,
-						packMcmeta,
-						type,
-						logger,
-					)
-					packs.push({ type, packRoot, packMcmeta, versionInfo })
+					if (format !== undefined) {
+						packs.push({ type, packRoot, format })
+					}
 				}
 			}
 		}
@@ -74,7 +68,10 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	meta.registerUriBinder(uriBinder)
 	registerUriBuilders(meta)
 
-	const versions = await getVersions(ctx.externals, ctx.downloader)
+	const [versions, packs] = await Promise.all([
+		getVersions(ctx.externals, ctx.downloader),
+		findPackMcmetas(),
+	])
 	if (!versions) {
 		ctx.logger.error(
 			'[je-initialize] Failed loading game version list. Expect everything to be broken.',
@@ -82,32 +79,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return
 	}
 
-	const packs = await findPackMcmetas(versions)
-
-	function selectVersionInfo(packs: PackInfo[], versions: McmetaVersions) {
-		// Select the first valid pack.mcmeta, prioritizing data packs
-		const pack = packs.find(p => p.packMcmeta !== undefined && p.type === 'data')
-			?? packs.find(p => p.packMcmeta !== undefined && p.type === 'assets')
-		const version = pack === undefined
-			? resolveConfiguredVersion(config.env.gameVersion, versions, undefined, undefined, logger)
-			: pack.versionInfo
-		const packMessage = pack === undefined
-			? 'Failed finding a valid pack.mcmeta'
-			: `Found a valid pack.mcmeta ${pack.packRoot}/pack.mcmeta`
-		const reasonMessage = pack && version.reason === 'auto'
-			? `using ${pack.type} pack format ${pack.packMcmeta?.pack.pack_format} to select`
-			: version.reason === 'config'
-			? `but using config override "${config.env.gameVersion}" to select`
-			: version.reason === 'fallback'
-			? 'using fallback'
-			: 'impossible' // should never occur
-		const versionMessage = `version ${version.release}${
-			version.id === version.release ? '' : ` (${version.id})`
-		}`
-		ctx.logger.info(`[je.initialize] ${packMessage}, ${reasonMessage} ${versionMessage}`)
-		return version
-	}
-	const version = selectVersionInfo(packs, versions)
+	const version = resolveConfiguredVersion(config.env.gameVersion, versions, packs, logger)
 	const release = version.release
 
 	meta.registerDependencyProvider(
@@ -160,8 +132,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	})
 
 	registerMcdocAttributes(meta, summary.commands, release)
-	registerPackFormatAttribute(meta, release, versions, packs)
-	registerPackFormatAttribute(meta, release, versions, packs)
+	registerPackFormatAttribute(meta, versions, packs)
 
 	meta.registerLanguage('zip', { extensions: ['.zip'] })
 	meta.registerLanguage('png', { extensions: ['.png'] })
@@ -171,7 +142,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	meta.registerLanguage('fsh', { extensions: ['.fsh'] })
 	meta.registerLanguage('vsh', { extensions: ['.vsh'] })
 
-	json.initialize(ctx)
+	json.getInitializer(jsonUriPredicate)(ctx)
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)

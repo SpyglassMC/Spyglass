@@ -49,7 +49,7 @@
   "devDependencies": {
     "@types/vscode": "1.67.0",
     "@vscode/vsce": "^2.29.0",
-    "esbuild": "^0.17.18",
+    "esbuild": "^0.25.2",
     "ovsx": "^0.9.1",
     "vscode-languageclient": "^9.0.1",
     "vscode-test": "^1.5.2"
@@ -93,6 +93,7 @@
           "assets/*/particles/**/*.json",
           "assets/*/post_effect/**/*.json",
           "assets/*/shaders/**/*.json",
+          "assets/*/waypoint_style/**/*.json",
           "assets/minecraft/**/*.json",
           "data/*/advancement/**/*.json",
           "data/*/advancements/**/*.json",
@@ -122,6 +123,7 @@
           "data/*/test_environment/**/*.json",
           "data/*/trim_material/**/*.json",
           "data/*/trim_pattern/**/*.json",
+          "data/*/wolf_sound_variant/**/*.json",
           "data/*/wolf_variant/**/*.json",
           "data/*/worldgen/**/*.json",
           "data/minecraft/**/*.json"

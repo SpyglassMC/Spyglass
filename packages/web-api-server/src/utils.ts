@@ -1,3 +1,4 @@
+import { Mutex } from 'async-mutex'
 import chalk from 'chalk'
 import { createHmac, timingSafeEqual } from 'crypto'
 import type { NextFunction, Request, Response } from 'express'
@@ -6,6 +7,8 @@ import path from 'path'
 import { RateLimiterMemory, RateLimiterRes } from 'rate-limiter-flexible'
 import simpleGit from 'simple-git'
 import type { SimpleGit } from 'simple-git'
+
+const gitMutex = new Mutex()
 
 export function loadConfig() {
 	if (
@@ -63,8 +66,10 @@ export async function initGitRepos(rootDir: string) {
 
 	async function initGitRepo(owner: string, repo: string) {
 		const repoDir = path.join(rootDir, repo)
+		const repoGit = simpleGit({ baseDir: repoDir }).outputHandler(defaultOutputHandler)
 		if (await doesPathExist(repoDir)) {
 			console.info(chalk.green(`Repo ${owner}/${repo} already cloned.`))
+			await updateGitRepo(repo, repoGit)
 		} else {
 			console.info(chalk.yellow(`Cloning ${owner}/${repo}...`))
 			await gitCloner.clone(
@@ -74,14 +79,21 @@ export async function initGitRepos(rootDir: string) {
 			)
 			console.info(chalk.green(`Repo ${owner}/${repo} cloned.`))
 		}
-
-		return simpleGit({ baseDir: repoDir }).outputHandler(defaultOutputHandler)
+		return repoGit
 	}
 
 	return {
 		mcmeta: await initGitRepo('misode', 'mcmeta'),
-		mcdoc: await initGitRepo('SpyglassMC', 'vanilla-mcdoc'),
+		'vanilla-mcdoc': await initGitRepo('SpyglassMC', 'vanilla-mcdoc'),
 	}
+}
+
+export async function updateGitRepo(name: string, git: SimpleGit) {
+	await gitMutex.runExclusive(async () => {
+		console.info(chalk.yellow(`Updating ${name}...`))
+		await git.remote(['update', '--prune'])
+		console.info(chalk.green(`Updated ${name}`))
+	})
 }
 
 export async function sendGitFile(
