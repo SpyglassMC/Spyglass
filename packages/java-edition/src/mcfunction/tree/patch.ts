@@ -1,6 +1,6 @@
 import type { ResourceLocationOptions } from '@spyglassmc/core'
 import { SymbolAccessType } from '@spyglassmc/core'
-import type { PartialRootTreeNode, PartialTreeNode } from '@spyglassmc/mcfunction'
+import type { PartialRootTreeNode, PartialTreeNode, RootTreeNode } from '@spyglassmc/mcfunction'
 import { ReleaseVersion } from '../../dependency/index.js'
 import type { NbtParserProperties } from './argument.js'
 
@@ -82,15 +82,6 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					},
 				}
 				: {}),
-			ban: {
-				permission: 3,
-			},
-			'ban-ip': {
-				permission: 3,
-			},
-			banlist: {
-				permission: 3,
-			},
 			bossbar: {
 				children: {
 					add: {
@@ -168,24 +159,6 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 						vaultAccessType: SymbolAccessType.Write,
 					}),
 				},
-			},
-			datapack: {
-				children: {
-					...(ReleaseVersion.cmp(release, '1.21.6') >= 0
-						? {
-							// Added in 21w15a (1.21.6, pack format 72)
-							create: {
-								permission: 4,
-							},
-						}
-						: {}),
-				},
-			},
-			debug: {
-				permission: 3,
-			},
-			deop: {
-				permission: 3,
 			},
 			execute: {
 				children: {
@@ -374,23 +347,6 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					},
 				}
 				: {}),
-			help: {
-				permission: 0,
-			},
-			...(ReleaseVersion.cmp(release, '1.18') >= 0
-				? {
-					// Added in 21w37a (1.18, pack format 8)
-					jfr: {
-						permission: 4,
-					},
-				}
-				: {}),
-			kick: {
-				permission: 3,
-			},
-			list: {
-				permission: 0,
-			},
 			...(ReleaseVersion.isBetween(release, '1.16', '1.19')
 				? {
 					// Added in 20w06a (1.16, pack format 5)
@@ -459,29 +415,6 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					},
 				},
 			},
-			me: {
-				permission: 0,
-			},
-			msg: {
-				permission: 0,
-			},
-			op: {
-				permission: 3,
-			},
-			pardon: {
-				permission: 3,
-			},
-			'pardon-ip': {
-				permission: 3,
-			},
-			...(ReleaseVersion.cmp(release, '1.17') >= 0
-				? {
-					// Added in 1.17 Pre-release 1 (1.17, pack format 7)
-					perf: {
-						permission: 4,
-					},
-				}
-				: {}),
 			...(ReleaseVersion.cmp(release, '1.19') >= 0
 				? {
 					// Added in 22w18a (1.19, pack format 10)
@@ -515,9 +448,6 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				}
 				: {}),
 			playsound: Sound,
-			publish: {
-				permission: 4,
-			},
 			...(ReleaseVersion.cmp(release, '1.20.2') >= 0
 				? {
 					// Added in 23w31a (1.20.2, pack format 16)
@@ -579,15 +509,6 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					take: RecipeTargets,
 				},
 			},
-			'save-all': {
-				permission: 4,
-			},
-			'save-off': {
-				permission: 4,
-			},
-			'save-on': {
-				permission: 4,
-			},
 			schedule: {
 				children: {
 					clear: {
@@ -626,12 +547,6 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 						},
 					},
 				},
-			},
-			setidletimeout: {
-				permission: 3,
-			},
-			stop: {
-				permission: 4,
 			},
 			stopsound: {
 				children: {
@@ -706,9 +621,6 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					},
 				},
 			},
-			teammsg: {
-				permission: 0,
-			},
 			/**
 			 * Original command syntax:
 			 * 1. `teleport <destination: entity(single)>`
@@ -737,30 +649,13 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					},
 				},
 			},
-			tell: {
-				permission: 0,
-			},
-			...(ReleaseVersion.cmp(release, '1.20.3') >= 0
-				? {
-					// Added in 23w43a (1.20.3, pack format 22)
-					tick: {
-						permission: 3,
-					},
-				}
-				: {}),
-			tm: {
-				permission: 0,
-			},
-			...(ReleaseVersion.cmp(release, '1.20.5') >= 0
-				? {
-					// Added in 24w04a (1.20.5, pack format 29)
-					transfer: {
-						permission: 3,
-					},
-				}
-				: {}),
 			trigger: {
-				permission: 0,
+				...(ReleaseVersion.cmp(release, '1.21.6') < 0
+					? {
+						// 25w20a (1.21.6, pack format 77) adds required_level to vanilla data
+						required_level: 0,
+					}
+					: {}),
 				children: {
 					objective: {
 						properties: {
@@ -770,13 +665,132 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					},
 				},
 			},
-			w: {
-				permission: 0,
-			},
-			whitelist: {
-				permission: 3,
-			},
+
+			// 25w20a (1.21.6, pack format 77) adds required_level to vanilla data
+			...(ReleaseVersion.cmp(release, '1.21.6') < 0
+				? {
+					ban: {
+						required_level: 3,
+					},
+					'ban-ip': {
+						required_level: 3,
+					},
+					banlist: {
+						required_level: 3,
+					},
+					debug: {
+						required_level: 3,
+					},
+					deop: {
+						required_level: 3,
+					},
+					help: {
+						required_level: 0,
+					},
+					...(ReleaseVersion.cmp(release, '1.18') >= 0
+						? {
+							// Added in 21w37a (1.18, pack format 8)
+							jfr: {
+								required_level: 4,
+							},
+						}
+						: {}),
+					kick: {
+						required_level: 3,
+					},
+					list: {
+						required_level: 0,
+					},
+					me: {
+						required_level: 0,
+					},
+					msg: {
+						required_level: 0,
+					},
+					op: {
+						required_level: 3,
+					},
+					pardon: {
+						required_level: 3,
+					},
+					'pardon-ip': {
+						required_level: 3,
+					},
+					...(ReleaseVersion.cmp(release, '1.17') >= 0
+						? {
+							// Added in 1.17 Pre-release 1 (1.17, pack format 7)
+							perf: {
+								required_level: 4,
+							},
+						}
+						: {}),
+					publish: {
+						required_level: 4,
+					},
+					'save-all': {
+						required_level: 4,
+					},
+					'save-off': {
+						required_level: 4,
+					},
+					'save-on': {
+						required_level: 4,
+					},
+					setidletimeout: {
+						required_level: 3,
+					},
+					stop: {
+						required_level: 4,
+					},
+					teammsg: {
+						required_level: 0,
+					},
+					tell: {
+						required_level: 0,
+					},
+					...(ReleaseVersion.cmp(release, '1.20.3') >= 0
+						? {
+							// Added in 23w43a (1.20.3, pack format 22)
+							tick: {
+								required_level: 3,
+							},
+						}
+						: {}),
+					tm: {
+						required_level: 0,
+					},
+					...(ReleaseVersion.cmp(release, '1.20.5') >= 0
+						? {
+							// Added in 24w04a (1.20.5, pack format 29)
+							transfer: {
+								required_level: 3,
+							},
+						}
+						: {}),
+					w: {
+						required_level: 0,
+					},
+					whitelist: {
+						required_level: 3,
+					},
+				}
+				: {}),
 		},
+	}
+}
+
+/**
+ * Set required_level to 2 when the patch hasn't set a different required_level level, for versions <= 1.21.5
+ */
+export function patchDefaultRequiredLevels(tree: RootTreeNode) {
+	if (tree.children === undefined) {
+		return
+	}
+
+	for (const child of Object.keys(tree.children)) {
+		if (tree.children[child].required_level === undefined) {
+			tree.children[child].required_level = 2
+		}
 	}
 }
 

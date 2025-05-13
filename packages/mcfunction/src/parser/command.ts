@@ -175,7 +175,7 @@ function dispatch(
 				return false
 			}
 
-			const requiredPermissionLevel = childTreeNode.permission ?? 2
+			const requiredPermissionLevel = childTreeNode.required_level ?? 0
 			if (ctx.config.env.permissionLevel < requiredPermissionLevel) {
 				ctx.err.report(
 					localize(
