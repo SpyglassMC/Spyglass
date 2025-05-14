@@ -46,6 +46,9 @@ export interface MinecraftColumnPosArgumentTreeNode extends mcf.ArgumentTreeNode
 export interface MinecraftComponentArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:component'
 }
+export interface MinecraftDialogArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:dialog'
+}
 export interface MinecraftDimensionArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:dimension'
 }
@@ -272,6 +275,7 @@ export type ArgumentTreeNode =
 	| MinecraftColorArgumentTreeNode
 	| MinecraftColumnPosArgumentTreeNode
 	| MinecraftComponentArgumentTreeNode
+	| MinecraftDialogArgumentTreeNode
 	| MinecraftDimensionArgumentTreeNode
 	| MinecraftEntityArgumentTreeNode
 	| MinecraftEntityAnchorArgumentTreeNode

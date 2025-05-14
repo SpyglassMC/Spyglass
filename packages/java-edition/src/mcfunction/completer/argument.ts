@@ -111,6 +111,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 				json.JsonObjectNode.mock(range),
 				json.JsonStringNode.mock(range),
 			]
+		case 'minecraft:dialog':
+			return ResourceLocationNode.mock(range, { category: 'dialog' })
 		case 'minecraft:dimension':
 			return ResourceLocationNode.mock(range, { category: 'dimension' })
 		case 'minecraft:entity':

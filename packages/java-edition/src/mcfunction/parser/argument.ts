@@ -162,6 +162,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
 			return wrap(typeRefParser('::java::server::util::text::Text'))
+		case 'minecraft:dialog':
+			return wrap(resourceOrInline('dialog'))
 		case 'minecraft:dimension':
 			return wrap(core.resourceLocation({ category: 'dimension' }))
 		case 'minecraft:entity':
