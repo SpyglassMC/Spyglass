@@ -62,14 +62,14 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 							// Find all files under the added URI and send 'add' events for them as well.
 							for (const fileUri of await core.fileUtil.getAllFiles(NodeJsExternals, uri)) {
 								if (!this.#watchedFiles.has(fileUri)) {
-									this.emit('add', fileUri)
 									this.#watchedFiles.add(fileUri)
+									this.emit('add', fileUri)
 								}
 							}
 						} else if (stat.isFile()) {
 							if (!this.#watchedFiles.has(uri)) {
-								this.emit('add', uri)
 								this.#watchedFiles.add(uri)
+								this.emit('add', uri)
 							}
 						}
 						break
@@ -77,21 +77,21 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 					case ls.FileChangeType.Changed:
 						this.emit('change', uri)
 						if (!this.#watchedFiles.has(uri)) {
-							this.#watchedFiles.add(uri)
 							this.logger.warn(`[LspFsWatcher#handler] unknown changed file ${uri}`)
+							this.#watchedFiles.add(uri)
 						}
 						break
 					case ls.FileChangeType.Deleted: {
 						if (this.#watchedFiles.has(uri)) {
-							this.emit('unlink', uri)
 							this.#watchedFiles.delete(uri)
+							this.emit('unlink', uri)
 						} else {
 							// Find all files under the deleted URI and send 'unlink' events for them as well.
 							const dirUri = core.fileUtil.ensureEndingSlash(uri)
+							this.#watchedFiles.delete(dirUri)
 							for (const watchedUri of this.#watchedFiles.getSubFiles(dirUri)) {
 								this.emit('unlink', watchedUri)
 							}
-							this.#watchedFiles.delete(dirUri)
 						}
 						break
 					}
