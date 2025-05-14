@@ -16,7 +16,6 @@ Spyglass supports multiple languages. If you'd like to help us translate this pr
 
 1. Go to the [localization website](https://weblate.spyglassmc.com).
 2. [Register](https://weblate.spyglassmc.com/accounts/register) by linking your GitHub account (recommended), or using your email.
-    - Note that the username and email will be shown in the [repository](https://github.com/SpyglassMC/Spyglass)'s git commit log. If you don't feel like you want to disclose your own email address, feel free to [contact SPGoding](https://github.com/SPGoding/datapack-language-server/wiki/Contact-SPGoding) to get an account with a fake email address.
 3. See two components of Spyglass [here](https://weblate.spyglassmc.com/projects/spyglass).
 4. Start translating!
 
