@@ -26,6 +26,8 @@ Spyglass supports multiple languages. If you'd like to help us translate this pr
 
 ## 💰 Sponsor
 
-[SPGoding](https://github.com/SPGoding) personally accept financial supports. The funds will be used for purchasing the server which holds the [localization website](https://weblate.spyglassmc.com), the rest money will be used for SPGoding's personal usage. _Intransparent, huh?_
-
-If you're interested in sponsoring, you can go ahead to my [GitHub Sponsors page](https://github.com/sponsors/SPGoding).
+Some team members accept donations. If you're interested in sponsoring, you can go to their GitHub Sponsors pages:
+- [SPGoding](https://github.com/sponsors/SPGoding)
+- [Misode](https://github.com/sponsors/misode)
+- [MulverineX](https://github.com/sponsors/MulverineX)
+- [jacobsjo](https://github.com/sponsors/jacobsjo)
