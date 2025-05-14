@@ -36,6 +36,7 @@ const Suites: Partial<
 	'minecraft:color': [{ content: ['red', 'green'] }],
 	'minecraft:column_pos': [{ content: ['0 0', '~ ~', '~1 ~-2'] }],
 	'minecraft:component': [{ content: ['"hello world"', '""', '{"text":"hello world"}', '[""]'] }],
+	'minecraft:dialog': [{ content: ['minecraft:custom_options', '{type:"notice",title:"Hello"}'] }],
 	'minecraft:dimension': [{ content: ['minecraft:overworld', 'minecraft:the_nether'] }],
 	'minecraft:entity': [{
 		properties: { amount: 'multiple', type: 'entities' },
