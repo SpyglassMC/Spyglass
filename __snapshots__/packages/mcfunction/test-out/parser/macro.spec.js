@@ -7,6 +7,13 @@ exports['mcfunction parser macro() Parse "$say $() bar" 1'] = {
     },
     "children": [
       {
+        "type": "mcfunction:macro/prefix",
+        "range": {
+          "start": 0,
+          "end": 1
+        }
+      },
+      {
         "type": "mcfunction:macro/other",
         "range": {
           "start": 1,
@@ -52,6 +59,13 @@ exports['mcfunction parser macro() Parse "$say $(foo bar" 1'] = {
       "end": 15
     },
     "children": [
+      {
+        "type": "mcfunction:macro/prefix",
+        "range": {
+          "start": 0,
+          "end": 1
+        }
+      },
       {
         "type": "mcfunction:macro/other",
         "range": {
@@ -99,6 +113,13 @@ exports['mcfunction parser macro() Parse "$say $(invalid.key) bar" 1'] = {
     },
     "children": [
       {
+        "type": "mcfunction:macro/prefix",
+        "range": {
+          "start": 0,
+          "end": 1
+        }
+      },
+      {
         "type": "mcfunction:macro/other",
         "range": {
           "start": 1,
@@ -145,6 +166,13 @@ exports['mcfunction parser macro() Parse "$say $(message)" 1'] = {
     },
     "children": [
       {
+        "type": "mcfunction:macro/prefix",
+        "range": {
+          "start": 0,
+          "end": 1
+        }
+      },
+      {
         "type": "mcfunction:macro/other",
         "range": {
           "start": 1,
@@ -173,6 +201,13 @@ exports['mcfunction parser macro() Parse "$say no macro argument specified" 1'] 
       "end": 32
     },
     "children": [
+      {
+        "type": "mcfunction:macro/prefix",
+        "range": {
+          "start": 0,
+          "end": 1
+        }
+      },
       {
         "type": "mcfunction:macro/other",
         "range": {
@@ -204,6 +239,13 @@ exports['mcfunction parser macro() Parse "$scoreboard players set $mode settings
     },
     "children": [
       {
+        "type": "mcfunction:macro/prefix",
+        "range": {
+          "start": 0,
+          "end": 1
+        }
+      },
+      {
         "type": "mcfunction:macro/other",
         "range": {
           "start": 1,
@@ -232,6 +274,13 @@ exports['mcfunction parser macro() Parse "$summon cow $(x).1 $(y)30.0 $(z).0" 1'
       "end": 34
     },
     "children": [
+      {
+        "type": "mcfunction:macro/prefix",
+        "range": {
+          "start": 0,
+          "end": 1
+        }
+      },
       {
         "type": "mcfunction:macro/other",
         "range": {
@@ -302,6 +351,13 @@ exports['mcfunction parser macro() Parse "$tag @s add $(tag)_40" 1'] = {
     },
     "children": [
       {
+        "type": "mcfunction:macro/prefix",
+        "range": {
+          "start": 0,
+          "end": 1
+        }
+      },
+      {
         "type": "mcfunction:macro/other",
         "range": {
           "start": 1,
@@ -338,6 +394,13 @@ exports['mcfunction parser macro() Parse "$tellraw $(player) $(text)" 1'] = {
       "end": 26
     },
     "children": [
+      {
+        "type": "mcfunction:macro/prefix",
+        "range": {
+          "start": 0,
+          "end": 1
+        }
+      },
       {
         "type": "mcfunction:macro/other",
         "range": {
@@ -383,6 +446,13 @@ exports['mcfunction parser macro() Parse "$tellraw $(players) ["$ Hello everyone
       "end": 43
     },
     "children": [
+      {
+        "type": "mcfunction:macro/prefix",
+        "range": {
+          "start": 0,
+          "end": 1
+        }
+      },
       {
         "type": "mcfunction:macro/other",
         "range": {
