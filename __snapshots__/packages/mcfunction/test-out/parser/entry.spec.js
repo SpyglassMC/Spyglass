@@ -126,6 +126,13 @@ exports['mcfunction parser entry() Parse "# this is a comment↓say hi↓$this i
         },
         "children": [
           {
+            "type": "mcfunction:macro/prefix",
+            "range": {
+              "start": 27,
+              "end": 28
+            }
+          },
+          {
             "type": "mcfunction:macro/other",
             "range": {
               "start": 28,
@@ -172,6 +179,13 @@ exports['mcfunction parser entry() Parse "$this is a $(macro) command" 1'] = {
         },
         "children": [
           {
+            "type": "mcfunction:macro/prefix",
+            "range": {
+              "start": 0,
+              "end": 1
+            }
+          },
+          {
             "type": "mcfunction:macro/other",
             "range": {
               "start": 1,
@@ -217,6 +231,13 @@ exports['mcfunction parser entry() Parse "$this is a $(macro) ⧵ ↓ this is $(
           "end": 48
         },
         "children": [
+          {
+            "type": "mcfunction:macro/prefix",
+            "range": {
+              "start": 0,
+              "end": 1
+            }
+          },
           {
             "type": "mcfunction:macro/other",
             "range": {
@@ -277,8 +298,7 @@ exports['mcfunction parser entry() Parse "$this is a macro command $(with_args)"
         "range": {
           "start": 0,
           "end": 37
-        },
-        "children": []
+        }
       }
     ]
   },
@@ -307,8 +327,7 @@ exports['mcfunction parser entry() Parse "$this is a macro command" without macr
         "range": {
           "start": 0,
           "end": 24
-        },
-        "children": []
+        }
       }
     ]
   },
