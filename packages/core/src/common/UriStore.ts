@@ -1,7 +1,7 @@
 import type { RootUriString } from '../service/index.js'
 import { Uri } from './util.js'
 
-type FileNode = { hash?: string }
+type FileNode = Record<string, never>
 type DirectoryNode = Map<string, DirectoryNode | FileNode>
 
 /**
@@ -15,8 +15,6 @@ export class UriStore {
 	 * Adds a file URI or a directory URI to the store.
 	 * Directory URIs must end with a slash (`/`), otherwise it will be treated as a file URI.
 	 */
-	// add(uri: string, metadata?: FileMetadata): void
-	// add(uri: RootUriString): void
 	add(uri: string): void {
 		const [parts, isDir] = this.#dissectUri(uri)
 		let node = this.#trie
