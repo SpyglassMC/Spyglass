@@ -31,7 +31,13 @@ import type { Dependency } from './Dependency.js'
 import { DependencyKey } from './Dependency.js'
 import { Downloader } from './Downloader.js'
 import { LinterErrorReporter } from './ErrorReporter.js'
-import { ArchiveUriSupporter, FileService, FileUriSupporter, GitRepoSupporter, RemoteUriSupporter } from './FileService.js'
+import {
+	ArchiveUriSupporter,
+	FileService,
+	FileUriSupporter,
+	GitRepoSupporter,
+	RemoteUriSupporter,
+} from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
 import { MetaRegistry } from './MetaRegistry.js'
@@ -477,13 +483,13 @@ export class Project implements ExternalEventEmitter {
 				dependencies,
 				this.externals,
 				this.downloader,
-				this.logger
+				this.logger,
 			)
 			const gitRepoSupporter = await GitRepoSupporter.create(
 				dependencies,
 				this.externals,
 				this.downloader,
-				this.logger
+				this.logger,
 			)
 			this.fs.register('file:', fileUriSupporter, true)
 			this.fs.register(ArchiveUriSupporter.Protocol, archiveUriSupporter, true)
