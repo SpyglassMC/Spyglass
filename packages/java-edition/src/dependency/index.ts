@@ -118,7 +118,7 @@ export async function getVanillaDatapack(
 	version: string,
 	isLatest: boolean,
 ): Promise<core.Dependency> {
-	const uri = await downloadGitHubRepo({
+	const uri = await core.downloadGitHubRepo({
 		defaultBranch: 'data',
 		downloader,
 		getTag: (v) => `${v}-data`,

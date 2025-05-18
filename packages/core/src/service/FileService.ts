@@ -437,29 +437,21 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 							dependencyPath.slice(2, 5).join('/'),
 						)
 					} else {
-						switch (dependencyPath.slice(2, 4)) {
-							// GitLab instance
-							case ['-', 'raw']:
-								{
-									cache = getCacheOptionsBasedOnGitLabCommitSha(
-										dependency.hostname,
-										dependencyPath[0],
-										dependencyPath[1],
-										dependencyPath[4],
-									)
-								}
-								break
-							// Codeberg/Gitea/Forgejo
-							case ['raw', 'branch']:
-								{
-									cache = getCacheOptionsBasedOnGiteaCommitSha(
-										dependency.hostname,
-										dependencyPath[0],
-										dependencyPath[1],
-										dependencyPath[4],
-									)
-								}
-								break
+						// GitLab instance
+						if (dependencyPath[2] === '-' && dependencyPath[3] === 'raw') {
+							cache = getCacheOptionsBasedOnGitLabCommitSha(
+								dependency.hostname,
+								dependencyPath[0],
+								dependencyPath[1],
+								dependencyPath[4],
+							)
+						} else if (dependencyPath[2] === 'raw' && dependencyPath[3]) {
+							cache = getCacheOptionsBasedOnGiteaCommitSha(
+								dependency.hostname,
+								dependencyPath[0],
+								dependencyPath[1],
+								dependencyPath[4],
+							)
 						}
 					}
 				}
