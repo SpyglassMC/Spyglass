@@ -3,7 +3,14 @@
 import type { DecompressedFile, Externals, Logger } from '../common/index.js'
 import { RemoteUriString, Uri } from '../common/index.js'
 import { TwoWayMap } from '../common/TwoWayMap.js'
-import { DownloaderCache, DownloaderDownloadOut, DownloaderTtl, downloadGitHubRepo, getCacheOptionsBasedOnGiteaCommitSha, getCacheOptionsBasedOnGitHubCommitSha, getCacheOptionsBasedOnGitLabCommitSha, getCacheOptionsBasedOnSourcehutCommitSha, type Downloader } from '../index.js'
+import type {
+	Downloader,
+	DownloaderCache,
+	DownloaderDownloadOut,
+	getCacheOptionsBasedOnGiteaCommitSha,
+	getCacheOptionsBasedOnGitHubCommitSha,
+	getCacheOptionsBasedOnGitLabCommitSha,
+} from '../index.js'
 import type { Dependency } from './Dependency.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
@@ -372,7 +379,12 @@ async function hashFile(externals: Externals, uri: string): Promise<string> {
 
 export class RemoteUriSupporter implements UriProtocolSupporter {
 	public static readonly Protocols = ['https:', 'http:'] as const
-	private static readonly SupportedArchiveExtnames = ['.tar', '.tar.bz2', '.tar.gz', '.zip'] as const
+	private static readonly SupportedArchiveExtnames = [
+		'.tar',
+		'.tar.bz2',
+		'.tar.gz',
+		'.zip',
+	] as const
 
 	/**
 	 * @param entries A map from remote archive names to unzipped entries.
@@ -384,7 +396,10 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 		private readonly entries: Map<string, Map<string, DecompressedFile>>,
 	) {}
 
-	private static getCache(_dependency: URL, dependencyPath: string[]): DownloaderCache | undefined {
+	private static getCache(
+		_dependency: URL,
+		dependencyPath: string[],
+	): DownloaderCache | undefined {
 		let dependency = _dependency
 
 		/**
@@ -392,7 +407,6 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 		 * - https://raw.githubusercontent.com/ SpyglassMC/vanilla-mcdoc/ refs/heads/generated/symbols.json
 		 * - https://gitlab.futo.org/           polycentric/harbor/       -/raw/main/Dockerfile.ci
 		 * - https://codeberg.org/              forgejo/forgejo/          raw/branch/forgejo/.golangci.yml
-		 * - https://git.sr.ht/                 ~mlb/linkhut/             blob/master/.formatter.exs
 		 */
 		let cache: DownloaderCache | undefined = undefined
 
@@ -400,8 +414,12 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 		for (const ext of RemoteUriSupporter.SupportedArchiveExtnames) {
 			if (dependency.pathname.endsWith(ext)) {
 				// Example: https://github.com/SpyglassMC/vanilla-mcdoc/blob/generated/symbols.json?raw=true
-				if (dependency.hostname === 'github.com' && dependency.searchParams.has('raw', 'true')) {
-					const base = `https://raw.githubusercontent.com/${dependencyPath[0]}/${dependencyPath[1]}`
+				if (
+					dependency.hostname === 'github.com' && dependency.searchParams.has('raw', 'true')
+				) {
+					const base = `https://raw.githubusercontent.com/${dependencyPath[0]}/${
+						dependencyPath[1]
+					}`
 
 					if (dependencyPath[3].length === 40) {
 						dependency = new URL(`${base}/${dependencyPath.slice(2).join('/')}`)
@@ -409,42 +427,41 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 						dependency = new URL(`${base}}/refs/heads/${dependencyPath.slice(2).join('/')}`)
 					}
 				}
-				
 
 				if (dependencyPath.length >= 5) {
-					if (dependency.hostname === 'raw.githubusercontent.com' && dependencyPath[2] === 'refs') {
+					if (
+						dependency.hostname === 'raw.githubusercontent.com'
+						&& dependencyPath[2] === 'refs'
+					) {
 						cache = getCacheOptionsBasedOnGitHubCommitSha(
-							dependencyPath[0], dependencyPath[1], 
-							dependencyPath.slice(2, 5).join('/')
+							dependencyPath[0],
+							dependencyPath[1],
+							dependencyPath.slice(2, 5).join('/'),
 						)
 					} else {
 						switch (dependencyPath.slice(2, 4)) {
 							// GitLab instance
-							case ['-', 'raw']: {
-								cache = getCacheOptionsBasedOnGitLabCommitSha(
-									dependency.hostname, 
-									dependencyPath[0], dependencyPath[1], 
-									dependencyPath[4]
-								)
-							} break
-							// Codeberg/Gitea/Forgejo
-							case ['raw', 'branch']: {
-								cache = getCacheOptionsBasedOnGiteaCommitSha(
-									dependency.hostname,
-									dependencyPath[0], dependencyPath[1],
-									dependencyPath[4]
-								)
-							} break
-							default: {
-								// Sourcehut instance
-								if (dependencyPath[0].startsWith('~') && dependencyPath[2] === 'blob') {
-									cache = getCacheOptionsBasedOnSourcehutCommitSha(
+							case ['-', 'raw']:
+								{
+									cache = getCacheOptionsBasedOnGitLabCommitSha(
 										dependency.hostname,
-										dependencyPath[0], dependencyPath[1],
-										dependencyPath[3]
+										dependencyPath[0],
+										dependencyPath[1],
+										dependencyPath[4],
 									)
 								}
-							} break
+								break
+							// Codeberg/Gitea/Forgejo
+							case ['raw', 'branch']:
+								{
+									cache = getCacheOptionsBasedOnGiteaCommitSha(
+										dependency.hostname,
+										dependencyPath[0],
+										dependencyPath[1],
+										dependencyPath[4],
+									)
+								}
+								break
 						}
 					}
 				}
@@ -467,7 +484,7 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 				...cache.checksumJob,
 				// TODO
 				id: dependencyPath[dependencyPath.length - 1],
-				options: cache.options
+				options: cache.options,
 			})
 
 			if (commitSHA !== undefined) {
@@ -541,7 +558,9 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 	private getUri(archiveName: string): RootUriString
 	private getUri(archiveName: string, pathInArchive: string): string
 	private getUri(archiveName: string, pathInArchive = '') {
-		return `${ArchiveUriSupporter.Protocol}//${this.downloader.cacheRoot}/downloader/${archiveName}/${pathInArchive.replace(/\\/g, '/')}`
+		return `${ArchiveUriSupporter.Protocol}//${this.downloader.cacheRoot}/downloader/${archiveName}/${
+			pathInArchive.replace(/\\/g, '/')
+		}`
 	}
 
 	/**
@@ -607,8 +626,10 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 }
 
 export class GitRepoSupporter implements UriProtocolSupporter {
-	private static readonly Providers = ['github', 'gitlab', 'gitea', 'srht'] as const
-	public static readonly Protocols = GitRepoSupporter.Providers.map(provider => `$${provider}:`) as `${string}:`[]
+	private static readonly Providers = ['github', 'gitlab', 'gitea'] as const
+	public static readonly Protocols = GitRepoSupporter.Providers.map(provider =>
+		`$${provider}:`
+	) as `${string}:`[]
 
 	/**
 	 * @param entries A map from remote archive names to unzipped entries.
@@ -622,62 +643,73 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 
 	private static defaultDomain(provider: (typeof GitRepoSupporter)['Providers'][number]) {
 		switch (provider) {
-			case 'github': return 'github.com'
-			case 'gitlab': return 'gitlab.com'
-			case 'gitea': return 'codeberg.org'
-			case 'srht': return 'git.sr.ht'
+			case 'github':
+				return 'github.com'
+			case 'gitlab':
+				return 'gitlab.com'
+			case 'gitea':
+				return 'codeberg.org'
 		}
 	}
 
 	/**
-	 * @param baseParts A Git repository provider, formatted as `$github:(owner)/(repo)[@(branch)][/(folder path)]` 
-	 *  or `$gitlab/gitea/srht[:(instance)]:(owner)/(repo)[@(branch)][/(folder path)]`,
+	 * @param baseParts A Git repository provider, formatted as `$github:(owner)/(repo)[@(branch)][/(folder path)]`
+	 *  or `$gitlab/gitea[:(instance)]:(owner)/(repo)[@(branch)][/(folder path)]`,
 	 *  where the root or folder path will be considered a spyglass project (should have spyglass.json and/or pack.mcmeta).
 	 */
 	private static getCache(baseParts: string[]): NonNullable<DownloaderCache> {
-		const hostname = baseParts.length === 2 ? GitRepoSupporter.defaultDomain(baseParts[0] as (typeof GitRepoSupporter)['Providers'][number]) : baseParts[1]
+		const hostname = baseParts.length === 2
+			? GitRepoSupporter.defaultDomain(
+				baseParts[0] as (typeof GitRepoSupporter)['Providers'][number],
+			)
+			: baseParts[1]
 
 		const path = baseParts.length === 2 ? baseParts[1].split('/') : baseParts[2].split('/')
 
 		let branch = 'main'
 		if (path[1].includes('@')) {
-			[path[1], branch] = path[1].split('@')
+			;[path[1], branch] = path[1].split('@')
 		}
 
 		switch (baseParts[0] as (typeof GitRepoSupporter)['Providers'][number]) {
-			case 'github': return getCacheOptionsBasedOnGitHubCommitSha(
-				path[0], path[1], 
-				branch
-			)!
-			case 'gitlab': return getCacheOptionsBasedOnGitLabCommitSha(
-				hostname, 
-				path[0], path[1], 
-				branch
-			)!
-			case 'gitea': return getCacheOptionsBasedOnGiteaCommitSha(
-				hostname, 
-				path[0], path[1], 
-				branch
-			)!
-			case 'srht': return getCacheOptionsBasedOnGiteaCommitSha(
-				hostname, 
-				path[0], path[1], 
-				branch
-			)!
+			case 'github':
+				return getCacheOptionsBasedOnGitHubCommitSha(
+					path[0],
+					path[1],
+					branch,
+				)!
+			case 'gitlab':
+				return getCacheOptionsBasedOnGitLabCommitSha(
+					hostname,
+					path[0],
+					path[1],
+					branch,
+				)!
+			case 'gitea':
+				return getCacheOptionsBasedOnGiteaCommitSha(
+					hostname,
+					path[0],
+					path[1],
+					branch,
+				)!
 		}
 	}
 
 	async hash(uri: string): Promise<string> {
 		const baseParts = uri.slice(1).split(':')
 
-		const hostname = baseParts.length === 2 ? GitRepoSupporter.defaultDomain(baseParts[0] as (typeof GitRepoSupporter)['Providers'][number]) : baseParts[1]
+		const hostname = baseParts.length === 2
+			? GitRepoSupporter.defaultDomain(
+				baseParts[0] as (typeof GitRepoSupporter)['Providers'][number],
+			)
+			: baseParts[1]
 
 		const path = baseParts.length === 2 ? baseParts[1].split('/') : baseParts[2].split('/')
 
 		let branch = 'main'
 
 		if (path[1].includes('@')) {
-			[path[1], branch] = path[1].split('@')
+			;[path[1], branch] = path[1].split('@')
 
 			path.splice(2, 0, branch)
 		}
@@ -751,7 +783,9 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 	private getUri(archiveName: string): RootUriString
 	private getUri(archiveName: string, pathInArchive: string): string
 	private getUri(archiveName: string, pathInArchive = '') {
-		return `${ArchiveUriSupporter.Protocol}//${this.downloader.cacheRoot}/downloader/${archiveName}/${pathInArchive.replace(/\\/g, '/')}`
+		return `${ArchiveUriSupporter.Protocol}//${this.downloader.cacheRoot}/downloader/${archiveName}/${
+			pathInArchive.replace(/\\/g, '/')
+		}`
 	}
 
 	/**
@@ -780,8 +814,8 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 		for (const { uri, info } of dependencies) {
 			try {
 				/**
-				 * A Git repository provider, formatted as `$github:(owner)/(repo)[@(branch)][/(folder path)]` 
-				 *  or `$gitlab/gitea/srht[:(instance)]:(owner)/(repo)[@(branch)][/(folder path)]`,
+				 * A Git repository provider, formatted as `$github:(owner)/(repo)[@(branch)][/(folder path)]`
+				 *  or `$gitlab/gitea[:(instance)]:(owner)/(repo)[@(branch)][/(folder path)]`,
 				 *  where the root or folder path will be considered a spyglass project (should have spyglass.json and/or pack.mcmeta).
 				 */
 				const baseParts = uri.slice(1).split(':')
@@ -793,62 +827,67 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 				const provider = baseParts[0] as (typeof GitRepoSupporter)['Providers'][number]
 
 				switch (provider) {
-					case 'github': {
-						const path = baseParts[1].split('/')
-						let branch = 'main'
-						if (path[1].includes('@')) {
-							[path[1], branch] = path[1].split('@')
+					case 'github':
+						{
+							const path = baseParts[1].split('/')
+							let branch = 'main'
+							if (path[1].includes('@')) {
+								;[path[1], branch] = path[1].split('@')
+							}
+							actualUri = `https://github.com/${path[0]}/${
+								path[1]
+							}/archive/refs/heads/${branch}.tar.gz`
+							if (path.length > 2) {
+								pathed = path.slice(2)
+							}
 						}
-						actualUri = `https://github.com/${path[0]}/${path[1]}/archive/refs/heads/${branch}.tar.gz`
-						if (path.length > 2) {
-							pathed = path.slice(2)
+						break
+					case 'gitlab':
+						{
+							const instance = baseParts.length === 2
+								? GitRepoSupporter.defaultDomain(provider)
+								: baseParts[1]
+							const path = baseParts.length === 2
+								? baseParts[1].split('/')
+								: baseParts[2].split('/')
+							let branch = 'main'
+							if (path[1].includes('@')) {
+								;[path[1], branch] = path[1].split('@')
+							}
+							actualUri = `https://${instance}/${path[0]}/${path[1]}/-/archive/${branch}/${
+								path[1]
+							}-${branch}.tar.gz`
+							if (path.length > 2) {
+								pathed = path.slice(2)
+							}
 						}
-					} break
-					case 'gitlab': {
-						const instance = baseParts.length === 2 ? GitRepoSupporter.defaultDomain(provider) : baseParts[1]
-						const path = baseParts.length === 2 ? baseParts[1].split('/') : baseParts[2].split('/')
-						let branch = 'main'
-						if (path[1].includes('@')) {
-							[path[1], branch] = path[1].split('@')
+						break
+					case 'gitea':
+						{
+							const instance = baseParts.length === 2
+								? GitRepoSupporter.defaultDomain(provider)
+								: baseParts[1]
+							const path = baseParts.length === 2
+								? baseParts[1].split('/')
+								: baseParts[2].split('/')
+							let branch = 'main'
+							if (path[1].includes('@')) {
+								;[path[1], branch] = path[1].split('@')
+							}
+							actualUri = `https://${instance}/${path[0]}/${
+								path[1]
+							}/archive/${branch}.tar.gz`
+							if (path.length > 2) {
+								pathed = path.slice(2)
+							}
 						}
-						actualUri = `https://${instance}/${path[0]}/${path[1]}/-/archive/${branch}/${path[1]}-${branch}.tar.gz`
-						if (path.length > 2) {
-							pathed = path.slice(2)
-						}
-					} break
-					case 'gitea': {
-						const instance = baseParts.length === 2 ? GitRepoSupporter.defaultDomain(provider) : baseParts[1]
-						const path = baseParts.length === 2 ? baseParts[1].split('/') : baseParts[2].split('/')
-						let branch = 'main'
-						if (path[1].includes('@')) {
-							[path[1], branch] = path[1].split('@')
-						}
-						actualUri = `https://${instance}/${path[0]}/${path[1]}/archive/${branch}.tar.gz`
-						if (path.length > 2) {
-							pathed = path.slice(2)
-						}
-					} break
-					case 'srht': {
-						const instance = baseParts.length === 2 ? GitRepoSupporter.defaultDomain(provider) : baseParts[1]
-						const path = baseParts.length === 2 ? baseParts[1].split('/') : baseParts[2].split('/')
-						let branch = 'main'
-						if (path[1].includes('@')) {
-							[path[1], branch] = path[1].split('@')
-						}
-						if (path[0].startsWith('~')) {
-							path[0] = path[0].slice(1)
-						}
-						actualUri = `https://${instance}/~${path[0]}/${path[1]}/archive/${branch}.tar.gz`
-						if (path.length > 2) {
-							pathed = path.slice(2)
-						}
-					} break
+						break
 				}
 
 				const url = new URL(actualUri)
 				const { hostname, pathname } = url
 				const path = pathname.split('/').slice(1)
-				
+
 				if (pathed) {
 					for (const _path of pathed) {
 						path.splice(path.length - 2, 0, _path)
@@ -869,14 +908,14 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 							const files = await externals.archive.decompressBall(buffer)
 
 							const newFiles: DecompressedFile[] = []
-							
+
 							for (const file of files) {
 								const newRoot = pathed.join('/')
 								if (file.path.startsWith(newRoot)) {
 									newFiles.push({
 										...file,
 										// TODO: ensure this is correct
-										path: file.path.replace(newRoot, '')
+										path: file.path.replace(newRoot, ''),
 									})
 								}
 							}

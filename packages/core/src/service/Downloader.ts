@@ -211,7 +211,11 @@ export const GitHubApiDownloadOptions = {
 	headers: { Accept: 'application/vnd.github.v3+json', 'User-Agent': 'SpyglassMC' },
 } as const
 
-export function getCacheOptionsBasedOnGitHubCommitSha(owner: string, repo: string, ref: string): DownloaderCache {
+export function getCacheOptionsBasedOnGitHubCommitSha(
+	owner: string,
+	repo: string,
+	ref: string,
+): DownloaderCache {
 	return {
 		checksumExtension: '.commit-sha' as const,
 		checksumJob: {
@@ -238,11 +242,17 @@ type GitLabBranchResponse = { message: string } | {
 	commit: { id: string }
 }
 
-export function getCacheOptionsBasedOnGitLabCommitSha(instance: string, owner: string, repo: string, branch: string): DownloaderCache {
+export function getCacheOptionsBasedOnGitLabCommitSha(
+	instance: string,
+	owner: string,
+	repo: string,
+	branch: string,
+): DownloaderCache {
 	return {
 		checksumExtension: '.commit-sha' as const,
 		checksumJob: {
-			uri: `https://${instance}/api/v4/projects/${owner}%2F${repo}/repository/branches/${branch}` as const,
+			uri:
+				`https://${instance}/api/v4/projects/${owner}%2F${repo}/repository/branches/${branch}` as const,
 			transformer: (buffer: Uint8Array) => {
 				const response = JSON.parse(bufferToString(buffer)) as GitLabBranchResponse
 				if (response.message === undefined && response.name === branch) {
@@ -267,7 +277,12 @@ type GiteaContentListResponse = { message: string } | {
  *  if this fails for some Gitea instances I apologize lol,
  *  if you know how to differentiate or base this on Git instead please contribute.
  */
-export function getCacheOptionsBasedOnGiteaCommitSha(instance: string, owner: string, repo: string, ref: string): DownloaderCache {
+export function getCacheOptionsBasedOnGiteaCommitSha(
+	instance: string,
+	owner: string,
+	repo: string,
+	ref: string,
+): DownloaderCache {
 	return {
 		checksumExtension: '.commit-sha' as const,
 		checksumJob: {
@@ -278,69 +293,6 @@ export function getCacheOptionsBasedOnGiteaCommitSha(instance: string, owner: st
 					return response.last_commit_sha
 				} else {
 					throw new Error(response.message)
-				}
-			},
-			ttl: DownloaderTtl,
-		},
-	}
-}
-
-/**
- * This scrapes because the sourcehut API requires authentication and I don't feel like adding a proxy to our infra.
- * 
- * This probably won't work in the web-ported version of the extension due to CORS
- */
-export function getCacheOptionsBasedOnSourcehutCommitSha(instance: string, owner: string, repo: string, branch: string): DownloaderCache {
-	return {
-		checksumExtension: '.commit-sha' as const,
-		checksumJob: {
-			uri: `https://${instance}/${owner}/${repo}/log/${branch}` as const,
-			options: {
-				headers: {
-					accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/jxl,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-					'accept-encoding': 'gzip, deflate, br, zstd',
-					'accept-language': 'en-US,en;q=0.9',
-					'cache-control': 'max-age=0',
-					dnt: '1',
-					priority: 'u=0, i',
-					'sec-ch-ua': '"Not?A_Brand";v="99", "Chromium";v="130"',
-					'sec-ch-ua-mobile': '?0',
-					'sec-ch-ua-platform': 'Windows',
-					'sec-fetch-dest': 'document',
-					'sec-fetch-mode': 'navigate',
-					'sec-fetch-site': 'none',
-					'sec-fetch-user': '?0',
-					'upgrade-insecure-requests': '1',
-					'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
-				}
-			},
-			transformer: (buffer: Uint8Array) => {
-				const response = bufferToString(buffer)
-				
-				if (response.includes('<h2>404 Not Found</h2>')) {
-					throw new Error(`Sourcehut responded with a 404 for $srht:${instance}:${owner}/${repo}@${branch}`)
-				} else {
-					const linkTitlesIterator = response.matchAll(/title="(.+)"/g)
-
-					let commitSHA: undefined | string = undefined
-
-					if (linkTitlesIterator !== undefined) {
-						let found = false
-						while(!found) {
-							const linkTitle = linkTitlesIterator.next()
-
-							if (linkTitle !== undefined && Array.isArray(linkTitle) && linkTitle[1]?.length === 40 && !linkTitle[1].includes(' ')) {
-								found = true
-								commitSHA = linkTitle[1]
-							}
-						}
-					}
-
-					if (commitSHA !== undefined) {
-						return commitSHA
-					} else {
-						throw new Error(`Failed to find latest commit SHA for Sourcehut repo $srht:${instance}:${owner}/${repo}@${branch}`)
-					}
 				}
 			},
 			ttl: DownloaderTtl,
