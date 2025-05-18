@@ -3,10 +3,8 @@
 import type { DecompressedFile, Externals, Logger } from '../common/index.js'
 import { RemoteUriString, Uri } from '../common/index.js'
 import { TwoWayMap } from '../common/TwoWayMap.js'
-import type {
-	Downloader,
-	DownloaderCache,
-	DownloaderDownloadOut,
+import type { Downloader, DownloaderCache, DownloaderDownloadOut } from '../index.js'
+import {
 	getCacheOptionsBasedOnGiteaCommitSha,
 	getCacheOptionsBasedOnGitHubCommitSha,
 	getCacheOptionsBasedOnGitLabCommitSha,
