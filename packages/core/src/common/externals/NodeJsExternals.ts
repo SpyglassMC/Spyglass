@@ -1,5 +1,4 @@
 // https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/60592
-import chokidar from 'chokidar'
 import decompress from 'decompress'
 import followRedirects from 'follow-redirects'
 import { Buffer } from 'node:buffer'
@@ -19,7 +18,7 @@ import type {
 	ExternalDownloaderOptions,
 	RemoteUriString,
 } from './downloader.js'
-import type { Externals, FsLocation, FsWatcher } from './index.js'
+import type { Externals, FsLocation } from './index.js'
 
 const { http, https } = followRedirects
 const gunzip = promisify(zlib.gunzip)
@@ -114,14 +113,6 @@ export const NodeJsExternals: Externals = {
 		unlink(location) {
 			return fsp.unlink(toFsPathLike(location))
 		},
-		watch(locations, { usePolling = false } = {}) {
-			return new ChokidarWatcherWrapper(
-				chokidar.watch(locations.map(toPath), {
-					usePolling,
-					disableGlobbing: true,
-				}),
-			)
-		},
 		writeFile(location, data, options) {
 			return fsp.writeFile(toFsPathLike(location), data, options)
 		},
@@ -134,11 +125,6 @@ Object.freeze(NodeJsExternals)
  * @returns A {@link fs.PathLike}.
  */
 function toFsPathLike(path: FsLocation): fs.PathLike {
-	if (path instanceof Uri) {
-		// Convert WHATWG URL to string so that it will be converted
-		// to Node.js URL by the next if-block.
-		path = path.toString()
-	}
 	if (typeof path === 'string' && path.startsWith('file:')) {
 		return new url.URL(path)
 	}
@@ -152,24 +138,4 @@ function toPath(path: FsLocation): string {
 	return uriToPath(path)
 }
 
-const uriToPath = (uri: string | Uri) =>
-	url.fileURLToPath(uri instanceof Uri ? new url.URL(uri.toString()) : uri)
-const uriFromPath = (path: string) => url.pathToFileURL(path).toString()
-
-class ChokidarWatcherWrapper extends EventEmitter implements FsWatcher {
-	readonly #watcher: chokidar.FSWatcher
-
-	constructor(watcher: chokidar.FSWatcher) {
-		super()
-		this.#watcher = watcher
-			.on('ready', () => this.emit('ready'))
-			.on('add', (path) => this.emit('add', uriFromPath(path)))
-			.on('change', (path) => this.emit('change', uriFromPath(path)))
-			.on('unlink', (path) => this.emit('unlink', uriFromPath(path)))
-			.on('error', (e) => this.emit('error', e))
-	}
-
-	close(): Promise<void> {
-		return this.#watcher.close()
-	}
-}
+const uriToPath = (uri: string | Uri) => url.fileURLToPath(uri)
