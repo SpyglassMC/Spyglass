@@ -145,7 +145,7 @@ export class UriStore {
 		const [protocol, host, ...segments] = parts
 		const pathname = `/${segments.map(encodeURIComponent).join('/')}`
 		const trailingSlash = isDir && segments.length ? '/' : ''
-		return `${protocol}${host === 'localhost' ? '' : host}${pathname}${trailingSlash}`
+		return `${protocol}//${host === 'localhost' ? '' : host}${pathname}${trailingSlash}`
 	}
 
 	/**
