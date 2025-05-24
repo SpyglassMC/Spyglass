@@ -17,11 +17,12 @@
     "build": {
       "command": "node esbuild.mjs prod",
       "dependencies": [
-        "../..:build:packages"
+        "../..:build:packages",
+        "../language-server:build"
       ],
       "files": [
         "out/extension.mjs",
-        "../language-server/lib/server.js"
+        "../language-server/dist/server.js"
       ],
       "output": [
         "dist/extension.js",
@@ -31,11 +32,12 @@
     "build:dev": {
       "command": "node esbuild.mjs dev",
       "dependencies": [
-        "../..:build:packages"
+        "../..:build:packages",
+        "../language-server:build"
       ],
       "files": [
         "out/extension.mjs",
-        "../language-server/lib/server.js"
+        "../language-server/dist/server.js"
       ],
       "output": [
         "dist/extension.js",

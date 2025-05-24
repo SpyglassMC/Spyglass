@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import esbuild from 'esbuild'
-import { copyFile } from 'fs/promises';
 
 try {
 	const mode = process.argv[2]
@@ -11,9 +10,9 @@ try {
 	const isDev = mode !== 'prod'
 	console.info('Start building...')
 	const result = await esbuild.build({
-		entryPoints: ['./out/extension.mjs'],
+		entryPoints: ['./lib/server.js'],
 		entryNames: '[name]',
-		format: 'cjs', // https://github.com/microsoft/vscode/issues/130367
+		format: 'esm',
 		platform: 'node',
 		target: 'node16.13',
 		bundle: true,
@@ -26,9 +25,6 @@ try {
 		minify: !isDev,
 	})
 	logResult(result)
-
-	await copyFile('../language-server/dist/server.js', './dist/server.js')
-	console.info('Copied language server bundle successfully.')
 } catch (e) {
 	console.error(e)
 	process.exitCode = 1
