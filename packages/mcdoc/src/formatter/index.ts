@@ -22,8 +22,6 @@ import type {
 
 // These formatters operate under the assumption that each AST node's children are in the same order as they appear when formatted.
 
-// TODO: Better formatter for CommentNode: Use correct prefix
-
 function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 	node: DeepReadonly<TNode>,
 	ctx: FormatterContext,
