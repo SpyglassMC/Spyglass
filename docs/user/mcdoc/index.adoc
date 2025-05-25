@@ -3,4 +3,53 @@
 :page-parent: Home
 :page-has_children: true
 
-Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs.
+:toc:
+
+Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs. It is a custom language that is interpreted by the Spyglass language server.
+
+The entirety of vanilla Minecraft is documented at the https://github.com/SpyglassMC/vanilla-mcdoc[vanilla-mcdoc] repository. This is a great place to look to learn about the syntax beyond this documentation!
+
+== Writing Your Own
+
+Any file with the `.mcdoc` extension will be picked up by Spyglass. If you start having multiple mcdoc files, it can be helpful to organize them in a `mcdoc/` folder in your pack root, but this is not required.
+
+Defining an mcdoc type is pretty straightforward:
+
+[source,mcdoc]
+----
+use ::java::util::text::Text
+use ::java::world::item::ItemStack
+
+struct MyQuest {
+	type: string,
+	prompt: Text,
+	/// The item given to the player when completing the quest.
+	reward_item?: ItemStack,
+}
+----
+
+The above example describes a type `MyQuest`, which is an object or compound (in mcdoc this is called a struct). The struct has 3 fields. Two required fields `type` and `prompt`. One optional field `reward_item` (indicated by the `?:` field separator).
+
+Fields can have doc comments. These are comments above the field starting with `///` and will be shown as a description of fields during autocomplete and hover interactions.
+
+At the top of the file you can see `use` statements. These can import types from other files. The example imports types from vanilla-mcdoc using the absolute path of the struct. If the above file was placed in `quests.mcdoc`, the absolute path of the struct type would be `::quests::MyQuest`.
+
+== Dispatching Types
+
+A type on its own isn't very useful. We need to tell Spyglass where this type is used in the data pack. This is where dispatchers are used.
+
+[source,mcdoc]
+----
+dispatch minecraft:storage[example:quests] to struct QuestsStorage {
+	available?: [MyQuest],
+}
+----
+
+This `dispatch` statement tells Spyglass that the storage `example:quests` should have the type `QuestsStorage`, which in turn can reference other types in the file.
+
+Writing the following line in function file, you will notice that Spyglass suggests fields and gives errors for missing required fields:
+
+[source,mcfunction]
+----
+data merge storage example:quests {available:[{ }]}
+----

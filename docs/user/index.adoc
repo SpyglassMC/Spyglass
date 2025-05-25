@@ -39,18 +39,6 @@ Planned.
 
 Planned.
 
-== Customization
-
-Main article: link:./user/config[Config]
-
-== Mcdoc
-
-Main article: link:./user/mcdoc[Mcdoc]
-
-== Playground
-
-Click link:./playground[here].
-
 == Contributing
 
 * {link-github-repo}/issues/new/choose[Create an issue]

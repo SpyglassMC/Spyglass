@@ -5,8 +5,6 @@
 
 :toc:
 
-Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs.
-
 This document defines the syntax and semantics of the mcdoc format.
 
 == Project root
