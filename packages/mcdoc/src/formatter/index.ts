@@ -17,10 +17,19 @@ import type {
 	StructBlockNode,
 	StructNode,
 	StructPairFieldNode,
+	StructSpreadFieldNode,
 	TypedNumberNode,
 } from '../node'
 
 // These formatters operate under the assumption that each AST node's children are in the same order as they appear when formatted.
+// 		With the exception of comments, because those can be moved to the parent if they're at odd locations
+// 		(for example a comment between the identifier and '{' of a struct will be moved to before the struct).
+
+const nodeTypesAllowingComments = new Set<string>([
+	'mcdoc:module',
+	'mcdoc:struct/block',
+	'mcdoc:doc_comments',
+])
 
 function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 	node: DeepReadonly<TNode>,
@@ -33,7 +42,15 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 		}
 	},
 ): string {
-	return node.children.map((child) => {
+	const allowsComments = nodeTypesAllowingComments.has(node.type)
+	const children = allowsComments ? liftChildComments(node.children) : node.children
+
+	return children.map((child) => {
+		if (child.type === 'comment' && !allowsComments) {
+			// Don't format comments if the type doesn't allow them.
+			// A parent type that does allow comments should have already included them.
+			return ''
+		}
 		const info = childFormatInfo[child.type as keyof typeof childFormatInfo]
 		const value = ctx.meta.getFormatter(child.type)(
 			child,
@@ -44,10 +61,47 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 	}).join('')
 }
 
+function liftChildComments(
+	children: DeepReadonly<AstNode[]>,
+): DeepReadonly<AstNode>[] {
+	// Get mutable children list so comments from children that don't allow comments can be added to the list.
+	const mutableChildren = [...children]
+	for (let i = 0; i < mutableChildren.length; i++) {
+		const child = mutableChildren[i]
+		const comments = findComments(child)
+		// Add comments and advance i to not iterate over them again
+		mutableChildren.splice(i, 0, ...comments)
+		i += comments.length
+	}
+	return mutableChildren
+}
+
+function findComments(node: DeepReadonly<AstNode>): DeepReadonly<AstNode>[] {
+	if (!node.children) {
+		return []
+	}
+	return node.children.flatMap((child) => {
+		if (child.type === 'comment') {
+			return [child]
+		}
+		if (nodeTypesAllowingComments.has(child.type)) {
+			// The child will format its own comments, so we don't need to lift them.
+			return []
+		}
+		return findComments(child)
+	})
+}
+
 const module: Formatter<ModuleNode> = (node, ctx) => {
-	return node.children.map((child) => {
-		return ctx.meta.getFormatter(child.type)(child, ctx)
-	}).join('\n\n') // With an empty line between each child
+	return liftChildComments(node.children).map((child) => {
+		const formatted = ctx.meta.getFormatter(child.type)(child, ctx)
+		if (child.type !== 'comment') {
+			// With an empty line between each non-comment child
+			// (comments don't have them, because they probably refer to the next child)
+			return `${formatted}\n`
+		}
+		return formatted
+	}).join('\n')
 }
 
 const struct: Formatter<StructNode> = (node, ctx) => {
@@ -82,7 +136,6 @@ const structPairField: Formatter<StructPairFieldNode> = (node, ctx) => {
 const attribute: Formatter<AttributeNode> = (node, ctx) => {
 	const hasTypeValue = node.children.some(child => child.type.startsWith('mcdoc:type/'))
 	return formatChildren(node, ctx, {
-		'comment': { suffix: '\n' },
 		'mcdoc:identifier': { prefix: '#[', suffix: hasTypeValue ? '=' : '' },
 	}) + ']'
 }
