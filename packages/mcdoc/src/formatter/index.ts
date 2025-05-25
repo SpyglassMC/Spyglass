@@ -469,8 +469,9 @@ const docComments: Formatter<DocCommentsNode> = (node, ctx) => {
 	if (node.children.length === 0) {
 		return ''
 	}
-	// No need to add new lines, because DocCommentNodes include them
-	return formatChildren(node, ctx, {})
+	return formatChildren(node, ctx, {
+		comment: { suffix: ctx.indent() }, // No need to add new lines, because DocCommentNodes include them
+	})
 }
 
 export function registerMcdocFormatter(meta: MetaRegistry): void {
