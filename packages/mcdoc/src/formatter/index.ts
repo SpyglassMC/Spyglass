@@ -6,7 +6,6 @@ import type {
 	MetaRegistry,
 } from '@spyglassmc/core'
 import { indentFormatter } from '@spyglassmc/core'
-import { kStringMaxLength } from 'buffer'
 import { node } from 'webpack'
 import type {
 	AnyTypeNode,
