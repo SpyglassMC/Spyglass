@@ -400,7 +400,7 @@ exports['nbt list() Parse "" 1'] = {
   ]
 }
 
-exports['nbt list() Parse "["string", 1b]" 1'] = {
+exports['nbt list() Parse "["string", 1b]" in 1.21.4 1'] = {
   "node": {
     "type": "nbt:list",
     "range": {
@@ -501,6 +501,100 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
       "severity": 3
     }
   ]
+}
+
+exports['nbt list() Parse "["string", 1b]" in 1.21.5 1'] = {
+  "node": {
+    "type": "nbt:list",
+    "range": {
+      "start": 0,
+      "end": 14
+    },
+    "children": [
+      {
+        "type": "item",
+        "range": {
+          "start": 1,
+          "end": 10
+        },
+        "children": [
+          {
+            "type": "nbt:string",
+            "range": {
+              "start": 1,
+              "end": 9
+            },
+            "value": "string",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                }
+              }
+            ],
+            "quote": "\""
+          }
+        ],
+        "value": {
+          "type": "nbt:string",
+          "range": {
+            "start": 1,
+            "end": 9
+          },
+          "value": "string",
+          "valueMap": [
+            {
+              "inner": {
+                "start": 0,
+                "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
+              }
+            }
+          ],
+          "quote": "\""
+        },
+        "sep": {
+          "start": 9,
+          "end": 10
+        }
+      },
+      {
+        "type": "item",
+        "range": {
+          "start": 11,
+          "end": 13
+        },
+        "children": [
+          {
+            "type": "nbt:byte",
+            "range": {
+              "start": 11,
+              "end": 13
+            },
+            "value": 1
+          }
+        ],
+        "value": {
+          "type": "nbt:byte",
+          "range": {
+            "start": 11,
+            "end": 13
+          },
+          "value": 1
+        }
+      }
+    ],
+    "valueType": "nbt:string"
+  },
+  "errors": []
 }
 
 exports['nbt list() Parse "["string"]" 1'] = {

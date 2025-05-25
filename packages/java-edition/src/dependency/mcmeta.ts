@@ -1,14 +1,20 @@
 import * as core from '@spyglassmc/core'
-import type { PackMcmeta, ReleaseVersion, VersionInfo } from './common.js'
+import type { TypeDefSymbolData } from '@spyglassmc/mcdoc/lib/binder/index.js'
+import type { PackInfo, VersionInfo } from './common.js'
+import { ReleaseVersion } from './common.js'
+
+// DOCS: Update this when a new snapshot cycle begins
+export const NEXT_RELEASE_VERSION = '1.21.6'
 
 /**
  * @param inputVersion {@link core.Config.env.gameVersion}
  */
-export async function resolveConfiguredVersion(
+export function resolveConfiguredVersion(
 	inputVersion: string,
 	versions: McmetaVersions,
-	getPackMcmeta: () => Promise<PackMcmeta | undefined>,
-): Promise<VersionInfo> {
+	packs: PackInfo[],
+	logger: core.Logger,
+): VersionInfo {
 	function findReleaseTarget(version: McmetaVersion): string {
 		if (version.release_target) {
 			return version.release_target
@@ -22,11 +28,12 @@ export async function resolveConfiguredVersion(
 				return versions[i].id
 			}
 		}
-		// DOCS: Update this when a new snapshot cycle begins
-		return '1.21'
+		return NEXT_RELEASE_VERSION
 	}
 
-	function toVersionInfo(version: McmetaVersion | undefined): VersionInfo {
+	function toVersionInfo(
+		version: McmetaVersion | undefined,
+	): VersionInfo {
 		version = version ?? versions[0]
 		return {
 			id: version.id,
@@ -40,45 +47,83 @@ export async function resolveConfiguredVersion(
 		throw new Error('mcmeta version list is empty')
 	}
 
+	// This should never happen, but for some reason happens sometimes
+	// https://github.com/SpyglassMC/Spyglass/issues/1621
+	if (inputVersion === undefined) {
+		logger.warn('[resolveConfiguredVersion] Input version was undefined! Falling back to "auto"')
+		inputVersion = 'auto'
+	}
 	inputVersion = inputVersion.toLowerCase()
+
 	versions = versions.sort((a, b) => b.data_version - a.data_version)
 	const latestRelease = versions.find((v) => v.type === 'release')
 	if (inputVersion === 'auto') {
-		const packMcmeta = await getPackMcmeta()
-		if (packMcmeta && latestRelease) {
-			// If the pack format is larger than the latest release, use the latest snapshot
-			if (packMcmeta.pack.pack_format > latestRelease.data_pack_version) {
-				return toVersionInfo(versions[0])
-			}
-			// Look for versions from recent to oldest, picking the most recent release that matches
-			let oldestRelease = undefined
-			for (const version of versions) {
-				if (version.type === 'release') {
-					// If we already passed the pack format, use the oldest release so far
-					if (packMcmeta.pack.pack_format > version.data_pack_version) {
-						return toVersionInfo(oldestRelease)
-					}
-					if (packMcmeta.pack.pack_format === version.data_pack_version) {
-						return toVersionInfo(version)
-					}
-					oldestRelease = version
-				}
-			}
-			// If the pack format is still lower, use the oldest known release version
-			return toVersionInfo(oldestRelease)
+		if (packs.length === 0) {
+			// Fall back to the latest release if pack mcmeta is not available
+			logger.info(
+				`[resolveConfiguredVersion] No pack format detected, selecting latest release ${latestRelease?.id}`,
+			)
+			return toVersionInfo(latestRelease)
 		}
-		// Fall back to the latest release if pack mcmeta is not available
-		return toVersionInfo(latestRelease)
+		packs.sort((a, b) => b.format - a.format)
+		const maxData = packs.filter(p => p.type === 'data')[0]
+		const maxAssets = packs.filter(p => p.type === 'assets')[0]
+		// Look for versions from recent to oldest, picking the most recent release that matches
+		let oldestRelease = versions[0]
+		const releases = versions.filter(v => v.type === 'release')
+		for (const version of releases) {
+			// If we already passed the pack format, use the oldest release so far
+			if (maxData && maxData.format > version.data_pack_version) {
+				logger.info(
+					`[resolveConfiguredVersion] Detected data pack format ${maxData.format} in ${maxData.packRoot}, selecting version ${oldestRelease.id}`,
+				)
+				return toVersionInfo(oldestRelease)
+			}
+			if (maxAssets && maxAssets.format > version.resource_pack_version) {
+				logger.info(
+					`[resolveConfiguredVersion] Detected resource pack format ${maxAssets.format} in ${maxAssets.packRoot}, selecting version ${oldestRelease.id}`,
+				)
+				return toVersionInfo(oldestRelease)
+			}
+			if (maxData && maxData.format === version.data_pack_version) {
+				logger.info(
+					`[resolveConfiguredVersion] Detected data pack format ${maxData.format} in ${maxData.packRoot}, selecting version ${version.id}`,
+				)
+				return toVersionInfo(version)
+			}
+			if (maxAssets && maxAssets.format === version.resource_pack_version) {
+				logger.info(
+					`[resolveConfiguredVersion] Detected resource pack format ${maxAssets.format} in ${maxAssets.packRoot}, selecting version ${version.id}`,
+				)
+				return toVersionInfo(version)
+			}
+			oldestRelease = version
+		}
+		// If the pack format is still lower, use the oldest known release version
+		logger.info(
+			`[resolveConfiguredVersion] Detected pack format too low, selecting oldest supported release ${oldestRelease?.id}`,
+		)
+		return toVersionInfo(oldestRelease)
 	} else if (inputVersion === 'latest release') {
+		logger.info(
+			`[resolveConfiguredVersion] Using config "${inputVersion}", selecting version ${latestRelease?.id}`,
+		)
 		return toVersionInfo(latestRelease)
 	} else if (inputVersion === 'latest snapshot') {
+		logger.info(
+			`[resolveConfiguredVersion] Using config "${inputVersion}", selecting version ${
+				versions[0]?.id
+			}`,
+		)
 		return toVersionInfo(versions[0])
 	}
-	return toVersionInfo(
-		versions.find((v) =>
-			inputVersion === v.id.toLowerCase() || inputVersion === v.name.toLowerCase()
-		),
+	const configVersion = versions.find((v) =>
+		inputVersion === v.id.toLowerCase() || inputVersion === v.name.toLowerCase()
 	)
+	logger.info(
+		`[resolveConfiguredVersion] Using config "${inputVersion}", selecting version ${configVersion?.id}`,
+	)
+	return toVersionInfo(configVersion)
 }
 
 const DataSources: Partial<Record<string, string>> = {
@@ -117,7 +162,10 @@ export function getMcmetaSummaryUris(
 	}
 }
 
-export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
+export function symbolRegistrar(
+	summary: McmetaSummary,
+	release: ReleaseVersion,
+): core.SymbolRegistrar {
 	const McmetaSummaryUri = 'mcmeta://summary/registries.json'
 
 	/**
@@ -160,6 +208,57 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 				},
 			)
 		}
+
+		const stateTypes = { block: summary.blocks, fluid: summary.fluids }
+		for (const [type, states] of Object.entries(stateTypes)) {
+			symbols.query(McmetaSummaryUri, 'mcdoc/dispatcher', `mcdoc:${type}_states`)
+				.enter({ usage: { type: 'declaration' } })
+				.onEach(Object.entries(states), ([id, [properties]], query) => {
+					const data: TypeDefSymbolData = {
+						typeDef: {
+							kind: 'struct',
+							fields: Object.entries(properties).map(([propKey, propValues]) => ({
+								kind: 'pair',
+								key: propKey,
+								optional: true,
+								type: {
+									kind: 'union',
+									members: propValues.map(value => ({
+										kind: 'literal',
+										value: { kind: 'string', value },
+									})),
+								},
+							})),
+						},
+					}
+					query.member(id, (stateQuery) => {
+						stateQuery.enter({
+							data: { data },
+							usage: { type: 'declaration' },
+						})
+					})
+				})
+
+			symbols.query(McmetaSummaryUri, 'mcdoc/dispatcher', `mcdoc:${type}_state_keys`)
+				.enter({ usage: { type: 'declaration' } })
+				.onEach(Object.entries(states), ([id, [properties]], query) => {
+					const data: TypeDefSymbolData = {
+						typeDef: {
+							kind: 'union',
+							members: Object.keys(properties).map(propKey => ({
+								kind: 'literal',
+								value: { kind: 'string', value: propKey },
+							})),
+						},
+					}
+					query.member(id, (stateQuery) => {
+						stateQuery.enter({
+							data: { data },
+							usage: { type: 'declaration' },
+						})
+					})
+				})
+		}
 	}
 
 	function addRegistriesSymbols(registries: McmetaRegistries, symbols: core.SymbolUtil) {
@@ -180,8 +279,16 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 	}
 
 	function addBuiltinSymbols(symbols: core.SymbolUtil) {
-		symbols.query(McmetaSummaryUri, 'loot_table', 'minecraft:empty')
+		if (ReleaseVersion.cmp(release, '1.21.2') < 0) {
+			symbols.query(McmetaSummaryUri, 'loot_table', 'minecraft:empty')
+				.enter({ usage: { type: 'declaration' } })
+		}
+		symbols.query(McmetaSummaryUri, 'model', 'minecraft:builtin/generated')
 			.enter({ usage: { type: 'declaration' } })
+		if (ReleaseVersion.cmp(release, '1.21.4') < 0) {
+			symbols.query(McmetaSummaryUri, 'model', 'minecraft:builtin/entity')
+				.enter({ usage: { type: 'declaration' } })
+		}
 	}
 
 	return (symbols) => {

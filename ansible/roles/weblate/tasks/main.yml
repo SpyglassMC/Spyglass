@@ -1,0 +1,86 @@
+- name: Install packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - git
+      - restic
+
+- name: Clone weblate-docker
+  ansible.builtin.git:
+    repo: https://github.com/WeblateOrg/docker-compose.git
+    dest: '{{ weblate_docker_project_src }}'
+    version: main
+  notify: Restart weblate
+
+- name: Create override settings
+  ansible.builtin.template:
+    src: docker-compose.override.yml
+    dest: '{{ weblate_docker_project_src }}/docker-compose.override.yml'
+    mode: '600'
+  notify: Restart weblate
+
+- name: Start service
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: '{{ weblate_docker_project_src }}'
+
+- name: Create nginx reverse proxy
+  become: true
+  ansible.builtin.template:
+    src: weblate.conf
+    dest: /etc/nginx/conf.d/weblate.conf
+    mode: '644'
+  notify: Reload nginx
+
+- name: Create backup script directory
+  become: true
+  ansible.builtin.file:
+    path: /home/ansible/weblate-backup
+    state: directory
+    owner: root
+    group: root
+    mode: '755'
+
+- name: Create backup environment variables
+  become: true
+  ansible.builtin.template:
+    src: env.sh
+    dest: /home/ansible/weblate-backup/env.sh
+    owner: root
+    group: root
+    mode: '700'
+
+- name: Create backup script
+  become: true
+  ansible.builtin.template:
+    src: backup.sh
+    dest: /home/ansible/weblate-backup/backup.sh
+    owner: root
+    group: root
+    mode: '744'
+
+- name: Create restic repository
+  become: true
+  block:
+    - name: Check config of restic repository
+      ansible.builtin.shell:
+        chdir: /home/ansible/weblate-backup/
+        cmd: . env.sh; restic cat config
+        executable: bash
+      changed_when: false
+  rescue:
+    - name: Create repository
+      ansible.builtin.shell:
+        chdir: /home/ansible/weblate-backup/
+        cmd: . env.sh; restic init
+        executable: bash
+      changed_when: true
+
+- name: Add backup script to cron
+  become: true
+  ansible.builtin.cron:
+    name: ansible_weblate_backup
+    cron_file: ansible_weblate_backup
+    user: root
+    special_time: daily
+    job: /home/ansible/weblate-backup/backup.sh

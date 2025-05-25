@@ -23,7 +23,7 @@ exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in versio
       },
       "children": [
         {
-          "type": "pair",
+          "type": "mcfunction:component",
           "range": {
             "start": 6,
             "end": 11
@@ -51,7 +51,11 @@ exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in versio
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 6,
+        "end": 11
+      }
     }
   },
   "errors": [
@@ -82,6 +86,241 @@ exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in versio
   ]
 }
 
+exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in version 1.21 1'] = {
+  "node": {
+    "type": "mcfunction:item_stack",
+    "range": {
+      "start": 0,
+      "end": 12
+    },
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "path": [
+        "apple"
+      ]
+    },
+    "components": {
+      "type": "mcfunction:component_list",
+      "range": {
+        "start": 5,
+        "end": 12
+      },
+      "children": [
+        {
+          "type": "mcfunction:component_removal",
+          "range": {
+            "start": 6,
+            "end": 11
+          },
+          "children": [
+            {
+              "type": "literal",
+              "range": {
+                "start": 6,
+                "end": 7
+              },
+              "value": "!"
+            },
+            {
+              "type": "resource_location",
+              "range": {
+                "start": 7,
+                "end": 11
+              },
+              "path": [
+                "food"
+              ]
+            }
+          ],
+          "prefix": {
+            "type": "literal",
+            "range": {
+              "start": 6,
+              "end": 7
+            },
+            "value": "!"
+          },
+          "key": {
+            "type": "resource_location",
+            "range": {
+              "start": 7,
+              "end": 11
+            },
+            "path": [
+              "food"
+            ]
+          }
+        }
+      ],
+      "innerRange": {
+        "start": 6,
+        "end": 11
+      }
+    }
+  },
+  "errors": []
+}
+
+exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreakable={},rarity=epic]" in version 1.21 1'] = {
+  "node": {
+    "type": "mcfunction:item_stack",
+    "range": {
+      "start": 0,
+      "end": 43
+    },
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 15
+      },
+      "path": [
+        "diamond_pickaxe"
+      ]
+    },
+    "components": {
+      "type": "mcfunction:component_list",
+      "range": {
+        "start": 15,
+        "end": 43
+      },
+      "children": [
+        {
+          "type": "mcfunction:component",
+          "range": {
+            "start": 16,
+            "end": 30
+          },
+          "children": [
+            {
+              "type": "resource_location",
+              "range": {
+                "start": 16,
+                "end": 27
+              },
+              "path": [
+                "unbreakable"
+              ]
+            },
+            {
+              "type": "nbt:compound",
+              "range": {
+                "start": 28,
+                "end": 30
+              },
+              "children": [],
+              "innerRange": {
+                "start": 29,
+                "end": 29
+              }
+            }
+          ],
+          "key": {
+            "type": "resource_location",
+            "range": {
+              "start": 16,
+              "end": 27
+            },
+            "path": [
+              "unbreakable"
+            ]
+          },
+          "value": {
+            "type": "nbt:compound",
+            "range": {
+              "start": 28,
+              "end": 30
+            },
+            "children": [],
+            "innerRange": {
+              "start": 29,
+              "end": 29
+            }
+          }
+        },
+        {
+          "type": "mcfunction:component",
+          "range": {
+            "start": 31,
+            "end": 42
+          },
+          "children": [
+            {
+              "type": "resource_location",
+              "range": {
+                "start": 31,
+                "end": 37
+              },
+              "path": [
+                "rarity"
+              ]
+            },
+            {
+              "type": "nbt:string",
+              "range": {
+                "start": 38,
+                "end": 42
+              },
+              "value": "epic",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 38,
+                    "end": 38
+                  }
+                }
+              ]
+            }
+          ],
+          "key": {
+            "type": "resource_location",
+            "range": {
+              "start": 31,
+              "end": 37
+            },
+            "path": [
+              "rarity"
+            ]
+          },
+          "value": {
+            "type": "nbt:string",
+            "range": {
+              "start": 38,
+              "end": 42
+            },
+            "value": "epic",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 38,
+                  "end": 38
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "innerRange": {
+        "start": 16,
+        "end": 42
+      }
+    }
+  },
+  "errors": []
+}
+
 exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreakable={}]" in version 1.20.5 1'] = {
   "node": {
     "type": "mcfunction:item_stack",
@@ -107,7 +346,7 @@ exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreak
       },
       "children": [
         {
-          "type": "pair",
+          "type": "mcfunction:component",
           "range": {
             "start": 16,
             "end": 30
@@ -129,7 +368,11 @@ exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreak
                 "start": 28,
                 "end": 30
               },
-              "children": []
+              "children": [],
+              "innerRange": {
+                "start": 29,
+                "end": 29
+              }
             }
           ],
           "key": {
@@ -142,20 +385,24 @@ exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreak
               "unbreakable"
             ]
           },
-          "sep": {
-            "start": 27,
-            "end": 28
-          },
           "value": {
             "type": "nbt:compound",
             "range": {
               "start": 28,
               "end": 30
             },
-            "children": []
+            "children": [],
+            "innerRange": {
+              "start": 29,
+              "end": 29
+            }
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 16,
+        "end": 30
+      }
     }
   },
   "errors": []
@@ -342,7 +589,11 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
             ]
           }
         }
-      ]
+      ],
+      "innerRange": {
+        "start": 6,
+        "end": 13
+      }
     }
   },
   "errors": []

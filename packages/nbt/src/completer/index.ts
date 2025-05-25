@@ -23,7 +23,7 @@ const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 			...ctx,
 			requireCanonical: node.requireCanonical,
 		})
-		if (ctx.offset < node.children[node.children.length - 1]?.range.start ?? 0) {
+		if (ctx.offset < (node.children[node.children.length - 1]?.range.start ?? 0)) {
 			return completions.map(c => ({ ...c, insertText: c.insertText + ',' }))
 		}
 		return completions
@@ -44,6 +44,7 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 				core.CompletionItem.create(key, pair?.key ?? range, {
 					kind: core.CompletionKind.Field,
 					detail: mcdoc.McdocType.toString(field.type as core.Mutable<mcdoc.McdocType>),
+					documentation: field.desc,
 					deprecated: field.deprecated,
 					sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
 					filterText: formatKey(key, pair?.key?.quote),
@@ -126,6 +127,7 @@ function getPathKeys(
 			core.CompletionItem.create(key, range, {
 				kind: core.CompletionKind.Field,
 				detail: mcdoc.McdocType.toString(field.type as core.Mutable<mcdoc.McdocType>),
+				documentation: field.desc,
 				deprecated: field.deprecated,
 				sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
 				filterText: formatKey(key, quote),
@@ -140,11 +142,14 @@ function getValues(
 	ctx: mcdoc.runtime.completer.McdocCompleterContext,
 ): core.CompletionItem[] {
 	return mcdoc.runtime.completer.getValues(typeDef, ctx)
-		.map(({ value, labelSuffix, detail, kind, completionKind, insertText, sortText }) =>
+		.map((
+			{ value, labelSuffix, detail, documentation, kind, completionKind, insertText, sortText },
+		) =>
 			core.CompletionItem.create(value, range, {
 				kind: completionKind ?? core.CompletionKind.Value,
 				labelSuffix,
 				detail,
+				documentation,
 				filterText: formatValue(value, kind),
 				insertText: formatValue(insertText ?? value, kind),
 				sortText,

@@ -270,7 +270,23 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
         "end": 17
       },
       "message": "Trailing separation",
-      "severity": 3
+      "severity": 3,
+      "info": {
+        "codeAction": {
+          "title": "Remove trailing separation",
+          "isPreferred": true,
+          "changes": [
+            {
+              "type": "edit",
+              "range": {
+                "start": 16,
+                "end": 17
+              },
+              "text": ""
+            }
+          ]
+        }
+      }
     }
   ]
 }
@@ -466,7 +482,23 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
         "end": 9
       },
       "message": "Trailing separation",
-      "severity": 3
+      "severity": 3,
+      "info": {
+        "codeAction": {
+          "title": "Remove trailing separation",
+          "isPreferred": true,
+          "changes": [
+            {
+              "type": "edit",
+              "range": {
+                "start": 8,
+                "end": 9
+              },
+              "text": ""
+            }
+          ]
+        }
+      }
     }
   ]
 }
@@ -655,7 +687,23 @@ exports['list() list(no trailing comma) Parse "[ , ]" 1'] = {
         "end": 3
       },
       "message": "Trailing separation",
-      "severity": 3
+      "severity": 3,
+      "info": {
+        "codeAction": {
+          "title": "Remove trailing separation",
+          "isPreferred": true,
+          "changes": [
+            {
+              "type": "edit",
+              "range": {
+                "start": 2,
+                "end": 3
+              },
+              "text": ""
+            }
+          ]
+        }
+      }
     }
   ]
 }

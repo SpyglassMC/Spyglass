@@ -26,7 +26,7 @@ export const file: core.Checker<json.JsonFileNode> = (node, ctx) => {
 	}
 	const parts = dissectUri(ctx.doc.uri, ctx)
 	if (parts?.ok) {
-		if (parts?.category.startsWith('tag/')) {
+		if (parts.category.startsWith('tag/')) {
 			const type = createTagDefinition(parts.category.slice(4))
 			return json.checker.index(type)(child, ctx)
 		}

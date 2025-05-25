@@ -1,3 +1,5 @@
+import type * as core from '@spyglassmc/core'
+
 export type ReleaseVersion = `1.${number}`
 export namespace ReleaseVersion {
 	/**
@@ -30,14 +32,32 @@ export interface VersionInfo {
 	isLatest: boolean
 }
 
-export interface PackMcmeta {
-	pack: { pack_format: number }
-}
 export namespace PackMcmeta {
-	export function assert(data: any): asserts data is PackMcmeta {
-		const format: string | undefined = data?.pack?.pack_format?.toString()
-		if (!format) {
-			throw new Error('“pack.pack_format” undefined')
+	export function readPackFormat(data: any): number {
+		const supported = data?.pack?.supported_formats
+		if (Array.isArray(supported) && supported.length === 2 && typeof supported[1] === 'number') {
+			return supported[1]
 		}
+		if (typeof supported === 'object' && typeof supported?.max_inclusive === 'number') {
+			return supported.max_inclusive
+		}
+		const format = data?.pack?.pack_format
+		if (typeof format === 'number') {
+			return format
+		}
+		throw new Error('“pack.pack_format” is not a number')
 	}
+
+	export async function getType(packRoot: string, externals: core.Externals) {
+		const dir = await externals.fs.readdir(packRoot)
+		const isResourcePack = dir.some(e => e.isDirectory() && e.name === 'assets')
+			&& !dir.some(e => e.isDirectory() && e.name === 'data')
+		return isResourcePack ? 'assets' : 'data'
+	}
+}
+
+export interface PackInfo {
+	type: 'data' | 'assets'
+	packRoot: string
+	format: number
 }

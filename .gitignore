@@ -9,6 +9,7 @@
 /.history
 /.vscode/settings.json
 /.mocharc.local.jsonc
+/.idea
 
 /packages/*/lib
 /packages/*/out

@@ -6,7 +6,7 @@ import type { McdocType, UnionType } from '@spyglassmc/mcdoc/lib/type/index.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { McdocRuntimeError } from '../../lib/runtime/checker/error'
+import type { McdocRuntimeError } from '../../lib/runtime/checker/error.js'
 
 describe('mcdoc runtime checker', () => {
 	type JsValue = boolean | number | string | JsValue[] | { [key: string]: JsValue }

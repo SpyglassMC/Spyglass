@@ -734,48 +734,8 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
           "rng": {
             "data": {
               "typeDef": {
-                "kind": "struct",
-                "fields": [
-                  {
-                    "kind": "pair",
-                    "key": "type",
-                    "type": {
-                      "kind": "union",
-                      "members": [
-                        {
-                          "kind": "literal",
-                          "value": {
-                            "kind": "string",
-                            "value": "uniform"
-                          }
-                        },
-                        {
-                          "kind": "literal",
-                          "value": {
-                            "kind": "string",
-                            "value": "binomial"
-                          }
-                        }
-                      ]
-                    },
-                    "optional": true
-                  },
-                  {
-                    "kind": "spread",
-                    "type": {
-                      "kind": "dispatcher",
-                      "parallelIndices": [
-                        {
-                          "kind": "dynamic",
-                          "accessor": [
-                            "type"
-                          ]
-                        }
-                      ],
-                      "registry": "minecraft:rng"
-                    }
-                  }
-                ]
+                "kind": "reference",
+                "path": "::test::RNG"
               }
             },
             "definition": [

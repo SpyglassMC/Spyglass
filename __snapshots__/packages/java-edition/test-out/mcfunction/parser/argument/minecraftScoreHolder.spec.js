@@ -5,8 +5,8 @@ exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"mu
       "start": 0,
       "end": 1
     },
-    "fakeName": {
-      "type": "symbol",
+    "wildcard": {
+      "type": "literal",
       "range": {
         "start": 0,
         "end": 1
@@ -24,8 +24,8 @@ exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"si
       "start": 0,
       "end": 1
     },
-    "fakeName": {
-      "type": "symbol",
+    "wildcard": {
+      "type": "literal",
       "range": {
         "start": 0,
         "end": 1
@@ -180,7 +180,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
                 "end": 9
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 10
+          }
         }
       ],
       "variable": "a",
@@ -268,7 +272,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
               "end": 9
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 10
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -461,7 +469,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                         "end": 26
                       }
                     }
-                  ]
+                  ],
+                  "innerRange": {
+                    "start": 14,
+                    "end": 27
+                  }
                 }
               ],
               "key": {
@@ -596,14 +608,22 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                       "end": 26
                     }
                   }
-                ]
+                ],
+                "innerRange": {
+                  "start": 14,
+                  "end": 27
+                }
               },
               "end": {
                 "start": 29,
                 "end": 30
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 31
+          }
         }
       ],
       "variable": "a",
@@ -749,7 +769,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                       "end": 26
                     }
                   }
-                ]
+                ],
+                "innerRange": {
+                  "start": 14,
+                  "end": 27
+                }
               }
             ],
             "key": {
@@ -884,14 +908,22 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                     "end": 26
                   }
                 }
-              ]
+              ],
+              "innerRange": {
+                "start": 14,
+                "end": 27
+              }
             },
             "end": {
               "start": 29,
               "end": 30
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 31
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -975,7 +1007,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                     "start": 13,
                     "end": 16
                   },
-                  "children": []
+                  "children": [],
+                  "innerRange": {
+                    "start": 14,
+                    "end": 15
+                  }
                 }
               ],
               "key": {
@@ -1018,7 +1054,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                   "start": 13,
                   "end": 16
                 },
-                "children": []
+                "children": [],
+                "innerRange": {
+                  "start": 14,
+                  "end": 15
+                }
               },
               "end": {
                 "start": 17,
@@ -1068,7 +1108,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                     "start": 28,
                     "end": 31
                   },
-                  "children": []
+                  "children": [],
+                  "innerRange": {
+                    "start": 29,
+                    "end": 30
+                  }
                 }
               ],
               "key": {
@@ -1111,14 +1155,22 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                   "start": 28,
                   "end": 31
                 },
-                "children": []
+                "children": [],
+                "innerRange": {
+                  "start": 29,
+                  "end": 30
+                }
               },
               "end": {
                 "start": 32,
                 "end": 33
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 34
+          }
         }
       ],
       "variable": "a",
@@ -1172,7 +1224,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                   "start": 13,
                   "end": 16
                 },
-                "children": []
+                "children": [],
+                "innerRange": {
+                  "start": 14,
+                  "end": 15
+                }
               }
             ],
             "key": {
@@ -1215,7 +1271,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                 "start": 13,
                 "end": 16
               },
-              "children": []
+              "children": [],
+              "innerRange": {
+                "start": 14,
+                "end": 15
+              }
             },
             "end": {
               "start": 17,
@@ -1265,7 +1325,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                   "start": 28,
                   "end": 31
                 },
-                "children": []
+                "children": [],
+                "innerRange": {
+                  "start": 29,
+                  "end": 30
+                }
               }
             ],
             "key": {
@@ -1308,14 +1372,22 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                 "start": 28,
                 "end": 31
               },
-              "children": []
+              "children": [],
+              "innerRange": {
+                "start": 29,
+                "end": 30
+              }
             },
             "end": {
               "start": 32,
               "end": 33
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 34
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -1502,7 +1574,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                 "end": 22
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 23
+          }
         }
       ],
       "variable": "a",
@@ -1650,7 +1726,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
               "end": 22
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 23
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -1965,7 +2045,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                 "end": 29
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 30
+          }
         }
       ],
       "variable": "a",
@@ -2250,7 +2334,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
               "end": 29
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 30
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -2581,7 +2669,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                 "end": 33
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 34
+          }
         }
       ],
       "variable": "a",
@@ -2882,7 +2974,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
               "end": 33
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 34
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -3181,7 +3277,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                 "end": 29
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 30
+          }
         }
       ],
       "variable": "a",
@@ -3450,7 +3550,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
               "end": 29
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 30
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -3633,7 +3737,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                 }
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 18
+          }
         }
       ],
       "variable": "a",
@@ -3777,7 +3885,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
               }
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 18
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -3904,7 +4016,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
                 "end": 17
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 18
+          }
         }
       ],
       "variable": "a",
@@ -3992,7 +4108,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
               "end": 17
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 18
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -4422,7 +4542,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "end": 44
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 45
+          }
         }
       ],
       "variable": "a",
@@ -4805,7 +4929,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
               "end": 44
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 45
+        }
       },
       "chunkLimited": false,
       "currentEntity": false,
@@ -5423,7 +5551,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "end": 66
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 67
+          }
         }
       ],
       "variable": "a",
@@ -5992,7 +6124,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
               "end": 66
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 67
+        }
       },
       "chunkLimited": false,
       "currentEntity": false,
@@ -6337,7 +6473,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "end": 62
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 63
+          }
         }
       ],
       "variable": "a",
@@ -6650,7 +6790,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
               "end": 62
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 63
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -7002,7 +7146,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "end": 62
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 63
+          }
         }
       ],
       "variable": "a",
@@ -7315,7 +7463,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
               "end": 62
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 63
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -7745,7 +7897,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 "end": 41
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 42
+          }
         }
       ],
       "variable": "e",
@@ -8062,7 +8218,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
               "end": 41
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 42
+        }
       },
       "currentEntity": false,
       "playersOnly": false,
@@ -8388,7 +8548,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "end": 33
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 34
+          }
         }
       ],
       "variable": "e",
@@ -8681,7 +8845,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
               "end": 33
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 34
+        }
       },
       "currentEntity": false,
       "playersOnly": false,
@@ -8858,7 +9026,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                 }
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 18
+          }
         }
       ],
       "variable": "e",
@@ -9002,7 +9174,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
               }
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 18
+        }
       },
       "currentEntity": false,
       "playersOnly": true,
@@ -9320,7 +9496,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 "end": 37
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 38
+          }
         }
       ],
       "variable": "e",
@@ -9605,7 +9785,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
               "end": 37
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 38
+        }
       },
       "currentEntity": false,
       "playersOnly": false,
@@ -9932,7 +10116,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "end": 39
               }
             }
-          ]
+          ],
+          "innerRange": {
+            "start": 3,
+            "end": 40
+          }
         }
       ],
       "variable": "s",
@@ -10217,7 +10405,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
               "end": 39
             }
           }
-        ]
+        ],
+        "innerRange": {
+          "start": 3,
+          "end": 40
+        }
       },
       "currentEntity": true,
       "playersOnly": false,

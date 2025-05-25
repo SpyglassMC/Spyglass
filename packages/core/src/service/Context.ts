@@ -53,7 +53,7 @@ export namespace ParserContext {
 			...ContextBase.create(project),
 			config: project.config,
 			doc: opts.doc,
-			err: opts.err ?? new ErrorReporter(),
+			err: opts.err ?? new ErrorReporter(project.ctx['errorSource']),
 		}
 	}
 }
@@ -121,7 +121,7 @@ export namespace BinderContext {
 	export function create(project: ProjectData, opts: BinderContextOptions): BinderContext {
 		return {
 			...ProcessorContext.create(project, opts),
-			err: opts.err ?? new ErrorReporter(),
+			err: opts.err ?? new ErrorReporter(project.ctx['errorSource']),
 			ensureBindingStarted: project.ensureBindingStarted?.bind(project),
 		}
 	}
@@ -138,7 +138,7 @@ export namespace CheckerContext {
 	export function create(project: ProjectData, opts: CheckerContextOptions): CheckerContext {
 		return {
 			...ProcessorContext.create(project, opts),
-			err: opts.err ?? new ErrorReporter(),
+			err: opts.err ?? new ErrorReporter(project.ctx['errorSource']),
 			ensureBindingStarted: project.ensureBindingStarted?.bind(project),
 		}
 	}
@@ -188,6 +188,21 @@ export namespace FormatterContext {
 	}
 }
 
+export interface CodeActionProviderContext extends ProcessorContext {
+	range: Range
+}
+export interface CodeActionProviderContextOptions extends ProcessorContextOptions {
+	range: Range
+}
+export namespace CodeActionProviderContext {
+	export function create(
+		project: ProjectData,
+		opts: CodeActionProviderContextOptions,
+	): CodeActionProviderContext {
+		return { ...ProcessorContext.create(project, opts), range: opts.range }
+	}
+}
+
 export interface ColorizerContext extends ProcessorWithRangeContext {}
 export interface ColorizerContextOptions extends ProcessorWithRangeContextOptions {}
 export namespace ColorizerContext {
@@ -232,5 +247,12 @@ export interface UriBinderContext extends ContextBase {
 export namespace UriBinderContext {
 	export function create(project: ProjectData): UriBinderContext {
 		return { ...ContextBase.create(project), config: project.config, symbols: project.symbols }
+	}
+}
+
+export interface UriPredicateContext extends ContextBase {}
+export namespace UriPredicateContext {
+	export function create(project: ProjectData): UriPredicateContext {
+		return { ...ContextBase.create(project) }
 	}
 }

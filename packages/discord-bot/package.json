@@ -4,24 +4,24 @@
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "bin": {
+    "spyglassmc-discord-bot": "bin/bot.js"
+  },
   "author": "SPGoding",
   "license": "MIT",
   "directories": {
     "test": "test/"
   },
   "dependencies": {
-    "@discordjs/rest": "^0.4.1",
-    "discord.js": "^13.7.0",
-    "discord-api-types": "^0.33.1"
+    "discord.js": "^14.16.3"
   },
-  "devDependencies": {},
   "scripts": {
     "release": "npm publish",
     "release:dry": "npm publish --dry-run",
     "start": "node lib/index.js"
   },
   "engines": {
-    "node": ">=16.9.0"
+    "node": ">=22.12.0"
   },
   "publishConfig": {
     "access": "public"

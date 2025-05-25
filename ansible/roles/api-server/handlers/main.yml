@@ -1,0 +1,11 @@
+- name: Reload systemctl daemon
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart API server service
+  become: true
+  ansible.builtin.service:
+    name: spyglassmc-api-server
+    enabled: true
+    state: restarted

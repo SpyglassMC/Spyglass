@@ -1,72 +1,77 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
-import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
-import { uriBinder } from './binder/index.js'
-import type { McmetaSummary, McmetaVersion } from './dependency/index.js'
+import { jsonUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
+import type { McmetaSummary, McmetaVersions, PackInfo } from './dependency/index.js'
 import {
 	getMcmetaSummary,
 	getVanillaDatapack,
 	getVanillaMcdoc,
+	getVanillaResourcepack,
 	getVersions,
 	PackMcmeta,
-	ReleaseVersion,
 	resolveConfiguredVersion,
 	symbolRegistrar,
 } from './dependency/index.js'
 import * as jeJson from './json/index.js'
+import { registerMcdocAttributes, registerPackFormatAttribute } from './mcdocAttributes.js'
 import * as jeMcf from './mcfunction/index.js'
 
 export * as binder from './binder/index.js'
 export * as dependency from './dependency/index.js'
 export * as json from './json/index.js'
+export * from './mcdocAttributes.js'
 export * as mcf from './mcfunction/index.js'
 
 export const initialize: core.ProjectInitializer = async (ctx) => {
 	const { config, downloader, externals, logger, meta, projectRoots } = ctx
 
-	async function readPackMcmeta(uri: string): Promise<PackMcmeta | undefined> {
+	async function readPackFormat(uri: string): Promise<number | undefined> {
 		try {
 			const data = await core.fileUtil.readJson(externals, uri)
-			PackMcmeta.assert(data)
-			return data
+			return PackMcmeta.readPackFormat(data)
 		} catch (e) {
 			if (!externals.error.isKind(e, 'ENOENT')) {
 				// `pack.mcmeta` exists but broken. Log an error.
-				logger.error(`[je.initialize] Failed loading pack.mcmeta “${uri}”`, e)
+				logger.error(`[je.initialize] Failed loading pack.mcmeta ${uri}`, e)
 			}
 		}
 		return undefined
 	}
 
-	async function findPackMcmeta(): Promise<PackMcmeta | undefined> {
-		const searched = new Set<string>()
+	async function findPackMcmetas(): Promise<PackInfo[]> {
+		const searchedUris = new Set<string>()
+		const packs: PackInfo[] = []
 		for (let depth = 0; depth <= 2; depth += 1) {
 			for (const projectRoot of projectRoots) {
-				const files = await externals.fs.getAllFiles(projectRoot, depth + 1)
+				const files = await core.fileUtil.getAllFiles(externals, projectRoot, depth + 1)
 				for (const uri of files.filter(uri => uri.endsWith('/pack.mcmeta'))) {
-					if (searched.has(uri)) {
+					if (searchedUris.has(uri)) {
 						continue
 					}
-					searched.add(uri)
-					const data = await readPackMcmeta(uri)
-					if (data) {
-						logger.info(
-							`[je.initialize] Found a valid pack.mcmeta “${uri}” with pack_format “${data.pack.pack_format}”`,
-						)
-						return data
+					searchedUris.add(uri)
+					const packRoot = core.fileUtil.dirname(uri)
+					const [format, type] = await Promise.all([
+						readPackFormat(uri),
+						PackMcmeta.getType(packRoot, externals),
+					])
+					if (format !== undefined) {
+						packs.push({ type, packRoot, format })
 					}
 				}
 			}
 		}
-		logger.warn('[je.initialize] Failed finding a valid pack.mcmeta')
-		return undefined
+		return packs
 	}
 
 	meta.registerUriBinder(uriBinder)
+	registerUriBuilders(meta)
 
-	const versions = await getVersions(ctx.externals, ctx.downloader)
+	const [versions, packs] = await Promise.all([
+		getVersions(ctx.externals, ctx.downloader),
+		findPackMcmetas(),
+	])
 	if (!versions) {
 		ctx.logger.error(
 			'[je-initialize] Failed loading game version list. Expect everything to be broken.',
@@ -74,12 +79,17 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return
 	}
 
-	const version = await resolveConfiguredVersion(config.env.gameVersion, versions, findPackMcmeta)
+	const version = resolveConfiguredVersion(config.env.gameVersion, versions, packs, logger)
 	const release = version.release
 
 	meta.registerDependencyProvider(
 		'@vanilla-datapack',
 		() => getVanillaDatapack(downloader, version.id, version.isLatest),
+	)
+
+	meta.registerDependencyProvider(
+		'@vanilla-resourcepack',
+		() => getVanillaResourcepack(downloader, version.id, version.isLatest),
 	)
 
 	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader))
@@ -101,8 +111,8 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	}
 
 	meta.registerSymbolRegistrar('mcmeta-summary', {
-		checksum: summary.checksum,
-		registrar: symbolRegistrar(summary as McmetaSummary),
+		checksum: `${summary.checksum}_v3`,
+		registrar: symbolRegistrar(summary as McmetaSummary, release),
 	})
 
 	meta.registerLinter('nameOfNbtKey', {
@@ -121,87 +131,21 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 				&& !n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
 
-	mcdoc.runtime.registerAttribute(meta, 'since', mcdoc.runtime.attribute.validator.string, {
-		filterElement: (config, ctx) => {
-			if (!config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
-				return true
-			}
-			return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
-		},
-	})
-	mcdoc.runtime.registerAttribute(meta, 'until', mcdoc.runtime.attribute.validator.string, {
-		filterElement: (config, ctx) => {
-			if (!config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
-				return true
-			}
-			return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
-		},
-	})
-	mcdoc.runtime.registerAttribute(
-		meta,
-		'deprecated',
-		mcdoc.runtime.attribute.validator.optional(mcdoc.runtime.attribute.validator.string),
-		{
-			mapField: (config, field, ctx) => {
-				if (config === undefined) {
-					return { ...field, deprecated: true }
-				}
-				if (!config.startsWith('1.')) {
-					ctx.logger.warn(`Invalid mcdoc attribute for "deprecated": ${config}`)
-					return field
-				}
-				if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
-					return { ...field, deprecated: true }
-				}
-				return field
-			},
-		},
-	)
-	const packFormats = new Map<number, McmetaVersion>()
-	for (const version of versions) {
-		if (version.type === 'release' && !packFormats.has(version.data_pack_version)) {
-			packFormats.set(version.data_pack_version, version)
-		}
-	}
-	mcdoc.runtime.registerAttribute(meta, 'pack_format', () => undefined, {
-		checker: (_, typeDef) => {
-			if (typeDef.kind !== 'literal' || typeof typeDef.value.value !== 'number') {
-				return undefined
-			}
-			const target = typeDef.value.value
-			return (node, ctx) => {
-				const targetVersion = packFormats.get(target)
-				if (!targetVersion) {
-					ctx.err.report(
-						localize('java-edition.pack-format.unsupported', target),
-						node,
-						core.ErrorSeverity.Warning,
-					)
-				} else if (targetVersion.id !== release) {
-					ctx.err.report(
-						localize('java-edition.pack-format.not-loaded', target, release),
-						node,
-						core.ErrorSeverity.Warning,
-					)
-				}
-			}
-		},
-		numericCompleter: (_, ctx) => {
-			return [...packFormats.values()].map((v, i) => ({
-				range: core.Range.create(ctx.offset),
-				label: `${v.data_pack_version}`,
-				labelSuffix: ` (${v.id})`,
-				sortText: `${i}`.padStart(4, '0'),
-			} satisfies core.CompletionItem))
-		},
-	})
+	registerMcdocAttributes(meta, summary.commands, release)
+	registerPackFormatAttribute(meta, versions, packs)
 
-	json.initialize(ctx)
+	meta.registerLanguage('zip', { extensions: ['.zip'] })
+	meta.registerLanguage('png', { extensions: ['.png'] })
+	meta.registerLanguage('ogg', { extensions: ['.ogg'] })
+	meta.registerLanguage('ttf', { extensions: ['.ttf'] })
+	meta.registerLanguage('otf', { extensions: ['.otf'] })
+	meta.registerLanguage('fsh', { extensions: ['.fsh'] })
+	meta.registerLanguage('vsh', { extensions: ['.vsh'] })
+
+	json.getInitializer(jsonUriPredicate)(ctx)
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)
 
-	return { loadedVersion: release }
+	return { loadedVersion: release, errorSource: release }
 }

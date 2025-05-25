@@ -42,7 +42,8 @@ There's no support for multiple config files or inheriting/overriding config fil
 		"language": "Default",
 		"permissionLevel": 2,
 		"plugins": [],
-		"mcmetaSummaryOverrides": {}
+		"mcmetaSummaryOverrides": {},
+		"useFilePolling": false
 	},
 	"format": {
 		"blockStateBracketSpacing": { "inside": 0 },

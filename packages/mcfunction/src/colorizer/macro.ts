@@ -1,13 +1,12 @@
 import * as core from '@spyglassmc/core'
-import type { MacroNode } from '../node/macro'
+import type { MacroNode } from '../node/macro.js'
 
 export const macro: core.Colorizer<MacroNode> = (node, ctx) => {
 	const tokens: core.ColorToken[] = []
-	tokens.push(
-		core.ColorToken.create(core.Range.create(node.range.start, node.range.start + 1), 'literal'),
-	) // Dollar Sign
 	for (const child of node.children) {
-		if (child.type === 'mcfunction:macro/other') {
+		if (child.type === 'mcfunction:macro/prefix') {
+			tokens.push(core.ColorToken.create(child.range, 'literal'))
+		} else if (child.type === 'mcfunction:macro/other') {
 			tokens.push(core.ColorToken.create(child.range, 'string'))
 		} else {
 			const { start, end } = child.range

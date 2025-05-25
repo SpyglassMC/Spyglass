@@ -49,7 +49,7 @@
   "devDependencies": {
     "@types/vscode": "1.67.0",
     "@vscode/vsce": "^2.29.0",
-    "esbuild": "^0.17.18",
+    "esbuild": "^0.25.2",
     "ovsx": "^0.9.1",
     "vscode-languageclient": "^9.0.1",
     "vscode-test": "^1.5.2"
@@ -83,33 +83,60 @@
       {
         "fileMatch": [
           "pack.mcmeta",
+          "assets/*/atlases/**/*.json",
+          "assets/*/blockstates/**/*.json",
+          "assets/*/items/**/*.json",
+          "assets/*/equipment/**/*.json",
+          "assets/*/fonts/**/*.json",
+          "assets/*/lang/**/*.json",
+          "assets/*/models/**/*.json",
+          "assets/*/particles/**/*.json",
+          "assets/*/post_effect/**/*.json",
+          "assets/*/shaders/**/*.json",
+          "assets/*/waypoint_style/**/*.json",
+          "assets/minecraft/**/*.json",
           "data/*/advancement/**/*.json",
           "data/*/advancements/**/*.json",
           "data/*/banner_pattern/**/*.json",
+          "data/*/cat_variant/**/*.json",
           "data/*/chat_type/**/*.json",
+          "data/*/cow_variant/**/*.json",
           "data/*/damage_type/**/*.json",
+          "data/*/dialog/**/*.json",
           "data/*/dimension/**/*.json",
           "data/*/dimension_type/**/*.json",
           "data/*/enchantment/**/*.json",
           "data/*/enchantment_provider/**/*.json",
+          "data/*/frog_variant/**/*.json",
           "data/*/item_modifier/**/*.json",
           "data/*/item_modifiers/**/*.json",
           "data/*/jukebox_song/**/*.json",
           "data/*/loot_table/**/*.json",
           "data/*/loot_tables/**/*.json",
           "data/*/painting_variant/**/*.json",
+          "data/*/pig_variant/**/*.json",
           "data/*/predicate/**/*.json",
           "data/*/predicates/**/*.json",
           "data/*/recipe/**/*.json",
           "data/*/recipes/**/*.json",
           "data/*/tags/**/*.json",
+          "data/*/test_instance/**/*.json",
+          "data/*/test_environment/**/*.json",
           "data/*/trim_material/**/*.json",
           "data/*/trim_pattern/**/*.json",
+          "data/*/wolf_sound_variant/**/*.json",
           "data/*/wolf_variant/**/*.json",
           "data/*/worldgen/**/*.json",
           "data/minecraft/**/*.json"
         ],
         "url": "./resource/empty-object.json"
+      },
+      {
+        "fileMatch": [
+          "spyglass.json",
+          ".spyglassrc.json"
+        ],
+        "url": "./resource/spyglass.json"
       }
     ],
     "languages": [
@@ -169,6 +196,11 @@
         "command": "spyglassmc.showCacheRoot",
         "title": "%spyglassmc.commands.showCacheRoot.title%",
         "category": "Spyglass"
+      },
+      {
+        "command": "spyglassmc.showOutput",
+        "title": "%spyglassmc.commands.showOutput.title%",
+        "category": "Spyglass"
       }
     ],
     "menus": {
@@ -182,12 +214,25 @@
         },
         {
           "command": "spyglassmc.showCacheRoot"
+        },
+        {
+          "command": "spyglassmc.showOutput"
         }
       ]
     },
     "configuration": {
       "title": "Spyglass",
       "properties": {
+        "spyglassmc.env.gameVersion": {
+          "type": "string",
+          "enum": [
+            "Auto",
+            "Latest release",
+            "Latest snapshot"
+          ],
+          "markdownDescription": "%spyglassmc.env.gameVersion%",
+          "default": "Auto"
+        },
         "spyglassmc.trace.server": {
           "type": "string",
           "enum": [
@@ -225,6 +270,10 @@
         "description": "An error."
       },
       {
+        "id": "escape",
+        "description": "An escape sequence."
+      },
+      {
         "id": "literal",
         "description": "A literal."
       },
@@ -247,6 +296,9 @@
         "scopes": {
           "error": [
             "invalid.illegal"
+          ],
+          "escape": [
+            "constant.character.escape"
           ],
           "literal": [
             "keyword.other"

@@ -1,0 +1,45 @@
+services:
+  weblate:
+    ports:
+      - '{{ weblate_host_port }}:8080'
+    environment:
+      # Admin
+      WEBLATE_ADMIN_EMAIL: '{{ weblate_admin_email }}'
+      WEBLATE_ADMIN_NAME: '{{ weblate_admin_name }}'
+
+      # Email
+      WEBLATE_EMAIL_HOST: '{{ weblate_email_host }}'
+      WEBLATE_EMAIL_PORT: '{{ weblate_email_port }}'
+      WEBLATE_EMAIL_HOST_USER: '{{ weblate_email_host_user }}'
+      WEBLATE_EMAIL_HOST_PASSWORD: '{{ weblate_email_host_password }}'
+      WEBLATE_SERVER_EMAIL: '{{ weblate_server_email }}'
+      WEBLATE_DEFAULT_FROM_EMAIL: '{{ weblate_server_email }}'
+
+      # Generic
+      WEBLATE_SITE_DOMAIN: '{{ weblate_site_domain }}'
+      WEBLATE_SITE_TITLE: Spyglass Localization
+
+      # Disable backup check, as it is done through restic
+      WEBLATE_SILENCED_SYSTEM_CHECKS: 'weblate.I028'
+
+      # Sentry
+      SENTRY_DSN: '{{ weblate_sentry_dsn }}'
+
+      # GPG
+      WEBLATE_GPG_IDENTITY: '{{ weblate_default_commiter_name }} <{{ weblate_default_commiter_email }}>'
+
+      # Git
+      WEBLATE_DEFAULT_COMMITER_EMAIL: '{{ weblate_default_commiter_email }}'
+      WEBLATE_DEFAULT_COMMITER_NAME: '{{ weblate_default_commiter_name }}'
+
+      # HTTPS & reverse proxy
+      WEBLATE_ENABLE_HTTPS: 1
+      WEBLATE_IP_BEHIND_REVERSE_PROXY: 1
+
+      # Registration: only allows GitHub
+      WEBLATE_REGISTRATION_ALLOW_BACKENDS: github
+      WEBLATE_SOCIAL_AUTH_GITHUB_KEY: '{{ weblate_social_auth_github_key }}'
+      WEBLATE_SOCIAL_AUTH_GITHUB_SECRET: '{{ weblate_social_auth_github_secret }}'
+
+      # Use private commit email by default instead of asking users to opt in
+      WEBLATE_PRIVATE_COMMIT_EMAIL_OPT_IN: 0

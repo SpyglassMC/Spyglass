@@ -71,6 +71,8 @@ const rootCommand = (
 			nbtResource(node, ctx)
 		} else if (json.TypedJsonNode.is(node)) {
 			json.checker.typed(node, ctx)
+		} else if (nbt.TypedNbtNode.is(node)) {
+			nbt.checker.typed(node, ctx)
 		} else if (NbtNode.is(node) && node.properties) {
 			const dispatchedBy = getEarlierNode(nodes, i, node.properties.dispatchedBy)
 			const indexedBy = getEarlierNode(nodes, i, node.properties.indexedBy)
@@ -138,7 +140,7 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 			} else if (ComponentTestExactNode.is(test) && test.value) {
 				nbt.checker.index('minecraft:data_component', key)(test.value, ctx)
 			} else if (ComponentTestSubpredicateNode.is(test) && test.value) {
-				nbt.checker.index('minecraft:item_sub_predicate', key)(test.value, ctx)
+				nbt.checker.index('minecraft:data_component_predicate', key)(test.value, ctx)
 			}
 		}
 	}
@@ -153,17 +155,17 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 		return
 	}
 	const groupedComponents = new Map<string, core.AstNode[]>()
-	for (const pair of node.components.children) {
-		if (!pair.key) {
+	for (const child of node.components.children) {
+		if (!child.key) {
 			continue
 		}
-		const componentId = core.ResourceLocationNode.toString(pair.key, 'full')
+		const componentId = core.ResourceLocationNode.toString(child.key, 'full')
 		if (!groupedComponents.has(componentId)) {
 			groupedComponents.set(componentId, [])
 		}
-		groupedComponents.get(componentId)!.push(pair.key)
-		if (pair.value) {
-			nbt.checker.index('minecraft:data_component', componentId)(pair.value, ctx)
+		groupedComponents.get(componentId)!.push(child.key)
+		if (child.type === 'mcfunction:component' && child.value) {
+			nbt.checker.index('minecraft:data_component', componentId)(child.value, ctx)
 		}
 	}
 	for (const [_, group] of groupedComponents) {
@@ -308,17 +310,15 @@ const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
 		return
 	}
 	const options = node.children?.find(nbt.NbtCompoundNode.is)
-	if (ParticleNode.requiresOptions(id)) {
-		if (options) {
-			nbt.checker.index('minecraft:particle', core.ResourceLocation.lengthen(id))(options, ctx)
-		} else {
-			ctx.err.report(
-				localize('expected', localize('nbt.node.compound')),
-				core.Range.create(node.id.range.end, node.id.range.end + 1),
-			)
-		}
-	} else if (options) {
-		ctx.err.report(localize('expected', localize('nothing')), options)
+	if (options) {
+		// Even if particle isn't explicitly marked as requiring options,
+		// run the type checker anyways to allow an empty compound
+		nbt.checker.index('minecraft:particle', core.ResourceLocation.lengthen(id))(options, ctx)
+	} else if (ParticleNode.requiresOptions(id)) {
+		ctx.err.report(
+			localize('expected', localize('nbt.node.compound')),
+			core.Range.create(node.id.range.end, node.id.range.end + 1),
+		)
 	}
 }
 // #endregion

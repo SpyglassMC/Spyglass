@@ -45,6 +45,18 @@ exports['mcfunction argument minecraft:objective_criteria Parse "minecraft.used:
   "errors": []
 }
 
+exports['mcfunction argument minecraft:objective_criteria Parse "teamkill.aqua" 1'] = {
+  "node": {
+    "type": "mcfunction:objective_criteria",
+    "range": {
+      "start": 0,
+      "end": 13
+    },
+    "simpleValue": "teamkill.aqua"
+  },
+  "errors": []
+}
+
 exports['mcfunction argument minecraft:objective_criteria Parse "used:spyglass" 1'] = {
   "node": {
     "type": "mcfunction:objective_criteria",

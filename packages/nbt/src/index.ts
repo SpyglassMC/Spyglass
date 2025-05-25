@@ -1,8 +1,8 @@
 import type * as core from '@spyglassmc/core'
-import { registerMcdocAttributes } from './attributes.js'
 import * as checker from './checker/index.js'
 import * as colorizer from './colorizer/index.js'
 import * as completer from './completer/index.js'
+import { registerMcdocAttributes } from './mcdocAttributes.js'
 import type { NbtCompoundNode, NbtNode, NbtPathNode } from './node/index.js'
 import * as parser from './parser/index.js'
 

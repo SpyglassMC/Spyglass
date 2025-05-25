@@ -4,21 +4,30 @@ import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import { getItemSlotsArgumentValues } from './common/index.js'
-import { EntitySelectorAtVariable, EntitySelectorNode, ScoreHolderNode } from './node/argument.js'
+import {
+	BlockNode,
+	EntitySelectorAtVariable,
+	EntitySelectorNode,
+	ScoreHolderNode,
+} from './node/argument.js'
 import * as parser from './parser/index.js'
 
 const validator = mcdoc.runtime.attribute.validator
 
 interface CommandConfig {
 	slash?: 'allowed' | 'required' | 'chat'
+	macro?: 'implicit'
 	max_length?: number
 	empty?: 'allowed'
+	incomplete?: 'allowed'
 }
 const commandValidator = validator.alternatives<CommandConfig>(
 	validator.tree({
 		slash: validator.optional(validator.options('allowed', 'required', 'chat')),
+		macro: validator.optional(validator.options('implicit')),
 		max_length: validator.optional(validator.number),
 		empty: validator.optional(validator.options('allowed')),
+		incomplete: validator.optional(validator.options('allowed')),
 	}),
 	() => ({}),
 )
@@ -48,17 +57,26 @@ const scoreHolderValidator = validator.alternatives<ScoreHolderConfig>(
 export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: mcf.RootTreeNode) {
 	mcdoc.runtime.registerAttribute(meta, 'command', commandValidator, {
 		// TODO: fix completer inside commands
-		stringParser: ({ slash, max_length, empty }) => {
+		stringParser: ({ slash, macro, max_length, empty, incomplete }) => {
 			return (src, ctx) => {
+				if (macro) {
+					return mcf.macro(false)(src, ctx)
+				}
 				if ((empty && !src.canRead()) || (slash === 'chat' && src.peek() !== '/')) {
 					return core.string({
 						unquotable: { blockList: new Set(), allowEmpty: true },
 					})(src, ctx)
 				}
-				return mcf.command(rootTreeNode, parser.argument, {
+				const tmpCtx = { ...ctx, err: new core.ErrorReporter(ctx.err.source) }
+				const result = mcf.command(rootTreeNode, parser.argument, {
 					slash: slash === 'chat' ? 'allowed' : slash,
 					maxLength: max_length,
-				})(src, ctx)
+				})(src, tmpCtx)
+				if (incomplete) {
+					tmpCtx.err.errors = tmpCtx.err.errors.filter(e => e.range.end < result.range.end)
+				}
+				ctx.err.absorb(tmpCtx.err)
+				return result
 			}
 		},
 	})
@@ -88,8 +106,12 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 		stringMocker: (_, __, ctx) => ScoreHolderNode.mock(ctx.offset),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'tag', () => undefined, {
-		stringParser: () => parser.tag('definition'), // TODO: make this a config
+		stringParser: () => parser.tag('reference'),
 		stringMocker: (_, __, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'tag' }),
+	})
+	mcdoc.runtime.registerAttribute(meta, 'block_predicate', () => undefined, {
+		stringParser: () => parser.blockPredicate,
+		stringMocker: (_, __, ctx) => BlockNode.mock(ctx.offset, true),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'entity', entityValidator, {
 		stringParser: (config) =>
@@ -100,7 +122,7 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 			}),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'item_slots', () => undefined, {
-		stringParser: () => parser.itemSlots,
+		stringParser: (_, __, ctx) => core.literal({ pool: getItemSlotsArgumentValues(ctx) }),
 		stringMocker: (_, __, ctx) =>
 			core.LiteralNode.mock(ctx.offset, { pool: getItemSlotsArgumentValues(ctx) }),
 	})

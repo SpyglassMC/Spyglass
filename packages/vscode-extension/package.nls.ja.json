@@ -1,1 +1,9 @@
-{}
+{
+	"spyglassmc.commands.resetProjectCache.title": "プロジェクトのキャッシュファイルを消去",
+	"spyglassmc.commands.showCacheRoot.title": "キャッシュフォルダーを開く",
+	"spyglassmc.commands.showOutput.title": "出力を表示",
+	"spyglassmc.description": "Minecraft: Java Edition データパック用の強力な言語機能",
+	"spyglassmc.displayName": "Datapack Helper Plus by Spyglass",
+	"spyglassmc.env.gameVersion": "使用する Minecraft のバージョンは auto に設定すると`pack.mcmeta`から推定され、他のバージョンは` spyglass.json`ファイルで指定可能です。",
+	"spyglassmc.trace.server": "VS CodeとSpyglass Language Server 間の通信内容を追跡します。"
+}

@@ -18,7 +18,7 @@ export function attempt<N extends AstNode>(
 ): AttemptResult {
 	const tempCtx: CheckerContext = {
 		...ctx,
-		err: new ErrorReporter(),
+		err: new ErrorReporter(ctx.err.source),
 		symbols: ctx.symbols.clone(),
 	}
 

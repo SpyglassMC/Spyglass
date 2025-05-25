@@ -17,9 +17,7 @@
     "release:dry": "npm publish --dry-run"
   },
   "dependencies": {},
-  "devDependencies": {
-    "fast-glob": "^3.2.5"
-  },
+  "devDependencies": {},
   "publishConfig": {
     "access": "public"
   },

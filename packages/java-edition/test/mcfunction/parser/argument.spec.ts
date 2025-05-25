@@ -36,6 +36,7 @@ const Suites: Partial<
 	'minecraft:color': [{ content: ['red', 'green'] }],
 	'minecraft:column_pos': [{ content: ['0 0', '~ ~', '~1 ~-2'] }],
 	'minecraft:component': [{ content: ['"hello world"', '""', '{"text":"hello world"}', '[""]'] }],
+	'minecraft:dialog': [{ content: ['minecraft:custom_options', '{type:"notice",title:"Hello"}'] }],
 	'minecraft:dimension': [{ content: ['minecraft:overworld', 'minecraft:the_nether'] }],
 	'minecraft:entity': [{
 		properties: { amount: 'multiple', type: 'entities' },
@@ -102,6 +103,7 @@ const Suites: Partial<
 	'minecraft:item_stack': [
 		{ content: ['stick', 'minecraft:stick', 'stick{foo:bar}'] },
 		{ content: ['stick', 'diamond_pickaxe[unbreakable={}]', 'apple[!food]'], version: '1.20.5' },
+		{ content: ['diamond_pickaxe[unbreakable={},rarity=epic]', 'apple[!food]'], version: '1.21' },
 	],
 	'minecraft:loot_modifier': [{ content: ['foo:bar', '[{function:"furnace_smelt"}]'] }],
 	'minecraft:loot_predicate': [{
@@ -114,7 +116,7 @@ const Suites: Partial<
 	'minecraft:nbt_tag': [{ content: ['0', '0b', '0l', '0.0', '"foo"', '{foo:bar}'] }],
 	'minecraft:objective': [{ content: ['foo', '012'] }],
 	'minecraft:objective_criteria': [{
-		content: ['dummy', 'used:spyglass', 'minecraft.used:minecraft.spyglass'],
+		content: ['dummy', 'used:spyglass', 'minecraft.used:minecraft.spyglass', 'teamkill.aqua'],
 	}],
 	'minecraft:operation': [{ content: ['=', '>', '<'] }],
 	'minecraft:particle': [{
@@ -222,7 +224,7 @@ describe('mcfunction argument parser', () => {
 					properties,
 				}
 				const project = mockProjectData({ ctx: { loadedVersion: version } })
-				json.initialize(project)
+				json.getInitializer()(project)
 				nbt.initialize(project)
 
 				for (const string of content) {

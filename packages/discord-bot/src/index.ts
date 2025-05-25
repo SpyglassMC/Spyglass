@@ -1,58 +1,73 @@
-import {
-	SlashCommandBooleanOption,
-	SlashCommandBuilder,
-	SlashCommandStringOption,
-} from '@discordjs/builders'
-import { REST } from '@discordjs/rest'
 import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
 import {
-	ConfigService,
+	CompletionItem,
 	ErrorSeverity,
 	FileNode,
 	fileUtil,
 	ProfilerFactory,
 	Range,
 	Service,
-	VanillaConfig,
 } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import { Routes } from 'discord-api-types/rest/v9'
-import type { Snowflake } from 'discord.js'
-import { Client, Intents, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js'
-import { dirname, join } from 'path'
-import { fileURLToPath, pathToFileURL } from 'url'
+import { webcrypto } from 'crypto'
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	Client,
+	ComponentType,
+	EmbedBuilder,
+	GatewayIntentBits,
+	REST,
+	Routes,
+	SlashCommandBooleanOption,
+	SlashCommandBuilder,
+	SlashCommandStringOption,
+} from 'discord.js'
+import type {
+	APIActionRowComponent,
+	APIEmbed,
+	APIMessageActionRowComponent,
+	ApplicationCommandOptionChoiceData,
+} from 'discord.js'
+import { join } from 'path'
+import { env } from 'process'
+import { pathToFileURL } from 'url'
 
 export declare const __dirname: undefined // Not defined in ES module scope
+const MaxCommandLength = 1000
 const MaxContentLength = 2000
 
 const ProfilerId = 'discord-bot#startup'
 const profilers = new ProfilerFactory(console, [ProfilerId])
 const __profiler = profilers.get(ProfilerId)
 
-const parentPath = dirname(fileURLToPath(import.meta.url))
-const cacheRoot = join(parentPath, 'cache')
-const projectPath = join(parentPath, 'project-root')
+const rootPath = env.SPYGLASSMC_DISCORD_BOT_DIR
+if (!rootPath) {
+	throw new Error('Environment variable SPYGLASSMC_DISCORD_BOT_DIR expected.')
+}
+const cacheRoot = join(rootPath, 'cache')
+const projectPath = join(rootPath, 'project-root')
 await fileUtil.ensureDir(NodeJsExternals, projectPath)
 console.log(`cacheRoot = ${cacheRoot}`)
 console.log(`projectPath = ${projectPath}`)
 
 const config = await loadConfig()
-const rest = new REST({ version: '9' }).setToken(config.token)
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+const rest = new REST({ version: '10' }).setToken(config.token)
+const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 const service = new Service({
 	logger: console,
 	profilers,
 	project: {
 		cacheRoot: fileUtil.ensureEndingSlash(pathToFileURL(cacheRoot).toString()),
-		defaultConfig: ConfigService.merge(VanillaConfig, { env: { dependencies: [] } }),
+		// defaultConfig: ConfigService.merge(VanillaConfig, { env: { dependencies: [] } }),
 		externals: NodeJsExternals,
 		initializers: [mcdoc.initialize, je.initialize],
 		projectRoots: [fileUtil.ensureEndingSlash(pathToFileURL(projectPath).toString())],
 	},
 })
-const DocumentUri = 'spyglassmc://discord-bot/file.mcfunction'
 
 interface InteractionInfo {
 	content: string
@@ -61,27 +76,10 @@ interface InteractionInfo {
 	tokens: readonly ColorToken[]
 	showRaw: boolean
 }
-const activeInteractions = new Map<Snowflake, InteractionInfo>()
 
 client.on('interactionCreate', async (i) => {
 	try {
-		if (i.isButton()) {
-			const info = activeInteractions.get(i.message.id)
-			if (!info) {
-				await i.update({
-					embeds: [new MessageEmbed().setDescription('The interaction has expired!')],
-					components: [],
-				})
-				return
-			}
-
-			if (i.customId === 'previous') {
-				info.activeErrorIndex--
-			} else if (i.customId === 'next') {
-				info.activeErrorIndex++
-			}
-			await i.update(getReplyOptions(info))
-		} else if (i.isCommand()) {
+		if (i.isChatInputCommand()) {
 			switch (i.commandName) {
 				case 'ping':
 					await i.reply({
@@ -94,9 +92,37 @@ client.on('interactionCreate', async (i) => {
 					const showRaw = i.options.getBoolean('showraw', false) ?? false
 					const info = await getInteractionInfo(command, showRaw)
 					const reply = await i.reply(getReplyOptions(info))
-					activeInteractions.set(reply.id, info)
+					const collector = reply.createMessageComponentCollector({
+						componentType: ComponentType.Button,
+						time: 600_000, // 10 minutes
+					})
+					collector
+						.on('collect', async (bi) => {
+							if (bi.user.id !== i.user.id) {
+								await bi.reply({
+									content:
+										'Only the original initiator of this interaction may switch to other diagnostics.',
+									ephemeral: true,
+								})
+								return
+							}
+
+							if (bi.customId === 'previous') {
+								info.activeErrorIndex--
+							} else if (bi.customId === 'next') {
+								info.activeErrorIndex++
+							}
+							await bi.update(getReplyOptions(info))
+						})
+						.on('end', async () => {
+							await i.editReply(getReplyOptions(info, true))
+						})
 					break
 			}
+		} else if (i.isAutocomplete()) {
+			const content = i.options.getFocused()
+			const options = await getAutocomplete(content)
+			await i.respond(options)
 		}
 	} catch (e) {
 		console.error('[interactionCreate]', e)
@@ -122,7 +148,7 @@ interface Config {
  * @throws
  */
 async function loadConfig(): Promise<Config> {
-	const path = join(parentPath, 'config.json')
+	const path = join(rootPath!, 'config.json')
 	const config = (await fileUtil.readJson(NodeJsExternals, path)) as Config
 	if (
 		!(typeof config.clientId === 'string'
@@ -142,11 +168,11 @@ async function registerCommands(): Promise<unknown> {
 		'Ping the Spyglass Bot',
 	).toJSON()
 	const spyCommand = new SlashCommandBuilder().setName('spy').setDescription(
-		'Renders a mcfunction command. Error reporting coming soon™',
+		'Renders a mcfunction command.',
 	).addStringOption(
 		new SlashCommandStringOption().setName('command').setDescription(
 			'Put a single mcfunction command here',
-		).setRequired(true),
+		).setAutocomplete(true).setMaxLength(MaxCommandLength).setRequired(true),
 	).addBooleanOption(
 		new SlashCommandBooleanOption().setName('showraw').setDescription(
 			'Whether to show the result ANSI code in raw code blocks',
@@ -158,14 +184,43 @@ async function registerCommands(): Promise<unknown> {
 	})
 }
 
-async function getInteractionInfo(content: string, showRaw: boolean): Promise<InteractionInfo> {
-	if (activeInteractions.has(content)) {
-		return activeInteractions.get(content)!
+function generateRandomUri(): string {
+	const uuid = webcrypto.randomUUID()
+	return pathToFileURL(`${rootPath}/virtual/file-${uuid}.mcfunction`).toString()
+}
+
+async function getAutocomplete(
+	content: string,
+): Promise<readonly ApplicationCommandOptionChoiceData<string>[]> {
+	const uri = generateRandomUri()
+	await service.project.onDidOpen(uri, 'mcfunction', 0, content)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	service.project.onDidClose(uri)
+	if (!docAndNode) {
+		throw new Error('docAndNode is undefined')
 	}
 
-	await service.project.onDidOpen(DocumentUri, 'mcfunction', 0, content)
-	const docAndNode = await service.project.ensureClientManagedChecked(DocumentUri)
-	service.project.onDidClose(DocumentUri)
+	const { node, doc } = docAndNode
+
+	return service.complete(node, doc, content.length)
+		.sort((a, b) => (a.sortText ?? a.label).localeCompare(b.sortText ?? b.label))
+		// Convert autocomplete options into full text options
+		.map((i) => {
+			const insertText = i.insertText ?? i.label
+			return `${content.slice(0, i.range.start)}${insertText}${content.slice(i.range.end)}`
+		})
+		// Filter to the texts starting with the user input
+		.filter((v) => v.startsWith(content))
+		.map((v) => ({ name: v, value: v }))
+		// Limit to a maximum of 25 options
+		.slice(0, 25)
+}
+
+async function getInteractionInfo(content: string, showRaw: boolean): Promise<InteractionInfo> {
+	const uri = generateRandomUri()
+	await service.project.onDidOpen(uri, 'mcfunction', 0, content)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	service.project.onDidClose(uri)
 	if (!docAndNode) {
 		throw new Error('docAndNode is undefined')
 	}
@@ -180,20 +235,34 @@ async function getInteractionInfo(content: string, showRaw: boolean): Promise<In
 
 function getReplyOptions(
 	info: InteractionInfo,
-): { content: string; components: MessageActionRow[]; fetchReply: true } {
+	expired = false,
+): {
+	content: string
+	components: APIActionRowComponent<APIMessageActionRowComponent>[]
+	embeds: APIEmbed[]
+	fetchReply: true
+} {
 	const content = getReplyContent(info)
 	return {
 		content: content.length > MaxContentLength
 			? `Skipped colorizing due to Discord length limit.\n\`\`\`\n${info.content}\n\`\`\``
 			: content,
-		components: info.errors.length > 1
-			? [new MessageActionRow().addComponents(
-				new MessageButton().setCustomId('previous').setLabel('Previous Error').setStyle(
-					'PRIMARY',
-				).setDisabled(info.activeErrorIndex <= 0),
-				new MessageButton().setCustomId('next').setLabel('Next Error').setStyle('PRIMARY')
-					.setDisabled(info.activeErrorIndex >= info.errors.length - 1),
-			)]
+		components: !expired && info.errors.length > 1
+			? [
+				new ActionRowBuilder<ButtonBuilder>().addComponents(
+					new ButtonBuilder().setCustomId('previous').setLabel('Previous Error').setStyle(
+						ButtonStyle.Primary,
+					).setDisabled(info.activeErrorIndex <= 0),
+					new ButtonBuilder().setCustomId('next').setLabel('Next Error').setStyle(
+						ButtonStyle.Primary,
+					).setDisabled(info.activeErrorIndex >= info.errors.length - 1),
+				).toJSON(),
+			]
+			: [],
+		embeds: expired
+			? [
+				new EmbedBuilder({ description: 'The interaction has expired.' }).data,
+			]
 			: [],
 		fetchReply: true,
 	}
@@ -232,6 +301,7 @@ const ColorTokenTypeLegend: Record<ColorTokenType, Set<RenderFormat>> = {
 	enum: new Set(['foreground_white']),
 	enumMember: new Set(['foreground_white']),
 	error: new Set(['foreground_red', 'underline']),
+	escape: new Set(['foreground_green']),
 	function: new Set(['foreground_yellow']),
 	keyword: new Set(['foreground_pink']),
 	literal: new Set(['foreground_blue']),
@@ -248,7 +318,7 @@ const ColorTokenTypeLegend: Record<ColorTokenType, Set<RenderFormat>> = {
 }
 
 function getReplyContent(info: InteractionInfo): string {
-	const { content, tokens, errors, activeErrorIndex } = info
+	const { content, errors, activeErrorIndex } = info
 	const ansiCode = getAnsiCode(content, toRenderTokens(info))
 
 	const activeError: LanguageError | undefined = errors[activeErrorIndex]

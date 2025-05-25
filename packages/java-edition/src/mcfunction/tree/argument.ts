@@ -46,6 +46,9 @@ export interface MinecraftColumnPosArgumentTreeNode extends mcf.ArgumentTreeNode
 export interface MinecraftComponentArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:component'
 }
+export interface MinecraftDialogArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:dialog'
+}
 export interface MinecraftDimensionArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:dimension'
 }
@@ -59,8 +62,15 @@ export interface MinecraftEntityAnchorArgumentTreeNode extends mcf.ArgumentTreeN
 export interface MinecraftEntitySummonArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:entity_summon'
 }
+export interface RangeProperties extends Record<string, unknown> {
+	min: number
+	max: number
+	minSpan: number
+	maxSpan: number
+}
 export interface MinecraftFloatRangeArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:float_range'
+	properties?: RangeProperties
 }
 export interface MinecraftFunctionArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:function'
@@ -76,6 +86,7 @@ export interface MinecraftHeightmapArgumentTreeNode extends mcf.ArgumentTreeNode
 }
 export interface MinecraftIntRangeArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:int_range'
+	properties?: RangeProperties
 }
 export interface MinecraftItemEnchantmentArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:item_enchantment'
@@ -197,6 +208,10 @@ export interface MinecraftResourceOrTagKeyArgumentTreeNode extends mcf.ArgumentT
 	parser: 'minecraft:resource_or_tag_key'
 	properties: { registry: string }
 }
+export interface MinecraftResourceSelectorTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:resource_selector'
+	properties: { registry: string }
+}
 export interface MinecraftRotationArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:rotation'
 }
@@ -260,6 +275,7 @@ export type ArgumentTreeNode =
 	| MinecraftColorArgumentTreeNode
 	| MinecraftColumnPosArgumentTreeNode
 	| MinecraftComponentArgumentTreeNode
+	| MinecraftDialogArgumentTreeNode
 	| MinecraftDimensionArgumentTreeNode
 	| MinecraftEntityArgumentTreeNode
 	| MinecraftEntityAnchorArgumentTreeNode
@@ -292,6 +308,7 @@ export type ArgumentTreeNode =
 	| MinecraftResourceLocationArgumentTreeNode
 	| MinecraftResourceOrTagArgumentTreeNode
 	| MinecraftResourceOrTagKeyArgumentTreeNode
+	| MinecraftResourceSelectorTreeNode
 	| MinecraftRotationArgumentTreeNode
 	| MinecraftScoreHolderArgumentTreeNode
 	| MinecraftScoreboardSlotArgumentTreeNode

@@ -1,0 +1,14 @@
+[Unit]
+Description=SpyglassMC API server service
+After=network.target
+
+[Service]
+User=api-server
+Group=api-server
+WorkingDirectory=/var/lib/api-server
+ExecStart=/var/lib/api-server/start.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

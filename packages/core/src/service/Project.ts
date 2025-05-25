@@ -1,5 +1,4 @@
-import type { Ignore } from 'ignore'
-import ignore from 'ignore'
+import picomatch from 'picomatch'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
@@ -26,6 +25,7 @@ import {
 	LinterContext,
 	ParserContext,
 	UriBinderContext,
+	UriPredicateContext,
 } from './Context.js'
 import type { Dependency } from './Dependency.js'
 import { DependencyKey } from './Dependency.js'
@@ -158,7 +158,6 @@ export type ProjectData = Pick<
  */
 export class Project implements ExternalEventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
-	private static readonly GitIgnore = '.gitignore'
 
 	/** Prevent circular binding. */
 	readonly #bindingInProgressUris = new Set<string>()
@@ -183,7 +182,6 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	config!: Config
-	ignore: Ignore = ignore()
 	readonly downloader: Downloader
 	readonly externals: Externals
 	readonly fs: FileService
@@ -290,11 +288,11 @@ export class Project implements ExternalEventEmitter {
 	 * are not loaded into the memory.
 	 */
 	getTrackedFiles(): string[] {
-		const extensions: string[] = this.meta.getSupportedFileExtensions()
 		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.#watchedFiles]
-			.filter((file) => extensions.includes(fileUtil.extname(file) ?? ''))
-		const filteredFiles = this.ignore.filter(supportedFiles)
-		return filteredFiles
+		this.logger.info(
+			`[Project#getTrackedFiles] Listed ${supportedFiles.length} supported files`,
+		)
+		return supportedFiles
 	}
 
 	constructor(
@@ -328,14 +326,15 @@ export class Project implements ExternalEventEmitter {
 
 		this.#ctx = {}
 
-		this.logger.info(`[Project] [init] cacheRoot = “${cacheRoot}”`)
+		this.logger.info(`[Project] [init] cacheRoot = ${cacheRoot}`)
+		this.logger.info(`[Project] [init] projectRoots = ${projectRoots.join(' ')}`)
 
 		this.#configService.on('changed', ({ config }) => {
 			this.config = config
 			this.logger.info('[Project] [Config] Changed')
 		}).on(
 			'error',
-			({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading “${uri}”`, error),
+			({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading ${uri}`, error),
 		)
 
 		this.setInitPromise()
@@ -376,30 +375,21 @@ export class Project implements ExternalEventEmitter {
 			this.tryClearingCache(uri)
 		}).on('ready', () => {
 			this.#isReady = true
-			// // Recheck client managed files after the READY process, as they may have incomplete results and are user-facing.
-			// const promises: Promise<unknown>[] = []
-			// for (const { doc, node } of this.#clientManagedDocAndNodes.values()) {
-			// 	promises.push(this.check(doc, node))
-			// }
-			// Promise.all(promises).catch(e => this.logger.error('[Project#ready] Error occurred when rechecking client managed files after READY', e))
+			// Recheck client managed files after the READY process, as they may have incomplete results and are user-facing.
+			const promises: Promise<unknown>[] = []
+			for (const { doc, node } of this.#clientManagedDocAndNodes.values()) {
+				promises.push(this.check(doc, node))
+			}
+			Promise.all(promises).catch(e =>
+				this.logger.error(
+					'[Project#ready] Error occurred when rechecking client managed files after READY',
+					e,
+				)
+			)
 		})
 	}
 
 	private setInitPromise(): void {
-		const loadConfig = async () => {
-			this.config = await this.#configService.load()
-			this.ignore = ignore()
-			for (const pattern of this.config.env.exclude) {
-				if (pattern === '@gitignore') {
-					const gitignore = await this.readGitignore()
-					if (gitignore) {
-						this.ignore.add(gitignore)
-					}
-				} else {
-					this.ignore.add(pattern)
-				}
-			}
-		}
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
@@ -433,29 +423,13 @@ export class Project implements ExternalEventEmitter {
 			this.symbols.buildCache()
 			__profiler.task('Load Cache')
 
-			await loadConfig()
+			this.config = await this.#configService.load()
 			__profiler.task('Load Config')
 
 			await callIntializers()
 			__profiler.task('Initialize').finalize()
 		}
 		this.#initPromise = init()
-	}
-
-	private async readGitignore() {
-		if (this.projectRoots.length === 0) {
-			return undefined
-		}
-		try {
-			const uri = this.projectRoots[0] + Project.GitIgnore
-			const contents = await this.externals.fs.readFile(uri)
-			return bufferToString(contents)
-		} catch (e) {
-			if (!this.externals.error.isKind(e, 'ENOENT')) {
-				this.logger.error(`[Project] [readGitignore]`, e)
-			}
-		}
-		return undefined
 	}
 
 	private setReadyPromise(): void {
@@ -510,19 +484,30 @@ export class Project implements ExternalEventEmitter {
 				}
 				this.#watchedFiles.clear()
 				this.#watcherReady = false
-				this.#watcher = this.externals.fs.watch(this.projectRoots).once('ready', () => {
+				this.#watcher = this.externals.fs.watch(this.projectRoots, {
+					usePolling: this.config.env.useFilePolling,
+				}).once('ready', () => {
 					this.#watcherReady = true
 					resolve()
 				}).on('add', (uri) => {
+					if (this.shouldExclude(uri)) {
+						return
+					}
 					this.#watchedFiles.add(uri)
 					if (this.#watcherReady) {
 						this.emit('fileCreated', { uri })
 					}
 				}).on('change', (uri) => {
+					if (this.shouldExclude(uri)) {
+						return
+					}
 					if (this.#watcherReady) {
 						this.emit('fileModified', { uri })
 					}
 				}).on('unlink', (uri) => {
+					if (this.shouldExclude(uri)) {
+						return
+					}
 					this.#watchedFiles.delete(uri)
 					if (this.#watcherReady) {
 						this.emit('fileDeleted', { uri })
@@ -538,7 +523,8 @@ export class Project implements ExternalEventEmitter {
 
 			await Promise.all([listDependencyFiles(), listProjectFiles()])
 
-			this.#dependencyFiles = new Set(this.fs.listFiles())
+			this.#dependencyFiles = new Set([...this.fs.listFiles()]
+				.filter((uri) => !this.shouldExclude(uri)))
 			this.#dependencyRoots = new Set(this.fs.listRoots())
 
 			this.updateRoots()
@@ -576,6 +562,18 @@ export class Project implements ExternalEventEmitter {
 
 			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
 			__profiler.task('Sort URIs')
+
+			const fileCountByExtension = new Map<string, number>()
+			for (const file of files) {
+				const ext = fileUtil.extname(file)?.replace(/^\./, '')
+				if (ext) {
+					fileCountByExtension.set(ext, (fileCountByExtension.get(ext) ?? 0) + 1)
+				}
+			}
+			this.logger.info(`[Project#ready] == Files to bind ==`)
+			for (const [ext, count] of fileCountByExtension.entries()) {
+				this.logger.info(`[Project#ready] File extension ${ext}: ${count}`)
+			}
 
 			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
 			for (const uri of files) {
@@ -660,13 +658,9 @@ export class Project implements ExternalEventEmitter {
 		this.#textDocumentCache.delete(uri)
 	}
 	private async read(uri: string): Promise<TextDocument | undefined> {
-		const getLanguageID = (uri: string): string => {
-			const ext = fileUtil.extname(uri) ?? '.plaintext'
-			return this.meta.getLanguageID(ext) ?? ext.slice(1)
-		}
 		const createTextDocument = async (uri: string): Promise<TextDocument | undefined> => {
-			const languageId = getLanguageID(uri)
-			if (!this.meta.isSupportedLanguage(languageId)) {
+			const languageId = this.guessLanguageID(uri)
+			if (!this.isSupportedLanguage(uri, languageId)) {
 				return undefined
 			}
 
@@ -674,7 +668,7 @@ export class Project implements ExternalEventEmitter {
 				const content = bufferToString(await this.fs.readFile(uri))
 				return TextDocument.create(uri, languageId, -1, content)
 			} catch (e) {
-				this.logger.warn(`[Project] [read] Failed creating TextDocument for “${uri}”`, e)
+				this.logger.warn(`[Project] [read] Failed creating TextDocument for ${uri}`, e)
 				return undefined
 			}
 		}
@@ -727,7 +721,7 @@ export class Project implements ExternalEventEmitter {
 				return result.doc
 			}
 			throw new Error(
-				`[Project] [read] Client-managed URI “${uri}” does not have a TextDocument in the cache`,
+				`[Project] [read] Client-managed URI ${uri} does not have a TextDocument in the cache`,
 			)
 		}
 		return getCacheHandlingPromise(uri)
@@ -767,7 +761,7 @@ export class Project implements ExternalEventEmitter {
 			this.#bindingInProgressUris.delete(doc.uri)
 			this.#symbolUpToDateUris.add(doc.uri)
 		} catch (e) {
-			this.logger.error(`[Project] [bind] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Project] [bind] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 	}
 
@@ -786,7 +780,7 @@ export class Project implements ExternalEventEmitter {
 				this.lint(doc, node)
 			})
 		} catch (e) {
-			this.logger.error(`[Project] [check] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Project] [check] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 	}
 
@@ -813,7 +807,7 @@ export class Project implements ExternalEventEmitter {
 
 				const ctx = LinterContext.create(this, {
 					doc,
-					err: new LinterErrorReporter(ruleName, ruleSeverity),
+					err: new LinterErrorReporter(ruleName, ruleSeverity, this.ctx['errorSource']),
 					ruleName,
 					ruleValue,
 				})
@@ -827,7 +821,7 @@ export class Project implements ExternalEventEmitter {
 				;(node.linterErrors as LanguageError[]).push(...ctx.err.dump())
 			}
 		} catch (e) {
-			this.logger.error(`[Project] [lint] Failed for “${doc.uri}” #${doc.version}`, e)
+			this.logger.error(`[Project] [lint] Failed for ${doc.uri} # ${doc.version}`, e)
 		}
 	}
 
@@ -873,8 +867,11 @@ export class Project implements ExternalEventEmitter {
 		content: string,
 	): Promise<void> {
 		uri = this.normalizeUri(uri)
-		if (!fileUtil.isFileUri(uri)) {
-			return // We only accept `file:` scheme for client-managed URIs.
+		if (uri.startsWith(ArchiveUriSupporter.Protocol)) {
+			return // We do not accept `archive:` scheme for client-managed URIs.
+		}
+		if (this.shouldExclude(uri, languageID)) {
+			return
 		}
 		const doc = TextDocument.create(uri, languageID, version, content)
 		const node = this.parse(doc)
@@ -897,16 +894,16 @@ export class Project implements ExternalEventEmitter {
 	): Promise<void> {
 		uri = this.normalizeUri(uri)
 		this.#symbolUpToDateUris.delete(uri)
-		if (!fileUtil.isFileUri(uri)) {
-			return // We only accept `file:` scheme for client-managed URIs.
+		if (uri.startsWith(ArchiveUriSupporter.Protocol)) {
+			return // We do not accept `archive:` scheme for client-managed URIs.
 		}
 		const doc = this.#clientManagedDocAndNodes.get(uri)?.doc
-		if (!doc) {
-			throw new Error(
-				`TextDocument for “${uri}” is ${
-					!doc ? 'not cached' : 'a Promise'
-				}. This should not happen. Did the language client send a didChange notification without sending a didOpen one, or is there a logic error on our side resulting the 'read' function overriding the 'TextDocument' created in the 'didOpen' notification handler?`,
-			)
+		if (!doc || this.shouldExclude(uri, doc.languageId)) {
+			// If doc is undefined, it means the document was previously excluded by onDidOpen()
+			// based on the language ID supplied by the client, in which case we should return early.
+			// Otherwise, we perform the shouldExclude() check with the URI and the saved language ID
+			// as usual.
+			return
 		}
 		TextDocument.update(doc, changes, version)
 		const node = this.parse(doc)
@@ -922,8 +919,8 @@ export class Project implements ExternalEventEmitter {
 	 */
 	onDidClose(uri: string): void {
 		uri = this.normalizeUri(uri)
-		if (!fileUtil.isFileUri(uri)) {
-			return // We only accept `file:` scheme for client-managed URIs.
+		if (uri.startsWith(ArchiveUriSupporter.Protocol)) {
+			return // We do not accept `archive:` scheme for client-managed URIs.
 		}
 		this.#clientManagedUris.delete(uri)
 		this.#clientManagedDocAndNodes.delete(uri)
@@ -957,10 +954,54 @@ export class Project implements ExternalEventEmitter {
 		}
 
 		try {
+			await fileUtil.ensureDir(this.externals, this.#cacheRoot)
 			await this.externals.fs.showFile(this.#cacheRoot)
 		} catch (e) {
 			this.logger.error('[Service#showCacheRoot]', e)
 		}
+	}
+
+	/**
+	 * Returns true iff the URI should be excluded from all Spyglass language support.
+	 *
+	 * @param language Optional. If ommitted, a language will be derived from the URI according to
+	 *                 its file extension.
+	 */
+	public shouldExclude(uri: string, language?: string): boolean {
+		return !this.isSupportedLanguage(uri, language) || this.isUserExcluded(uri)
+	}
+
+	private isSupportedLanguage(uri: string, language?: string): boolean {
+		language ??= this.guessLanguageID(uri)
+
+		const languageOptions = this.meta.getLanguageOptions(language)
+		if (!languageOptions) {
+			// Unsupported language.
+			return false
+		}
+
+		const { uriPredicate } = languageOptions
+		return uriPredicate?.(uri, UriPredicateContext.create(this)) ?? true
+	}
+
+	/**
+	 * Guess a language ID from a URI. The guessed language ID may or may not actually be supported.
+	 */
+	private guessLanguageID(uri: string): string {
+		const ext = fileUtil.extname(uri) ?? '.spyglassmc-unknown'
+		return this.meta.getLanguageID(ext) ?? ext.slice(1)
+	}
+
+	private isUserExcluded(uri: string): boolean {
+		if (this.config.env.exclude.length === 0) {
+			return false
+		}
+		for (const rel of fileUtil.getRels(uri, this.projectRoots)) {
+			if (picomatch(this.config.env.exclude, { dot: true, posixSlashes: false })(rel)) {
+				return true
+			}
+		}
+		return false
 	}
 
 	private tryClearingCache(uri: string): void {

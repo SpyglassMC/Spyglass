@@ -5,7 +5,7 @@ import { describe, it } from 'mocha'
 import * as path from 'path'
 import snapshot from 'snap-shot-it'
 import url from 'url'
-import type { PackMcmeta } from '../../lib/dependency/common.js'
+import type { PackInfo, PackMcmeta } from '../../lib/dependency/common.js'
 import type { McmetaRegistries, McmetaStates, McmetaVersions } from '../../lib/dependency/mcmeta.js'
 import {
 	Fluids,
@@ -41,8 +41,8 @@ const Fixtures = {
 
 describe('mcmeta', () => {
 	describe('resolveConfiguredVersion()', () => {
-		const suites: { version: string; packMcmeta?: PackMcmeta | undefined }[] = [
-			{ version: 'Auto', packMcmeta: { pack: { pack_format: 6 } } },
+		const suites: { version: string; packs?: PackInfo[] | undefined }[] = [
+			{ version: 'Auto', packs: [{ type: 'data', format: 6, packRoot: 'file:///pack.mcmeta' }] },
 			{ version: 'Latest Release' },
 			{ version: 'Latest Snapshot' },
 			{ version: 'unknown' },
@@ -50,12 +50,13 @@ describe('mcmeta', () => {
 			{ version: '22w03a' },
 			{ version: '1.16.5' },
 		]
-		for (const { version, packMcmeta } of suites) {
+		for (const { version, packs } of suites) {
 			it(`Should resolve "${version}"`, async () => {
-				const actual = await resolveConfiguredVersion(
+				const actual = resolveConfiguredVersion(
 					version,
 					Fixtures.Versions,
-					async () => packMcmeta,
+					packs ?? [],
+					console,
 				)
 				snapshot(actual)
 			})
@@ -84,7 +85,7 @@ describe('mcmeta', () => {
 				commands: undefined as any,
 				fluids: Fluids,
 				registries: Fixtures.Registries,
-			})
+			}, '1.18.2')
 			const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 			registrar(symbols, {})
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))

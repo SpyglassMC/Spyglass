@@ -4,29 +4,30 @@ import type { MacroNode } from '../node/index.js'
 
 /**
  * Parse a macro line.
- * @param supportsMacros When false, reports the entire line as an error (due to
- * the Minecraft version not supporting macros).
+ * @param hasPrefix When false, don't look for a starting '$'.
  */
-export function macro(supportsMacros = true): core.Parser<MacroNode | core.ErrorNode> {
-	return (src: core.Source, ctx: core.ParserContext): core.Result<MacroNode | core.ErrorNode> => {
+export function macro(hasPrefix = true): core.InfallibleParser<MacroNode> {
+	return (src: core.Source, ctx: core.ParserContext): MacroNode => {
 		const ans: MacroNode = {
 			type: 'mcfunction:macro',
 			range: core.Range.create(src.cursor),
 			children: [],
 		}
-
-		if (!supportsMacros) {
-			src.skipLine()
-			ans.range.end = src.cursor
-			ctx.err.report(localize('mcfunction.parser.macro.disallowed'), ans.range)
-			return { ...ans, type: 'error' } as core.ErrorNode
-		}
-
-		// Skip the starting '$'
-		src.skip()
-
 		let start = src.cursor
 		let hasMacroArgs = false
+
+		if (hasPrefix) {
+			// Skip the starting '$'
+			if (src.trySkip('$')) {
+				ans.children.push({
+					type: 'mcfunction:macro/prefix',
+					range: core.Range.create(start, src),
+				})
+				start = src.cursor
+			} else {
+				ctx.err.report(localize('expected', localeQuote('$')), ans)
+			}
+		}
 
 		while (src.canReadInLine()) {
 			src.skipUntilOrEnd(core.LF, core.CR, '$')
@@ -37,7 +38,7 @@ export function macro(supportsMacros = true): core.Parser<MacroNode | core.Error
 				if (other.length > 0) {
 					ans.children.push({
 						type: 'mcfunction:macro/other',
-						range: core.Range.create(start, src.cursor),
+						range: core.Range.create(start, src),
 						value: other,
 					})
 					start = src.cursor
@@ -59,7 +60,7 @@ export function macro(supportsMacros = true): core.Parser<MacroNode | core.Error
 					// No more macro arguments, add the remaining other stuff
 					ans.children.push({
 						type: 'mcfunction:macro/other',
-						range: core.Range.create(start, src.cursor),
+						range: core.Range.create(start, src),
 						value: src.sliceToCursor(start),
 					})
 				}
@@ -70,7 +71,7 @@ export function macro(supportsMacros = true): core.Parser<MacroNode | core.Error
 		if (!hasMacroArgs) {
 			ctx.err.report(
 				localize('expected', localize('mcfunction.parser.macro.at-least-one')),
-				core.Range.create(start, src.cursor),
+				core.Range.create(start, src),
 			)
 		}
 

@@ -46,7 +46,7 @@ jobs:
       - run: npm test -- --forbid-only
 
       - run: tar -cvf build-artifact.tar packages/*/lib/ packages/*/out/ packages/*/dist/
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: build-artifact
           path: build-artifact.tar
@@ -68,7 +68,7 @@ jobs:
           cache: "npm"
       - run: npm ci
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: build-artifact
       - run: |

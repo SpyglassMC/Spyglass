@@ -3,6 +3,7 @@ import { Uri } from '../common/index.js'
 import type { PosRangeLanguageError } from '../source/index.js'
 import type { UnlinkedSymbolTable } from '../symbol/index.js'
 import { SymbolTable } from '../symbol/index.js'
+import { ArchiveUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
 import type { Project } from './Project.js'
@@ -11,7 +12,7 @@ import type { Project } from './Project.js'
  * The format version of the cache. Should be increased when any changes that
  * could invalidate the cache are introduced to the Spyglass codebase.
  */
-export const LatestCacheVersion = 4
+export const LatestCacheVersion = 6
 
 /**
  * Checksums of cached files or roots.
@@ -66,7 +67,12 @@ export class CacheService {
 	 */
 	constructor(private readonly cacheRoot: RootUriString, private readonly project: Project) {
 		this.project.on('documentUpdated', async ({ doc }) => {
-			if (!this.#hasValidatedFiles) {
+			if (
+				!this.#hasValidatedFiles
+				// Do not save checksums for file schemes that we cannot map to disk (e.g. 'untitled:'
+				// for untitled files in VS Code)
+				|| !(doc.uri.startsWith(ArchiveUriSupporter.Protocol) || doc.uri.startsWith('file:'))
+			) {
 				return
 			}
 			try {
@@ -123,7 +129,7 @@ export class CacheService {
 		let filePath: string | undefined
 		try {
 			filePath = await this.getCacheFileUri()
-			this.project.logger.info(`[CacheService#load] symbolCachePath = “${filePath}”`)
+			this.project.logger.info(`[CacheService#load] symbolCachePath = ${filePath}`)
 			const cache =
 				(await fileUtil.readGzippedJson(this.project.externals, filePath)) as CacheFile
 			__profiler.task('Read File')
@@ -174,11 +180,11 @@ export class CacheService {
 				ans.unchangedFiles.push(uri)
 				continue
 			}
-
-			if (this.project.ignore.ignores(uri)) {
-				ans.unchangedFiles.push(uri)
+			if (this.project.shouldExclude(uri)) {
+				ans.removedFiles.push(uri)
 				continue
 			}
+
 			try {
 				const hash = await this.project.fs.hash(uri)
 				if (hash === checksum) {
@@ -236,7 +242,7 @@ export class CacheService {
 
 			return true
 		} catch (e) {
-			this.project.logger.error(`[CacheService#save] path = “${filePath}”`, e)
+			this.project.logger.error(`[CacheService#save] path = ${filePath}`, e)
 		}
 		return false
 	}

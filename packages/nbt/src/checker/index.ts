@@ -13,7 +13,7 @@ import {
 } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
-const typed: core.Checker<TypedNbtNode> = (node, ctx) => {
+export const typed: core.SyncChecker<TypedNbtNode> = (node, ctx) => {
 	typeDefinition(node.targetType)(node.children[0], ctx)
 }
 
@@ -129,10 +129,15 @@ export function typeDefinition(
 					}
 					return []
 				},
-				reportError: mcdoc.runtime.checker.getDefaultErrorReporter(
-					ctx,
-					mcdoc.runtime.checker.getDefaultErrorRange<NbtNode>,
-				),
+				reportError: (error) => {
+					if (options.isPredicate && error.kind === 'invalid_collection_length') {
+						return
+					}
+					mcdoc.runtime.checker.getDefaultErrorReporter(
+						ctx,
+						mcdoc.runtime.checker.getDefaultErrorRange<NbtNode>,
+					)(error)
+				},
 				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
 					node.requireCanonical = options.isPredicate

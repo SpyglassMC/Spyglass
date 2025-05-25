@@ -4,13 +4,18 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 
 describe('nbt list()', () => {
-	const suites: { content: string }[] = [{ content: '' }, { content: '[]' }, {
-		content: '["string"]',
-	}, { content: '["string", 1b]' }]
-	for (const { content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+	const suites: { content: string; version?: string }[] = [
+		{ content: '' },
+		{ content: '[]' },
+		{ content: '["string"]' },
+		{ content: '["string", 1b]', version: '1.21.4' },
+		{ content: '["string", 1b]', version: '1.21.5' },
+	]
+	for (const { content, version } of suites) {
+		it(`Parse "${showWhitespaceGlyph(content)}"${version ? ` in ${version}` : ''}`, () => {
 			const parser = list
-			snapshot(testParser(parser, content))
+			const ctx = version ? { project: { ctx: { loadedVersion: version } } } : undefined
+			snapshot(testParser(parser, content, ctx))
 		})
 	}
 })

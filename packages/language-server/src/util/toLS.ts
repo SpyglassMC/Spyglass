@@ -48,7 +48,7 @@ export function diagnostic(error: core.PosRangeLanguageError): ls.Diagnostic {
 		error.message,
 		diagnosticSeverity(error.severity),
 		undefined,
-		'spyglassmc',
+		error.source ? `spyglassmc(${error.source})` : 'spyglassmc',
 	)
 	if (error.info?.deprecated) {
 		;(ans.tags ??= [])?.push(ls.DiagnosticTag.Deprecated)
@@ -132,7 +132,7 @@ export function documentSymbols(
 				...(s.typeDefinition ?? []),
 			].find((l) => l.uri === doc.uri),
 		] as const
-	).filter(([_s, l]) => !!l).map(([s, l]) =>
+	).filter(([s, l]) => !!l && s.identifier).map(([s, l]) =>
 		documentSymbol(s, l!, doc, hierarchicalSupport, supportedKinds)
 	)
 }
@@ -176,6 +176,33 @@ export function inlayHints(hints: core.InlayHint[], doc: TextDocument): ls.Inlay
 	return hints.map((h) => inlayHint(h, doc))
 }
 
+export function codeAction(codeAction: core.CodeAction, doc: TextDocument): ls.CodeAction {
+	return {
+		title: codeAction.title,
+		kind: ls.CodeActionKind.QuickFix,
+		isPreferred: codeAction.isPreferred,
+		diagnostics: codeAction.errors?.map(e => diagnostic(core.LanguageError.withPosRange(e, doc))),
+		edit: codeAction.changes
+			? {
+				documentChanges: codeAction.changes.map(change => {
+					switch (change.type) {
+						case 'edit':
+							return {
+								textDocument: { uri: doc.uri, version: doc.version },
+								edits: [{ range: range(change.range, doc), newText: change.text }],
+							} satisfies ls.TextDocumentEdit
+						case 'create':
+							return {
+								kind: 'create',
+								uri: change.uri,
+							} satisfies ls.CreateFile
+					}
+				}),
+			}
+			: undefined,
+	}
+}
+
 export function completionItem(
 	completion: core.CompletionItem,
 	doc: TextDocument,
@@ -197,7 +224,7 @@ export function completionItem(
 		kind: completion.kind,
 		...(completion.labelSuffix ? { labelDetails: { detail: completion.labelSuffix } } : {}),
 		detail: completion.detail,
-		documentation: completion.documentation,
+		documentation: completion.documentation ? markupContent(completion.documentation) : undefined,
 		filterText: completion.filterText,
 		sortText: completion.sortText,
 		textEdit,
