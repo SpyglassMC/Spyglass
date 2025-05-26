@@ -6,6 +6,7 @@ import type {
 	MetaRegistry,
 } from '@spyglassmc/core'
 import { indentFormatter } from '@spyglassmc/core'
+import { text } from 'stream/consumers'
 import { node } from 'webpack'
 import type {
 	AnyTypeNode,
@@ -164,8 +165,9 @@ const injection: Formatter<InjectionNode> = (node, ctx) => {
 }
 
 const struct: Formatter<StructNode> = (node, ctx) => {
+	const isTopLevel = node.parent?.type === 'mcdoc:module'
 	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: '\n' },
+		'mcdoc:attribute': { suffix: isTopLevel ? '\n' : ' ' },
 		'mcdoc:literal': { suffix: ' ' },
 		'mcdoc:identifier': { suffix: ' ' },
 	})
@@ -209,11 +211,13 @@ const structMapKey: Formatter<StructMapKeyNode> = (node, ctx) => {
 const structSpreadField: Formatter<StructSpreadFieldNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)[0]
 	return formatChildren(node, ctx, {
+		'mcdoc:attribute': { suffix: `\n${ctx.indent()}` },
 		[typeNode.type]: { prefix: '...' },
 	})
 }
 
 const _enum: Formatter<EnumNode> = (node, ctx) => {
+	const isTopLevel = node.parent?.type === 'mcdoc:module'
 	return node.children.map((child) => {
 		if (child.type === 'comment') {
 			// Don't format comments if the type doesn't allow them.
@@ -222,7 +226,7 @@ const _enum: Formatter<EnumNode> = (node, ctx) => {
 		}
 		const formatted = ctx.meta.getFormatter(child.type)(child, ctx)
 		if (child.type === 'mcdoc:attribute') {
-			return formatted + '\n'
+			return formatted + isTopLevel ? '\n' : ' '
 		}
 		if (child.type === 'mcdoc:identifier') {
 			return formatted + ' '
@@ -267,6 +271,7 @@ const enumBlock: Formatter<EnumBlockNode> = (node, ctx) => {
 
 const enumField: Formatter<EnumFieldNode> = (node, ctx) => {
 	return formatChildren(node, ctx, {
+		'mcdoc:attribute': { suffix: `\n${ctx.indent()}` },
 		'mcdoc:identifier': { suffix: ' = ' },
 	})
 }
@@ -292,7 +297,9 @@ const unionType: Formatter<UnionTypeNode> = (node, ctx) => {
 }
 
 const referenceType: Formatter<ReferenceTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {})
+	return formatChildren(node, ctx, {
+		'mcdoc:attribute': { suffix: ' ' },
+	})
 }
 
 const path: Formatter<PathNode> = (node, ctx) => {
@@ -308,12 +315,14 @@ const path: Formatter<PathNode> = (node, ctx) => {
 
 const stringType: Formatter<StringTypeNode> = (node, ctx) => {
 	return formatChildren(node, ctx, {
+		'mcdoc:attribute': { suffix: ' ' },
 		'mcdoc:int_range': { prefix: '@' },
 	})
 }
 
 const primitiveArrayType: Formatter<PrimitiveArrayTypeNode> = (node, ctx) => {
 	return formatChildren(node, ctx, {
+		'mcdoc:attribute': { suffix: ' ' },
 		'mcdoc:int_range': { prefix: '@' },
 	})
 }
@@ -322,6 +331,7 @@ const listType: Formatter<ListTypeNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)[0]
 	return formatChildren(node, ctx, {
 		[typeNode.type]: { prefix: '[', suffix: ']' },
+		'mcdoc:attribute': { suffix: ' ' },
 		'mcdoc:int_range': { prefix: '@' },
 	})
 }
@@ -330,17 +340,21 @@ const typeAlias: Formatter<TypeAliasNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)[0]
 	return formatChildren(node, ctx, {
 		[typeNode.type]: { prefix: ' = ' },
+		'mcdoc:attribute': { suffix: '\n' },
 		'mcdoc:literal': { suffix: ' ' },
 	})
 }
 
 const dispatcherType: Formatter<DispatcherTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {})
+	return formatChildren(node, ctx, {
+		'mcdoc:attribute': { suffix: ' ' },
+	})
 }
 
 const dispatchStatement: Formatter<DispatchStatementNode> = (node, ctx) => {
 	return formatChildren(node, ctx, {
 		'mcdoc:literal': { suffix: ' ' },
+		'mcdoc:attribute': { suffix: '\n' },
 		'mcdoc:index_body': { suffix: ' ' },
 	})
 }
@@ -435,6 +449,7 @@ const typedNumber: Formatter<TypedNumberNode> = (node, ctx) => {
 
 const numericType: Formatter<NumericTypeNode> = (node, ctx) => {
 	return formatChildren(node, ctx, {
+		'mcdoc:attribute': { suffix: ' ' },
 		'mcdoc:int_range': { prefix: '@' },
 		'mcdoc:float_range': { prefix: '@' },
 	})
@@ -449,11 +464,15 @@ const floatRange: Formatter<FloatRangeNode> = (node, ctx) => {
 }
 
 const anyType: Formatter<AnyTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {})
+	return formatChildren(node, ctx, {
+		'mcdoc:attribute': { suffix: ' ' },
+	})
 }
 
 const booleanType: Formatter<BooleanTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {})
+	return formatChildren(node, ctx, {
+		'mcdoc:attribute': { suffix: ' ' },
+	})
 }
 
 const literal: Formatter<LiteralNode> = (node) => {
