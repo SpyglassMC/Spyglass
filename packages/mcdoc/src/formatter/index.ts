@@ -51,7 +51,7 @@ import type {
 	UnionTypeNode,
 	UseStatementNode,
 } from '../node'
-import { AttributeTreeClosure } from '../parser'
+import { AttributeTreeClosure } from '../parser/index.js'
 
 // These formatters operate under the assumption that each AST node's children are in the same order as they appear when formatted.
 // 		With the exception of comments, because those can be moved to the parent if they're at odd locations
