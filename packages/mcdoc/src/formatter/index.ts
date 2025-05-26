@@ -79,11 +79,12 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 	childFormatInfo: {
 		[TChildType in TNode['children'][number]['type']]?: ChildFormatInfo
 	},
+	excludeLastChildSuffix: boolean = false,
 ): string {
 	const allowsComments = nodeTypesAllowingComments.has(node.type)
 	const children = allowsComments ? liftChildComments(node.children) : node.children
 
-	return children.map((child) => {
+	return children.map((child, i) => {
 		if (child.type === 'comment' && !allowsComments) {
 			// Don't format comments if the type doesn't allow them.
 			// A parent type that does allow comments should have already included them.
@@ -94,7 +95,11 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 			child,
 			info?.indentSelf ? indentFormatter(ctx) : ctx,
 		)
-		const formatted = `${info?.prefix ?? ''}${value}${info?.suffix ?? ''}`
+		const prefix = info?.prefix ?? ''
+		const hasSuffix = info?.suffix !== undefined
+			&& (!excludeLastChildSuffix || children.length - 1 !== i)
+		const suffix = hasSuffix ? info.suffix : ''
+		const formatted = `${prefix}${value}${suffix}`
 		return formatted
 	}).join('')
 }
@@ -282,7 +287,7 @@ const tupleType: Formatter<TupleTypeNode> = (node, ctx) => {
 	for (const child of typeNode) {
 		childFormatInfo[child.type] = { suffix: ', ' }
 	}
-	const content = formatChildren(node, ctx, childFormatInfo)
+	const content = formatChildren(node, ctx, childFormatInfo, true)
 	return `[${content}]`
 }
 
@@ -292,7 +297,7 @@ const unionType: Formatter<UnionTypeNode> = (node, ctx) => {
 	for (const child of typeNode) {
 		childFormatInfo[child.type] = { suffix: ' | ' }
 	}
-	const content = formatChildren(node, ctx, childFormatInfo)
+	const content = formatChildren(node, ctx, childFormatInfo, true)
 	return `(${content})`
 }
 
@@ -366,7 +371,7 @@ const indexBody: Formatter<IndexBodyNode> = (node, ctx) => {
 		'mcdoc:literal': { suffix: ', ' },
 		'resource_location': { suffix: ', ' },
 		'string': { suffix: ', ' },
-	})
+	}, true)
 	return `[${content}]`
 }
 
@@ -402,7 +407,7 @@ const attributeTreePosValues: Formatter<AttributeTreePosValuesNode> = (node, ctx
 	for (const child of typeNode) {
 		childFormatInfo[child.type] = { suffix: ', ' }
 	}
-	return formatChildren(node, ctx, childFormatInfo)
+	return formatChildren(node, ctx, childFormatInfo, true)
 }
 
 const attributeTreeNamedValues: Formatter<AttributeTreeNamedValuesNode> = (node, ctx) => {
@@ -413,7 +418,7 @@ const attributeTreeNamedValues: Formatter<AttributeTreeNamedValuesNode> = (node,
 	for (const child of typeNode) {
 		childFormatInfo[child.type] = { prefix: '=', suffix: ', ' }
 	}
-	return formatChildren(node, ctx, childFormatInfo)
+	return formatChildren(node, ctx, childFormatInfo, true)
 }
 
 const typeArgBlock: Formatter<TypeArgBlockNode> = (node, ctx) => {
@@ -422,14 +427,14 @@ const typeArgBlock: Formatter<TypeArgBlockNode> = (node, ctx) => {
 	for (const child of typeNode) {
 		childFormatInfo[child.type] = { suffix: ', ' }
 	}
-	const content = formatChildren(node, ctx, childFormatInfo)
+	const content = formatChildren(node, ctx, childFormatInfo, true)
 	return `<${content}>`
 }
 
 const typeParamBlock: Formatter<TypeParamBlockNode> = (node, ctx) => {
 	const content = formatChildren(node, ctx, {
 		'mcdoc:type_param': { suffix: ', ' },
-	})
+	}, true)
 	return `<${content}>`
 }
 
