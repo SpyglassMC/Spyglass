@@ -24,7 +24,8 @@ exports['mcfunction parser entry() Parse "# this is a comment ⧵ ↓ still a co
           "start": 0,
           "end": 39
         },
-        "comment": " this is a comment still a comment"
+        "comment": " this is a comment still a comment",
+        "prefix": "#"
       }
     ]
   },
@@ -45,7 +46,8 @@ exports['mcfunction parser entry() Parse "# this is a comment" 1'] = {
           "start": 0,
           "end": 19
         },
-        "comment": " this is a comment"
+        "comment": " this is a comment",
+        "prefix": "#"
       }
     ]
   },
@@ -66,7 +68,8 @@ exports['mcfunction parser entry() Parse "# this is a comment↓say hi↓$this i
           "start": 0,
           "end": 19
         },
-        "comment": " this is a comment"
+        "comment": " this is a comment",
+        "prefix": "#"
       },
       {
         "type": "mcfunction:command",
@@ -1182,7 +1185,8 @@ exports['mcfunction parser entry() Parse "say ⧵↓ hi ↓ # comment start ⧵�
           "start": 12,
           "end": 35
         },
-        "comment": " comment start end "
+        "comment": " comment start end ",
+        "prefix": "#"
       },
       {
         "type": "mcfunction:command",
