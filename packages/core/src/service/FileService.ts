@@ -464,7 +464,7 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 	async hash(uri: string): Promise<string> {
 		const dependency = new URL(uri)
 
-		// TODO
+		// TODO - unknown, why do I do this
 		const dependencyPath = dependency.pathname.split('/').slice(1) // remove empty string that's always present at the beginning
 
 		const cache = RemoteUriSupporter.getCache(dependency, dependencyPath)
@@ -472,7 +472,7 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 		if (cache) {
 			const commitSHA = await this.downloader.download({
 				...cache.checksumJob,
-				// TODO
+				// TODO - unknown, why do I do this
 				id: dependencyPath[dependencyPath.length - 1],
 				options: cache.options,
 			})
@@ -564,7 +564,7 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 		if (!path) {
 			throw new Error(`Missing path in archive uri ${uri}`)
 		}
-		// TODO
+		// TODO - unknown, why do I do this
 		return { archiveName: uri.host, pathInArchive: path.charAt(0) === '/' ? path.slice(1) : path }
 	}
 
@@ -789,7 +789,7 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 		if (!path) {
 			throw new Error(`Missing path in archive uri ${uri}`)
 		}
-		// TODO
+		// TODO - unknown, why do I do this lol
 		return { archiveName: uri.host, pathInArchive: path.charAt(0) === '/' ? path.slice(1) : path }
 	}
 
@@ -888,10 +888,10 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 					throw new Error(`A different URI with ${archiveName} already exists`)
 				}
 				const cache: DownloaderDownloadOut = {}
-				await downloader.download({
-					id: `remote/${archiveName}`,
-					uri: actualUri,
-					transformer: async (buffer) => {
+				/**
+				 * Old transformer code that can't be implemented without a zip function:
+				 * 
+				 * transformer: async (buffer) => {
 						if (pathed === undefined) {
 							return buffer
 						} else {
@@ -914,6 +914,11 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 							return new Uint8Array()
 						}
 					},
+				 */
+				await downloader.download({
+					id: `remote/${archiveName}`,
+					uri: actualUri,
+					transformer: (buffer) => buffer,
 					cache: GitRepoSupporter.getCache(baseParts),
 				}, cache)
 
@@ -923,10 +928,12 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 					await externals.fs.readFile(localUri),
 					{ stripLevel: typeof info?.startDepth === 'number' ? info.startDepth : 0 },
 				)
+
 				/// Debug message for #1609
 				logger.info(
 					`[RemoteUriSupporter#create] Extracted ${files.length} files from ${archiveName}`,
 				)
+				// TODO: AHA moment: establish a nested root if the dependency is pathed HERE, then we don't have to handle it anywhere else and all thats kept in memory is the files we care about
 				entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
 			} catch (e) {
 				logger.error(`[RemoteUriSupporter#create] Bad dependency ${uri}`, e)
