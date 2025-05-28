@@ -126,54 +126,6 @@ function hasMultilineChild(node: DeepReadonly<AstNode>): boolean {
 	return false
 }
 
-/*
-// Automatically chooses multiline format when the content is too long or the node contains comments.
-// Otherwise, everything is formatted in a single line.
-function formatRepeatedInline<TNode extends AstNode & { children: AstNode[] }>(
-	node: DeepReadonly<TNode>,
-	ctx: FormatterContext,
-	separator: string,
-	additionalChildFormatInfo?: {
-		[TChildType in TNode['children'][number]['type']]?: {
-			prefix?: string
-			suffix?: string
-		}
-	},
-) {
-	const children = liftChildComments(node.children)
-	const foundMultilineChild = hasMultilineChild(node)
-	const isMultiline = foundMultilineChild // Todo: OR too long
-	const childSuffix = isMultiline ? separator + `\n` : separator + ' '
-	const childIndent = isMultiline ? ctx.indent(1) : ''
-	let lastChildHadAdditionalChildFormatInfo = false
-	const formattedChildren = children.map((child, i) => {
-		// Don't indent children after additionalChildFormatInfo, because the indent should be handled be the
-		// format info to also allow for multiple nodes on the same line.
-		const formatted = (lastChildHadAdditionalChildFormatInfo ? '' : childIndent)
-			+ ctx.meta.getFormatter(child.type)(child, ctx)
-
-		const info = additionalChildFormatInfo?.[child.type as keyof typeof additionalChildFormatInfo]
-		lastChildHadAdditionalChildFormatInfo = info !== undefined
-		if (info !== undefined) {
-			return (info.prefix ? info.prefix : '') + formatted + (info.suffix ? info.suffix : '')
-		}
-
-		if (child.type === 'comment') {
-			return formatted + `\n`
-		}
-		if (child.type === 'mcdoc:attribute') {
-			return formatted + ' '
-		}
-		if (!isMultiline && i === children.length - 1) {
-			// Don't add suffix to the last single-line child, trailing separators only look good for multiline nodes
-			return formatted
-		}
-		return formatted + childSuffix
-	}).join('')
-
-	return (isMultiline ? `\n` : '') + formattedChildren + (isMultiline ? ctx.indent() : '')
-}*/
-
 const maxDynamicInlineLength = 80 // Kind of arbitrary
 
 function formatDynamicMultiline(
