@@ -6,6 +6,7 @@ import type {
 	MetaRegistry,
 } from '@spyglassmc/core'
 import { indentFormatter } from '@spyglassmc/core'
+import { has } from 'benchmark'
 import { text } from 'stream/consumers'
 import { node } from 'webpack'
 import type {
@@ -58,13 +59,13 @@ import { AttributeTreeClosure } from '../parser/index.js'
 // 		With the exception of comments, because those can be moved to the parent if they're at odd locations
 // 		(for example a comment between the identifier and '{' of a struct will be moved to before the struct).
 
-// TODO: Allow comments in list-like nodes (for example tuples, unions and dispatchers)
-
 const nodeTypesAllowingComments = new Set<string>([
 	'mcdoc:module',
 	'mcdoc:struct/block',
 	'mcdoc:enum/block',
 	'mcdoc:doc_comments',
+	'mcdoc:type/tuple',
+	'mcdoc:type/union',
 ])
 
 interface ChildFormatInfo {
@@ -102,6 +103,91 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 		const formatted = `${prefix}${value}${suffix}`
 		return formatted
 	}).join('')
+}
+
+function hasMultilineChild(node: DeepReadonly<AstNode>): boolean {
+	if (!node.children) {
+		return false
+	}
+	for (const child of node.children) {
+		if (child.type === 'comment') {
+			return true
+		}
+		if (child.type === 'mcdoc:struct') {
+			return true
+		}
+		if (child.type === 'mcdoc:enum') {
+			return true
+		}
+		if (hasMultilineChild(child)) {
+			return true
+		}
+	}
+	return false
+}
+
+/*
+// Automatically chooses multiline format when the content is too long or the node contains comments.
+// Otherwise, everything is formatted in a single line.
+function formatRepeatedInline<TNode extends AstNode & { children: AstNode[] }>(
+	node: DeepReadonly<TNode>,
+	ctx: FormatterContext,
+	separator: string,
+	additionalChildFormatInfo?: {
+		[TChildType in TNode['children'][number]['type']]?: {
+			prefix?: string
+			suffix?: string
+		}
+	},
+) {
+	const children = liftChildComments(node.children)
+	const foundMultilineChild = hasMultilineChild(node)
+	const isMultiline = foundMultilineChild // Todo: OR too long
+	const childSuffix = isMultiline ? separator + `\n` : separator + ' '
+	const childIndent = isMultiline ? ctx.indent(1) : ''
+	let lastChildHadAdditionalChildFormatInfo = false
+	const formattedChildren = children.map((child, i) => {
+		// Don't indent children after additionalChildFormatInfo, because the indent should be handled be the
+		// format info to also allow for multiple nodes on the same line.
+		const formatted = (lastChildHadAdditionalChildFormatInfo ? '' : childIndent)
+			+ ctx.meta.getFormatter(child.type)(child, ctx)
+
+		const info = additionalChildFormatInfo?.[child.type as keyof typeof additionalChildFormatInfo]
+		lastChildHadAdditionalChildFormatInfo = info !== undefined
+		if (info !== undefined) {
+			return (info.prefix ? info.prefix : '') + formatted + (info.suffix ? info.suffix : '')
+		}
+
+		if (child.type === 'comment') {
+			return formatted + `\n`
+		}
+		if (child.type === 'mcdoc:attribute') {
+			return formatted + ' '
+		}
+		if (!isMultiline && i === children.length - 1) {
+			// Don't add suffix to the last single-line child, trailing separators only look good for multiline nodes
+			return formatted
+		}
+		return formatted + childSuffix
+	}).join('')
+
+	return (isMultiline ? `\n` : '') + formattedChildren + (isMultiline ? ctx.indent() : '')
+}*/
+
+const maxDynamicInlineLength = 80 // Kind of arbitrary
+
+function formatDynamicMultiline(
+	node: DeepReadonly<AstNode>,
+	formatter: (doMultiline: boolean) => string,
+): string {
+	if (hasMultilineChild(node)) {
+		return formatter(true)
+	}
+	const inlineFormat = formatter(false)
+	if (inlineFormat.length > maxDynamicInlineLength) {
+		return formatter(true)
+	}
+	return inlineFormat
 }
 
 function liftChildComments(
@@ -283,22 +369,46 @@ const enumField: Formatter<EnumFieldNode> = (node, ctx) => {
 
 const tupleType: Formatter<TupleTypeNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)
-	const childFormatInfo: { [key: string]: ChildFormatInfo } = {}
-	for (const child of typeNode) {
-		childFormatInfo[child.type] = { suffix: ', ' }
-	}
-	const content = formatChildren(node, ctx, childFormatInfo, true)
-	return `[${content}]`
+	return formatDynamicMultiline(node, (doMultiline) => {
+		const childFormatInfo: { [key: string]: ChildFormatInfo } = {
+			'comment': {
+				prefix: ctx.indent(1),
+				suffix: `\n`,
+			},
+		}
+		const typeFormatInfo = {
+			prefix: doMultiline ? ctx.indent(1) : '',
+			suffix: ',' + (doMultiline ? `\n` : ' '),
+			indentSelf: true,
+		}
+		for (const child of typeNode) {
+			childFormatInfo[child.type] = typeFormatInfo
+		}
+		const content = formatChildren(node, ctx, childFormatInfo, !doMultiline)
+		return doMultiline ? `[\n${content}${ctx.indent()}]` : `[${content}]`
+	})
 }
 
 const unionType: Formatter<UnionTypeNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)
-	const childFormatInfo: { [key: string]: ChildFormatInfo } = {}
-	for (const child of typeNode) {
-		childFormatInfo[child.type] = { suffix: ' | ' }
-	}
-	const content = formatChildren(node, ctx, childFormatInfo, true)
-	return `(${content})`
+	return formatDynamicMultiline(node, (doMultiline) => {
+		const childFormatInfo: { [key: string]: ChildFormatInfo } = {
+			'comment': {
+				prefix: ctx.indent(1),
+				suffix: `\n`,
+			},
+		}
+		const typeFormatInfo = {
+			prefix: doMultiline ? ctx.indent(1) : '',
+			suffix: ' |' + (doMultiline ? `\n` : ' '),
+			indentSelf: true,
+		}
+		for (const child of typeNode) {
+			childFormatInfo[child.type] = typeFormatInfo
+		}
+		const content = formatChildren(node, ctx, childFormatInfo, !doMultiline)
+		return doMultiline ? `(\n${content}${ctx.indent()})` : `(${content})`
+	})
 }
 
 const referenceType: Formatter<ReferenceTypeNode> = (node, ctx) => {
@@ -401,24 +511,42 @@ const attributeTree: Formatter<AttributeTreeNode> = (node, ctx) => {
 
 const attributeTreePosValues: Formatter<AttributeTreePosValuesNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)
-	const childFormatInfo: { [key: string]: ChildFormatInfo } = {
-		'mcdoc:attribute/tree': { suffix: ', ' },
-	}
-	for (const child of typeNode) {
-		childFormatInfo[child.type] = { suffix: ', ' }
-	}
-	return formatChildren(node, ctx, childFormatInfo, true)
+	return formatDynamicMultiline(node, (doMultiline) => {
+		const childFormatInfo = {
+			prefix: doMultiline ? ctx.indent(1) : '',
+			suffix: ',' + (doMultiline ? `\n` : ' '),
+			indentSelf: true,
+		}
+		const childFormatInfoMap: { [key: string]: ChildFormatInfo } = {
+			'mcdoc:attribute/tree': childFormatInfo,
+		}
+		for (const child of typeNode) {
+			childFormatInfoMap[child.type] = childFormatInfo
+		}
+		const content = formatChildren(node, ctx, childFormatInfoMap, !doMultiline)
+		return doMultiline ? `\n${content}${ctx.indent()}` : content
+	})
 }
 
 const attributeTreeNamedValues: Formatter<AttributeTreeNamedValuesNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)
-	const childFormatInfo: { [key: string]: ChildFormatInfo } = {
-		'mcdoc:attribute/tree': { prefix: '=', suffix: ', ' },
-	}
-	for (const child of typeNode) {
-		childFormatInfo[child.type] = { prefix: '=', suffix: ', ' }
-	}
-	return formatChildren(node, ctx, childFormatInfo, true)
+	return formatDynamicMultiline(node, (doMultiline) => {
+		const childFormatInfo = {
+			prefix: '=',
+			suffix: ',' + (doMultiline ? `\n` : ' '),
+			indentSelf: true,
+		}
+		const childFormatInfoMap: { [key: string]: ChildFormatInfo } = {
+			'mcdoc:attribute/tree': childFormatInfo,
+			'mcdoc:identifier': { prefix: doMultiline ? ctx.indent(1) : '' },
+			'string': { prefix: doMultiline ? ctx.indent(1) : '' },
+		}
+		for (const child of typeNode) {
+			childFormatInfoMap[child.type] = childFormatInfo
+		}
+		const content = formatChildren(node, ctx, childFormatInfoMap, !doMultiline)
+		return doMultiline ? `\n${content}${ctx.indent()}` : content
+	})
 }
 
 const typeArgBlock: Formatter<TypeArgBlockNode> = (node, ctx) => {
