@@ -200,14 +200,19 @@ function getTypeNodes(
 }
 
 const module: Formatter<ModuleNode> = (node, ctx) => {
-	return liftChildComments(node.children).map((child) => {
+	const children = liftChildComments(node.children)
+	return children.map((child, i) => {
 		const formatted = ctx.meta.getFormatter(child.type)(child, ctx)
-		if (child.type !== 'comment') {
-			// With an empty line between each non-comment child
-			// (comments don't have them, because they probably refer to the next child)
-			return `${formatted}\n`
+		if (child.type === 'comment') {
+			return formatted
 		}
-		return formatted
+		if (child.type === 'mcdoc:use_statement' && children[i + 1]?.type === 'mcdoc:use_statement') {
+			return formatted
+		}
+		// With an empty line between nodes
+		// (comments don't have them, because they probably refer to the next child)
+		// (use statements don't have them between each other, because use statements are supposed to be grouped together)
+		return `${formatted}\n`
 	}).join('\n')
 }
 
