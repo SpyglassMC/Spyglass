@@ -215,9 +215,10 @@ const module: Formatter<ModuleNode> = (node, ctx) => {
 }
 
 const useStatement: Formatter<UseStatementNode> = (node, ctx) => {
+	const hasAlias = node.children.some((child) => child.type === 'mcdoc:identifier')
 	return formatChildren(node, ctx, {
 		'mcdoc:literal': { suffix: ' ' },
-		'mcdoc:path': { suffix: ' ' },
+		'mcdoc:path': { suffix: hasAlias ? ' ' : '' },
 	})
 }
 
