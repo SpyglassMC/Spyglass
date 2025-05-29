@@ -260,6 +260,7 @@ const structBlock: Formatter<StructBlockNode> = (node, ctx) => {
 const structPairField: Formatter<StructPairFieldNode> = (node, ctx) => {
 	const keySuffix = `${node.isOptional ? '?' : ''}: `
 	return formatChildren(node, ctx, {
+		'mcdoc:attribute': { suffix: `\n${ctx.indent()}` },
 		'mcdoc:struct/map_key': { suffix: keySuffix },
 		'mcdoc:identifier': { suffix: keySuffix },
 		'string': { suffix: keySuffix },
