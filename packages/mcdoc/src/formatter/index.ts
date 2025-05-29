@@ -448,14 +448,21 @@ const dispatchStatement: Formatter<DispatchStatementNode> = (node, ctx) => {
 }
 
 const indexBody: Formatter<IndexBodyNode> = (node, ctx) => {
-	const content = formatChildren(node, ctx, {
-		'mcdoc:dynamic_index': { suffix: ', ' },
-		'mcdoc:identifier': { suffix: ', ' },
-		'mcdoc:literal': { suffix: ', ' },
-		'resource_location': { suffix: ', ' },
-		'string': { suffix: ', ' },
-	}, true)
-	return `[${content}]`
+	return formatDynamicMultiline(node, (doMultiline) => {
+		const indexFormatInfo: ChildFormatInfo = {
+			prefix: doMultiline ? ctx.indent(1) : '',
+			suffix: ',' + (doMultiline ? `\n` : ' '),
+			indentSelf: true,
+		}
+		const content = formatChildren(node, ctx, {
+			'mcdoc:dynamic_index': indexFormatInfo,
+			'mcdoc:identifier': indexFormatInfo,
+			'mcdoc:literal': indexFormatInfo,
+			'resource_location': indexFormatInfo,
+			'string': indexFormatInfo,
+		}, !doMultiline)
+		return doMultiline ? `[\n${content}${ctx.indent()}]` : `[${content}]`
+	})
 }
 
 const dynamicIndex: Formatter<DynamicIndexNode> = (node, ctx) => {
