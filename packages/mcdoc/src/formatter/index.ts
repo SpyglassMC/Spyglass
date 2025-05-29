@@ -79,9 +79,11 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 		[TChildType in TNode['children'][number]['type']]?: ChildFormatInfo
 	},
 	excludeLastChildSuffix: boolean = false,
+	postAttributesSuffix: string = '',
 ): string {
 	const allowsComments = nodeTypesAllowingComments.has(node.type)
 	const children = allowsComments ? liftChildComments(node.children) : node.children
+	let hasAppliedPostAttributesSuffix = false
 
 	return children.map((child, i) => {
 		if (child.type === 'comment' && !allowsComments) {
@@ -99,6 +101,10 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 			&& (!excludeLastChildSuffix || children.length - 1 !== i)
 		const suffix = hasSuffix ? info.suffix : ''
 		const formatted = `${prefix}${value}${suffix}`
+		if (child.type !== 'mcdoc:attribute' && !hasAppliedPostAttributesSuffix) {
+			hasAppliedPostAttributesSuffix = true
+			return postAttributesSuffix + formatted
+		}
 		return formatted
 	}).join('')
 }
@@ -349,6 +355,7 @@ const tupleType: Formatter<TupleTypeNode> = (node, ctx) => {
 				prefix: ctx.indent(1),
 				suffix: `\n`,
 			},
+			'mcdoc:attribute': { suffix: ' ' },
 		}
 		const typeFormatInfo = {
 			prefix: doMultiline ? ctx.indent(1) : '',
@@ -358,8 +365,14 @@ const tupleType: Formatter<TupleTypeNode> = (node, ctx) => {
 		for (const child of typeNode) {
 			childFormatInfo[child.type] = typeFormatInfo
 		}
-		const content = formatChildren(node, ctx, childFormatInfo, !doMultiline)
-		return doMultiline ? `[\n${content}${ctx.indent()}]` : `[${content}]`
+		const content = formatChildren(
+			node,
+			ctx,
+			childFormatInfo,
+			!doMultiline,
+			doMultiline ? '[\n' : '[',
+		)
+		return doMultiline ? `${content}${ctx.indent()}]` : `${content}]`
 	})
 }
 
@@ -371,6 +384,7 @@ const unionType: Formatter<UnionTypeNode> = (node, ctx) => {
 				prefix: ctx.indent(1),
 				suffix: `\n`,
 			},
+			'mcdoc:attribute': { suffix: ' ' },
 		}
 		const typeFormatInfo = {
 			prefix: doMultiline ? ctx.indent(1) : '',
@@ -380,8 +394,14 @@ const unionType: Formatter<UnionTypeNode> = (node, ctx) => {
 		for (const child of typeNode) {
 			childFormatInfo[child.type] = typeFormatInfo
 		}
-		const content = formatChildren(node, ctx, childFormatInfo, !doMultiline)
-		return doMultiline ? `(\n${content}${ctx.indent()})` : `(${content})`
+		const content = formatChildren(
+			node,
+			ctx,
+			childFormatInfo,
+			!doMultiline,
+			doMultiline ? '(\n' : '(',
+		)
+		return doMultiline ? `${content}${ctx.indent()})` : `${content})`
 	})
 }
 
