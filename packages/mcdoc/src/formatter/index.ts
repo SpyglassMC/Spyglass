@@ -85,7 +85,7 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 	const children = allowsComments ? liftChildComments(node.children) : node.children
 	let hasAppliedPostAttributesSuffix = false
 
-	return children.map((child, i) => {
+	const content = children.map((child, i) => {
 		if (child.type === 'comment' && !allowsComments) {
 			// Don't format comments if the type doesn't allow them.
 			// A parent type that does allow comments should have already included them.
@@ -107,6 +107,8 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 		}
 		return formatted
 	}).join('')
+
+	return hasAppliedPostAttributesSuffix ? content : postAttributesSuffix + content
 }
 
 function hasMultilineChild(node: DeepReadonly<AstNode>): boolean {
