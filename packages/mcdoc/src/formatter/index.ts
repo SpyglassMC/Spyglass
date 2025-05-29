@@ -6,8 +6,6 @@ import type {
 	MetaRegistry,
 } from '@spyglassmc/core'
 import { indentFormatter } from '@spyglassmc/core'
-import { has } from 'benchmark'
-import { text } from 'stream/consumers'
 import { node } from 'webpack'
 import type {
 	AnyTypeNode,
