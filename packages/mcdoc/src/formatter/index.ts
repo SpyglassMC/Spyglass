@@ -406,14 +406,14 @@ const path: Formatter<PathNode> = (node, ctx) => {
 const stringType: Formatter<StringTypeNode> = (node, ctx) => {
 	return formatChildren(node, ctx, {
 		'mcdoc:attribute': { suffix: ' ' },
-		'mcdoc:int_range': { prefix: '@' },
+		'mcdoc:int_range': { prefix: ' @ ' },
 	})
 }
 
 const primitiveArrayType: Formatter<PrimitiveArrayTypeNode> = (node, ctx) => {
 	return formatChildren(node, ctx, {
 		'mcdoc:attribute': { suffix: ' ' },
-		'mcdoc:int_range': { prefix: '@' },
+		'mcdoc:int_range': { prefix: ' @ ' },
 	})
 }
 
@@ -422,7 +422,7 @@ const listType: Formatter<ListTypeNode> = (node, ctx) => {
 	return formatChildren(node, ctx, {
 		[typeNode.type]: { prefix: '[', suffix: ']' },
 		'mcdoc:attribute': { suffix: ' ' },
-		'mcdoc:int_range': { prefix: '@' },
+		'mcdoc:int_range': { prefix: ' @ ' },
 	})
 }
 
@@ -558,8 +558,8 @@ const typedNumber: Formatter<TypedNumberNode> = (node, ctx) => {
 const numericType: Formatter<NumericTypeNode> = (node, ctx) => {
 	return formatChildren(node, ctx, {
 		'mcdoc:attribute': { suffix: ' ' },
-		'mcdoc:int_range': { prefix: '@' },
-		'mcdoc:float_range': { prefix: '@' },
+		'mcdoc:int_range': { prefix: ' @ ' },
+		'mcdoc:float_range': { prefix: ' @ ' },
 	})
 }
 
