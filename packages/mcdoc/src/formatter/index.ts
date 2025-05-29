@@ -299,7 +299,7 @@ const _enum: Formatter<EnumNode> = (node, ctx) => {
 		}
 		const formatted = ctx.meta.getFormatter(child.type)(child, ctx)
 		if (child.type === 'mcdoc:attribute') {
-			return formatted + isTopLevel ? '\n' : ' '
+			return formatted + (isTopLevel ? '\n' : ' ')
 		}
 		if (child.type === 'mcdoc:identifier') {
 			return formatted + ' '
