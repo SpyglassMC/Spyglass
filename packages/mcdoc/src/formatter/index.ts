@@ -83,12 +83,17 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 ): string {
 	const allowsComments = nodeTypesAllowingComments.has(node.type)
 	const children = allowsComments ? liftChildComments(node.children) : node.children
+	const lastNonComment = children.findLastIndex((child) => child.type !== 'comment')
 	let hasAppliedPostAttributesSuffix = false
 
 	const content = children.map((child, i) => {
 		if (child.type === 'comment' && !allowsComments) {
 			// Don't format comments if the type doesn't allow them.
 			// A parent type that does allow comments should have already included them.
+			return ''
+		}
+		if (i > lastNonComment) {
+			// Trailing comments are always lifted, because they can't be distinguished from comments that come after the node
 			return ''
 		}
 		const info = childFormatInfo[child.type as keyof typeof childFormatInfo]
@@ -184,11 +189,15 @@ function findComments(node: DeepReadonly<AstNode>): {
 		}
 		result.beforeNode.push(...currentCommentSequence)
 		currentCommentSequence = []
+		const childComments = findComments(child)
 		if (nodeTypesAllowingComments.has(child.type)) {
 			// The child will format its own comments, so we don't need to lift them.
+
+			// Comments at the end of the child are still lifted, because they can't be distinguished from comments
+			// that come after the child.
+			currentCommentSequence = childComments.afterNode
 			return
 		}
-		const childComments = findComments(child)
 		result.beforeNode.push(...childComments.beforeNode)
 		currentCommentSequence = childComments.afterNode
 	})
