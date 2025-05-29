@@ -92,7 +92,7 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 			// A parent type that does allow comments should have already included them.
 			return ''
 		}
-		if (i > lastNonComment) {
+		if (i > lastNonComment && node.type !== 'mcdoc:doc_comments') {
 			// Trailing comments are always lifted, because they can't be distinguished from comments that come after the node
 			return ''
 		}
@@ -193,9 +193,11 @@ function findComments(node: DeepReadonly<AstNode>): {
 		if (nodeTypesAllowingComments.has(child.type)) {
 			// The child will format its own comments, so we don't need to lift them.
 
-			// Comments at the end of the child are still lifted, because they can't be distinguished from comments
+			// Comments at the end of the child are still lifted for non-doc-comment nodes, because they can't be distinguished from comments
 			// that come after the child.
-			currentCommentSequence = childComments.afterNode
+			if (child.type !== 'mcdoc:doc_comments') {
+				currentCommentSequence = childComments.afterNode
+			}
 			return
 		}
 		result.beforeNode.push(...childComments.beforeNode)
