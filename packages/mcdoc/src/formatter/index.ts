@@ -110,7 +110,7 @@ function hasMultilineChild(node: DeepReadonly<AstNode>): boolean {
 		return false
 	}
 	for (const child of node.children) {
-		if (child.type === 'comment') {
+		if (child.type === 'comment' && nodeTypesAllowingComments.has(node.type)) {
 			return true
 		}
 		if (child.type === 'mcdoc:struct') {
