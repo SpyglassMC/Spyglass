@@ -149,28 +149,45 @@ function liftChildComments(
 	const mutableChildren = [...children]
 	for (let i = 0; i < mutableChildren.length; i++) {
 		const child = mutableChildren[i]
-		const comments = findComments(child)
+		const { beforeNode, afterNode } = findComments(child)
 		// Add comments and advance i to not iterate over them again
-		mutableChildren.splice(i, 0, ...comments)
-		i += comments.length
+		mutableChildren.splice(i, 0, ...beforeNode)
+		i += beforeNode.length
+		mutableChildren.splice(i + 1, 0, ...afterNode)
+		i += afterNode.length
 	}
 	return mutableChildren
 }
 
-function findComments(node: DeepReadonly<AstNode>): DeepReadonly<AstNode>[] {
-	if (!node.children) {
-		return []
+function findComments(node: DeepReadonly<AstNode>): {
+	beforeNode: DeepReadonly<AstNode>[]
+	afterNode: DeepReadonly<AstNode>[]
+} {
+	const result = {
+		beforeNode: [] as DeepReadonly<AstNode>[],
+		afterNode: [] as DeepReadonly<AstNode>[],
 	}
-	return node.children.flatMap((child) => {
+	if (!node.children) {
+		return result
+	}
+	let currentCommentSequence = [] as DeepReadonly<AstNode>[]
+	node.children.forEach((child) => {
 		if (child.type === 'comment') {
-			return [child]
+			currentCommentSequence.push(child)
+			return
 		}
+		result.beforeNode.push(...currentCommentSequence)
+		currentCommentSequence = []
 		if (nodeTypesAllowingComments.has(child.type)) {
 			// The child will format its own comments, so we don't need to lift them.
-			return []
+			return
 		}
-		return findComments(child)
+		const childComments = findComments(child)
+		result.beforeNode.push(...childComments.beforeNode)
+		currentCommentSequence = childComments.afterNode
 	})
+	result.afterNode.push(...currentCommentSequence)
+	return result
 }
 
 function getTypeNodes(
