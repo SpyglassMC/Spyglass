@@ -66,6 +66,18 @@ const nodeTypesAllowingComments = new Set<string>([
 	'mcdoc:type/union',
 ])
 
+const nodeTypesAllowingTrailingComments = new Set<string>([
+	'mcdoc:module',
+	'mcdoc:struct/block',
+	'mcdoc:enum/block',
+	'mcdoc:doc_comments',
+])
+
+const prelimNodeTypes = new Set<string>([
+	'mcdoc:attribute',
+	'mcdoc:doc_comments',
+])
+
 interface ChildFormatInfo {
 	prefix?: string
 	suffix?: string
@@ -79,21 +91,34 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 		[TChildType in TNode['children'][number]['type']]?: ChildFormatInfo
 	},
 	excludeLastChildSuffix: boolean = false,
-	postAttributesSuffix: string = '',
+	onlyFormatPrelimType?: TNode['children'][number]['type'],
 ): string {
 	const allowsComments = nodeTypesAllowingComments.has(node.type)
+	const allowsTrailingComments = nodeTypesAllowingTrailingComments.has(node.type)
 	const children = allowsComments ? liftChildComments(node.children) : node.children
 	const lastNonComment = children.findLastIndex((child) => child.type !== 'comment')
-	let hasAppliedPostAttributesSuffix = false
+	const lastFormattedChild = onlyFormatPrelimType !== undefined
+		? children.findLastIndex((child) => child.type === onlyFormatPrelimType)
+		: children.length - 1
 
 	const content = children.map((child, i) => {
+		// Only format prelim when it's supposed to be formatted
+		// and don't format other nodes when they're not supposed to be formatted.
+		if (onlyFormatPrelimType !== undefined && child.type !== onlyFormatPrelimType) {
+			return ''
+		}
+		if (onlyFormatPrelimType === undefined && prelimNodeTypes.has(child.type)) {
+			return ''
+		}
+
 		if (child.type === 'comment' && !allowsComments) {
 			// Don't format comments if the type doesn't allow them.
 			// A parent type that does allow comments should have already included them.
 			return ''
 		}
-		if (i > lastNonComment && node.type !== 'mcdoc:doc_comments') {
-			// Trailing comments are always lifted, because they can't be distinguished from comments that come after the node
+		if (i > lastNonComment && !allowsTrailingComments) {
+			// Don't format trailing comments if the type doesn't allow them.
+			// A parent type that does allow comments should have already included them.
 			return ''
 		}
 		const info = childFormatInfo[child.type as keyof typeof childFormatInfo]
@@ -103,17 +128,13 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 		)
 		const prefix = info?.prefix ?? ''
 		const hasSuffix = info?.suffix !== undefined
-			&& (!excludeLastChildSuffix || children.length - 1 !== i)
+			&& (!excludeLastChildSuffix || lastFormattedChild !== i)
 		const suffix = hasSuffix ? info.suffix : ''
 		const formatted = `${prefix}${value}${suffix}`
-		if (child.type !== 'mcdoc:attribute' && !hasAppliedPostAttributesSuffix) {
-			hasAppliedPostAttributesSuffix = true
-			return postAttributesSuffix + formatted
-		}
 		return formatted
 	}).join('')
 
-	return hasAppliedPostAttributesSuffix ? content : postAttributesSuffix + content
+	return content
 }
 
 function hasMultilineChild(node: DeepReadonly<AstNode>): boolean {
@@ -151,6 +172,93 @@ function formatDynamicMultiline(
 		return formatter(true)
 	}
 	return inlineFormat
+}
+
+function formatWithPrelim<TNode extends AstNode & { children: AstNode[] }>(
+	node: DeepReadonly<TNode>,
+	ctx: FormatterContext,
+	putAttributesOnSeparateLine: boolean,
+	contentFormatter: (contentCtx: FormatterContext) => string,
+): string {
+	function attributeFormatter(doMultiline: boolean, attributeCtx: FormatterContext): string {
+		const childFormatInfo = {
+			'mcdoc:attribute': {
+				suffix: doMultiline ? `\n${attributeCtx.indent()}` : ' ',
+			},
+		}
+		return formatChildren<TNode>(
+			node,
+			attributeCtx,
+			childFormatInfo,
+			// Last suffix is excluded, because it is specified separately through `putAttributesOnSeparateLine`.
+			// This makes it possible to put all attributes on one line but still add a newline at the end.
+			true,
+			'mcdoc:attribute',
+		)
+	}
+
+	const shouldIndentPrelim = !putAttributesOnSeparateLine
+		&& node.children.some((child) => child.type === 'mcdoc:doc_comments')
+
+	function processFormattedAttributes(
+		formattedAttributes: string,
+		areAttributesMultiline: boolean,
+	): string {
+		const commentFormatInfo = {
+			'mcdoc:doc_comments': {
+				suffix: putAttributesOnSeparateLine ? ctx.indent() : ctx.indent(1),
+			},
+		}
+		const formattedDocComments = formatChildren(
+			node,
+			ctx,
+			commentFormatInfo,
+			true,
+			'mcdoc:doc_comments',
+		)
+
+		if (formattedAttributes !== '') {
+			if (putAttributesOnSeparateLine || areAttributesMultiline) {
+				formattedAttributes += '\n'
+			} else {
+				formattedAttributes += ' '
+			}
+		}
+
+		const isIndented = shouldIndentPrelim
+			|| (!putAttributesOnSeparateLine && areAttributesMultiline)
+
+		const prelim = (isIndented ? `\n${ctx.indent(1)}` : '')
+			+ formattedDocComments + formattedAttributes
+		const content = (isIndented ? ctx.indent(1) : putAttributesOnSeparateLine ? ctx.indent() : '')
+			+ contentFormatter(
+				isIndented
+					? indentFormatter(ctx)
+					: ctx,
+			)
+		return prelim + content
+	}
+
+	const multilineChild = node.children?.some((child) => {
+		child.type === 'mcdoc:attribute' && hasMultilineChild(child)
+	})
+	if (multilineChild) {
+		return processFormattedAttributes(
+			attributeFormatter(true, putAttributesOnSeparateLine ? ctx : indentFormatter(ctx)),
+			true,
+		)
+	}
+	const inlineAttributes = attributeFormatter(false, ctx)
+	if (inlineAttributes.length > maxDynamicInlineLength) {
+		return processFormattedAttributes(
+			attributeFormatter(true, putAttributesOnSeparateLine ? ctx : indentFormatter(ctx)),
+			true,
+		)
+	}
+	return processFormattedAttributes(
+		(shouldIndentPrelim ? ctx.indent(1) : '') + inlineAttributes,
+		false,
+	)
 }
 
 function liftChildComments(
@@ -193,9 +301,9 @@ function findComments(node: DeepReadonly<AstNode>): {
 		if (nodeTypesAllowingComments.has(child.type)) {
 			// The child will format its own comments, so we don't need to lift them.
 
-			// Comments at the end of the child are still lifted for non-doc-comment nodes, because they can't be distinguished from comments
+			// Comments at the end of the child are still lifted for some nodes, because they can't be distinguished from comments
 			// that come after the child.
-			if (child.type !== 'mcdoc:doc_comments') {
+			if (!nodeTypesAllowingTrailingComments.has(child.type)) {
 				currentCommentSequence = childComments.afterNode
 			}
 			return
@@ -249,10 +357,11 @@ const injection: Formatter<InjectionNode> = (node, ctx) => {
 
 const struct: Formatter<StructNode> = (node, ctx) => {
 	const isTopLevel = node.parent?.type === 'mcdoc:module'
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: isTopLevel ? '\n' : ' ' },
-		'mcdoc:literal': { suffix: ' ' },
-		'mcdoc:identifier': { suffix: ' ' },
+	return formatWithPrelim(node, ctx, isTopLevel, (contentCtx) => {
+		return formatChildren(node, contentCtx, {
+			'mcdoc:literal': { suffix: ' ' },
+			'mcdoc:identifier': { suffix: ' ' },
+		})
 	})
 }
 
@@ -277,11 +386,12 @@ const structBlock: Formatter<StructBlockNode> = (node, ctx) => {
 
 const structPairField: Formatter<StructPairFieldNode> = (node, ctx) => {
 	const keySuffix = `${node.isOptional ? '?' : ''}: `
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: `\n${ctx.indent()}` },
-		'mcdoc:struct/map_key': { suffix: keySuffix },
-		'mcdoc:identifier': { suffix: keySuffix },
-		'string': { suffix: keySuffix },
+	return formatWithPrelim(node, ctx, true, (contentCtx) => {
+		return formatChildren(node, contentCtx, {
+			'mcdoc:struct/map_key': { suffix: keySuffix },
+			'mcdoc:identifier': { suffix: keySuffix },
+			'string': { suffix: keySuffix },
+		})
 	})
 }
 
@@ -294,33 +404,37 @@ const structMapKey: Formatter<StructMapKeyNode> = (node, ctx) => {
 
 const structSpreadField: Formatter<StructSpreadFieldNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)[0]
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: `\n${ctx.indent()}` },
-		[typeNode.type]: { prefix: '...' },
+	return formatWithPrelim(node, ctx, true, (contentCtx) => {
+		return formatChildren(node, contentCtx, {
+			[typeNode.type]: { prefix: '...' },
+		})
 	})
 }
 
 const _enum: Formatter<EnumNode> = (node, ctx) => {
 	const isTopLevel = node.parent?.type === 'mcdoc:module'
-	return node.children.map((child) => {
-		if (child.type === 'comment') {
-			// Don't format comments if the type doesn't allow them.
-			// A parent type that does allow comments should have already included them.
-			return ''
-		}
-		const formatted = ctx.meta.getFormatter(child.type)(child, ctx)
-		if (child.type === 'mcdoc:attribute') {
-			return formatted + (isTopLevel ? '\n' : ' ')
-		}
-		if (child.type === 'mcdoc:identifier') {
-			return formatted + ' '
-		}
-		if (child.type !== 'mcdoc:literal' || child.value === 'enum') {
-			return formatted
-		}
-		// Add parentheses to type
-		return `(${formatted}) `
-	}).join('')
+	return formatWithPrelim(node, ctx, isTopLevel, (contentCtx) => {
+		return node.children.map((child) => {
+			if (child.type === 'comment') {
+				// Don't format comments if the type doesn't allow them.
+				// A parent type that does allow comments should have already included them.
+				return ''
+			}
+			if (child.type === 'mcdoc:attribute') {
+				// Formatted separately
+				return ''
+			}
+			const formatted = contentCtx.meta.getFormatter(child.type)(child, contentCtx)
+			if (child.type === 'mcdoc:identifier') {
+				return formatted + ' '
+			}
+			if (child.type !== 'mcdoc:literal' || child.value === 'enum') {
+				return formatted
+			}
+			// Add parentheses to type
+			return `(${formatted}) `
+		}).join('')
+	})
 }
 
 const enumInjection: Formatter<EnumInjectionNode> = (node, ctx) => {
@@ -354,73 +468,74 @@ const enumBlock: Formatter<EnumBlockNode> = (node, ctx) => {
 }
 
 const enumField: Formatter<EnumFieldNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: `\n${ctx.indent()}` },
-		'mcdoc:identifier': { suffix: ' = ' },
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatChildren(node, contentCtx, {
+			'mcdoc:identifier': { suffix: ' = ' },
+		})
 	})
 }
 
 const tupleType: Formatter<TupleTypeNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)
-	return formatDynamicMultiline(node, (doMultiline) => {
-		const childFormatInfo: { [key: string]: ChildFormatInfo } = {
-			'comment': {
-				prefix: ctx.indent(1),
-				suffix: `\n`,
-			},
-			'mcdoc:attribute': { suffix: ' ' },
-		}
-		const typeFormatInfo = {
-			prefix: doMultiline ? ctx.indent(1) : '',
-			suffix: ',' + (doMultiline ? `\n` : ' '),
-			indentSelf: true,
-		}
-		for (const child of typeNode) {
-			childFormatInfo[child.type] = typeFormatInfo
-		}
-		const content = formatChildren(
-			node,
-			ctx,
-			childFormatInfo,
-			!doMultiline,
-			doMultiline ? '[\n' : '[',
-		)
-		return doMultiline ? `${content}${ctx.indent()}]` : `${content}]`
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatDynamicMultiline(node, (doMultiline) => {
+			const childFormatInfo: { [key: string]: ChildFormatInfo } = {
+				'comment': {
+					prefix: contentCtx.indent(1),
+					suffix: `\n`,
+				},
+			}
+			const typeFormatInfo = {
+				prefix: doMultiline ? contentCtx.indent(1) : '',
+				suffix: ',' + (doMultiline ? `\n` : ' '),
+				indentSelf: true,
+			}
+			for (const child of typeNode) {
+				childFormatInfo[child.type] = typeFormatInfo
+			}
+			const content = formatChildren(
+				node,
+				contentCtx,
+				childFormatInfo,
+				!doMultiline,
+			)
+			return doMultiline ? `[\n${content}${contentCtx.indent()}]` : `[${content}]`
+		})
 	})
 }
 
 const unionType: Formatter<UnionTypeNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)
-	return formatDynamicMultiline(node, (doMultiline) => {
-		const childFormatInfo: { [key: string]: ChildFormatInfo } = {
-			'comment': {
-				prefix: ctx.indent(1),
-				suffix: `\n`,
-			},
-			'mcdoc:attribute': { suffix: ' ' },
-		}
-		const typeFormatInfo = {
-			prefix: doMultiline ? ctx.indent(1) : '',
-			suffix: ' |' + (doMultiline ? `\n` : ' '),
-			indentSelf: true,
-		}
-		for (const child of typeNode) {
-			childFormatInfo[child.type] = typeFormatInfo
-		}
-		const content = formatChildren(
-			node,
-			ctx,
-			childFormatInfo,
-			!doMultiline,
-			doMultiline ? '(\n' : '(',
-		)
-		return doMultiline ? `${content}${ctx.indent()})` : `${content})`
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatDynamicMultiline(node, (doMultiline) => {
+			const childFormatInfo: { [key: string]: ChildFormatInfo } = {
+				'comment': {
+					prefix: contentCtx.indent(1),
+					suffix: `\n`,
+				},
+			}
+			const typeFormatInfo = {
+				prefix: doMultiline ? contentCtx.indent(1) : '',
+				suffix: ' |' + (doMultiline ? `\n` : ' '),
+				indentSelf: true,
+			}
+			for (const child of typeNode) {
+				childFormatInfo[child.type] = typeFormatInfo
+			}
+			const content = formatChildren(
+				node,
+				contentCtx,
+				childFormatInfo,
+				!doMultiline,
+			)
+			return doMultiline ? `(\n${content}${contentCtx.indent()})` : `(${content})`
+		})
 	})
 }
 
 const referenceType: Formatter<ReferenceTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: ' ' },
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatChildren(node, contentCtx, {})
 	})
 }
 
@@ -436,48 +551,53 @@ const path: Formatter<PathNode> = (node, ctx) => {
 }
 
 const stringType: Formatter<StringTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: ' ' },
-		'mcdoc:int_range': { prefix: ' @ ' },
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatChildren(node, contentCtx, {
+			'mcdoc:int_range': { prefix: ' @ ' },
+		})
 	})
 }
 
 const primitiveArrayType: Formatter<PrimitiveArrayTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: ' ' },
-		'mcdoc:int_range': { prefix: ' @ ' },
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatChildren(node, contentCtx, {
+			'mcdoc:int_range': { prefix: ' @ ' },
+		})
 	})
 }
 
 const listType: Formatter<ListTypeNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)[0]
-	return formatChildren(node, ctx, {
-		[typeNode.type]: { prefix: '[', suffix: ']' },
-		'mcdoc:attribute': { suffix: ' ' },
-		'mcdoc:int_range': { prefix: ' @ ' },
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatChildren(node, contentCtx, {
+			[typeNode.type]: { prefix: '[', suffix: ']' },
+			'mcdoc:int_range': { prefix: ' @ ' },
+		})
 	})
 }
 
 const typeAlias: Formatter<TypeAliasNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)[0]
-	return formatChildren(node, ctx, {
-		[typeNode.type]: { prefix: ' = ' },
-		'mcdoc:attribute': { suffix: '\n' },
-		'mcdoc:literal': { suffix: ' ' },
+	return formatWithPrelim(node, ctx, true, (contentCtx) => {
+		return formatChildren(node, contentCtx, {
+			[typeNode.type]: { prefix: ' = ' },
+			'mcdoc:literal': { suffix: ' ' },
+		})
 	})
 }
 
 const dispatcherType: Formatter<DispatcherTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: ' ' },
+	return formatWithPrelim(node, ctx, true, (contentCtx) => {
+		return formatChildren(node, contentCtx, {})
 	})
 }
 
 const dispatchStatement: Formatter<DispatchStatementNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {
-		'mcdoc:literal': { suffix: ' ' },
-		'mcdoc:attribute': { suffix: '\n' },
-		'mcdoc:index_body': { suffix: ' ' },
+	return formatWithPrelim(node, ctx, true, (contentCtx) => {
+		return formatChildren(node, contentCtx, {
+			'mcdoc:literal': { suffix: ' ' },
+			'mcdoc:index_body': { suffix: ' ' },
+		})
 	})
 }
 
@@ -585,8 +705,8 @@ const typeParam: Formatter<TypeParamNode> = (node, ctx) => {
 }
 
 const literalType: Formatter<LiteralTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: ' ' },
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatChildren(node, contentCtx, {})
 	})
 }
 
@@ -595,10 +715,11 @@ const typedNumber: Formatter<TypedNumberNode> = (node, ctx) => {
 }
 
 const numericType: Formatter<NumericTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: ' ' },
-		'mcdoc:int_range': { prefix: ' @ ' },
-		'mcdoc:float_range': { prefix: ' @ ' },
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatChildren(node, contentCtx, {
+			'mcdoc:int_range': { prefix: ' @ ' },
+			'mcdoc:float_range': { prefix: ' @ ' },
+		})
 	})
 }
 
@@ -611,14 +732,14 @@ const floatRange: Formatter<FloatRangeNode> = (node, ctx) => {
 }
 
 const anyType: Formatter<AnyTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: ' ' },
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatChildren(node, contentCtx, {})
 	})
 }
 
 const booleanType: Formatter<BooleanTypeNode> = (node, ctx) => {
-	return formatChildren(node, ctx, {
-		'mcdoc:attribute': { suffix: ' ' },
+	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+		return formatChildren(node, contentCtx, {})
 	})
 }
 
