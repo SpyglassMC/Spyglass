@@ -225,17 +225,23 @@ function formatWithPrelim<TNode extends AstNode & { children: AstNode[] }>(
 			}
 		}
 
-		const isIndented = shouldIndentPrelim
+		const hasAdditionalIndent = shouldIndentPrelim
 			|| (!putAttributesOnSeparateLine && areAttributesMultiline)
 
-		const prelim = (isIndented ? `\n${ctx.indent(1)}` : '')
+		const prelim = (hasAdditionalIndent ? `\n${ctx.indent(1)}` : '')
 			+ formattedDocComments + formattedAttributes
-		const content = (isIndented ? ctx.indent(1) : putAttributesOnSeparateLine ? ctx.indent() : '')
-			+ contentFormatter(
-				isIndented
-					? indentFormatter(ctx)
-					: ctx,
-			)
+		const defaultIndent = putAttributesOnSeparateLine
+			? ctx.indent()
+			: ''
+		const contentIndent = hasAdditionalIndent
+			? ctx.indent(1)
+			: defaultIndent
+
+		const content = contentIndent + contentFormatter(
+			hasAdditionalIndent
+				? indentFormatter(ctx)
+				: ctx,
+		)
 		return prelim + content
 	}
 
@@ -378,8 +384,8 @@ const structBlock: Formatter<StructBlockNode> = (node, ctx) => {
 	}
 	const content = formatChildren(node, ctx, {
 		'comment': { prefix: ctx.indent(1), suffix: '\n', indentSelf: true },
-		'mcdoc:struct/field/pair': { prefix: ctx.indent(1), suffix: ',\n', indentSelf: true },
-		'mcdoc:struct/field/spread': { prefix: ctx.indent(1), suffix: ',\n', indentSelf: true },
+		'mcdoc:struct/field/pair': { suffix: ',\n', indentSelf: true },
+		'mcdoc:struct/field/spread': { suffix: ',\n', indentSelf: true },
 	})
 	return `{\n${content}${ctx.indent()}}`
 }
