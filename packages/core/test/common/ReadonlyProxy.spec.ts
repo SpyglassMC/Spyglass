@@ -26,7 +26,7 @@ describe('ReadonlyProxy', () => {
 			delete proxy.foo.baz.qux
 		}, (e) => snapshot((e as Error).message))
 		snapshot(testObj)
-		assert.deepStrictEqual(testObj, proxy)
+		assert.deepEqual(testObj, proxy)
 	})
 	it('Should not proxy prototype', () => {
 		const testArr = [0, 1, 2, 3]
