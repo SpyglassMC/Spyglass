@@ -3,7 +3,7 @@ import type { CommandNode } from './command.js'
 import type { MacroNode } from './macro.js'
 
 export interface McfunctionNode
-	extends core.SequenceNode<CommandNode | MacroNode | core.CommentNode>
+	extends core.SequenceNode<CommandNode | MacroNode | core.CommentNode | core.ErrorNode>
 {
 	type: 'mcfunction:entry'
 }

@@ -46,6 +46,9 @@ export interface MinecraftColumnPosArgumentTreeNode extends mcf.ArgumentTreeNode
 export interface MinecraftComponentArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:component'
 }
+export interface MinecraftDialogArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:dialog'
+}
 export interface MinecraftDimensionArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:dimension'
 }
@@ -205,6 +208,10 @@ export interface MinecraftResourceOrTagKeyArgumentTreeNode extends mcf.ArgumentT
 	parser: 'minecraft:resource_or_tag_key'
 	properties: { registry: string }
 }
+export interface MinecraftResourceSelectorTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:resource_selector'
+	properties: { registry: string }
+}
 export interface MinecraftRotationArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:rotation'
 }
@@ -268,6 +275,7 @@ export type ArgumentTreeNode =
 	| MinecraftColorArgumentTreeNode
 	| MinecraftColumnPosArgumentTreeNode
 	| MinecraftComponentArgumentTreeNode
+	| MinecraftDialogArgumentTreeNode
 	| MinecraftDimensionArgumentTreeNode
 	| MinecraftEntityArgumentTreeNode
 	| MinecraftEntityAnchorArgumentTreeNode
@@ -300,6 +308,7 @@ export type ArgumentTreeNode =
 	| MinecraftResourceLocationArgumentTreeNode
 	| MinecraftResourceOrTagArgumentTreeNode
 	| MinecraftResourceOrTagKeyArgumentTreeNode
+	| MinecraftResourceSelectorTreeNode
 	| MinecraftRotationArgumentTreeNode
 	| MinecraftScoreHolderArgumentTreeNode
 	| MinecraftScoreboardSlotArgumentTreeNode

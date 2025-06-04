@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import { localize } from '@spyglassmc/locales'
 import type { CommandNode, CommandOptions, MacroNode, McfunctionNode } from '../node/index.js'
 import type { RootTreeNode } from '../tree/index.js'
 import type { ArgumentParserGetter } from './argument.js'
@@ -24,11 +25,22 @@ function mcfunction(
 		}
 
 		while (src.skipWhitespace().canReadInLine()) {
-			let result: core.CommentNode | CommandNode | MacroNode
+			let result: core.CommentNode | CommandNode | MacroNode | core.ErrorNode
 			if (src.peek() === '#') {
 				result = comment(src, ctx) as core.CommentNode
 			} else if (src.peek() === '$') {
-				result = macro(options.macros ?? false)(src, ctx) as MacroNode
+				const start = src.cursor
+				if (options.macros) {
+					result = macro()(src, ctx)
+				} else {
+					src.skipLine()
+					ans.range.end = src.cursor
+					result = {
+						type: 'error',
+						range: core.Range.create(start, src),
+					} satisfies core.ErrorNode
+					ctx.err.report(localize('mcfunction.parser.macro.disallowed'), result)
+				}
 			} else {
 				result = command(commandTree, argument, options.commandOptions)(src, ctx)
 			}
