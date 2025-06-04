@@ -88,8 +88,12 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 						} else {
 							// Find all files under the deleted URI and send 'unlink' events for them as well.
 							const dirUri = core.fileUtil.ensureEndingSlash(uri)
+							// getSubFiles() returns an iterator that would return nothing after dirUri
+							// is deleted from #watchedFiles, therefore we need to collect the results of
+							// the iterator before it is deleted.
+							const subFiles = [...this.#watchedFiles.getSubFiles(dirUri)]
 							this.#watchedFiles.delete(dirUri)
-							for (const watchedUri of this.#watchedFiles.getSubFiles(dirUri)) {
+							for (const watchedUri of subFiles) {
 								this.emit('unlink', watchedUri)
 							}
 						}

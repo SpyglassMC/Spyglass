@@ -200,7 +200,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 })
 
 connection.onDidChangeWatchedFiles((params) => {
-	logger.info('[FsWatcher] raw LSP changes', params)
+	logger.info('[FsWatcher] raw LSP changes', JSON.stringify(params))
 	void fsWatcher!.onLspDidChangeWatchedFiles(params)
 })
 
