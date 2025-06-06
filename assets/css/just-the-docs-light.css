@@ -1637,6 +1637,8 @@ pre > code { overflow-x: auto; white-space: pre; }
 
 td, th { font-size: 1rem !important; }
 
+ul.nav-list { margin-left: 0; }
+
 div.opaque { background-color: #fff; }
 
 /*# sourceMappingURL=just-the-docs-light.css.map */
