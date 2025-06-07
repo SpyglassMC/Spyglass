@@ -38,7 +38,7 @@ export const boolean: Formatter<BooleanBaseNode> = (node) => {
 }
 
 export const comment: Formatter<CommentNode> = (node) => {
-	return '#' + node.comment
+	return node.prefix + node.comment
 }
 
 export const float: Formatter<FloatBaseNode> = (node) => {

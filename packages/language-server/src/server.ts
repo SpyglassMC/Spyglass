@@ -124,8 +124,6 @@ connection.onInitialize(async (params) => {
 			declarationProvider: {},
 			definitionProvider: {},
 			implementationProvider: {},
-			// TODO: re-enable this
-			// documentFormattingProvider: {},
 			referencesProvider: {},
 			typeDefinitionProvider: {},
 			documentHighlightProvider: {},
@@ -155,6 +153,12 @@ connection.onInitialize(async (params) => {
 })
 
 connection.onInitialized(async () => {
+	if (capabilities.textDocument?.formatting?.dynamicRegistration) {
+		void connection.client.register(
+			ls.DocumentFormattingRequest.type,
+			{ documentSelector: [{ language: 'mcdoc' }] },
+		)
+	}
 	await service.project.ready()
 	if (capabilities.workspace?.workspaceFolders) {
 		connection.workspace.onDidChangeWorkspaceFolders(async () => {

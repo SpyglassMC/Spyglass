@@ -1,6 +1,7 @@
 import type * as core from '@spyglassmc/core'
 import * as binder from './binder/index.js'
 import * as colorizer from './colorizer/index.js'
+import * as formatter from './formatter/index.js'
 import * as parser from './parser/index.js'
 import { registerBuiltinAttributes } from './runtime/attribute/builtin.js'
 import * as uri_professors from './uri_processors.js'
@@ -24,4 +25,5 @@ export const initialize = ({ meta }: { meta: core.MetaRegistry }): void => {
 
 	binder.registerMcdocBinders(meta)
 	colorizer.registerMcdocColorizer(meta)
+	formatter.registerMcdocFormatter(meta)
 }

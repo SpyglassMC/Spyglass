@@ -215,7 +215,8 @@ exports['mcdoc struct Parse "struct Foo {↓⮀⮀⮀⮀⮀/// Hello world.↓�
                       "start": 18,
                       "end": 35
                     },
-                    "comment": " Hello world.\n"
+                    "comment": " Hello world.\n",
+                    "prefix": "///"
                   }
                 ],
                 "range": {
