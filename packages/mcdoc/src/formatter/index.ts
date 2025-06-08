@@ -99,7 +99,9 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 	const lastNonComment = children.findLastIndex((child) => child.type !== 'comment')
 	const lastFormattedChild = onlyFormatPrelimType !== undefined
 		? children.findLastIndex((child) => child.type === onlyFormatPrelimType)
-		: children.length - 1
+		// Exclude trailing comments, so trailing comments don't change
+		// whether the node in front of the comments has the suffix
+		: children.findLastIndex((child) => child.type !== 'comment')
 
 	const content = children.map((child, i) => {
 		// Only format prelim when it's supposed to be formatted
@@ -141,9 +143,20 @@ function hasMultilineChild(node: DeepReadonly<AstNode>): boolean {
 	if (!node.children) {
 		return false
 	}
-	for (const child of node.children) {
+	for (let i = 0; i < node.children.length; i++) {
+		const child = node.children[i]
 		if (child.type === 'comment' && nodeTypesAllowingComments.has(node.type)) {
-			return true
+			if (nodeTypesAllowingTrailingComments.has(node.type)) {
+				return true
+			}
+			// Only return true if there's a non-comment node after the comment, so
+			// the comment isn't moved outside the node.
+			// We only need to check whether i+1 is not a comment instead of checking
+			// all of the nodes after i, because even in the case where i+1 is a comment,
+			// but i+2 is a non-comment, the check will still succeed true in the next iteration.
+			if (i < node.children.length - 1 && node.children[i + 1].type !== 'comment') {
+				return true
+			}
 		}
 		if (child.type === 'mcdoc:struct') {
 			return true
