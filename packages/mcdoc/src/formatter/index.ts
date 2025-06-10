@@ -139,7 +139,7 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 	return content
 }
 
-function hasMultilineChild(node: DeepReadonly<AstNode>): boolean {
+function hasMultilineChild(node: DeepReadonly<AstNode>, isRecursiveCall: boolean = false): boolean {
 	if (!node.children) {
 		return false
 	}
@@ -164,7 +164,12 @@ function hasMultilineChild(node: DeepReadonly<AstNode>): boolean {
 		if (child.type === 'mcdoc:enum') {
 			return true
 		}
-		if (hasMultilineChild(child)) {
+		if (isRecursiveCall && child.type === 'mcdoc:attribute') {
+			// Attributes only count as multiline for a recursive call, because attributes found
+			// during the first call would be put in front of the node and not inside it.
+			return true
+		}
+		if (hasMultilineChild(child, true)) {
 			return true
 		}
 	}
