@@ -211,6 +211,7 @@ function formatWithPrelim<TNode extends AstNode & { children: AstNode[] }>(
 	node: DeepReadonly<TNode>,
 	ctx: FormatterContext,
 	putAttributesOnSeparateLine: boolean,
+	putDocOnSeparateLine: boolean,
 	contentFormatter: (contentCtx: FormatterContext) => string,
 ): string {
 	function attributeFormatter(doMultiline: boolean, attributeCtx: FormatterContext): string {
@@ -230,7 +231,7 @@ function formatWithPrelim<TNode extends AstNode & { children: AstNode[] }>(
 		)
 	}
 
-	const shouldIndentPrelim = !putAttributesOnSeparateLine
+	const shouldIndentPrelim = !putDocOnSeparateLine
 		&& node.children.some((child) => child.type === 'mcdoc:doc_comments')
 
 	function processFormattedAttributes(
@@ -239,7 +240,7 @@ function formatWithPrelim<TNode extends AstNode & { children: AstNode[] }>(
 	): string {
 		const commentFormatInfo = {
 			'mcdoc:doc_comments': {
-				suffix: putAttributesOnSeparateLine ? ctx.indent() : ctx.indent(1),
+				suffix: putDocOnSeparateLine ? ctx.indent() : ctx.indent(1),
 			},
 		}
 		const formattedDocComments = formatChildren(
@@ -396,7 +397,7 @@ const injection: Formatter<InjectionNode> = (node, ctx) => {
 
 const struct: Formatter<StructNode> = (node, ctx) => {
 	const isTopLevel = node.parent?.type === 'mcdoc:module'
-	return formatWithPrelim(node, ctx, isTopLevel, (contentCtx) => {
+	return formatWithPrelim(node, ctx, isTopLevel, isTopLevel, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			'mcdoc:literal': { suffix: ' ' },
 			'mcdoc:identifier': { suffix: ' ' },
@@ -425,7 +426,7 @@ const structBlock: Formatter<StructBlockNode> = (node, ctx) => {
 
 const structPairField: Formatter<StructPairFieldNode> = (node, ctx) => {
 	const keySuffix = `${node.isOptional ? '?' : ''}: `
-	return formatWithPrelim(node, ctx, true, (contentCtx) => {
+	return formatWithPrelim(node, ctx, true, true, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			'mcdoc:struct/map_key': { suffix: keySuffix },
 			'mcdoc:identifier': { suffix: keySuffix },
@@ -443,7 +444,7 @@ const structMapKey: Formatter<StructMapKeyNode> = (node, ctx) => {
 
 const structSpreadField: Formatter<StructSpreadFieldNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)[0]
-	return formatWithPrelim(node, ctx, true, (contentCtx) => {
+	return formatWithPrelim(node, ctx, true, true, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			[typeNode.type]: { prefix: '...' },
 		})
@@ -452,7 +453,7 @@ const structSpreadField: Formatter<StructSpreadFieldNode> = (node, ctx) => {
 
 const _enum: Formatter<EnumNode> = (node, ctx) => {
 	const isTopLevel = node.parent?.type === 'mcdoc:module'
-	return formatWithPrelim(node, ctx, isTopLevel, (contentCtx) => {
+	return formatWithPrelim(node, ctx, isTopLevel, isTopLevel, (contentCtx) => {
 		return node.children.map((child) => {
 			if (child.type === 'comment') {
 				// Don't format comments if the type doesn't allow them.
@@ -507,7 +508,7 @@ const enumBlock: Formatter<EnumBlockNode> = (node, ctx) => {
 }
 
 const enumField: Formatter<EnumFieldNode> = (node, ctx) => {
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, true, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			'mcdoc:identifier': { suffix: ' = ' },
 		})
@@ -516,7 +517,7 @@ const enumField: Formatter<EnumFieldNode> = (node, ctx) => {
 
 const tupleType: Formatter<TupleTypeNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, false, (contentCtx) => {
 		return formatDynamicMultiline(node, (doMultiline) => {
 			const childFormatInfo: { [key: string]: ChildFormatInfo } = {
 				'comment': {
@@ -545,7 +546,7 @@ const tupleType: Formatter<TupleTypeNode> = (node, ctx) => {
 
 const unionType: Formatter<UnionTypeNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, false, (contentCtx) => {
 		return formatDynamicMultiline(node, (doMultiline) => {
 			const childFormatInfo: { [key: string]: ChildFormatInfo } = {
 				'comment': {
@@ -573,7 +574,7 @@ const unionType: Formatter<UnionTypeNode> = (node, ctx) => {
 }
 
 const referenceType: Formatter<ReferenceTypeNode> = (node, ctx) => {
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, false, (contentCtx) => {
 		return formatChildren(node, contentCtx, {})
 	})
 }
@@ -590,7 +591,7 @@ const path: Formatter<PathNode> = (node, ctx) => {
 }
 
 const stringType: Formatter<StringTypeNode> = (node, ctx) => {
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, false, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			'mcdoc:int_range': { prefix: ' @ ' },
 		})
@@ -598,7 +599,7 @@ const stringType: Formatter<StringTypeNode> = (node, ctx) => {
 }
 
 const primitiveArrayType: Formatter<PrimitiveArrayTypeNode> = (node, ctx) => {
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, false, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			'mcdoc:int_range': { prefix: ' @ ' },
 		})
@@ -607,7 +608,7 @@ const primitiveArrayType: Formatter<PrimitiveArrayTypeNode> = (node, ctx) => {
 
 const listType: Formatter<ListTypeNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)[0]
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, false, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			[typeNode.type]: { prefix: '[', suffix: ']' },
 			'mcdoc:int_range': { prefix: ' @ ' },
@@ -617,7 +618,7 @@ const listType: Formatter<ListTypeNode> = (node, ctx) => {
 
 const typeAlias: Formatter<TypeAliasNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)[0]
-	return formatWithPrelim(node, ctx, true, (contentCtx) => {
+	return formatWithPrelim(node, ctx, true, true, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			[typeNode.type]: { prefix: ' = ' },
 			'mcdoc:literal': { suffix: ' ' },
@@ -626,13 +627,13 @@ const typeAlias: Formatter<TypeAliasNode> = (node, ctx) => {
 }
 
 const dispatcherType: Formatter<DispatcherTypeNode> = (node, ctx) => {
-	return formatWithPrelim(node, ctx, true, (contentCtx) => {
+	return formatWithPrelim(node, ctx, true, true, (contentCtx) => {
 		return formatChildren(node, contentCtx, {})
 	})
 }
 
 const dispatchStatement: Formatter<DispatchStatementNode> = (node, ctx) => {
-	return formatWithPrelim(node, ctx, true, (contentCtx) => {
+	return formatWithPrelim(node, ctx, true, true, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			'mcdoc:literal': { suffix: ' ' },
 			'mcdoc:index_body': { suffix: ' ' },
@@ -744,7 +745,7 @@ const typeParam: Formatter<TypeParamNode> = (node, ctx) => {
 }
 
 const literalType: Formatter<LiteralTypeNode> = (node, ctx) => {
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, false, (contentCtx) => {
 		return formatChildren(node, contentCtx, {})
 	})
 }
@@ -754,7 +755,7 @@ const typedNumber: Formatter<TypedNumberNode> = (node, ctx) => {
 }
 
 const numericType: Formatter<NumericTypeNode> = (node, ctx) => {
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, false, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			'mcdoc:int_range': { prefix: ' @ ' },
 			'mcdoc:float_range': { prefix: ' @ ' },
@@ -771,13 +772,13 @@ const floatRange: Formatter<FloatRangeNode> = (node, ctx) => {
 }
 
 const anyType: Formatter<AnyTypeNode> = (node, ctx) => {
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, false, (contentCtx) => {
 		return formatChildren(node, contentCtx, {})
 	})
 }
 
 const booleanType: Formatter<BooleanTypeNode> = (node, ctx) => {
-	return formatWithPrelim(node, ctx, false, (contentCtx) => {
+	return formatWithPrelim(node, ctx, false, false, (contentCtx) => {
 		return formatChildren(node, contentCtx, {})
 	})
 }
