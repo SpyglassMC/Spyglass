@@ -17,8 +17,8 @@ export interface LspFsWatcherOptions {
  */
 export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 	#ready = false
-	#logger: core.Logger
-	#predicate: (uri: string) => boolean
+	readonly #logger: core.Logger
+	readonly #predicate: (uri: string) => boolean
 	readonly #readyPromise: Promise<void>
 	readonly #watchedFiles = new core.UriStore()
 	#lspDisposables: ls.Disposable[] = []
@@ -42,36 +42,39 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 			)
 		}
 
-		this.#readyPromise = (async () => {
-			try {
-				this.#lspDisposables = [
-					await connection.client.register(
-						ls.DidChangeWatchedFilesNotification.type,
-						{
-							// "**/*" is needed to watch changes to folders as well.
-							// https://github.com/microsoft/vscode/issues/60813
-							watchers: [{ globPattern: '**/*' }],
-						},
-					),
-					connection.onDidChangeWatchedFiles((params) => {
-						logger.info('[LspFsWatcher] raw LSP changes', JSON.stringify(params))
-						void this.#onLspDidChangeWatchedFiles(params)
-					}),
-				]
+		this.#readyPromise = this.#initialize(connection, locations)
+	}
 
-				for (const location of locations) {
-					for (const uri of await core.fileUtil.getAllFiles(NodeJsExternals, location)) {
-						if (predicate(uri)) {
-							this.#watchedFiles.add(uri)
-						}
+	async #initialize(connection: ls.Connection, locations: core.FsLocation[]) {
+		try {
+			this.#lspDisposables = [
+				await connection.client.register(
+					ls.DidChangeWatchedFilesNotification.type,
+					{
+						// "**/*" is needed to watch changes to folders as well.
+						// https://github.com/microsoft/vscode/issues/60813
+						watchers: [{ globPattern: '**/*' }],
+					},
+				),
+				connection.onDidChangeWatchedFiles((params) => {
+					this.#logger.info('[LspFsWatcher] raw LSP changes', JSON.stringify(params))
+					void this.#onLspDidChangeWatchedFiles(params)
+				}),
+			]
+
+			for (const location of locations) {
+				for (const uri of await core.fileUtil.getAllFiles(NodeJsExternals, location)) {
+					if (this.#predicate(uri)) {
+						this.#watchedFiles.add(uri)
 					}
 				}
-				this.#ready = true
-				this.emit('ready')
-			} catch (e) {
-				this.emit('error', e)
 			}
-		})()
+
+			this.#ready = true
+			this.emit('ready')
+		} catch (e) {
+			this.emit('error', e)
+		}
 	}
 
 	async close() {
@@ -89,54 +92,68 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 			try {
 				switch (type) {
 					case ls.FileChangeType.Created: {
-						const stat = await NodeJsExternals.fs.stat(uri)
-						if (stat.isDirectory()) {
-							// Find all files under the added URI and send 'add' events for them as well.
-							for (const fileUri of await core.fileUtil.getAllFiles(NodeJsExternals, uri)) {
-								if (!this.#watchedFiles.has(fileUri) && this.#predicate(uri)) {
-									this.#watchedFiles.add(fileUri)
-									this.emit('add', fileUri)
-								}
-							}
-						} else if (stat.isFile()) {
-							if (!this.#watchedFiles.has(uri) && this.#predicate(uri)) {
-								this.#watchedFiles.add(uri)
-								this.emit('add', uri)
-							}
-						}
+						await this.#handleAdd(uri)
 						break
 					}
 					case ls.FileChangeType.Changed:
-						if (!this.#predicate(uri)) {
-							break
-						}
-						if (!this.#watchedFiles.has(uri)) {
-							this.#logger.warn(`[LspFsWatcher#handler] unknown changed file ${uri}`)
-							this.#watchedFiles.add(uri)
-						}
-						this.emit('change', uri)
+						this.#handleChange(uri)
 						break
 					case ls.FileChangeType.Deleted: {
-						if (this.#watchedFiles.has(uri)) {
-							this.#watchedFiles.delete(uri)
-							this.emit('unlink', uri)
-						} else {
-							// Find all files under the deleted URI and send 'unlink' events for them as well.
-							const dirUri = core.fileUtil.ensureEndingSlash(uri)
-							// getSubFiles() returns an iterator that would return nothing after dirUri
-							// is deleted from #watchedFiles, therefore we need to collect the results of
-							// the iterator before it is deleted.
-							const subFiles = [...this.#watchedFiles.getSubFiles(dirUri)]
-							this.#watchedFiles.delete(dirUri)
-							for (const watchedUri of subFiles) {
-								this.emit('unlink', watchedUri)
-							}
-						}
+						this.#handleDelete(uri)
 						break
 					}
 				}
 			} catch (e) {
 				this.#logger.error('[LspFsWatcher#handler]', e)
+			}
+		}
+	}
+
+	async #handleAdd(uri: string) {
+		const stat = await NodeJsExternals.fs.stat(uri)
+		if (stat.isDirectory()) {
+			// Find all files under the added URI and send 'add' events for them.
+			for (const fileUri of await core.fileUtil.getAllFiles(NodeJsExternals, uri)) {
+				if (!this.#watchedFiles.has(fileUri) && this.#predicate(fileUri)) {
+					this.#watchedFiles.add(fileUri)
+					this.emit('add', fileUri)
+				}
+			}
+		} else if (stat.isFile()) {
+			if (!this.#watchedFiles.has(uri) && this.#predicate(uri)) {
+				this.#watchedFiles.add(uri)
+				this.emit('add', uri)
+			}
+		}
+	}
+
+	#handleChange(uri: string) {
+		if (!this.#predicate(uri)) {
+			return
+		}
+
+		if (!this.#watchedFiles.has(uri)) {
+			this.#logger.warn(`[LspFsWatcher#handler] unknown changed file ${uri}`)
+			this.#watchedFiles.add(uri)
+		}
+
+		this.emit('change', uri)
+	}
+
+	#handleDelete(uri: string) {
+		if (this.#watchedFiles.has(uri)) {
+			this.#watchedFiles.delete(uri)
+			this.emit('unlink', uri)
+		} else {
+			// Find all files under the deleted URI and send 'unlink' events for them as well.
+			const dirUri = core.fileUtil.ensureEndingSlash(uri)
+			// getSubFiles() returns an iterator that would return nothing after dirUri
+			// is deleted from #watchedFiles, therefore we need to collect the results of
+			// the iterator before it is deleted.
+			const subFiles = [...this.#watchedFiles.getSubFiles(dirUri)]
+			this.#watchedFiles.delete(dirUri)
+			for (const watchedUri of subFiles) {
+				this.emit('unlink', watchedUri)
 			}
 		}
 	}
