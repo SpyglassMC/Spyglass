@@ -61,7 +61,9 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 
 				for (const location of locations) {
 					for (const uri of await core.fileUtil.getAllFiles(NodeJsExternals, location)) {
-						this.#watchedFiles.add(uri)
+						if (predicate(uri)) {
+							this.#watchedFiles.add(uri)
+						}
 					}
 				}
 				this.#ready = true
@@ -87,17 +89,17 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 			try {
 				switch (type) {
 					case ls.FileChangeType.Created: {
-						const stat = await (NodeJsExternals.fs.stat(uri))
+						const stat = await NodeJsExternals.fs.stat(uri)
 						if (stat.isDirectory()) {
 							// Find all files under the added URI and send 'add' events for them as well.
 							for (const fileUri of await core.fileUtil.getAllFiles(NodeJsExternals, uri)) {
-								if (!this.#watchedFiles.has(fileUri)) {
+								if (!this.#watchedFiles.has(fileUri) && this.#predicate(uri)) {
 									this.#watchedFiles.add(fileUri)
 									this.emit('add', fileUri)
 								}
 							}
 						} else if (stat.isFile()) {
-							if (!this.#watchedFiles.has(uri)) {
+							if (!this.#watchedFiles.has(uri) && this.#predicate(uri)) {
 								this.#watchedFiles.add(uri)
 								this.emit('add', uri)
 							}
@@ -105,11 +107,14 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 						break
 					}
 					case ls.FileChangeType.Changed:
-						this.emit('change', uri)
+						if (!this.#predicate(uri)) {
+							break
+						}
 						if (!this.#watchedFiles.has(uri)) {
 							this.#logger.warn(`[LspFsWatcher#handler] unknown changed file ${uri}`)
 							this.#watchedFiles.add(uri)
 						}
+						this.emit('change', uri)
 						break
 					case ls.FileChangeType.Deleted: {
 						if (this.#watchedFiles.has(uri)) {

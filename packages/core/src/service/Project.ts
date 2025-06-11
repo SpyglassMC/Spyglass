@@ -565,6 +565,9 @@ export class Project implements ExternalEventEmitter {
 		__profiler.task('Pop Errors')
 
 		const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
+		this.logger.info(
+			`[Project#ready] Files added/changed/removed: ${addedFiles.length}/${changedFiles.length}/${removedFiles.length}`,
+		)
 		for (const uri of removedFiles) {
 			this.emit('fileDeleted', { uri })
 		}
