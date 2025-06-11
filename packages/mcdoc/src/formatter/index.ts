@@ -139,23 +139,32 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 	return content
 }
 
-function hasMultilineChild(node: DeepReadonly<AstNode>, isRecursiveCall: boolean = false): boolean {
+function hasMultilineChild(
+	node: DeepReadonly<AstNode>,
+	isRecursiveCall: boolean = false,
+	alwaysIncludeComments: boolean = false,
+): boolean {
 	if (!node.children) {
 		return false
 	}
 	for (let i = 0; i < node.children.length; i++) {
 		const child = node.children[i]
-		if (child.type === 'comment' && nodeTypesAllowingComments.has(node.type)) {
-			if (nodeTypesAllowingTrailingComments.has(node.type)) {
+		if (child.type === 'comment') {
+			if (alwaysIncludeComments) {
 				return true
 			}
-			// Only return true if there's a non-comment node after the comment, so
-			// the comment isn't moved outside the node.
-			// We only need to check whether i+1 is not a comment instead of checking
-			// all of the nodes after i, because even in the case where i+1 is a comment,
-			// but i+2 is a non-comment, the check will still succeed true in the next iteration.
-			if (i < node.children.length - 1 && node.children[i + 1].type !== 'comment') {
-				return true
+			if (nodeTypesAllowingComments.has(node.type)) {
+				if (nodeTypesAllowingTrailingComments.has(node.type)) {
+					return true
+				}
+				// Only return true if there's a non-comment node after the comment, so
+				// the comment isn't moved outside the node.
+				// We only need to check whether i+1 is not a comment instead of checking
+				// all of the nodes after i, because even in the case where i+1 is a comment,
+				// but i+2 is a non-comment, the check will still succeed true in the next iteration.
+				if (i < node.children.length - 1 && node.children[i + 1].type !== 'comment') {
+					return true
+				}
 			}
 		}
 		if (child.type === 'mcdoc:struct') {
@@ -169,7 +178,13 @@ function hasMultilineChild(node: DeepReadonly<AstNode>, isRecursiveCall: boolean
 			// during the first call would be put in front of the node and not inside it.
 			return true
 		}
-		if (hasMultilineChild(child, true)) {
+		if (
+			hasMultilineChild(
+				child,
+				true,
+				alwaysIncludeComments || i < node.children.length - 1,
+			)
+		) {
 			return true
 		}
 	}
