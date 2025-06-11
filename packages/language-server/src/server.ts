@@ -29,8 +29,8 @@ const { cache: cacheRoot } = envPaths('spyglassmc')
 
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
-let fsWatcher: LspFsWatcher | undefined
 let workspaceFolders!: ls.WorkspaceFolder[]
+let projectRoots!: core.RootUriString[]
 let hasShutdown = false
 
 const externals = NodeJsExternals
@@ -53,7 +53,7 @@ connection.onInitialize(async (params) => {
 
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
-	const projectRoots = workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri))
+	projectRoots = workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri))
 
 	if (initializationOptions?.inDevelopmentMode) {
 		await new Promise((resolve) => setTimeout(resolve, 3000))
@@ -66,16 +66,6 @@ connection.onInitialize(async (params) => {
 		await locales.loadLocale(params.locale)
 	} catch (e) {
 		logger.error('[loadLocale]', e)
-	}
-
-	if (capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration) {
-		// Initializes LspFsWatcher when client supports didChangeWatchedFiles notifications.
-		fsWatcher = new LspFsWatcher(projectRoots, logger)
-			.on('ready', () => logger.info('[FsWatcher] ready'))
-			.on('add', (uri) => logger.info('[FsWatcher] added', uri))
-			.on('change', (uri) => logger.info('[FsWatcher] changed', uri))
-			.on('unlink', (uri) => logger.info('[FsWatcher] unlinked', uri))
-			.on('error', (e) => logger.error('[FsWatcher]', e))
 	}
 
 	try {
@@ -97,7 +87,6 @@ connection.onInitialize(async (params) => {
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
 				projectRoots,
-				projectRootsWatcher: fsWatcher,
 			},
 		})
 		service.project.on('documentErrored', async ({ errors, uri, version }) => {
@@ -168,17 +157,26 @@ connection.onInitialize(async (params) => {
 })
 
 connection.onInitialized(async () => {
-	if (capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration) {
-		const watcherDisposable = await connection.client.register(
-			ls.DidChangeWatchedFilesNotification.type,
-			{
-				watchers: [{ globPattern: '**/*' }],
-			},
-		)
-		fsWatcher!.setLspListener(watcherDisposable)
-	}
+	// Initializes LspFsWatcher only when client supports didChangeWatchedFiles notifications.
+	const fsWatcher = capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration
+		? new LspFsWatcher({
+			capabilities,
+			connection,
+			locations: projectRoots,
+			logger,
+			predicate: (uri) => !service.project.shouldExclude(uri),
+		})
+			.on('ready', () => logger.info('[FsWatcher] ready'))
+			.on('add', (uri) => logger.info('[FsWatcher] added', uri))
+			.on('change', (uri) => logger.info('[FsWatcher] changed', uri))
+			.on('unlink', (uri) => logger.info('[FsWatcher] unlinked', uri))
+			.on('error', (e) => logger.error('[FsWatcher]', e))
+		: undefined
 
-	await service.project.ready()
+	await service.project.ready({
+		projectRootsWatcher: fsWatcher,
+	})
+
 	if (capabilities.workspace?.workspaceFolders) {
 		connection.workspace.onDidChangeWorkspaceFolders(async () => {
 			// FIXME
@@ -197,11 +195,6 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, versi
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	service.project.onDidClose(uri)
-})
-
-connection.onDidChangeWatchedFiles((params) => {
-	logger.info('[FsWatcher] raw LSP changes', JSON.stringify(params))
-	void fsWatcher!.onLspDidChangeWatchedFiles(params)
 })
 
 connection.onCodeAction(async ({ textDocument: { uri }, range }) => {

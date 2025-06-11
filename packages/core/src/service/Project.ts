@@ -76,8 +76,11 @@ export interface ProjectOptions {
 	 * File URIs to the roots of this project.
 	 */
 	projectRoots: RootUriString[]
-	projectRootsWatcher?: FsWatcher
 	symbols?: SymbolUtil
+}
+
+export interface ProjectReadyOptions {
+	projectRootsWatcher?: FsWatcher
 }
 
 export interface DocAndNode {
@@ -173,13 +176,12 @@ export class Project implements ExternalEventEmitter {
 	readonly #symbolUpToDateUris = new Set<string>()
 	readonly #eventEmitter: ExternalEventEmitter
 	readonly #initializers: readonly ProjectInitializer[]
-	#initPromise!: Promise<void>
-	#readyPromise!: Promise<void>
-	readonly #watcher: FsWatcher | undefined
+	#watcher: FsWatcher | undefined
 	get watchedFiles() {
 		return this.#watcher?.watchedFiles ?? new UriStore()
 	}
 
+	#isInitialized = false
 	#isReady = false
 	get isReady(): boolean {
 		return this.#isReady
@@ -311,7 +313,6 @@ export class Project implements ExternalEventEmitter {
 			logger = Logger.create(),
 			profilers = ProfilerFactory.noop(),
 			projectRoots,
-			projectRootsWatcher,
 		}: ProjectOptions,
 	) {
 		this.#cacheRoot = cacheRoot
@@ -323,7 +324,6 @@ export class Project implements ExternalEventEmitter {
 		this.logger = logger
 		this.profilers = profilers
 		this.projectRoots = projectRoots
-		this.#watcher = projectRootsWatcher
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
@@ -343,8 +343,6 @@ export class Project implements ExternalEventEmitter {
 			({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading ${uri}`, error),
 		)
 
-		this.setInitPromise()
-		this.setReadyPromise()
 		this.#cacheSaverIntervalId = setInterval(
 			() => this.cacheService.save(),
 			CacheAutoSaveInterval,
@@ -395,7 +393,12 @@ export class Project implements ExternalEventEmitter {
 		})
 	}
 
-	private setInitPromise(): void {
+	/**
+	 * Load the config file and initialize parsers and processors.
+	 */
+	async init(): Promise<this> {
+		this.#isInitialized = false
+
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
@@ -421,24 +424,37 @@ export class Project implements ExternalEventEmitter {
 			})
 			this.#ctx = ctx
 		}
-		const init = async () => {
-			const __profiler = this.profilers.get('project#init')
 
-			const { symbols } = await this.cacheService.load()
-			this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
-			this.symbols.buildCache()
-			__profiler.task('Load Cache')
+		const __profiler = this.profilers.get('project#init')
 
-			this.config = await this.#configService.load()
-			__profiler.task('Load Config')
+		const { symbols } = await this.cacheService.load()
+		this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
+		this.symbols.buildCache()
+		__profiler.task('Load Cache')
 
-			await callIntializers()
-			__profiler.task('Initialize').finalize()
-		}
-		this.#initPromise = init()
+		this.config = await this.#configService.load()
+		__profiler.task('Load Config')
+
+		await callIntializers()
+		__profiler.task('Initialize').finalize()
+
+		this.#isInitialized = true
+
+		return this
 	}
 
-	private setReadyPromise(): void {
+	/**
+	 * Finish the initial run of parsing, binding, and checking the entire project.
+	 */
+	async ready({ projectRootsWatcher }: ProjectReadyOptions = {}): Promise<this> {
+		if (!this.#isInitialized) {
+			throw new Error('Project.ready() must be called after Project.init() resolves')
+		}
+
+		this.#isReady = false
+
+		this.#watcher = projectRootsWatcher
+
 		const getDependencies = async () => {
 			const ans: Dependency[] = []
 			for (const dependency of this.config.env.dependencies) {
@@ -517,93 +533,76 @@ export class Project implements ExternalEventEmitter {
 					this.#watcher.on('ready', resolve)
 				}
 			})
-		const ready = async () => {
-			await this.init()
 
-			const __profiler = this.profilers.get('project#ready')
+		const __profiler = this.profilers.get('project#ready')
 
-			await Promise.all([listDependencyFiles(), listProjectFiles()])
+		await Promise.all([listDependencyFiles(), listProjectFiles()])
 
-			this.#dependencyFiles = new Set([...this.fs.listFiles()]
-				.filter((uri) => !this.shouldExclude(uri)))
-			this.#dependencyRoots = new Set(this.fs.listRoots())
+		this.#dependencyFiles = new Set([...this.fs.listFiles()]
+			.filter((uri) => !this.shouldExclude(uri)))
+		this.#dependencyRoots = new Set(this.fs.listRoots())
 
-			this.updateRoots()
-			__profiler.task('List URIs')
+		this.updateRoots()
+		__profiler.task('List URIs')
 
-			for (const [id, { checksum, registrar }] of this.meta.symbolRegistrars) {
-				const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
-				if (cacheChecksum === undefined || checksum !== cacheChecksum) {
-					this.symbols.clear({ contributor: `symbol_registrar/${id}` })
-					this.symbols.contributeAs(`symbol_registrar/${id}`, () => {
-						registrar(this.symbols, { logger: this.logger })
-					})
-					this.emit('symbolRegistrarExecuted', { id, checksum })
-				} else {
-					this.logger.info(`[SymbolRegistrar] Skipped “${id}” thanks to cache ${checksum}`)
-				}
+		for (const [id, { checksum, registrar }] of this.meta.symbolRegistrars) {
+			const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
+			if (cacheChecksum === undefined || checksum !== cacheChecksum) {
+				this.symbols.clear({ contributor: `symbol_registrar/${id}` })
+				this.symbols.contributeAs(`symbol_registrar/${id}`, () => {
+					registrar(this.symbols, { logger: this.logger })
+				})
+				this.emit('symbolRegistrarExecuted', { id, checksum })
+			} else {
+				this.logger.info(`[SymbolRegistrar] Skipped “${id}” thanks to cache ${checksum}`)
 			}
-			__profiler.task('Register Symbols')
-
-			for (const [uri, values] of Object.entries(this.cacheService.errors)) {
-				this.emit('documentErrored', { errors: values, uri })
-			}
-			__profiler.task('Pop Errors')
-
-			const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
-			for (const uri of removedFiles) {
-				this.emit('fileDeleted', { uri })
-			}
-			__profiler.task('Validate Cache')
-
-			if (addedFiles.length > 0) {
-				this.bindUri(addedFiles)
-			}
-			__profiler.task('Bind URIs')
-
-			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
-			__profiler.task('Sort URIs')
-
-			const fileCountByExtension = new Map<string, number>()
-			for (const file of files) {
-				const ext = fileUtil.extname(file)?.replace(/^\./, '')
-				if (ext) {
-					fileCountByExtension.set(ext, (fileCountByExtension.get(ext) ?? 0) + 1)
-				}
-			}
-			this.logger.info(`[Project#ready] == Files to bind ==`)
-			for (const [ext, count] of fileCountByExtension.entries()) {
-				this.logger.info(`[Project#ready] File extension ${ext}: ${count}`)
-			}
-
-			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
-			for (const uri of files) {
-				await this.ensureBindingStarted(uri)
-				__bindProfiler.task(uri)
-			}
-			__bindProfiler.finalize()
-			__profiler.task('Bind Files')
-
-			__profiler.finalize()
-			this.emit('ready', {})
 		}
-		this.#isReady = false
-		this.#readyPromise = ready()
-	}
+		__profiler.task('Register Symbols')
 
-	/**
-	 * Load the config file and initialize parsers and processors.
-	 */
-	async init(): Promise<this> {
-		await this.#initPromise
-		return this
-	}
+		for (const [uri, values] of Object.entries(this.cacheService.errors)) {
+			this.emit('documentErrored', { errors: values, uri })
+		}
+		__profiler.task('Pop Errors')
 
-	/**
-	 * Finish the initial run of parsing, binding, and checking the entire project.
-	 */
-	async ready(): Promise<this> {
-		await this.#readyPromise
+		const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
+		for (const uri of removedFiles) {
+			this.emit('fileDeleted', { uri })
+		}
+		__profiler.task('Validate Cache')
+
+		if (addedFiles.length > 0) {
+			this.bindUri(addedFiles)
+		}
+		__profiler.task('Bind URIs')
+
+		const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
+		__profiler.task('Sort URIs')
+
+		const fileCountByExtension = new Map<string, number>()
+		for (const file of files) {
+			const ext = fileUtil.extname(file)?.replace(/^\./, '')
+			if (ext) {
+				fileCountByExtension.set(ext, (fileCountByExtension.get(ext) ?? 0) + 1)
+			}
+		}
+		this.logger.info(`[Project#ready] == Files to bind ==`)
+		for (const [ext, count] of fileCountByExtension.entries()) {
+			this.logger.info(`[Project#ready] File extension ${ext}: ${count}`)
+		}
+
+		const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
+		for (const uri of files) {
+			await this.ensureBindingStarted(uri)
+			__bindProfiler.task(uri)
+		}
+		__bindProfiler.finalize()
+		__profiler.task('Bind Files')
+
+		__profiler.finalize()
+		this.emit('ready', {})
+
+		this.#isReady = true
+
 		return this
 	}
 
@@ -620,7 +619,6 @@ export class Project implements ExternalEventEmitter {
 		try {
 			this.#bindingInProgressUris.clear()
 			this.#symbolUpToDateUris.clear()
-			this.setReadyPromise()
 			await this.ready()
 		} catch (e) {
 			this.logger.error('[Project#reset]', e)

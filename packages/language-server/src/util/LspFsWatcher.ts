@@ -3,15 +3,25 @@ import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import EventEmitter from 'events'
 import * as ls from 'vscode-languageserver/node.js'
 
+export interface LspFsWatcherOptions {
+	capabilities: ls.ClientCapabilities
+	connection: ls.Connection
+	locations: core.FsLocation[]
+	logger: core.Logger
+	predicate: (uri: string) => boolean
+}
+
 /**
  * A file system watcher based on Language Server Protocol's `workspace/didChangeWatchedFiles`
  * notification.
  */
 export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 	#ready = false
+	#logger: core.Logger
+	#predicate: (uri: string) => boolean
 	readonly #readyPromise: Promise<void>
 	readonly #watchedFiles = new core.UriStore()
-	#lspListener: ls.Disposable | undefined
+	#lspDisposables: ls.Disposable[] = []
 
 	get isReady() {
 		return this.#ready
@@ -20,13 +30,35 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 		return this.#watchedFiles
 	}
 
-	constructor(
-		readonly locations: core.FsLocation[],
-		private readonly logger: core.Logger,
-	) {
+	constructor({ capabilities, connection, locations, logger, predicate }: LspFsWatcherOptions) {
 		super()
+
+		this.#logger = logger
+		this.#predicate = predicate
+
+		if (!capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration) {
+			throw new Error(
+				'LspFsWatcher requires dynamic registration capability for didChangeWatchedFiles notifications',
+			)
+		}
+
 		this.#readyPromise = (async () => {
 			try {
+				this.#lspDisposables = [
+					await connection.client.register(
+						ls.DidChangeWatchedFilesNotification.type,
+						{
+							// "**/*" is needed to watch changes to folders as well.
+							// https://github.com/microsoft/vscode/issues/60813
+							watchers: [{ globPattern: '**/*' }],
+						},
+					),
+					connection.onDidChangeWatchedFiles((params) => {
+						logger.info('[LspFsWatcher] raw LSP changes', JSON.stringify(params))
+						void this.#onLspDidChangeWatchedFiles(params)
+					}),
+				]
+
 				for (const location of locations) {
 					for (const uri of await core.fileUtil.getAllFiles(NodeJsExternals, location)) {
 						this.#watchedFiles.add(uri)
@@ -40,15 +72,13 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 		})()
 	}
 
-	setLspListener(listener: ls.Disposable) {
-		this.#lspListener = listener
-	}
-
 	async close() {
-		this.#lspListener?.dispose()
+		for (const disposable of this.#lspDisposables) {
+			disposable.dispose()
+		}
 	}
 
-	async onLspDidChangeWatchedFiles({ changes }: ls.DidChangeWatchedFilesParams) {
+	async #onLspDidChangeWatchedFiles({ changes }: ls.DidChangeWatchedFilesParams) {
 		if (!this.#ready) {
 			await this.#readyPromise
 		}
@@ -77,7 +107,7 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 					case ls.FileChangeType.Changed:
 						this.emit('change', uri)
 						if (!this.#watchedFiles.has(uri)) {
-							this.logger.warn(`[LspFsWatcher#handler] unknown changed file ${uri}`)
+							this.#logger.warn(`[LspFsWatcher#handler] unknown changed file ${uri}`)
 							this.#watchedFiles.add(uri)
 						}
 						break
@@ -101,7 +131,7 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 					}
 				}
 			} catch (e) {
-				this.logger.error('[LspFsWatcher#handler]', e)
+				this.#logger.error('[LspFsWatcher#handler]', e)
 			}
 		}
 	}
