@@ -238,40 +238,31 @@ function formatWithPrelim<TNode extends AstNode & { children: AstNode[] }>(
 		formattedAttributes: string,
 		areAttributesMultiline: boolean,
 	): string {
-		const commentFormatInfo = {
-			'mcdoc:doc_comments': {
-				suffix: putDocOnSeparateLine ? ctx.indent() : ctx.indent(1),
-			},
-		}
 		const formattedDocComments = formatChildren(
 			node,
-			ctx,
-			commentFormatInfo,
-			true,
+			putDocOnSeparateLine ? ctx : indentFormatter(ctx),
+			{},
+			false,
 			'mcdoc:doc_comments',
 		)
 
+		const hasAdditionalIndent = shouldIndentPrelim
+			|| (!putAttributesOnSeparateLine && areAttributesMultiline)
+
 		if (formattedAttributes !== '') {
-			if (putAttributesOnSeparateLine || areAttributesMultiline) {
-				formattedAttributes += '\n'
+			if (hasAdditionalIndent) {
+				formattedAttributes += `\n${ctx.indent(1)}`
+			} else if (putAttributesOnSeparateLine) {
+				formattedAttributes += `\n${ctx.indent()}`
 			} else {
 				formattedAttributes += ' '
 			}
 		}
 
-		const hasAdditionalIndent = shouldIndentPrelim
-			|| (!putAttributesOnSeparateLine && areAttributesMultiline)
-
 		const prelim = (hasAdditionalIndent ? `\n${ctx.indent(1)}` : '')
 			+ formattedDocComments + formattedAttributes
-		const defaultIndent = putAttributesOnSeparateLine
-			? ctx.indent()
-			: ''
-		const contentIndent = hasAdditionalIndent
-			? ctx.indent(1)
-			: defaultIndent
 
-		const content = contentIndent + contentFormatter(
+		const content = contentFormatter(
 			hasAdditionalIndent
 				? indentFormatter(ctx)
 				: ctx,
@@ -426,7 +417,7 @@ const structBlock: Formatter<StructBlockNode> = (node, ctx) => {
 
 const structPairField: Formatter<StructPairFieldNode> = (node, ctx) => {
 	const keySuffix = `${node.isOptional ? '?' : ''}: `
-	return formatWithPrelim(node, ctx, true, true, (contentCtx) => {
+	return ctx.indent() + formatWithPrelim(node, ctx, true, true, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			'mcdoc:struct/map_key': { suffix: keySuffix },
 			'mcdoc:identifier': { suffix: keySuffix },
@@ -444,7 +435,7 @@ const structMapKey: Formatter<StructMapKeyNode> = (node, ctx) => {
 
 const structSpreadField: Formatter<StructSpreadFieldNode> = (node, ctx) => {
 	const typeNode = getTypeNodes(node.children)[0]
-	return formatWithPrelim(node, ctx, true, true, (contentCtx) => {
+	return ctx.indent() + formatWithPrelim(node, ctx, true, true, (contentCtx) => {
 		return formatChildren(node, contentCtx, {
 			[typeNode.type]: { prefix: '...' },
 		})

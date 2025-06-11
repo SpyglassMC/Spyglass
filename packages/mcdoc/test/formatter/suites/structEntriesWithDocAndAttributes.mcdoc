@@ -1,0 +1,9 @@
+struct MyStruct {
+    /// Counts the stuff but not the things
+    #[key]
+    count: int,
+    /// Counts the things but not the stuff
+    num: int,
+    [int]: Item,
+    ...Bar,
+}
