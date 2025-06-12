@@ -7,6 +7,10 @@ export interface CommentNode extends AstNode {
 	 * The actual comment with prefixes and suffixes removed.
 	 */
 	comment: string
+	/**
+	 * The prefix used to start the comment
+	 */
+	prefix: string
 }
 
 export namespace CommentNode {

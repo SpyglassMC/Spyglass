@@ -38,11 +38,15 @@ export const boolean: Formatter<BooleanBaseNode> = (node) => {
 }
 
 export const comment: Formatter<CommentNode> = (node) => {
-	return '#' + node.comment
+	return node.prefix + node.comment
 }
 
 export const float: Formatter<FloatBaseNode> = (node) => {
-	return node.value.toString()
+	return node.value.toLocaleString('fullwide', {
+		useGrouping: false,
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 20,
+	})
 }
 
 export const integer: Formatter<IntegerNode> = (node) => {

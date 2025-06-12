@@ -1,0 +1,11 @@
+type MyType = (
+    int |
+    float |
+    boolean |
+    long |
+    double |
+    short |
+    byte |
+    "something" |
+    "something else" |
+)

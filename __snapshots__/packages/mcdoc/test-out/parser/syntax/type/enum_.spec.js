@@ -188,7 +188,8 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓�
                       "start": 25,
                       "end": 37
                     },
-                    "comment": " Bar doc\n"
+                    "comment": " Bar doc\n",
+                    "prefix": "///"
                   }
                 ],
                 "range": {
@@ -239,7 +240,8 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓�
                       "start": 58,
                       "end": 70
                     },
-                    "comment": " Boo doc\n"
+                    "comment": " Boo doc\n",
+                    "prefix": "///"
                   },
                   {
                     "type": "comment",
@@ -247,7 +249,8 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓�
                       "start": 75,
                       "end": 92
                     },
-                    "comment": " Another line\n"
+                    "comment": " Another line\n",
+                    "prefix": "///"
                   }
                 ],
                 "range": {
@@ -307,7 +310,8 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓�
                       "start": 114,
                       "end": 126
                     },
-                    "comment": " Qux doc\n"
+                    "comment": " Qux doc\n",
+                    "prefix": "///"
                   }
                 ],
                 "range": {
