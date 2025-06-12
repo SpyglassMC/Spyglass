@@ -411,6 +411,12 @@ connection.onWorkspaceSymbol(({ query }) => {
 })
 
 connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
+	const errors = service.project.cacheService.errors[uri]
+	if (errors && errors.some(error => error.severity === core.ErrorSeverity.Error)) {
+		// Don't format if there are errors.
+		return undefined
+	}
+
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
