@@ -1,6 +1,6 @@
 type Something = any
 
-#[formatterIgnore]
+#[formatter_ignore]
             struct
         MyStruct
 { foo:

@@ -139,7 +139,7 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 	return content
 }
 
-const formatterIgnoreAttributeName = 'formatterIgnore'
+const formatterIgnoreAttributeName = 'formatter_ignore'
 
 function shouldFormatterIgnore(node: DeepReadonly<AstNode>): boolean {
 	return node.children?.some((child) => {
