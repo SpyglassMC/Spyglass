@@ -139,6 +139,27 @@ function formatChildren<TNode extends AstNode & { children: AstNode[] }>(
 	return content
 }
 
+const formatterIgnoreAttributeName = 'formatterIgnore'
+
+function shouldFormatterIgnore(node: DeepReadonly<AstNode>): boolean {
+	return node.children?.some((child) => {
+		if (child.type !== 'mcdoc:attribute') {
+			return false
+		}
+		return child.children!!.some((attributeChild) => {
+			return attributeChild.type === 'mcdoc:identifier'
+				&& (attributeChild as IdentifierNode).value === formatterIgnoreAttributeName
+		})
+	}) ?? false
+}
+
+function getUnformatted(node: DeepReadonly<AstNode>, ctx: FormatterContext): string {
+	return ctx.doc.getText({
+		start: ctx.doc.positionAt(node.range.start),
+		end: ctx.doc.positionAt(node.range.end),
+	})
+}
+
 function hasMultilineChild(
 	node: DeepReadonly<AstNode>,
 	isRecursiveCall: boolean = false,
@@ -214,6 +235,10 @@ function formatWithPrelim<TNode extends AstNode & { children: AstNode[] }>(
 	putDocOnSeparateLine: boolean,
 	contentFormatter: (contentCtx: FormatterContext) => string,
 ): string {
+	if (shouldFormatterIgnore(node)) {
+		return getUnformatted(node, ctx)
+	}
+
 	function attributeFormatter(doMultiline: boolean, attributeCtx: FormatterContext): string {
 		const childFormatInfo = {
 			'mcdoc:attribute': {
@@ -358,18 +383,29 @@ function getTypeNodes(
 const module: Formatter<ModuleNode> = (node, ctx) => {
 	const children = liftChildComments(node.children)
 	return children.map((child, i) => {
+		function addNewlineSeparator(formatted: string): string {
+			if (i === children.length - 1) {
+				return formatted
+			}
+			return `${formatted}\n`
+		}
+
 		const formatted = ctx.meta.getFormatter(child.type)(child, ctx)
-		if (child.type === 'comment') {
+		if (shouldFormatterIgnore(child)) {
+			// With formatterIgnore, the whitespace after a node is already included in the string, so no newlines have to be added
 			return formatted
 		}
+		if (child.type === 'comment') {
+			return addNewlineSeparator(formatted)
+		}
 		if (child.type === 'mcdoc:use_statement' && children[i + 1]?.type === 'mcdoc:use_statement') {
-			return formatted
+			return addNewlineSeparator(formatted)
 		}
 		// With an empty line between nodes
 		// (comments don't have them, because they probably refer to the next child)
 		// (use statements don't have them between each other, because use statements are supposed to be grouped together)
-		return `${formatted}\n`
-	}).join('\n')
+		return addNewlineSeparator(`${formatted}\n`)
+	}).join('')
 }
 
 const useStatement: Formatter<UseStatementNode> = (node, ctx) => {
