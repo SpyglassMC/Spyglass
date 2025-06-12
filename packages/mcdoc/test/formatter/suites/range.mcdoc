@@ -1,1 +1,1 @@
-type MyType = float @ 0.0..1.0
+type MyType = float @ 0.00001..1.0
