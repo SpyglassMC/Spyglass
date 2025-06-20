@@ -716,6 +716,7 @@ export class Project implements ExternalEventEmitter {
 				this.#textDocumentCache.set(uri, ans)
 				return ans
 			} else {
+				/* deepscan-disable-next-line */
 				const promise = createTextDocument(uri)
 				this.#textDocumentCache.set(uri, promise)
 

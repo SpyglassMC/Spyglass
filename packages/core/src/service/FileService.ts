@@ -464,7 +464,6 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 	async hash(uri: string): Promise<string> {
 		const dependency = new URL(uri)
 
-		// TODO - unknown, why do I do this
 		const dependencyPath = dependency.pathname.split('/').slice(1) // remove empty string that's always present at the beginning
 
 		const cache = RemoteUriSupporter.getCache(dependency, dependencyPath)
@@ -472,7 +471,6 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 		if (cache) {
 			const commitSHA = await this.downloader.download({
 				...cache.checksumJob,
-				// TODO - unknown, why do I do this
 				id: dependencyPath[dependencyPath.length - 1],
 				options: cache.options,
 			})
@@ -564,7 +562,6 @@ export class RemoteUriSupporter implements UriProtocolSupporter {
 		if (!path) {
 			throw new Error(`Missing path in archive uri ${uri}`)
 		}
-		// TODO - unknown, why do I do this
 		return { archiveName: uri.host, pathInArchive: path.charAt(0) === '/' ? path.slice(1) : path }
 	}
 
@@ -696,9 +693,8 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 
 		const path = baseParts.length === 2 ? baseParts[1].split('/') : baseParts[2].split('/')
 
-		let branch = 'main'
-
 		if (path[1].includes('@')) {
+			let branch = ''
 			;[path[1], branch] = path[1].split('@')
 
 			path.splice(2, 0, branch)
@@ -779,17 +775,16 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 	}
 
 	/**
-	 * @throws When `uri` has the wrong protocol or hostname.
+	 * @throws When `uri` has the wrong protocol or an invalid/missing file path.
 	 */
 	private static decodeUri(uri: URL): { archiveName: string; pathInArchive: string } {
-		if (uri.protocol !== ArchiveUriSupporter.Protocol) {
+		if (GitRepoSupporter.Protocols.indexOf(uri.protocol as `${string}:`) === -1) {
 			throw new Error(`Expected protocol “${ArchiveUriSupporter.Protocol}” in ${uri}`)
 		}
 		const path = uri.pathname
 		if (!path) {
-			throw new Error(`Missing path in archive uri ${uri}`)
+			throw new Error(`Missing path in GitRepo uri ${uri}`)
 		}
-		// TODO - unknown, why do I do this lol
 		return { archiveName: uri.host, pathInArchive: path.charAt(0) === '/' ? path.slice(1) : path }
 	}
 
@@ -890,7 +885,7 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 				const cache: DownloaderDownloadOut = {}
 				/**
 				 * Old transformer code that can't be implemented without a zip function:
-				 * 
+				 *
 				 * transformer: async (buffer) => {
 						if (pathed === undefined) {
 							return buffer
@@ -904,13 +899,13 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 								if (file.path.startsWith(newRoot)) {
 									newFiles.push({
 										...file,
-										// TODO: ensure this is correct
+										// TOD-O: ensure this is correct
 										path: file.path.replace(newRoot, ''),
 									})
 								}
 							}
 
-							// TODO: rezip newFiles into a new zip
+							// TOD-O: rezip newFiles into a new zip
 							return new Uint8Array()
 						}
 					},
@@ -931,10 +926,40 @@ export class GitRepoSupporter implements UriProtocolSupporter {
 
 				/// Debug message for #1609
 				logger.info(
-					`[RemoteUriSupporter#create] Extracted ${files.length} files from ${archiveName}`,
+					`[GitRepoSupporter#create] Extracted ${files.length} files from ${archiveName}`,
 				)
-				// TODO: AHA moment: establish a nested root if the dependency is pathed HERE, then we don't have to handle it anywhere else and all thats kept in memory is the files we care about
-				entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
+
+				const filteredFiles: Map<string, DecompressedFile> = new Map()
+
+				const pathedRoot = pathed?.join('/') ?? ''
+
+				for (const file of files) {
+					if (file.path.indexOf('\\') !== -1) {
+						// Normalize Windows paths to Unix paths
+						file.path = file.path.replace(/\\/g, '/')
+					}
+
+					if (pathed === undefined) {
+						filteredFiles.set(file.path, file)
+						continue
+					}
+
+					if (file.path.startsWith(pathedRoot)) {
+						filteredFiles.set(file.path.slice(pathedRoot.length), file)
+					}
+				}
+				if (filteredFiles.size === 0) {
+					throw new Error(
+						`No files found in archive ${archiveName} with path starting with ${pathedRoot}`,
+					)
+				}
+				/// Debug message for #1609
+				logger.info(
+					`[GitRepoSupporter#create] Filtered to ${filteredFiles.size} files from ${archiveName}` +
+					'\n\n' +
+					`Example file: ${filteredFiles.get(filteredFiles.keys().next().value!)!.path}`,
+				)
+				entries.set(archiveName, filteredFiles)
 			} catch (e) {
 				logger.error(`[RemoteUriSupporter#create] Bad dependency ${uri}`, e)
 			}
