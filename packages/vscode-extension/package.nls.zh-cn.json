@@ -1,1 +1,10 @@
-{}
+{
+	"spyglassmc.commands.dataHackPubify.title": "大憨批",
+	"spyglassmc.commands.resetProjectCache.title": "重置项目缓存",
+	"spyglassmc.commands.showCacheRoot.title": "打开缓存文件夹",
+	"spyglassmc.commands.showOutput.title": "显示输出",
+	"spyglassmc.description": "为《我的世界：Java版》数据包文件提供了大量的语法特性",
+	"spyglassmc.displayName": "棱镜（Spyglass）数据包助手",
+	"spyglassmc.env.gameVersion": "所使用的Minecraft的版本。若设为自动，则根据`pack.mcmeta`来推断版本。其他版本可通过`spyglass.json`配置文件指定。",
+	"spyglassmc.trace.server": "追踪VS Code与Spyglass语法服务器之间的通信情况。"
+}
