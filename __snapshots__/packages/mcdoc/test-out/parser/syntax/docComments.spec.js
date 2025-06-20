@@ -8,7 +8,8 @@ exports['mcdoc docComments Parse "/// First line↓⮀⮀⮀⮀/// Second line�
           "start": 0,
           "end": 15
         },
-        "comment": " First line\n"
+        "comment": " First line\n",
+        "prefix": "///"
       },
       {
         "type": "comment",
@@ -16,7 +17,8 @@ exports['mcdoc docComments Parse "/// First line↓⮀⮀⮀⮀/// Second line�
           "start": 19,
           "end": 35
         },
-        "comment": " Second line\n"
+        "comment": " Second line\n",
+        "prefix": "///"
       }
     ],
     "range": {

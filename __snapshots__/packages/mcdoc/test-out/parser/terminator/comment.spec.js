@@ -15,7 +15,8 @@ exports['mcdoc comment Parse "// This is a comment." 1'] = {
       "start": 0,
       "end": 21
     },
-    "comment": " This is a comment."
+    "comment": " This is a comment.",
+    "prefix": "//"
   },
   "errors": []
 }
@@ -27,7 +28,8 @@ exports['mcdoc comment Parse "// This is a comment.↓next line test;" 1'] = {
       "start": 0,
       "end": 21
     },
-    "comment": " This is a comment."
+    "comment": " This is a comment.",
+    "prefix": "//"
   },
   "errors": []
 }
@@ -39,7 +41,8 @@ exports['mcdoc comment Parse "//" 1'] = {
       "start": 0,
       "end": 2
     },
-    "comment": ""
+    "comment": "",
+    "prefix": "//"
   },
   "errors": []
 }
@@ -51,7 +54,8 @@ exports['mcdoc comment Parse "/// This is a doc comment." 1'] = {
       "start": 0,
       "end": 26
     },
-    "comment": "/ This is a doc comment."
+    "comment": "/ This is a doc comment.",
+    "prefix": "//"
   },
   "errors": [
     {
