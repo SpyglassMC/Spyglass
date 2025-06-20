@@ -24,7 +24,7 @@ export class Downloader {
 	readonly #memoryCache = new Map<string, MemoryCacheEntry>()
 
 	constructor(
-		private readonly cacheRoot: RootUriString,
+		readonly cacheRoot: RootUriString,
 		private readonly externals: Externals,
 		private readonly logger: Logger,
 	) {}
@@ -47,7 +47,7 @@ export class Downloader {
 		let cacheUri: string | undefined
 		let cacheChecksumUri: string | undefined
 		if (cache) {
-			const { checksumJob, checksumExtension } = cache
+			const { checksumJob, checksumExtension, options } = cache
 			out.cacheUri = cacheUri = new Uri(`downloader/${id}`, this.cacheRoot).toString()
 			cacheChecksumUri = new Uri(`downloader/${id}${checksumExtension}`, this.cacheRoot)
 				.toString()
@@ -55,6 +55,7 @@ export class Downloader {
 				out.checksum = checksum = await this.download({
 					...checksumJob,
 					id: id + checksumExtension,
+					options,
 				})
 				try {
 					const cacheChecksum = bufferToString(
@@ -171,6 +172,7 @@ interface Job<R> {
 		 * A download {@link Job} that will return a checksum of the latest remote data.
 		 */
 		checksumJob: Omit<Job<string>, 'cache' | 'id'>
+		options?: ExternalDownloaderOptions
 		checksumExtension: `.${string}`
 		serializer?: (data: Uint8Array) => Uint8Array
 		deserializer?: (cache: Uint8Array) => Uint8Array
@@ -181,4 +183,154 @@ interface Job<R> {
 	 * If set, caches the result in memory. Time in milliseconds.
 	 */
 	ttl?: number
+}
+
+// Memory cache TTL in milliseconds
+export const DownloaderTtl = 15_000
+
+export type DownloaderCache = Parameters<Downloader['download']>['0']['cache']
+
+export type GitHubRefResponse = { message: string } | {
+	message?: undefined
+	ref: string
+	object: { sha: string }
+} | { message?: undefined; ref: string; object: { sha: string } }[]
+
+export function getGitRef(
+	{ defaultBranch, getTag, isLatest, version }: {
+		defaultBranch: string
+		getTag: (version: string) => string
+		isLatest: boolean
+		version: string
+	},
+): string {
+	return isLatest ? `refs/heads/${defaultBranch}` : `refs/tags/${getTag(version)}`
+}
+
+export const GitHubApiDownloadOptions = {
+	headers: { Accept: 'application/vnd.github.v3+json', 'User-Agent': 'SpyglassMC' },
+} as const
+
+export function getCacheOptionsBasedOnGitHubCommitSha(
+	owner: string,
+	repo: string,
+	ref: string,
+): DownloaderCache {
+	return {
+		checksumExtension: '.commit-sha' as const,
+		checksumJob: {
+			uri: `https://api.github.com/repos/${owner}/${repo}/git/${ref}` as const,
+			transformer: (buffer: Uint8Array) => {
+				const response = JSON.parse(bufferToString(buffer)) as GitHubRefResponse
+				if (Array.isArray(response)) {
+					return response[0].object.sha
+				} else if (response.message === undefined) {
+					return response.object.sha
+				} else {
+					throw new Error(response.message)
+				}
+			},
+			options: GitHubApiDownloadOptions,
+			ttl: DownloaderTtl,
+		},
+	}
+}
+
+type GitLabBranchResponse = { message: string } | {
+	message?: undefined
+	name: string
+	commit: { id: string }
+}
+
+export function getCacheOptionsBasedOnGitLabCommitSha(
+	instance: string,
+	owner: string,
+	repo: string,
+	branch: string,
+): DownloaderCache {
+	return {
+		checksumExtension: '.commit-sha' as const,
+		checksumJob: {
+			uri:
+				`https://${instance}/api/v4/projects/${owner}%2F${repo}/repository/branches/${branch}` as const,
+			transformer: (buffer: Uint8Array) => {
+				const response = JSON.parse(bufferToString(buffer)) as GitLabBranchResponse
+				if (response.message === undefined && response.name === branch) {
+					return response.commit.id
+				} else {
+					throw new Error(response.message)
+				}
+			},
+			ttl: DownloaderTtl,
+		},
+	}
+}
+
+type GiteaContentListResponse = { message: string } | {
+	message?: undefined
+	type: 'file'
+	last_commit_sha: string
+}
+
+/**
+ * Based on https://github.com/IntegraSDL/gitea/commit/ed14f9390e23d930a95011c20c4c9f0261d916a7 ,
+ *  if this fails for some Gitea instances I apologize lol,
+ *  if you know how to differentiate or base this on Git instead please contribute.
+ */
+export function getCacheOptionsBasedOnGiteaCommitSha(
+	instance: string,
+	owner: string,
+	repo: string,
+	ref: string,
+): DownloaderCache {
+	return {
+		checksumExtension: '.commit-sha' as const,
+		checksumJob: {
+			uri: `https://${instance}/api/v1/repos/${owner}/${repo}/contents?ref=${ref}` as const,
+			transformer: (buffer: Uint8Array) => {
+				const response = JSON.parse(bufferToString(buffer)) as GiteaContentListResponse
+				if (response.message === undefined && response.type === 'file') {
+					return response.last_commit_sha
+				} else {
+					throw new Error(response.message)
+				}
+			},
+			ttl: DownloaderTtl,
+		},
+	}
+}
+
+/**
+ * Download data from a GitHub repository with tags corresponding to GitHub branches.
+ * The downloaded data will be cached based on the commit SHA of the respective tag.
+ *
+ * If `isLatest` if `true`, instead of finding the tag corresponding to the given version, the default branch will be used.
+ *
+ * @returns The URI to the `.tar.gz` file.
+ */
+export async function downloadGitHubRepo(
+	{ defaultBranch, downloader, getTag, repo, isLatest, owner, version, suffix }: {
+		defaultBranch: string
+		downloader: Downloader
+		getTag: (version: string) => string
+		owner: string
+		repo: string
+		isLatest: boolean
+		version: string
+		suffix?: string
+	},
+): Promise<string> {
+	const ref = getGitRef({ defaultBranch, getTag, isLatest, version })
+
+	const out: DownloaderDownloadOut = {}
+	await downloader.download<Uint8Array>({
+		id: `mc-je/${version}/${repo}${suffix ?? ''}.tar.gz`,
+		uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
+		transformer: (b) => b,
+		cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
+		options: GitHubApiDownloadOptions,
+		ttl: DownloaderTtl,
+	}, out)
+
+	return out.cacheUri!
 }
