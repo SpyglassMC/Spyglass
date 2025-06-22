@@ -396,10 +396,10 @@ const module: Formatter<ModuleNode> = (node, ctx) => {
 			return formatted
 		}
 		if (child.type === 'comment') {
-			return addNewlineSeparator(formatted)
+			return `${formatted}\n`
 		}
 		if (child.type === 'mcdoc:use_statement' && children[i + 1]?.type === 'mcdoc:use_statement') {
-			return addNewlineSeparator(formatted)
+			return `${formatted}\n`
 		}
 		// With an empty line between nodes
 		// (comments don't have them, because they probably refer to the next child)
