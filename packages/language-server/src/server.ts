@@ -411,17 +411,15 @@ connection.onWorkspaceSymbol(({ query }) => {
 })
 
 connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
-	const errors = service.project.cacheService.errors[uri]
-	if (errors && errors.some(error => error.severity === core.ErrorSeverity.Error)) {
-		// Don't format if there are errors.
-		return undefined
-	}
-
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
+	if (node.parserErrors.length !== 0) {
+		// Don't format if there are errors.
+		return undefined
+	}
 	let text = service.format(node, doc, options.tabSize, options.insertSpaces)
 	if (options.insertFinalNewline && text.charAt(text.length - 1) !== '\n') {
 		text += '\n'
