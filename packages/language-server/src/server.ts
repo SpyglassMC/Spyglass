@@ -14,6 +14,7 @@ import type {
 	MyLspDataHackPubifyRequestParams,
 } from './util/index.js'
 import { toCore, toLS } from './util/index.js'
+import { LspFsWatcher } from './util/LspFsWatcher.js'
 
 export * from './util/types.js'
 
@@ -29,8 +30,8 @@ const { cache: cacheRoot } = envPaths('spyglassmc')
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
 let workspaceFolders!: ls.WorkspaceFolder[]
+let projectRoots!: core.RootUriString[]
 let hasShutdown = false
-let progressReporter: ls.WorkDoneProgressReporter | undefined
 
 const externals = NodeJsExternals
 const logger: core.Logger = {
@@ -52,6 +53,7 @@ connection.onInitialize(async (params) => {
 
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
+	projectRoots = workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri))
 
 	if (initializationOptions?.inDevelopmentMode) {
 		await new Promise((resolve) => setTimeout(resolve, 3000))
@@ -84,7 +86,7 @@ connection.onInitialize(async (params) => {
 				cacheRoot: fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRoot).toString()),
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
-				projectRoots: workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri)),
+				projectRoots,
 			},
 		})
 		service.project.on('documentErrored', async ({ errors, uri, version }) => {
@@ -155,7 +157,26 @@ connection.onInitialize(async (params) => {
 })
 
 connection.onInitialized(async () => {
-	await service.project.ready()
+	// Initializes LspFsWatcher only when client supports didChangeWatchedFiles notifications.
+	const fsWatcher = capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration
+		? new LspFsWatcher({
+			capabilities,
+			connection,
+			locations: projectRoots,
+			logger,
+			predicate: (uri) => !service.project.shouldExclude(uri),
+		})
+			.on('ready', () => logger.info('[FsWatcher] ready'))
+			.on('add', (uri) => logger.info('[FsWatcher] added', uri))
+			.on('change', (uri) => logger.info('[FsWatcher] changed', uri))
+			.on('unlink', (uri) => logger.info('[FsWatcher] unlinked', uri))
+			.on('error', (e) => logger.error('[FsWatcher]', e))
+		: undefined
+
+	await service.project.ready({
+		projectRootsWatcher: fsWatcher,
+	})
+
 	if (capabilities.workspace?.workspaceFolders) {
 		connection.workspace.onDidChangeWorkspaceFolders(async () => {
 			// FIXME
@@ -175,8 +196,6 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, versi
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	service.project.onDidClose(uri)
 })
-
-connection.workspace.onDidRenameFiles(({}) => {})
 
 connection.onCodeAction(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
