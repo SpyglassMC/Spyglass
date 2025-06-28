@@ -10,7 +10,7 @@ import { inlayHintProvider } from './inlayHintProvider.js'
 import { registerMcdocAttributes } from './mcdocAttributes.js'
 import * as parser from './parser/index.js'
 import { signatureHelpProvider } from './signatureHelpProvider.js'
-import { getPatch } from './tree/patch.js'
+import { getPatch, patchDefaultRequiredLevels } from './tree/patch.js'
 import { validatePatchedTree } from './tree/patchValidator.js'
 
 export * as checker from './checker/index.js'
@@ -29,6 +29,9 @@ export const initialize = (
 	registerCustomResources(ctx.config)
 
 	const tree = core.merge(commands, getPatch(releaseVersion))
+	if (ReleaseVersion.cmp(releaseVersion, '1.21.6') < 0) {
+		patchDefaultRequiredLevels(tree)
+	}
 	if (ctx.isDebugging) {
 		validatePatchedTree(tree, ctx.logger)
 	}
