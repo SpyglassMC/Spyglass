@@ -1,0 +1,10 @@
+type Something = any
+
+#[formatter_ignore]
+            struct
+        MyStruct
+{ foo:
+
+                int }
+
+type SomethingElse = any

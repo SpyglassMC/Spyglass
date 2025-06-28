@@ -20,7 +20,8 @@ exports['mcdoc docComment Parse "/// This is a doc comment." 1'] = {
       "start": 0,
       "end": 26
     },
-    "comment": " This is a doc comment."
+    "comment": " This is a doc comment.",
+    "prefix": "///"
   },
   "errors": []
 }
@@ -32,7 +33,8 @@ exports['mcdoc docComment Parse "/// This is a doc comment.↓next line test;" 1
       "start": 0,
       "end": 27
     },
-    "comment": " This is a doc comment.\n"
+    "comment": " This is a doc comment.\n",
+    "prefix": "///"
   },
   "errors": []
 }

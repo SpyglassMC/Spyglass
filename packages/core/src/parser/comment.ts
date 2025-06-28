@@ -16,7 +16,12 @@ interface Options {
 export function comment({ singleLinePrefixes, includesEol }: Options): Parser<CommentNode> {
 	return (src: Source, _ctx: ParserContext): Result<CommentNode> => {
 		const start = src.cursor
-		const ans: CommentNode = { type: 'comment', range: Range.create(start), comment: '' }
+		const ans: CommentNode = {
+			type: 'comment',
+			range: Range.create(start),
+			comment: '',
+			prefix: '',
+		}
 
 		for (const prefix of singleLinePrefixes) {
 			if (src.peek(prefix.length) === prefix) {
@@ -27,6 +32,7 @@ export function comment({ singleLinePrefixes, includesEol }: Options): Parser<Co
 				}
 				ans.range.end = src.cursor
 				ans.comment = src.sliceToCursor(start + prefix.length)
+				ans.prefix = prefix
 				return ans
 			}
 		}

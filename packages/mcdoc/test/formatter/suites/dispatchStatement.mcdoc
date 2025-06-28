@@ -1,0 +1,6 @@
+/// Sample doc comment 1
+/// Sample doc comment 2
+#[exampleAttribute(1)] #[exampleAttribute(2)]
+dispatch minecraft:storage[my:storage] to struct MyStruct {
+    foo: int,
+}

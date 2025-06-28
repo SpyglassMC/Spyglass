@@ -454,7 +454,7 @@ const treeBody: InfallibleParser<
 	syntax([attributeTreePosValues, optional(marker(','))]),
 ])
 
-const AttributeTreeClosure = Object.freeze({ '(': ')', '[': ']', '{': '}' })
+export const AttributeTreeClosure = Object.freeze({ '(': ')', '[': ']', '{': '}' })
 const attributeTree: Parser<AttributeTreeNode> = (src, ctx) => {
 	const delim = src.trySkip('(')
 		? '('

@@ -38,11 +38,16 @@ export const boolean: Formatter<BooleanBaseNode> = (node) => {
 }
 
 export const comment: Formatter<CommentNode> = (node) => {
-	return '#' + node.comment
+	return node.prefix + node.comment
 }
 
 export const float: Formatter<FloatBaseNode> = (node) => {
-	return node.value.toString()
+	const numberAsString = node.value.toString()
+	const hasNoDecimalPoint = Number.isInteger(node.value)
+	if (hasNoDecimalPoint) {
+		return numberAsString + '.0'
+	}
+	return numberAsString
 }
 
 export const integer: Formatter<IntegerNode> = (node) => {
