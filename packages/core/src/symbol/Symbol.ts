@@ -123,6 +123,7 @@ export const NormalFileCategories = Object.freeze(
 		'banner_pattern',
 		'cat_variant',
 		'chat_type',
+		'chicken_variant',
 		'cow_variant',
 		'damage_type',
 		'dialog',

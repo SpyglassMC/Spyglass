@@ -100,6 +100,7 @@
           "data/*/banner_pattern/**/*.json",
           "data/*/cat_variant/**/*.json",
           "data/*/chat_type/**/*.json",
+          "data/*/chicken_variant/**/*.json",
           "data/*/cow_variant/**/*.json",
           "data/*/damage_type/**/*.json",
           "data/*/dialog/**/*.json",
