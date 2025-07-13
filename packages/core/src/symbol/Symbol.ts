@@ -31,6 +31,7 @@ export const RegistryCategories = Object.freeze(
 		'data_component_type',
 		'decorated_pot_pattern',
 		'decorated_pot_patterns', // Removed
+		'dialog_action_type',
 		'dialog_body_type',
 		'dialog_type',
 		'enchantment_effect_component_type',
@@ -79,7 +80,6 @@ export const RegistryCategories = Object.freeze(
 		'sound_event',
 		'spawn_condition_type',
 		'stat_type',
-		'submit_method_type',
 		'test_environment_definition_type',
 		'test_function',
 		'test_instance_type',
