@@ -143,7 +143,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	meta.registerLanguage('vsh', { extensions: ['.vsh'] })
 
 	json.getInitializer(jsonUriPredicate)(ctx)
-	jeJson.initialize(ctx)
+	jeJson.initialize(ctx, packs)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)
 
