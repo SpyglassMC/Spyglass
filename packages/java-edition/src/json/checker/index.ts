@@ -81,8 +81,8 @@ function getPackFormatRangeFromPackMcMeta(packFormat: json.JsonNode) {
 	let max_format: number | bigint | undefined = undefined
 
 	if (pack) {
-		max_format = getJsonNumber(pack, 'max_format')
-		min_format = getJsonNumber(pack, 'min_format')
+		max_format = getMinorVersionSupportedFormat(pack, 'max_format')
+		min_format = getMinorVersionSupportedFormat(pack, 'min_format')
 
 		const supported_formats = getJsonField(pack, 'supported_formats')
 		if (supported_formats) {
@@ -99,7 +99,7 @@ function getPackFormatRangeFromPackMcMeta(packFormat: json.JsonNode) {
 				}
 
 				if (!max_format && max_supported && json.JsonNumberNode.is(max_supported)) {
-					max_format = max_supported.value.value
+					min_format = max_supported.value.value
 				}
 			} else if (json.JsonObjectNode.is(supported_formats)) {
 				min_format ??= getJsonNumber(supported_formats, 'min_inclusive')
@@ -129,6 +129,20 @@ function getPackFormatRangeFromPackMcMeta(packFormat: json.JsonNode) {
 		const field = getJsonField(jsonNode, key)
 		if (field !== undefined && json.JsonNumberNode.is(field)) {
 			return field.value.value
+		}
+		return undefined
+	}
+	function getMinorVersionSupportedFormat(jsonNode: json.JsonNode | undefined, key: string) {
+		const field = getJsonField(jsonNode, key)
+		if (field !== undefined) {
+			if (json.JsonNumberNode.is(field)) {
+				return field.value.value
+			} else if (json.JsonArrayNode.is(field) && field.children.length >= 1) {
+				const value = field.children[0].value
+				if (value && json.JsonNumberNode.is(value)) {
+					return value.value.value
+				}
+			}
 		}
 		return undefined
 	}
