@@ -99,7 +99,7 @@ function getPackFormatRangeFromPackMcMeta(packFormat: json.JsonNode, newPackForm
 				}
 
 				if (!max_format && max_supported && json.JsonNumberNode.is(max_supported)) {
-					min_format = max_supported.value.value
+					max_format = max_supported.value.value
 				}
 			} else if (json.JsonObjectNode.is(supported_formats)) {
 				min_format ??= getJsonNumber(supported_formats, 'min_inclusive')
