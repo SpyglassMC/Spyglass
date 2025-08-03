@@ -28,11 +28,11 @@ export function file(packs: PackInfo[]): core.Checker<json.JsonFileNode> {
 		if (ctx.doc.uri.endsWith('/pack.mcmeta')) {
 			const thisPack = packs.find(p => core.fileUtil.isSubUriOf(ctx.doc.uri, p.packRoot))
 
-			const { min_format, max_format } = getPackFormatRangeFromPackMcMeta(child)
-
 			const newPackFormat = thisPack?.type === 'assets'
 				? NEW_RESOURCEPACK_PACK_FORMAT
 				: NEW_DATAPACK_PACK_FORMAT
+
+			const { min_format, max_format } = getPackFormatRangeFromPackMcMeta(child, newPackFormat)
 			let type: mcdoc.McdocType
 
 			const oldRange = { kind: 0b01, max: newPackFormat } satisfies mcdoc.NumericRange
@@ -74,7 +74,7 @@ export function register(meta: core.MetaRegistry, packs: PackInfo[]) {
 	meta.registerChecker<json.JsonFileNode>('json:file', file(packs))
 }
 
-function getPackFormatRangeFromPackMcMeta(packFormat: json.JsonNode) {
+function getPackFormatRangeFromPackMcMeta(packFormat: json.JsonNode, newPackFormat: number) {
 	const pack = getJsonField(packFormat, 'pack')
 
 	let min_format: number | bigint | undefined = undefined
@@ -112,7 +112,7 @@ function getPackFormatRangeFromPackMcMeta(packFormat: json.JsonNode) {
 		max_format ??= pack_format
 
 		min_format ??= max_format
-		max_format ??= min_format
+		max_format ??= (min_format && min_format > newPackFormat) ? min_format : newPackFormat
 	}
 
 	return { min_format, max_format }
