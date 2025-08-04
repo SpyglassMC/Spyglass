@@ -115,7 +115,7 @@ function getPackFormatRangeFromPackMcMeta(packFormat: json.JsonNode, newPackForm
 		max_format ??= pack_format
 
 		min_format ??= max_format
-		max_format ??= (min_format && min_format > newPackFormat) ? min_format : newPackFormat
+		max_format ??= (!min_format || min_format > newPackFormat) ? min_format : newPackFormat
 	}
 
 	return { min_format, max_format }
