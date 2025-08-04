@@ -38,6 +38,9 @@ export function file(packs: PackInfo[]): core.Checker<json.JsonFileNode> {
 			const oldRange = { kind: 0b01, max: newPackFormat } satisfies mcdoc.NumericRange
 			const newRange = { kind: 0, min: newPackFormat } satisfies mcdoc.NumericRange
 
+			// This is not done in mcdoc to give better error messages by essentially muting all
+			// irrelevant fields. Maybe there is a way mcdoc runtime could be improved in the future
+			// to show better error messages for complex types.
 			if (min_format && max_format) {
 				if (max_format < newPackFormat) {
 					type = createConcreteType('OldPack', oldRange)
