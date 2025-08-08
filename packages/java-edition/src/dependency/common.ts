@@ -34,14 +34,26 @@ export interface VersionInfo {
 
 export namespace PackMcmeta {
 	export function readPackFormat(data: any): number {
-		const supported = data?.pack?.supported_formats
+		const pack = data?.pack
+		if (!pack) {
+			throw new Error('“pack” is not set')
+		}
+
+		const max_format = pack.max_format
+		if (typeof max_format === 'number') {
+			return max_format
+		}
+		if (Array.isArray(max_format) && max_format.length > 0 && typeof max_format[0] === 'number') {
+			return pack.max_format[0] // TODO: Do we need the minor version as well?
+		}
+		const supported = pack.supported_formats
 		if (Array.isArray(supported) && supported.length === 2 && typeof supported[1] === 'number') {
 			return supported[1]
 		}
 		if (typeof supported === 'object' && typeof supported?.max_inclusive === 'number') {
 			return supported.max_inclusive
 		}
-		const format = data?.pack?.pack_format
+		const format = pack.pack_format
 		if (typeof format === 'number') {
 			return format
 		}
