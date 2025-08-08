@@ -42,12 +42,7 @@ export const comment: Formatter<CommentNode> = (node) => {
 }
 
 export const float: Formatter<FloatBaseNode> = (node) => {
-	const numberAsString = node.value.toString()
-	const hasNoDecimalPoint = Number.isInteger(node.value)
-	if (hasNoDecimalPoint) {
-		return numberAsString + '.0'
-	}
-	return numberAsString
+	return node.value.toString()
 }
 
 export const integer: Formatter<IntegerNode> = (node) => {
