@@ -54,6 +54,7 @@
 	"java-edition.binder.wrong-version": "Dateien im Ordner %0% werden in der geladenen Version %1% nicht erkannt",
 	"java-edition.translation-value.percent-escape-hint": "%0%. Wenn Sie ein wörtliches Prozentzeichen anzeigen möchten, verwenden Sie stattdessen „%%“",
 	"json.checker.array.length-between": "%0% mit einer Länge zwischen %1% und %2%",
+	"json.checker.item.duplicate": "Gegenstand aus der Liste duplizieren",
 	"json.checker.property.missing": "Fehlende Eigenschaft %0%",
 	"json.checker.property.unknown": "Unbekannte Eigenschaft %0%",
 	"json.checker.string.hex-color": "eine sechstellige Hexadezimalzahl",
