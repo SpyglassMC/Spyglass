@@ -1,4 +1,5 @@
 {
+	"spyglassmc.commands.dataHackPubify.title": "Data Hack Pubify",
 	"spyglassmc.commands.resetProjectCache.title": "プロジェクトのキャッシュファイルを消去",
 	"spyglassmc.commands.showCacheRoot.title": "キャッシュフォルダーを開く",
 	"spyglassmc.commands.showOutput.title": "出力を表示",
