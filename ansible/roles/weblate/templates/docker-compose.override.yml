@@ -35,6 +35,7 @@ services:
       # HTTPS & reverse proxy
       WEBLATE_ENABLE_HTTPS: 1
       WEBLATE_IP_BEHIND_REVERSE_PROXY: 1
+      WEBLATE_SECURE_PROXY_SSL_HEADER: HTTP_X_FORWARDED_PROTO,https
 
       # Registration: only allows GitHub
       WEBLATE_REGISTRATION_ALLOW_BACKENDS: github
