@@ -81,6 +81,7 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 		for (const disposable of this.#lspDisposables) {
 			disposable.dispose()
 		}
+		this.#lspDisposables = []
 	}
 
 	async #onLspDidChangeWatchedFiles({ changes }: ls.DidChangeWatchedFilesParams) {
@@ -154,6 +155,24 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 			this.#watchedFiles.delete(dirUri)
 			for (const watchedUri of subFiles) {
 				this.emit('unlink', watchedUri)
+			}
+		}
+	}
+
+	/**
+	 * Reconcile the internal URI store with the actual directories and files on the disk.
+	 * @param uri URI that should be checked. If it's a file URI, ensure the file exists in the
+	 * internal URI store; if it's a directory URI, ensure all contents of it exists and no extra
+	 * content is recorded; if the URI does not exist, reconcile its parent URI instead.
+	 */
+	async #reconcile(uri: string) {
+		try {
+			const stat = await NodeJsExternals.fs.stat(uri)
+		} catch (e) {
+			if (NodeJsExternals.error.isKind(e, 'ENOENT')) {
+				//
+			} else {
+				throw e
 			}
 		}
 	}
