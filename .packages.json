@@ -127,8 +127,8 @@
 	},
 	"web-api-server": {
 		"released": {
-			"commit": "d16f114a18d97cc134fa3ff00ba71e6908cc6350",
-			"version": "0.1.6"
+			"commit": "9e1d2f56bb652ebcd554d5c4f50995b665e00a9c",
+			"version": "0.1.7"
 		}
 	}
 }
