@@ -62,15 +62,15 @@ before trying again.
 
 === `GET` https://api.spyglassmc.com/mcje/versions[`/mcje/versions`]
 
-=== `GET` https://api.spyglassmc.com/mcje/versions/:version/block_states[`/mcje/versions/:version/block_states`]
+=== `GET` https://api.spyglassmc.com/mcje/versions/1.21/block_states[`/mcje/versions/:version/block_states`]
 
-=== `GET` https://api.spyglassmc.com/mcje/versions/:version/commands[`/mcje/versions/:version/commands`]
+=== `GET` https://api.spyglassmc.com/mcje/versions/1.21/commands[`/mcje/versions/:version/commands`]
 
-=== `GET` https://api.spyglassmc.com/mcje/versions/:version/registries[`/mcje/versions/:version/registries`]
+=== `GET` https://api.spyglassmc.com/mcje/versions/1.21/registries[`/mcje/versions/:version/registries`]
 
-=== `GET` https://api.spyglassmc.com/mcje/versions/:version/vanilla-assets-tiny/tarball[`/mcje/versions/:version/vanilla-assets-tiny/tarball`]
+=== `GET` https://api.spyglassmc.com/mcje/versions/1.21/vanilla-assets-tiny/tarball[`/mcje/versions/:version/vanilla-assets-tiny/tarball`]
 
-=== `GET` https://api.spyglassmc.com/mcje/versions/:version/vanilla-data/tarball[`/mcje/versions/:version/vanilla-data/tarball`]
+=== `GET` https://api.spyglassmc.com/mcje/versions/1.21/vanilla-data/tarball[`/mcje/versions/:version/vanilla-data/tarball`]
 
 === `GET` https://api.spyglassmc.com/vanilla-mcdoc/symbols[`/vanilla-mcdoc/symbols`]
 
