@@ -215,7 +215,12 @@ export class FileUriSupporter implements UriProtocolSupporter {
 		const roots: RootUriString[] = []
 		const files = new Map<string, string[]>()
 
-		for (let { uri } of dependencies) {
+		for (const dependency of dependencies) {
+			if (dependency.type !== 'directory') {
+				continue
+			}
+
+			let { uri } = dependency
 			try {
 				if (fileUtil.isFileUri(uri) && (await externals.fs.stat(uri)).isDirectory()) {
 					uri = fileUtil.ensureEndingSlash(uri)
@@ -335,29 +340,31 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	): Promise<ArchiveUriSupporter> {
 		const entries = new Map<string, Map<string, DecompressedFile>>()
 
-		for (const { uri, info } of dependencies) {
+		for (const dependency of dependencies) {
+			if (dependency.type === 'directory') {
+				continue
+			}
+
+			const archiveName = dependency.type === 'tarball-file'
+				? fileUtil.basename(dependency.uri)
+				: dependency.name
 			try {
-				if (
-					uri.startsWith('file:')
-					&& ArchiveUriSupporter.SupportedArchiveExtnames.some((ext) => uri.endsWith(ext))
-					&& (await externals.fs.stat(uri)).isFile()
-				) {
-					const archiveName = fileUtil.basename(uri)
-					if (entries.has(archiveName)) {
-						throw new Error(`A different URI with ${archiveName} already exists`)
-					}
-					const files = await externals.archive.decompressBall(
-						await externals.fs.readFile(uri),
-						{ stripLevel: typeof info?.startDepth === 'number' ? info.startDepth : 0 },
-					)
-					/// Debug message for #1609
-					logger.info(
-						`[ArchiveUriSupporter#create] Extracted ${files.length} files from ${archiveName}`,
-					)
-					entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
+				if (entries.has(archiveName)) {
+					throw new Error(`A different archive with ${archiveName} already exists`)
 				}
+				const files = await externals.archive.decompressBall(
+					dependency.type === 'tarball-file'
+						? await externals.fs.readFile(dependency.uri)
+						: dependency.data,
+					{ stripLevel: dependency.stripLevel ?? 0 },
+				)
+				/// Debug message for #1609
+				logger.info(
+					`[ArchiveUriSupporter#create] Extracted ${files.length} files from ${archiveName}`,
+				)
+				entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
 			} catch (e) {
-				logger.error(`[ArchiveUriSupporter#create] Bad dependency ${uri}`, e)
+				logger.error(`[ArchiveUriSupporter#create] Bad dependency ${archiveName}`, e)
 			}
 		}
 

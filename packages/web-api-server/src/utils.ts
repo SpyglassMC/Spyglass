@@ -113,6 +113,10 @@ export async function initGitRepos(logger: Logger, rootDir: string) {
 				path.join(rootDir, repo),
 				['--mirror', '--progress'],
 			)
+			// Make sure 'git repack' doesn't take up all RAM for mcmeta.
+			// https://stackoverflow.com/a/4829883
+			await gitCloner.addConfig('pack.windowMemory', '10m')
+			await gitCloner.addConfig('pack.packSizeLimit', '20m')
 			logger.debug({ owner, repo }, 'Cloned')
 		}
 		return repoGit

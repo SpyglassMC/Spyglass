@@ -29,7 +29,6 @@ import {
 } from './Context.js'
 import type { Dependency } from './Dependency.js'
 import { DependencyKey } from './Dependency.js'
-import { Downloader } from './Downloader.js'
 import { LinterErrorReporter } from './ErrorReporter.js'
 import { ArchiveUriSupporter, FileService, FileUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
@@ -43,7 +42,6 @@ export type ProjectInitializerContext = Pick<
 	Project,
 	| 'cacheRoot'
 	| 'config'
-	| 'downloader'
 	| 'externals'
 	| 'isDebugging'
 	| 'logger'
@@ -63,7 +61,6 @@ export type ProjectInitializer = SyncProjectInitializer | AsyncProjectInitialize
 export interface ProjectOptions {
 	cacheRoot: RootUriString
 	defaultConfig?: Config
-	downloader?: Downloader
 	externals: Externals
 	fs?: FileService
 	initializers?: readonly ProjectInitializer[]
@@ -104,7 +101,6 @@ export type ProjectData = Pick<
 	Project,
 	| 'cacheRoot'
 	| 'config'
-	| 'downloader'
 	| 'ensureBindingStarted'
 	| 'externals'
 	| 'fs'
@@ -182,7 +178,6 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	config!: Config
-	readonly downloader: Downloader
 	readonly externals: Externals
 	readonly fs: FileService
 	readonly isDebugging: boolean
@@ -299,7 +294,6 @@ export class Project implements ExternalEventEmitter {
 		{
 			cacheRoot,
 			defaultConfig,
-			downloader,
 			externals,
 			fs = FileService.create(externals, cacheRoot),
 			initializers = [],
@@ -321,7 +315,6 @@ export class Project implements ExternalEventEmitter {
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
-		this.downloader = downloader ?? new Downloader(cacheRoot, externals, logger)
 		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
 
 		this.#ctx = {}
@@ -394,7 +387,6 @@ export class Project implements ExternalEventEmitter {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
 				config: this.config,
-				downloader: this.downloader,
 				externals: this.externals,
 				isDebugging: this.isDebugging,
 				logger: this.logger,
@@ -434,32 +426,34 @@ export class Project implements ExternalEventEmitter {
 
 	private setReadyPromise(): void {
 		const getDependencies = async () => {
-			const ans: Dependency[] = []
-			for (const dependency of this.config.env.dependencies) {
-				if (DependencyKey.is(dependency)) {
-					const provider = this.meta.getDependencyProvider(dependency)
-					if (provider) {
-						try {
-							ans.push(await provider())
-							this.logger.info(
-								`[Project] [getDependencies] Executed provider “${dependency}”`,
-							)
-						} catch (e) {
-							this.logger.error(
-								`[Project] [getDependencies] Bad provider “${dependency}”`,
-								e,
-							)
+			const dependencies: Dependency[] = []
+			for (const input of this.config.env.dependencies) {
+				try {
+					if (DependencyKey.is(input)) {
+						const provider = this.meta.getDependencyProvider(input)
+						if (!provider) {
+							throw new Error(`No provider for ${input}`)
 						}
-					} else {
-						this.logger.error(
-							`[Project] [getDependencies] Bad dependency “${dependency}”: no associated provider`,
+
+						dependencies.push(await provider())
+						this.logger.info(
+							`[Project] [getDependencies] Executed provider “${input}”`,
 						)
+					} else {
+						const stats = await this.externals.fs.stat(input)
+						if (stats.isDirectory()) {
+							dependencies.push({ type: 'directory', uri: input })
+						} else if (stats.isFile()) {
+							dependencies.push({ type: 'tarball-file', uri: input })
+						} else {
+							throw new Error('Unsupported file entry type')
+						}
 					}
-				} else {
-					ans.push({ uri: dependency })
+				} catch (e) {
+					this.logger.error(`[Project] [getDependencies] Bad dependency “${input}”`, e)
 				}
 			}
-			return ans
+			return dependencies
 		}
 		const listDependencyFiles = async () => {
 			const dependencies = await getDependencies()

@@ -29,7 +29,6 @@ export interface VersionInfo {
 	release: ReleaseVersion
 	id: string
 	name: string
-	isLatest: boolean
 }
 
 export namespace PackMcmeta {
