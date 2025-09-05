@@ -1,6 +1,8 @@
 import { Dev } from '../common/index.js'
 import type { Externals, Logger } from '../common/index.js'
 
+const FETCH_TIMEOUT_MS = 30_000
+
 export async function fetchWithCache(
 	{ web }: Externals,
 	logger: Logger,
@@ -16,7 +18,7 @@ export async function fetchWithCache(
 	}
 	request.headers.set('User-Agent', 'SpyglassMC (+https://spyglassmc.com)')
 	try {
-		const response = await web.fetch(request)
+		const response = await web.fetch(request, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
 		if (response.status === 304) {
 			Dev.assertDefined(cachedResponse)
 			logger.info(`[fetchWithCache] reusing cache for ${request.url}`)
