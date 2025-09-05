@@ -14,10 +14,9 @@ export async function fetchWithCache(
 	if (cachedEtag) {
 		request.headers.set('If-None-Match', cachedEtag)
 	}
+	request.headers.set('User-Agent', 'SpyglassMC (+https://spyglassmc.com)')
 	try {
-		const response = await web.fetch(request, {
-			headers: { 'User-Agent': 'SpyglassMC (+https://spyglassmc.com)' },
-		})
+		const response = await web.fetch(request)
 		if (response.status === 304) {
 			Dev.assertDefined(cachedResponse)
 			logger.info(`[fetchWithCache] reusing cache for ${request.url}`)
