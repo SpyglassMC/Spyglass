@@ -31,6 +31,9 @@ export const RegistryCategories = Object.freeze(
 		'data_component_type',
 		'decorated_pot_pattern',
 		'decorated_pot_patterns', // Removed
+		'dialog_action_type',
+		'dialog_body_type',
+		'dialog_type',
 		'enchantment_effect_component_type',
 		'enchantment_entity_effect_type',
 		'enchantment_level_based_value_type',
@@ -43,6 +46,7 @@ export const RegistryCategories = Object.freeze(
 		'fluid',
 		'game_event',
 		'height_provider_type',
+		'input_control_type',
 		'instrument',
 		'int_provider_type',
 		'item',
@@ -119,8 +123,10 @@ export const NormalFileCategories = Object.freeze(
 		'banner_pattern',
 		'cat_variant',
 		'chat_type',
+		'chicken_variant',
 		'cow_variant',
 		'damage_type',
+		'dialog',
 		'dimension',
 		'dimension_type',
 		'enchantment',
@@ -241,6 +247,7 @@ export const AssetsFileCategories = Object.freeze(
 		'sounds', // sounds.json
 		'texture',
 		'texture_meta', // *.png.mcmeta
+		'waypoint_style',
 	] as const,
 )
 export type AssetsFileCategory = (typeof AssetsFileCategories)[number]

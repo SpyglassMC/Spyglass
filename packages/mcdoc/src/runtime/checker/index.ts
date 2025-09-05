@@ -513,7 +513,10 @@ function checkShallowly<T>(
 				typeDef.lengthRange
 				&& simplifiedInferred.kind === 'literal'
 				&& simplifiedInferred.value.kind === 'string'
-				&& !NumericRange.isInRange(typeDef.lengthRange, simplifiedInferred.value.value.length)
+				&& !NumericRange.isInRange(
+					typeDef.lengthRange,
+					[...simplifiedInferred.value.value].length,
+				)
 			) {
 				errors.push({
 					kind: 'invalid_string_length',
@@ -1060,14 +1063,9 @@ function simplifyUnion<T>(
 	context: SimplifyContext<T>,
 ): SimplifyResult<SimplifiedMcdocType> {
 	let dynamicData = false
-	const filterCanonical = context.ctx.requireCanonical
-		&& typeDef.members.some(m => m.attributes?.some(a => a.name === 'canonical'))
 
-	const validMembers = typeDef.members
+	let validMembers = typeDef.members
 		.filter(member => {
-			if (filterCanonical && !member.attributes?.some(a => a.name === 'canonical')) {
-				return false
-			}
 			let keep = true
 			handleAttributes(member.attributes, context.ctx, (handler, config) => {
 				if (!keep || !handler.filterElement) {
@@ -1079,6 +1077,14 @@ function simplifyUnion<T>(
 			})
 			return keep
 		})
+
+	const filterCanonical = context.ctx.requireCanonical
+		&& validMembers.some(m => m.attributes?.some(a => a.name === 'canonical'))
+	if (filterCanonical) {
+		validMembers = typeDef.members.filter(member =>
+			member.attributes?.some(a => a.name === 'canonical')
+		)
+	}
 
 	if (validMembers.length === 1) {
 		return simplify(validMembers[0], context)

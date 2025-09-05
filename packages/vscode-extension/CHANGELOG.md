@@ -1,3 +1,24 @@
+# v4.5.12 (2025-04-15)
+
+### ✨ New Features
+- [`f26605d`](https://github.com/SpyglassMC/Spyglass/commit/f26605d21468730ab77baa3b24d895052963a0cd) Improved version detection with supported_formats and multiple pack.mcmeta files ([#1794](https://github.com/SpyglassMC/Spyglass/pull/1794))
+
+### 🐛 Bug Fixes
+- [`5fff82b`](https://github.com/SpyglassMC/Spyglass/commit/5fff82bb5aa3ca5de4f6dd67bf0725f51e0f1175) Fixes completions of mcdoc enum keys ([#1793](https://github.com/SpyglassMC/Spyglass/pull/1793))
+- [`daa9df5`](https://github.com/SpyglassMC/Spyglass/commit/daa9df55de6a8934615a5ab56923db5f9779c255) Incomplete suggest commands are no longer marked as an error ([#1791](https://github.com/SpyglassMC/Spyglass/pull/1791))
+- [`fd57b02`](https://github.com/SpyglassMC/Spyglass/commit/fd57b0297dff12caa36a78f68c07e9367f1b1d6b) Fixes mcdoc string length check with surrogate pairs ([#1792](https://github.com/SpyglassMC/Spyglass/pull/1792))
+
+# v4.5.10 (2025-03-28)
+
+### ✨ New Features
+- [`b7d9e3e`](https://github.com/SpyglassMC/Spyglass/commit/b7d9e3e345653fe9629204e2954b560c857cb91e) Added `match_regex` mcdoc attribute ([#1760](https://github.com/SpyglassMC/Spyglass/pull/1760))
+
+### 🐛 Bug Fixes
+- [`00a1c07`](https://github.com/SpyglassMC/Spyglass/commit/00a1c0786e33f5448cad5ee7d2e4914be3701eaf) Added support for escape sequences in SNBT ([#1785](https://github.com/SpyglassMC/Spyglass/pull/1785))
+- [`cd453ae`](https://github.com/SpyglassMC/Spyglass/commit/cd453aee35666f25cc590ae294982ff6e24add30) Fixes canonical union filtering when combined with other attribute filters ([#1786](https://github.com/SpyglassMC/Spyglass/pull/1786))
+- [`69d493e`](https://github.com/SpyglassMC/Spyglass/commit/69d493e82cef3fd05cc0d39a9bdf020f7aaf496f) Added support for untitled mcfunction files
+- [`adec33f`](https://github.com/SpyglassMC/Spyglass/commit/adec33f11fcc9895a8ab4e453302e9239b0316e1) Fixes listing directories from archives as files
+
 # v4.5.4 (2025-01-26)
 
 ### 🐛 Bug Fixes

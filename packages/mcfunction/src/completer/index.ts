@@ -21,10 +21,10 @@ export function entry(
 ): core.Completer<McfunctionNode> {
 	return (node, ctx) => {
 		const childNode = core.AstNode.findChild(node, ctx.offset, true)
-		if (core.CommentNode.is(childNode) || MacroNode.is(childNode)) {
-			return []
-		} else {
+		if (CommandNode.is(childNode)) {
 			return command(tree, getMockNodes)(childNode ?? CommandNode.mock(ctx.offset), ctx)
+		} else {
+			return []
 		}
 	}
 }

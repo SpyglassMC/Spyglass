@@ -16,14 +16,18 @@ const validator = mcdoc.runtime.attribute.validator
 
 interface CommandConfig {
 	slash?: 'allowed' | 'required' | 'chat'
+	macro?: 'implicit'
 	max_length?: number
 	empty?: 'allowed'
+	incomplete?: 'allowed'
 }
 const commandValidator = validator.alternatives<CommandConfig>(
 	validator.tree({
 		slash: validator.optional(validator.options('allowed', 'required', 'chat')),
+		macro: validator.optional(validator.options('implicit')),
 		max_length: validator.optional(validator.number),
 		empty: validator.optional(validator.options('allowed')),
+		incomplete: validator.optional(validator.options('allowed')),
 	}),
 	() => ({}),
 )
@@ -53,17 +57,26 @@ const scoreHolderValidator = validator.alternatives<ScoreHolderConfig>(
 export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: mcf.RootTreeNode) {
 	mcdoc.runtime.registerAttribute(meta, 'command', commandValidator, {
 		// TODO: fix completer inside commands
-		stringParser: ({ slash, max_length, empty }) => {
+		stringParser: ({ slash, macro, max_length, empty, incomplete }) => {
 			return (src, ctx) => {
+				if (macro) {
+					return mcf.macro(false)(src, ctx)
+				}
 				if ((empty && !src.canRead()) || (slash === 'chat' && src.peek() !== '/')) {
 					return core.string({
 						unquotable: { blockList: new Set(), allowEmpty: true },
 					})(src, ctx)
 				}
-				return mcf.command(rootTreeNode, parser.argument, {
+				const tmpCtx = { ...ctx, err: new core.ErrorReporter(ctx.err.source) }
+				const result = mcf.command(rootTreeNode, parser.argument, {
 					slash: slash === 'chat' ? 'allowed' : slash,
 					maxLength: max_length,
-				})(src, ctx)
+				})(src, tmpCtx)
+				if (incomplete) {
+					tmpCtx.err.errors = tmpCtx.err.errors.filter(e => e.range.end < result.range.end)
+				}
+				ctx.err.absorb(tmpCtx.err)
+				return result
 			}
 		},
 	})

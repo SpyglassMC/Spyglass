@@ -107,6 +107,26 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			return core.LiteralNode.mock(ctx.offset, { pool: keys })
 		},
 	})
+	registerAttribute(meta, 'divisible_by', validator.number, {
+		checker(config, typeDef) {
+			if (
+				typeDef.kind !== 'literal' || typeDef.value.kind === 'string'
+				|| typeDef.value.kind === 'boolean'
+			) {
+				return undefined
+			}
+			const value = typeDef.value.value
+			return (node, ctx) => {
+				if (value % config !== 0) {
+					ctx.err.report(
+						localize('not-divisible-by', value, config),
+						node,
+						core.ErrorSeverity.Warning,
+					)
+				}
+			}
+		},
+	})
 	registerAttribute(meta, 'id', idValidator, {
 		checkInferred: (config, inferred, ctx) => {
 			if (inferred.kind === 'string') {

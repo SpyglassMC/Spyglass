@@ -124,8 +124,6 @@ connection.onInitialize(async (params) => {
 			declarationProvider: {},
 			definitionProvider: {},
 			implementationProvider: {},
-			// TODO: re-enable this
-			// documentFormattingProvider: {},
 			referencesProvider: {},
 			typeDefinitionProvider: {},
 			documentHighlightProvider: {},
@@ -155,6 +153,12 @@ connection.onInitialize(async (params) => {
 })
 
 connection.onInitialized(async () => {
+	if (capabilities.textDocument?.formatting?.dynamicRegistration) {
+		void connection.client.register(
+			ls.DocumentFormattingRequest.type,
+			{ documentSelector: [{ language: 'mcdoc' }] },
+		)
+	}
 	await service.project.ready()
 	if (capabilities.workspace?.workspaceFolders) {
 		connection.workspace.onDidChangeWorkspaceFolders(async () => {
@@ -412,6 +416,10 @@ connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
+	if (node.parserErrors.length !== 0) {
+		// Don't format if there are errors.
+		return undefined
+	}
 	let text = service.format(node, doc, options.tabSize, options.insertSpaces)
 	if (options.insertFinalNewline && text.charAt(text.length - 1) !== '\n') {
 		text += '\n'

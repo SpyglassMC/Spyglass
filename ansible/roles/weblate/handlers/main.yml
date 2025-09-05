@@ -1,0 +1,5 @@
+- name: Restart weblate
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: '{{ weblate_docker_project_src }}'
+    state: restarted

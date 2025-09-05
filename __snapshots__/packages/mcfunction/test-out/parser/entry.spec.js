@@ -24,7 +24,8 @@ exports['mcfunction parser entry() Parse "# this is a comment ⧵ ↓ still a co
           "start": 0,
           "end": 39
         },
-        "comment": " this is a comment still a comment"
+        "comment": " this is a comment still a comment",
+        "prefix": "#"
       }
     ]
   },
@@ -45,7 +46,8 @@ exports['mcfunction parser entry() Parse "# this is a comment" 1'] = {
           "start": 0,
           "end": 19
         },
-        "comment": " this is a comment"
+        "comment": " this is a comment",
+        "prefix": "#"
       }
     ]
   },
@@ -66,7 +68,8 @@ exports['mcfunction parser entry() Parse "# this is a comment↓say hi↓$this i
           "start": 0,
           "end": 19
         },
-        "comment": " this is a comment"
+        "comment": " this is a comment",
+        "prefix": "#"
       },
       {
         "type": "mcfunction:command",
@@ -126,6 +129,13 @@ exports['mcfunction parser entry() Parse "# this is a comment↓say hi↓$this i
         },
         "children": [
           {
+            "type": "mcfunction:macro/prefix",
+            "range": {
+              "start": 27,
+              "end": 28
+            }
+          },
+          {
             "type": "mcfunction:macro/other",
             "range": {
               "start": 28,
@@ -172,6 +182,13 @@ exports['mcfunction parser entry() Parse "$this is a $(macro) command" 1'] = {
         },
         "children": [
           {
+            "type": "mcfunction:macro/prefix",
+            "range": {
+              "start": 0,
+              "end": 1
+            }
+          },
+          {
             "type": "mcfunction:macro/other",
             "range": {
               "start": 1,
@@ -217,6 +234,13 @@ exports['mcfunction parser entry() Parse "$this is a $(macro) ⧵ ↓ this is $(
           "end": 48
         },
         "children": [
+          {
+            "type": "mcfunction:macro/prefix",
+            "range": {
+              "start": 0,
+              "end": 1
+            }
+          },
           {
             "type": "mcfunction:macro/other",
             "range": {
@@ -277,8 +301,7 @@ exports['mcfunction parser entry() Parse "$this is a macro command $(with_args)"
         "range": {
           "start": 0,
           "end": 37
-        },
-        "children": []
+        }
       }
     ]
   },
@@ -307,8 +330,7 @@ exports['mcfunction parser entry() Parse "$this is a macro command" without macr
         "range": {
           "start": 0,
           "end": 24
-        },
-        "children": []
+        }
       }
     ]
   },
@@ -1163,7 +1185,8 @@ exports['mcfunction parser entry() Parse "say ⧵↓ hi ↓ # comment start ⧵�
           "start": 12,
           "end": 35
         },
-        "comment": " comment start end "
+        "comment": " comment start end ",
+        "prefix": "#"
       },
       {
         "type": "mcfunction:command",

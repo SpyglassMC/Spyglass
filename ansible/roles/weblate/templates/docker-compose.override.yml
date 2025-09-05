@@ -6,15 +6,14 @@ services:
       # Admin
       WEBLATE_ADMIN_EMAIL: '{{ weblate_admin_email }}'
       WEBLATE_ADMIN_NAME: '{{ weblate_admin_name }}'
-      WEBLATE_ADMIN_NOTIFY_ERROR: 0
 
-      # Email: completely disabled
-      WEBLATE_EMAIL_BACKEND: django.core.mail.backends.dummy.EmailBackend
-      WEBLATE_EMAIL_HOST: 'localhost'
-      WEBLATE_EMAIL_HOST_USER: 'user'
-      WEBLATE_EMAIL_HOST_PASSWORD: 'pass'
-      WEBLATE_SERVER_EMAIL: 'admin@example.com'
-      WEBLATE_DEFAULT_FROM_EMAIL: 'admin@example.com'
+      # Email
+      WEBLATE_EMAIL_HOST: '{{ weblate_email_host }}'
+      WEBLATE_EMAIL_PORT: '{{ weblate_email_port }}'
+      WEBLATE_EMAIL_HOST_USER: '{{ weblate_email_host_user }}'
+      WEBLATE_EMAIL_HOST_PASSWORD: '{{ weblate_email_host_password }}'
+      WEBLATE_SERVER_EMAIL: '{{ weblate_server_email }}'
+      WEBLATE_DEFAULT_FROM_EMAIL: '{{ weblate_server_email }}'
 
       # Generic
       WEBLATE_SITE_DOMAIN: '{{ weblate_site_domain }}'
@@ -35,10 +34,13 @@ services:
 
       # HTTPS & reverse proxy
       WEBLATE_ENABLE_HTTPS: 1
-      WEBLATE_IP_PROXY_HEADER: HTTP_X_FORWARDED_FOR
+      WEBLATE_IP_BEHIND_REVERSE_PROXY: 1
       WEBLATE_SECURE_PROXY_SSL_HEADER: HTTP_X_FORWARDED_PROTO,https
 
       # Registration: only allows GitHub
       WEBLATE_REGISTRATION_ALLOW_BACKENDS: github
       WEBLATE_SOCIAL_AUTH_GITHUB_KEY: '{{ weblate_social_auth_github_key }}'
       WEBLATE_SOCIAL_AUTH_GITHUB_SECRET: '{{ weblate_social_auth_github_secret }}'
+
+      # Use private commit email by default instead of asking users to opt in
+      WEBLATE_PRIVATE_COMMIT_EMAIL_OPT_IN: 0
