@@ -1,2 +1,8 @@
 # (str)
+api_server_bunny_cdn_api_key: null
+# (int)
+api_server_bunny_cdn_pull_zone_id: null
+# (str)
+api_server_bunny_cdn_secret: null
+# (str)
 api_server_webhook_secret: null

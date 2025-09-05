@@ -11,7 +11,7 @@ pack toolings. It uses https://github.com/misode/mcmeta[misode/mcmeta] and
 https://github.com/SpyglassMC/vanilla-mcdoc[SpyglassMC/vanilla-mcdoc] under the hood and provides a
 few advantages over using the GitHub API directly:
 
-* Accessible within mainland China.
+* Accessible within regions that have blocked `raw.githubusercontent.com` access.
 * Cache invalidation is handled through standard HTTP headers like `ETag` and `If-None-Match`;
   no more git commit sha hackery needed on client side.
 * Cleaner?
@@ -40,23 +40,7 @@ the last response.
 
 === Ratelimiting
 
-Each API endpoint has a point cost depending on how expensive it is to serve the request. Each IP
-address can consume up to 100 points per one hour window before receiving `429 Too Many Requests`
-responses. Additionally, the response time will be degraded starting from 150 requests per 15 minute
-window.
-
-.Point Costs
-|===
-|Type |Points
-
-|Conditional requests that end up with `304 Not Modified` responses |0
-|Non-tarball requests |1
-|Tarball requests |5
-|===
-
-Number of remaining points is provided through the `RateLimit-Remaining` response header. When
-`429 Too Many Requests` responses are received, the client must wait at least `Retry-After` seconds
-before trying again.
+Ratelimiting is generous and should not be hit by normal usage.
 
 == Endpoints
 

@@ -4,24 +4,50 @@ import { createHmac, timingSafeEqual } from 'crypto'
 import type { NextFunction, Request, Response } from 'express'
 import fs from 'fs/promises'
 import path from 'path'
-import { RateLimiterMemory, RateLimiterRes } from 'rate-limiter-flexible'
 import simpleGit from 'simple-git'
 import type { SimpleGit } from 'simple-git'
 
 const gitMutex = new Mutex()
 
+interface Config {
+	bunnyCdnApiKey: string
+	bunnyCdnPullZoneId: string
+	dir: string
+	webhookSecret: string
+	port?: number
+	[key: string]: string | number | undefined
+}
+
 export function loadConfig() {
-	if (
-		!(process.env.SPYGLASSMC_API_SERVER_DIR && process.env.SPYGLASSMC_API_SERVER_WEBHOOK_SECRET)
-	) {
+	const PREFIX = 'SPYGLASSMC_API_SERVER_'
+	const REQUIRED = ['bunnyCdnApiKey', 'bunnyCdnPullZoneId', 'dir', 'webhookSecret'] as const
+
+	const config = Object.create(null) as Config
+
+	for (const [k, v] of Object.entries(process.env)) {
+		if (k.startsWith(PREFIX)) {
+			const camelKey = k
+				.slice(PREFIX.length)
+				.toLowerCase()
+				.replace(/(_)(\w)/g, ([_, c]) => c.toUpperCase())
+			config[camelKey] = v
+		}
+	}
+
+	const missing = REQUIRED.filter(k => !(k in config))
+	if (missing.length) {
 		throw new Error(
-			'Expected environmental variable SPYGLASSMC_API_SERVER_DIR, SPYGLASSMC_API_SERVER_WEBHOOK_SECRET',
+			`Expected environmental variables: ${
+				missing
+					.map(camelKey => PREFIX + camelKey.replace(/([A-Z])/g, '_$1').toUpperCase())
+					.join(', ')
+			}`,
 		)
 	}
-	const hookSecret = process.env.SPYGLASSMC_API_SERVER_WEBHOOK_SECRET
-	const rootDir = path.resolve(process.env.SPYGLASSMC_API_SERVER_DIR)
-	const port = parseInt(process.env.SPYGLASSMC_API_SERVER_PORT ?? '3003')
-	return { hookSecret, port, rootDir }
+
+	config.port = Number(config.port ?? 3003)
+
+	return config
 }
 
 export async function assertRootDir(rootDir: string) {
@@ -112,7 +138,6 @@ export async function sendGitFile(
 	res.setHeader('ETag', etag)
 	if (req.headers['if-none-match'] === etag) {
 		res.status(304).end()
-		await rateLimiter.reward(req.ip!, CHEAP_REQUEST_POINTS)
 	} else {
 		git.outputHandler((_command, stdout, stderr) => {
 			stdout.pipe(res)
@@ -139,7 +164,6 @@ export async function sendGitTarball(
 	res.setHeader('ETag', etag)
 	if (req.headers['if-none-match'] === etag) {
 		res.status(304).end()
-		await rateLimiter.reward(req.ip!, EXPENSIVE_REQUEST_POINTS)
 	} else {
 		res.contentType('application/gzip')
 		res.appendHeader('Content-Disposition', `attachment; filename="${fileName}.tar.gz"`)
@@ -200,8 +224,23 @@ export const errorHandler = (err: Error, _req: Request, res: Response, next: Nex
 	if (res.headersSent) {
 		return next(err)
 	}
-	console.error(chalk.red(err.stack))
+	console.error(err.stack)
 	res.status(500).send(JSON.stringify({ message: err.message }))
+}
+
+export async function purgeCdnCache(apiKey: string, pullZoneId: string) {
+	const uri = `https://api.bunny.net/pullzone/${pullZoneId}/purgeCache`
+	const response = await fetch(uri, {
+		method: 'POST',
+		headers: {
+			'AccessKey': apiKey,
+			'Accept': 'application/json',
+			'Content-Type': 'application/json',
+		},
+	})
+	if (!response.ok) {
+		throw new Error(`Error status: ${response.status} ${response.statusText}`)
+	}
 }
 
 export const getVersionValidator =
@@ -215,41 +254,6 @@ export const getVersionValidator =
 			res.status(404).send(JSON.stringify({ message: `Unknown version '${version}'` }))
 		}
 	}
-
-const rateLimiter = new RateLimiterMemory({
-	duration: 3600,
-	points: 100,
-})
-
-const getRateLimiter =
-	(points: number) => async (req: Request, res: Response, next: NextFunction) => {
-		res.appendHeader('RateLimit-Limit', '100')
-		try {
-			const result = await rateLimiter.consume(req.ip!, points)
-			res.appendHeader('RateLimit-Remaining', `${result.remainingPoints}`)
-			res.appendHeader(
-				'RateLimit-Reset',
-				`${new Date(Date.now() + result.msBeforeNext).toUTCString()}`,
-			)
-			next()
-		} catch (e) {
-			if (e instanceof RateLimiterRes) {
-				res.appendHeader('RateLimit-Remaining', `${e.remainingPoints}`)
-				res.appendHeader('Retry-After', `${Math.round(e.msBeforeNext / 1000)}`)
-			}
-			res.status(429).send(
-				JSON.stringify({
-					message: 'Too Many Requests. Check the RateLimit headers for details.',
-				}),
-			)
-		}
-	}
-
-const CHEAP_REQUEST_POINTS = 1
-const EXPENSIVE_REQUEST_POINTS = 5
-
-export const cheapRateLimiter = getRateLimiter(CHEAP_REQUEST_POINTS)
-export const expensiveRateLimiter = getRateLimiter(EXPENSIVE_REQUEST_POINTS)
 
 export class MemCache {
 	#versions: { id: string }[] | undefined
