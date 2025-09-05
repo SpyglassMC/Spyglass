@@ -83,53 +83,53 @@
     "url": "/developer/",
     "relUrl": "/developer/"
   },"14": {
-    "doc": "Maintainer Guides",
-    "title": "Maintainer Guides",
-    "content": " ",
-    "url": "/maintainer/",
-    "relUrl": "/maintainer/"
-  },"15": {
     "doc": "Mcdoc",
     "title": "Writing Your Own",
     "content": "Any file with the .mcdoc extension will be picked up by Spyglass. If you start having multiple mcdoc files, it can be helpful to organize them in a mcdoc/ folder in your pack root, but this is not required. Defining an mcdoc type is pretty straightforward: . use ::java::util::text::Text use ::java::world::item::ItemStack struct MyQuest { type: string, prompt: Text, /// The item given to the player when completing the quest. reward_item?: ItemStack, } . The above example describes a type MyQuest, which is an object or compound (in mcdoc this is called a struct). The struct has 3 fields. Two required fields type and prompt. One optional field reward_item (indicated by the ?: field separator). Fields can have doc comments. These are comments above the field starting with /// and will be shown as a description of fields during autocomplete and hover interactions. At the top of the file you can see use statements. These can import types from other files. The example imports types from vanilla-mcdoc using the absolute path of the struct. If the above file was placed in quests.mcdoc, the absolute path of the struct type would be ::quests::MyQuest. ",
     "url": "/user/mcdoc/#writing-your-own",
     "relUrl": "/user/mcdoc/#writing-your-own"
-  },"16": {
+  },"15": {
     "doc": "Mcdoc",
     "title": "Dispatching Types",
     "content": "A type on its own isn&#8217;t very useful. We need to tell Spyglass where this type is used in the data pack. This is where dispatchers are used. dispatch minecraft:storage[example:quests] to struct QuestsStorage { available?: [MyQuest], } . This dispatch statement tells Spyglass that the storage example:quests should have the type QuestsStorage, which in turn can reference other types in the file. Writing the following line in function file, you will notice that Spyglass suggests fields and gives errors for missing required fields: . data merge storage example:quests {available:[{ }]} . ",
     "url": "/user/mcdoc/#dispatching-types",
     "relUrl": "/user/mcdoc/#dispatching-types"
-  },"17": {
+  },"16": {
     "doc": "Mcdoc",
     "title": "Mcdoc",
     "content": "Table of Contents . | Writing Your Own | Dispatching Types | . Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs. It is a custom language that is interpreted by the Spyglass language server. The entirety of vanilla Minecraft is documented at the vanilla-mcdoc repository. This is a great place to look to learn about the syntax beyond this documentation! . ",
     "url": "/user/mcdoc/",
     "relUrl": "/user/mcdoc/"
-  },"18": {
+  },"17": {
     "doc": "Home",
     "title": "User Testimonials",
     "content": "By far, by a huge margin, the best extension I&#8217;ve found for it. &#8212; slicedlime during his Twitch stream ",
     "url": "/#user-testimonials",
     "relUrl": "/#user-testimonials"
-  },"19": {
+  },"18": {
     "doc": "Home",
     "title": "Getting Started",
     "content": "You can enjoy features provided by Spyglass on various text editors. VS Code . Install from the Marketplace. VSCodium . Install from the Open VSX Registry. Sublime Text . Planned. Zed Editor . Planned. ",
     "url": "/#getting-started",
     "relUrl": "/#getting-started"
-  },"20": {
+  },"19": {
     "doc": "Home",
     "title": "Contributing",
     "content": ". | Create an issue . | GitHub Repository . | Localization . | . ",
     "url": "/#contributing",
     "relUrl": "/#contributing"
-  },"21": {
+  },"20": {
     "doc": "Home",
     "title": "Home",
     "content": "Welcome to the documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real-time diagnostics, semantic coloring and such. It is planned to support multiple text editors, but for now, the only officially supported release is our vscode extension. ",
     "url": "/",
     "relUrl": "/"
+  },"21": {
+    "doc": "Maintainer Guides",
+    "title": "Maintainer Guides",
+    "content": " ",
+    "url": "/maintainer/",
+    "relUrl": "/maintainer/"
   },"22": {
     "doc": "Initialization Options",
     "title": "Initialization Options",
@@ -421,13 +421,13 @@
   },"70": {
     "doc": "Web API",
     "title": "Introduction",
-    "content": "The Spyglass Web API provides access to various information that is helpful for data pack/resource pack toolings. It uses misode/mcmeta and SpyglassMC/vanilla-mcdoc under the hood and provides a few advantages over using the GitHub API directly: . | Accessible within mainland China. | Cache invalidation is handled through standard HTTP headers like ETag and If-None-Match; no more git commit sha hackery needed on client side. | Cleaner? . | . ",
+    "content": "The Spyglass Web API provides access to various information that is helpful for data pack/resource pack toolings. It uses misode/mcmeta and SpyglassMC/vanilla-mcdoc under the hood and provides a few advantages over using the GitHub API directly: . | Accessible within regions that have blocked raw.githubusercontent.com access. | Cache invalidation is handled through standard HTTP headers like ETag and If-None-Match; no more git commit sha hackery needed on client side. | Cleaner? . | . ",
     "url": "/developer/web-api.html#introduction",
     "relUrl": "/developer/web-api.html#introduction"
   },"71": {
     "doc": "Web API",
     "title": "General Usage",
-    "content": "The Spyglass API root endpoint is https://api.spyglassmc.com/. Clients must identify themselves using the User-Agent HTTP header; requests without the User-Agent header will be rejected. Error Handling . All error responses (HTTP status code 4xx and 5xx) will include a JSON body with the following structure: . | message: (str) A human readable message describing the error details. | . Conditional Requests . All API endpoints include an ETag header in the response. Clients should cache the value of ETag along with the response body if possible, which can be achieved using the CacheStorage API on browsers. For future requests at the same endpoint, clients should include the value of ETag in the If-None-Match request header. A 304 Not Modified response will be returned if the resource has not changed since the last response. Ratelimiting . Each API endpoint has a point cost depending on how expensive it is to serve the request. Each IP address can consume up to 100 points per one hour window before receiving 429 Too Many Requests responses. Additionally, the response time will be degraded starting from 150 requests per 15 minute window. Table 1. Point Costs | Type | Points | . | Conditional requests that end up with 304 Not Modified responses . | 0 . | . | Non-tarball requests . | 1 . | . | Tarball requests . | 5 . | . Number of remaining points is provided through the RateLimit-Remaining response header. When 429 Too Many Requests responses are received, the client must wait at least Retry-After seconds before trying again. ",
+    "content": "The Spyglass API root endpoint is https://api.spyglassmc.com/. Clients must identify themselves using the User-Agent HTTP header; requests without the User-Agent header will be rejected. Error Handling . All error responses (HTTP status code 4xx and 5xx) will include a JSON body with the following structure: . | message: (str) A human readable message describing the error details. | . Conditional Requests . All API endpoints include an ETag header in the response. Clients should cache the value of ETag along with the response body if possible, which can be achieved using the CacheStorage API on browsers. For future requests at the same endpoint, clients should include the value of ETag in the If-None-Match request header. A 304 Not Modified response will be returned if the resource has not changed since the last response. Ratelimiting . Ratelimiting is generous and should not be hit by normal usage. ",
     "url": "/developer/web-api.html#general-usage",
     "relUrl": "/developer/web-api.html#general-usage"
   },"72": {
