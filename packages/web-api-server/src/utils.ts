@@ -1,17 +1,19 @@
 import { Mutex } from 'async-mutex'
-import chalk from 'chalk'
 import { createHmac, timingSafeEqual } from 'crypto'
 import type { NextFunction, Request, Response } from 'express'
 import fs from 'fs/promises'
 import path from 'path'
+import type { Logger } from 'pino'
 import simpleGit from 'simple-git'
 import type { SimpleGit } from 'simple-git'
+import { Transform } from 'stream'
 
 const gitMutex = new Mutex()
 
 interface Config {
 	bunnyCdnApiKey: string
 	bunnyCdnPullZoneId: string
+	discordLogWebhook?: string
 	dir: string
 	webhookSecret: string
 	port?: number
@@ -52,7 +54,6 @@ export function loadConfig() {
 
 export async function assertRootDir(rootDir: string) {
 	try {
-		console.info(chalk.blue(`Root dir: ${rootDir}`))
 		const result = await fs.stat(rootDir)
 		if (!result.isDirectory()) {
 			throw new Error('Not a directory')
@@ -71,6 +72,15 @@ async function doesPathExist(path: string) {
 	}
 }
 
+function createErrorStream(logger: Logger) {
+	return new Transform({
+		transform(chunk, _encoding, callback) {
+			logger.error(chunk.toString().trimEnd())
+			callback()
+		},
+	})
+}
+
 const defaultOutputHandler = (
 	_command: string,
 	_stdout: NodeJS.ReadableStream,
@@ -83,7 +93,7 @@ const defaultOutputHandler = (
  * Ensures the local git repositories exist and returns a simple-git instance, a mutex, and the
  * directory path for each of the local repos.
  */
-export async function initGitRepos(rootDir: string) {
+export async function initGitRepos(logger: Logger, rootDir: string) {
 	const gitCloner = simpleGit({})
 		.outputHandler((_command, stdout, stderr) => {
 			stdout.pipe(process.stdout)
@@ -94,16 +104,16 @@ export async function initGitRepos(rootDir: string) {
 		const repoDir = path.join(rootDir, repo)
 		const repoGit = simpleGit({ baseDir: repoDir }).outputHandler(defaultOutputHandler)
 		if (await doesPathExist(repoDir)) {
-			console.info(chalk.green(`Repo ${owner}/${repo} already cloned.`))
-			await updateGitRepo(repo, repoGit)
+			logger.debug({ owner, repo }, 'Already cloned')
+			await updateGitRepo(logger, repo, repoGit)
 		} else {
-			console.info(chalk.yellow(`Cloning ${owner}/${repo}...`))
+			logger.debug({ owner, repo }, 'Cloning...')
 			await gitCloner.clone(
 				`git@github.com:${owner}/${repo}.git`,
 				path.join(rootDir, repo),
 				['--mirror', '--progress'],
 			)
-			console.info(chalk.green(`Repo ${owner}/${repo} cloned.`))
+			logger.debug({ owner, repo }, 'Cloned')
 		}
 		return repoGit
 	}
@@ -114,11 +124,11 @@ export async function initGitRepos(rootDir: string) {
 	}
 }
 
-export async function updateGitRepo(name: string, git: SimpleGit) {
+export async function updateGitRepo(logger: Logger, name: string, git: SimpleGit) {
 	await gitMutex.runExclusive(async () => {
-		console.info(chalk.yellow(`Updating ${name}...`))
+		logger.debug({ repo: name }, 'Updating...')
 		await git.remote(['update', '--prune'])
-		console.info(chalk.green(`Updated ${name}`))
+		logger.debug({ repo: name }, 'Updated')
 	})
 }
 
@@ -141,7 +151,7 @@ export async function sendGitFile(
 	} else {
 		git.outputHandler((_command, stdout, stderr) => {
 			stdout.pipe(res)
-			stderr.pipe(process.stderr)
+			stderr.pipe(createErrorStream(req.log))
 		})
 		try {
 			await git.show(`${branch}:${path}`)
@@ -169,7 +179,7 @@ export async function sendGitTarball(
 		res.appendHeader('Content-Disposition', `attachment; filename="${fileName}.tar.gz"`)
 		git.outputHandler((_command, stdout, stderr) => {
 			stdout.pipe(res)
-			stderr.pipe(process.stderr)
+			stderr.pipe(createErrorStream(req.log))
 		})
 		try {
 			await git.raw(['archive', '--format=tar.gz', branch])
@@ -179,13 +189,18 @@ export async function sendGitTarball(
 	}
 }
 
-export function verifySignature(secret: string, payload: Buffer, signature: string) {
+export function verifySignature(
+	logger: Logger,
+	secret: string,
+	payload: Buffer,
+	signature: string,
+) {
 	try {
 		const actualSignature = createHmac('sha256', secret).update(payload).digest()
 		const givenSignature = Buffer.from(signature.replace(/^sha256=/, ''), 'hex')
 		return timingSafeEqual(actualSignature, givenSignature)
 	} catch (e: any) {
-		console.error(chalk.red('verifySignature', e.stack))
+		logger.warn('Failed signature verification')
 		return false
 	}
 }
@@ -200,31 +215,11 @@ export const userAgentEnforcer = (req: Request, res: Response, next: NextFunctio
 	}))
 }
 
-export const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
-	const start = new Date()
-	console.info(
-		chalk.yellow(
-			`[${start.toISOString()}] ${req.method} ${req.path} by ${req.ip} - ${
-				req.headers['user-agent']
-			}...`,
-		),
-	)
-	res.on('finish', () => {
-		const end = new Date()
-		const message =
-			`[${end.toISOString()}] ${req.method} ${req.path} by ${req.ip} - ${res.statusCode} - ${
-				end.getTime() - start.getTime()
-			}ms`
-		console.info(res.statusCode < 400 ? chalk.green(message) : chalk.red(message))
-	})
-	next()
-}
-
-export const errorHandler = (err: Error, _req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+	req.log.error(err)
 	if (res.headersSent) {
 		return next(err)
 	}
-	console.error(err.stack)
 	res.status(500).send(JSON.stringify({ message: err.message }))
 }
 

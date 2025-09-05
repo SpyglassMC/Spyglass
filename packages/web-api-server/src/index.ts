@@ -1,13 +1,14 @@
 import cors from 'cors'
 import express, { type Request } from 'express'
 import assert from 'node:assert'
+import pino from 'pino'
+import pinoHttp from 'pino-http'
 import {
 	assertRootDir,
 	errorHandler,
 	getVersionValidator,
 	initGitRepos,
 	loadConfig,
-	loggerMiddleware as logger,
 	MemCache,
 	purgeCdnCache,
 	sendGitFile,
@@ -17,12 +18,32 @@ import {
 	verifySignature,
 } from './utils.js'
 
-const { bunnyCdnApiKey, bunnyCdnPullZoneId, dir: rootDir, port,  webhookSecret } = loadConfig()
+const { bunnyCdnApiKey, bunnyCdnPullZoneId, dir: rootDir, discordLogWebhook, port, webhookSecret } =
+	loadConfig()
 await assertRootDir(rootDir)
-const gits = await initGitRepos(rootDir)
+const logger = pino({
+	level: 'debug',
+	transport: {
+		targets: [
+			{
+				level: 'debug',
+				target: 'pino/file',
+				options: { destination: 1 },
+			},
+			...discordLogWebhook
+				? [{
+					level: 'info',
+					target: 'pino-discord-webhook',
+					options: { webhookURL: discordLogWebhook },
+				}]
+				: [],
+		],
+	},
+})
+const gits = await initGitRepos(logger, rootDir)
 const cache = new MemCache(gits.mcmeta)
 
-const DocUri = 'https://spyglassmc.com/developer/web-api.html'
+const DOC_URI = 'https://spyglassmc.com/developer/web-api.html'
 
 const versionRoute = express.Router({ mergeParams: true })
 	.use(getVersionValidator(cache))
@@ -48,11 +69,10 @@ const versionRoute = express.Router({ mergeParams: true })
 	})
 
 const app = express()
-	.set('trust proxy', 1)
+	.set('trust proxy', 2)
+	.use(pinoHttp({ logger, useLevel: 'debug' }))
 	.use(cors({
-		exposedHeaders: [
-			'ETag',
-		],
+		exposedHeaders: ['ETag'],
 	}))
 	.use((_req, res, next) => {
 		// 'max-age=0' instead of 'no-cache' is used, as 'no-cache' disallows the use of stale
@@ -65,7 +85,6 @@ const app = express()
 
 		next()
 	})
-	.use(logger)
 	.use(userAgentEnforcer)
 	.get('/mcje/versions', async (req, res) => {
 		await sendGitFile(req, res, gits.mcmeta, 'summary', 'versions/data.json')
@@ -85,7 +104,7 @@ const app = express()
 			if (typeof signature !== 'string') {
 				return void res.status(400).send(JSON.stringify({ message: 'Missing signature' }))
 			}
-			if (!verifySignature(webhookSecret, req.body, signature)) {
+			if (!verifySignature(req.log, webhookSecret, req.body, signature)) {
 				return void res.status(401).send(JSON.stringify({ message: 'Invalid signature' }))
 			}
 			res.status(202).send(JSON.stringify({ message: 'Accepted' }))
@@ -98,19 +117,31 @@ const app = express()
 				repository: { name: string }
 			}
 			assert(name === 'vanilla-mcdoc' || name === 'mcmeta')
-			await updateGitRepo(name, gits[name])
+			req.log.info({ repo: name }, `Received GitHub push event`)
+			await updateGitRepo(req.log, name, gits[name])
 			cache.invalidate()
 			await purgeCdnCache(bunnyCdnApiKey, bunnyCdnPullZoneId)
+			req.log.info('Purged CDN cache')
 		},
 	)
 	.get('/', (_req, res) => {
-		res.redirect(DocUri)
+		res.redirect(DOC_URI)
 	})
 	.all('*catchall', (_req, res) => {
-		res.status(404).send(JSON.stringify({ message: `Not Found. See ${DocUri}` }))
+		res.status(404).send(JSON.stringify({ message: `Not Found. See ${DOC_URI}` }))
 	})
 	.use(errorHandler)
 
 app.listen(port, () => {
-	console.info(`Spyglass API server listening on ${port}...`)
+	logger.info({ port, rootDir }, 'Spyglass API server started')
 })
+
+process
+	.on('unhandledRejection', (r) => {
+		logger.fatal(r, 'unhandledRejection')
+		process.exit(1)
+	})
+	.on('uncaughtException', (e) => {
+		logger.fatal(e, 'uncaughtException')
+		process.exit(1)
+	})
