@@ -20,7 +20,7 @@ import {
 
 const { bunnyCdnApiKey, bunnyCdnPullZoneId, dir: rootDir, discordLogWebhook, port, webhookSecret } =
 	loadConfig()
-await assertRootDir(rootDir)
+
 const logger = pino({
 	level: 'debug',
 	transport: {
@@ -40,6 +40,19 @@ const logger = pino({
 		],
 	},
 })
+
+process
+	.on('unhandledRejection', (r) => {
+		logger.fatal(r, 'unhandledRejection')
+		process.exit(1)
+	})
+	.on('uncaughtException', (e) => {
+		logger.fatal(e, 'uncaughtException')
+		process.exit(1)
+	})
+
+await assertRootDir(rootDir)
+
 const gits = await initGitRepos(logger, rootDir)
 const cache = new MemCache(gits.mcmeta)
 
@@ -135,13 +148,3 @@ const app = express()
 app.listen(port, () => {
 	logger.info({ port, rootDir }, 'Spyglass API server started')
 })
-
-process
-	.on('unhandledRejection', (r) => {
-		logger.fatal(r, 'unhandledRejection')
-		process.exit(1)
-	})
-	.on('uncaughtException', (e) => {
-		logger.fatal(e, 'uncaughtException')
-		process.exit(1)
-	})
