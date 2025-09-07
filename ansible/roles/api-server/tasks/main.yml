@@ -22,11 +22,11 @@
         home: /var/lib/api-server
         system: true
 
-- name: Create launcher script
+- name: Create environment files
   become: true
   ansible.builtin.template:
-    src: start.sh
-    dest: /var/lib/api-server/start.sh
+    src: env
+    dest: /etc/default/spyglassmc-api-server
     owner: root
     group: root
     mode: '700'
@@ -36,7 +36,7 @@
   become: true
   ansible.builtin.copy:
     src: spyglassmc-api-server.service
-    dest: /lib/systemd/system/spyglassmc-api-server.service
+    dest: /etc/systemd/system/spyglassmc-api-server.service
     mode: '644'
   notify: Reload systemctl daemon
 
