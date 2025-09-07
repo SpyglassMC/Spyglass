@@ -6,7 +6,8 @@ After=network.target
 User=api-server
 Group=api-server
 WorkingDirectory=/var/lib/api-server
-ExecStart=/var/lib/api-server/start.sh
+EnvironmentFile=/etc/default/spyglassmc-api-server
+ExecStart=/usr/local/bin/spyglassmc-web-api-server
 Restart=always
 
 [Install]
