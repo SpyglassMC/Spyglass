@@ -20,7 +20,7 @@ import {
 
 const { bunnyCdnApiKey, bunnyCdnPullZoneId, dir: rootDir, discordLogWebhook, port, webhookSecret } =
 	loadConfig()
-await assertRootDir(rootDir)
+
 const logger = pino({
 	level: 'debug',
 	transport: {
@@ -40,10 +40,24 @@ const logger = pino({
 		],
 	},
 })
+
+process
+	.on('unhandledRejection', (r) => {
+		logger.fatal(r, 'unhandledRejection')
+		process.exit(1)
+	})
+	.on('uncaughtException', (e) => {
+		logger.fatal(e, 'uncaughtException')
+		process.exit(1)
+	})
+
+await assertRootDir(rootDir)
+
 const gits = await initGitRepos(logger, rootDir)
 const cache = new MemCache(gits.mcmeta)
 
 const DOC_URI = 'https://spyglassmc.com/developer/web-api.html'
+const MAX_REQUST_BODY_SIZE = '2MB'
 
 const versionRoute = express.Router({ mergeParams: true })
 	.use(getVersionValidator(cache))
@@ -98,7 +112,7 @@ const app = express()
 	})
 	.post(
 		'/hooks/github',
-		express.raw({ type: 'application/json' }),
+		express.raw({ type: 'application/json', limit: MAX_REQUST_BODY_SIZE }),
 		async (req, res) => {
 			const signature = req.headers['x-hub-signature-256']
 			if (typeof signature !== 'string') {
@@ -117,11 +131,11 @@ const app = express()
 				repository: { name: string }
 			}
 			assert(name === 'vanilla-mcdoc' || name === 'mcmeta')
-			req.log.info({ repo: name }, `Received GitHub push event`)
+			req.log.debug({ repo: name }, `Received GitHub push event`)
 			await updateGitRepo(req.log, name, gits[name])
 			cache.invalidate()
 			await purgeCdnCache(bunnyCdnApiKey, bunnyCdnPullZoneId)
-			req.log.info('Purged CDN cache')
+			req.log.debug('Purged CDN cache')
 		},
 	)
 	.get('/', (_req, res) => {
@@ -135,13 +149,3 @@ const app = express()
 app.listen(port, () => {
 	logger.info({ port, rootDir }, 'Spyglass API server started')
 })
-
-process
-	.on('unhandledRejection', (r) => {
-		logger.fatal(r, 'unhandledRejection')
-		process.exit(1)
-	})
-	.on('uncaughtException', (e) => {
-		logger.fatal(e, 'uncaughtException')
-		process.exit(1)
-	})
