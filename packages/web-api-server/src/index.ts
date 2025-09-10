@@ -131,11 +131,11 @@ const app = express()
 				repository: { name: string }
 			}
 			assert(name === 'vanilla-mcdoc' || name === 'mcmeta')
-			req.log.info({ repo: name }, `Received GitHub push event`)
+			req.log.debug({ repo: name }, `Received GitHub push event`)
 			await updateGitRepo(req.log, name, gits[name])
 			cache.invalidate()
 			await purgeCdnCache(bunnyCdnApiKey, bunnyCdnPullZoneId)
-			req.log.info('Purged CDN cache')
+			req.log.debug('Purged CDN cache')
 		},
 	)
 	.get('/', (_req, res) => {

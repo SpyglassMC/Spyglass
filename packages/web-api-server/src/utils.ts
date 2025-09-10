@@ -129,9 +129,9 @@ export async function initGitRepos(logger: Logger, rootDir: string) {
 
 export async function updateGitRepo(logger: Logger, name: string, git: SimpleGit) {
 	await gitMutex.runExclusive(async () => {
-		logger.info({ repo: name }, 'Updating...')
+		logger.debug({ repo: name }, 'Updating...')
 		await git.remote(['update', '--prune'])
-		logger.info({ repo: name }, 'Updated')
+		logger.debug({ repo: name }, 'Updated')
 	})
 }
 
