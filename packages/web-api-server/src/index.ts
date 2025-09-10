@@ -57,6 +57,7 @@ const gits = await initGitRepos(logger, rootDir)
 const cache = new MemCache(gits.mcmeta)
 
 const DOC_URI = 'https://spyglassmc.com/developer/web-api.html'
+const MAX_REQUST_BODY_SIZE = '2MB'
 
 const versionRoute = express.Router({ mergeParams: true })
 	.use(getVersionValidator(cache))
@@ -111,7 +112,7 @@ const app = express()
 	})
 	.post(
 		'/hooks/github',
-		express.raw({ type: 'application/json' }),
+		express.raw({ type: 'application/json', limit: MAX_REQUST_BODY_SIZE }),
 		async (req, res) => {
 			const signature = req.headers['x-hub-signature-256']
 			if (typeof signature !== 'string') {
