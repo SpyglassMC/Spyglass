@@ -75,5 +75,5 @@
   ansible.builtin.template:
     src: api-server.conf
     dest: /etc/nginx/conf.d/api-server.conf
-    mode: '644'
+    mode: '600'
   notify: Reload nginx
