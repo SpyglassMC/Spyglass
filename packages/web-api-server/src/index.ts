@@ -3,6 +3,7 @@ import express, { type Request } from 'express'
 import assert from 'node:assert'
 import pino from 'pino'
 import pinoHttp from 'pino-http'
+import { ready, watchdog } from 'sd-notify'
 import {
 	assertRootDir,
 	errorHandler,
@@ -58,6 +59,7 @@ const cache = new MemCache(gits.mcmeta)
 
 const DOC_URI = 'https://spyglassmc.com/developer/web-api.html'
 const MAX_REQUST_BODY_SIZE = '2MB'
+const WATCHDOG_INTERVAL_MS = 25_000
 
 const versionRoute = express.Router({ mergeParams: true })
 	.use(getVersionValidator(cache))
@@ -148,4 +150,19 @@ const app = express()
 
 app.listen(port, () => {
 	logger.info({ port, rootDir }, 'Spyglass API server started')
+	if (process.env.NOTIFY_SOCKET) {
+		ready()
+	}
 })
+
+if (process.env.NOTIFY_SOCKET) {
+	setInterval(async () => {
+		try {
+			const data = await (await fetch(`http://localhost:${port}/mcje/versions`)).json()
+			assert(data instanceof Array && data.length > 0 && typeof data[0].id === 'string')
+			watchdog()
+		} catch (e) {
+			logger.error(e, 'Watchdog failure')
+		}
+	}, WATCHDOG_INTERVAL_MS)
+}
