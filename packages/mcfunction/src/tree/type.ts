@@ -4,13 +4,11 @@ interface BaseTreeNode {
 	children?: { [name: string]: TreeNode }
 	executable?: boolean
 	redirect?: readonly string[]
-
-	// The following properties are custom.
 	/**
 	 * The permission level required to use this node.
-	 * @default 2
+	 * @default 0
 	 */
-	permission?: 0 | 1 | 2 | 3 | 4
+	required_level?: 0 | 1 | 2 | 3 | 4
 }
 
 export interface ArgumentTreeNode extends BaseTreeNode {
