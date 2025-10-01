@@ -215,6 +215,7 @@ export const DatapackCategories = Object.freeze(
 	[
 		'attribute_modifier_uuid',
 		'objective',
+		'player_uuid',
 		'score_holder',
 		'tag',
 		'team',
