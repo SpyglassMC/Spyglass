@@ -199,6 +199,23 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					unless: ExecuteCondition,
 				},
 			},
+			...(ReleaseVersion.cmp(release, '1.21.9') >= 0
+				? {
+					fetchprofile: {
+						children: {
+							id: {
+								children: {
+									id: {
+										properties: {
+											category: 'player_uuid',
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				: {}),
 			function: {
 				children: {
 					name: {
@@ -646,6 +663,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							neutral: Sound,
 							player: Sound,
 							record: Sound,
+							...(ReleaseVersion.cmp(release, '1.21.9') >= 0
+								? {
+									ui: Sound,
+								}
+								: {}),
 							voice: Sound,
 							weather: Sound,
 						},
@@ -740,6 +762,24 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			tell: {
 				permission: 0,
 			},
+			...(ReleaseVersion.cmp(release, '1.21.5') >= 0
+				? {
+					test: {
+						children: {
+							create: {
+								children: {
+									id: {
+										properties: {
+											category: 'test_instance',
+											allowUnknown: true,
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				: {}),
 			...(ReleaseVersion.cmp(release, '1.20.3') >= 0
 				? {
 					// Added in 23w43a (1.20.3, pack format 22)
@@ -773,6 +813,35 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			w: {
 				permission: 0,
 			},
+			...(ReleaseVersion.cmp(release, '1.21.6') >= 0
+				? {
+					waypoint: {
+						children: {
+							modify: {
+								children: {
+									waypoint: {
+										children: {
+											style: {
+												children: {
+													set: {
+														children: {
+															style: {
+																properties: {
+																	category: 'waypoint_style',
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				: {}),
 			whitelist: {
 				permission: 3,
 			},

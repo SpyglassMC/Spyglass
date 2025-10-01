@@ -29,6 +29,7 @@ export const RegistryCategories = Object.freeze(
 		'custom_stat',
 		'data_component_predicate_type',
 		'data_component_type',
+		'debug_subscription',
 		'decorated_pot_pattern',
 		'decorated_pot_patterns', // Removed
 		'dialog_action_type',
@@ -46,6 +47,7 @@ export const RegistryCategories = Object.freeze(
 		'fluid',
 		'game_event',
 		'height_provider_type',
+		'incoming_rpc_methods',
 		'input_control_type',
 		'instrument',
 		'int_provider_type',
@@ -63,6 +65,7 @@ export const RegistryCategories = Object.freeze(
 		'mob_effect',
 		'motive', // Removed
 		'number_format_type',
+		'outgoing_rpc_methods',
 		'particle_type',
 		'point_of_interest_type',
 		'pos_rule_test',
@@ -212,6 +215,7 @@ export const DatapackCategories = Object.freeze(
 	[
 		'attribute_modifier_uuid',
 		'objective',
+		'player_uuid',
 		'score_holder',
 		'tag',
 		'team',
