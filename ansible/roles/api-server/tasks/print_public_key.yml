@@ -1,0 +1,12 @@
+- name: Read public key
+  become: true
+  become_user: api-server
+  ansible.builtin.slurp:
+    src: ~/.ssh/id_ed25519.pub
+  register: public_key
+
+- name: Display public key
+  become: true
+  become_user: api-server
+  ansible.builtin.debug:
+    msg: "{{ public_key.content | b64decode | trim }}"
