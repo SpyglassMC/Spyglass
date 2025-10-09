@@ -9,7 +9,12 @@ export namespace ReleaseVersion {
 	 * * `1` if `a` is newer than `b`.
 	 */
 	export function cmp(a: ReleaseVersion, b: ReleaseVersion): number {
-		return Math.sign(Number(a.slice(2)) - Number(b.slice(2)))
+		const [minorA, patchA = 0] = a.slice(2).split('.')
+		const [minorB, patchB = 0] = b.slice(2).split('.')
+		if (minorA !== minorB) {
+			return Math.sign(Number(minorA) - Number(minorB))
+		}
+		return Math.sign(Number(patchA) - Number(patchB))
 	}
 
 	/**
