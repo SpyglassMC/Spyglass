@@ -4,7 +4,7 @@ import type { PackInfo, VersionInfo } from './common.js'
 import { ReleaseVersion } from './common.js'
 
 // DOCS: Update this when a new snapshot cycle begins
-export const NEXT_RELEASE_VERSION = '1.21.9'
+export const NEXT_RELEASE_VERSION = '1.21.11'
 
 /**
  * @param inputVersion {@link core.Config.env.gameVersion}
