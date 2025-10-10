@@ -67,6 +67,8 @@ export const RegistryCategories = Object.freeze(
 		'number_format_type',
 		'outgoing_rpc_methods',
 		'particle_type',
+		'permission_check_type',
+		'permission_type',
 		'point_of_interest_type',
 		'pos_rule_test',
 		'position_source_type',
