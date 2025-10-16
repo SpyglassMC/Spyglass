@@ -51,11 +51,21 @@ process
 		logger.fatal(e, 'uncaughtException')
 		process.exit(1)
 	})
-	.on('SIGABRT', (sig) => { logger.fatal(sig) })
-	.on('SIGHUP', (sig) => { logger.fatal(sig) })
-	.on('SIGKILL', (sig) => { logger.fatal(sig) })
-	.on('SIGQUIT', (sig) => { logger.fatal(sig) })
-	.on('SIGTERM', (sig) => { logger.fatal(sig) })
+	.on('SIGABRT', (sig) => {
+		logger.fatal(sig)
+	})
+	.on('SIGHUP', (sig) => {
+		logger.fatal(sig)
+	})
+	.on('SIGKILL', (sig) => {
+		logger.fatal(sig)
+	})
+	.on('SIGQUIT', (sig) => {
+		logger.fatal(sig)
+	})
+	.on('SIGTERM', (sig) => {
+		logger.fatal(sig)
+	})
 
 await assertRootDir(rootDir)
 
