@@ -33,7 +33,7 @@
 
 - name: Create common config
   become: true
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: common.conf
     dest: /etc/nginx/conf.d/common.conf
     mode: '644'

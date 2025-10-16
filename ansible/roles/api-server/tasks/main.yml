@@ -1,9 +1,18 @@
+- name: Install apt packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - g++
+      - git
+      - make
+
 - name: Install API server
   become: true
   community.general.npm:
     name: '@spyglassmc/web-api-server'
+    version: "{% if common_is_prod %}latest{% else %}alpha{% endif %}"
     global: true
-    state: latest
+    state: present
   notify: Restart API server service
 
 - name: Create user
@@ -22,11 +31,34 @@
         home: /var/lib/api-server
         system: true
 
-- name: Create launcher script
+- name: Set up GitHub SSH access
+  become: true
+  become_user: api-server
+  block:
+    - name: Create .ssh directory
+      ansible.builtin.file:
+        path: ~/.ssh
+        state: directory
+        mode: '700'
+
+    - name: Add GitHub to known_hosts
+      ansible.builtin.known_hosts:
+        name: github.com
+        # https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
+        key: github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
+
+    - name: Generate SSH key pair
+      community.crypto.openssh_keypair:
+        path: ~/.ssh/id_ed25519
+        type: ed25519
+        comment: 'api-server@{{ ansible_hostname }}'
+      notify: Print SSH public key
+
+- name: Create environment files
   become: true
   ansible.builtin.template:
-    src: start.sh
-    dest: /var/lib/api-server/start.sh
+    src: env
+    dest: /etc/default/spyglassmc-api-server
     owner: root
     group: root
     mode: '700'
@@ -36,7 +68,7 @@
   become: true
   ansible.builtin.copy:
     src: spyglassmc-api-server.service
-    dest: /lib/systemd/system/spyglassmc-api-server.service
+    dest: /etc/systemd/system/spyglassmc-api-server.service
     mode: '644'
   notify: Reload systemctl daemon
 
@@ -52,5 +84,5 @@
   ansible.builtin.template:
     src: api-server.conf
     dest: /etc/nginx/conf.d/api-server.conf
-    mode: '644'
+    mode: '600'
   notify: Reload nginx

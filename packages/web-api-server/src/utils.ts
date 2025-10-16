@@ -1,13 +1,16 @@
 import { Mutex } from 'async-mutex'
-import { createHmac, timingSafeEqual } from 'crypto'
 import type { NextFunction, Request, Response } from 'express'
-import fs from 'fs/promises'
-import path from 'path'
+import { spawn as spawnCallback } from 'node:child_process'
+import { createHmac, timingSafeEqual } from 'node:crypto'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import { Transform } from 'node:stream'
+import { promisify } from 'node:util'
 import type { Logger } from 'pino'
-import simpleGit from 'simple-git'
+import simpleGit, { GitConstructError } from 'simple-git'
 import type { SimpleGit } from 'simple-git'
-import { Transform } from 'stream'
 
+const spawn = promisify(spawnCallback)
 const gitMutex = new Mutex()
 
 interface Config {
@@ -63,15 +66,6 @@ export async function assertRootDir(rootDir: string) {
 	}
 }
 
-async function doesPathExist(path: string) {
-	try {
-		await fs.stat(path)
-		return true
-	} catch {
-		return false
-	}
-}
-
 function createErrorStream(logger: Logger) {
 	return new Transform({
 		transform(chunk, _encoding, callback) {
@@ -102,22 +96,29 @@ export async function initGitRepos(logger: Logger, rootDir: string) {
 
 	async function initGitRepo(owner: string, repo: string) {
 		const repoDir = path.join(rootDir, repo)
-		const repoGit = simpleGit({ baseDir: repoDir }).outputHandler(defaultOutputHandler)
-		if (await doesPathExist(repoDir)) {
-			logger.debug({ owner, repo }, 'Already cloned')
+		const getRepoGit = () => simpleGit({ baseDir: repoDir }).outputHandler(defaultOutputHandler)
+		let repoGit: SimpleGit
+		try {
+			repoGit = getRepoGit() // Throws if the directory does not exist.
+			logger.info({ owner, repo }, 'Already cloned')
 			await updateGitRepo(logger, repo, repoGit)
-		} else {
-			logger.debug({ owner, repo }, 'Cloning...')
-			await gitCloner.clone(
-				`git@github.com:${owner}/${repo}.git`,
-				path.join(rootDir, repo),
-				['--mirror', '--progress'],
-			)
-			// Make sure 'git repack' doesn't take up all RAM for mcmeta.
-			// https://stackoverflow.com/a/4829883
-			await gitCloner.addConfig('pack.windowMemory', '10m')
-			await gitCloner.addConfig('pack.packSizeLimit', '20m')
-			logger.debug({ owner, repo }, 'Cloned')
+		} catch (e) {
+			if (e instanceof GitConstructError && e.message.match(/directory.*not exist/i)) {
+				logger.info({ owner, repo }, 'Cloning...')
+				await gitCloner.clone(
+					`git@github.com:${owner}/${repo}.git`,
+					path.join(rootDir, repo),
+					['--mirror', '--progress'],
+				)
+				repoGit = getRepoGit()
+				// Make sure 'git repack' doesn't take up all RAM for mcmeta.
+				// https://stackoverflow.com/a/4829883
+				await repoGit.addConfig('pack.windowMemory', '10m')
+				await repoGit.addConfig('pack.packSizeLimit', '20m')
+				logger.info({ owner, repo }, 'Cloned')
+			} else {
+				throw e
+			}
 		}
 		return repoGit
 	}
@@ -240,6 +241,10 @@ export async function purgeCdnCache(apiKey: string, pullZoneId: string) {
 	if (!response.ok) {
 		throw new Error(`Error status: ${response.status} ${response.statusText}`)
 	}
+}
+
+export function systemdNotify(variable: string) {
+	return spawn('systemd-notify', [`${variable}=1`], {})
 }
 
 export const getVersionValidator =
