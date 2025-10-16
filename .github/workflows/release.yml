@@ -1,11 +1,12 @@
 name: Release
 on:
   workflow_dispatch:
+permissions:
+  contents: write
+  id-token: write
 env:
   BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
   BOT_NAME: ${{ secrets.BOT_NAME }}
-  BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   OVSX_PAT: ${{ secrets.OVSX_PAT }}
   VSCE_PAT: ${{ secrets.VSCE_PAT }}
 jobs:
@@ -21,7 +22,7 @@ jobs:
         with:
           node-version: "lts/*"
 
-      - run: npm i -g npm
+      - run: npm i -g npm@latest
 
       - name: Cache node modules
         uses: actions/cache@v4
@@ -31,7 +32,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm i
+      - run: npm ci
 
       - run: npm run build
 

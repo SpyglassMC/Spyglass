@@ -10,10 +10,11 @@ on:
       - main
     paths-ignore:
       - "docs/**"
+permissions:
+  contents: write
 env:
   BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
   BOT_NAME: ${{ secrets.BOT_NAME }}
-  BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
 jobs:
   lint:
     name: Lint

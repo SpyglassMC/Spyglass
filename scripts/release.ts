@@ -2,7 +2,7 @@
 // Environment Variables:
 // - BOT_EMAIL
 // - BOT_NAME
-// - BOT_TOKEN
+// - GITHUB_TOKEN
 
 import cp from 'child_process'
 import fs from 'fs'
@@ -141,9 +141,9 @@ async function main(): Promise<void> {
 		console.log('Start releasing...')
 	}
 
-	const { BOT_EMAIL: botEmail, BOT_NAME: botName, BOT_TOKEN: botToken } = process.env
-	if (!isDryRun && !(botEmail && botName && botToken)) {
-		throw new Error('BOT_EMAIL, BOT_NAME, BOT_TOKEN environment variables required.')
+	const { BOT_EMAIL: botEmail, BOT_NAME: botName, GITHUB_TOKEN: githubToken } = process.env
+	if (!isDryRun && !(botEmail && botName && githubToken)) {
+		throw new Error('BOT_EMAIL, BOT_NAME, GITHUB_TOKEN environment variables required.')
 	}
 
 	const RepoRoot = path.join(__dirname, '..')
@@ -235,7 +235,7 @@ async function main(): Promise<void> {
 		await dryRunableShell(isDryRun, 'git', ['add', '.'], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['commit', `-m ${commitMessage}\n\n${versionSummary}`], RepoRoot, commitEnvVariables)
 		await dryRunableShell(isDryRun, 'git', ['tag', `v${rootVersion}`], RepoRoot)
-		await dryRunableShell(isDryRun, 'git', ['remote', 'set-url', 'origin', `https://${botName}:${botToken}@github.com/SpyglassMC/Spyglass.git`], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', ['remote', 'set-url', 'origin', `https://${botName}:${githubToken}@github.com/SpyglassMC/Spyglass.git`], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['pull', '--rebase'], RepoRoot, commitEnvVariables)
 		await dryRunableShell(isDryRun, 'git', ['push'], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['push', '--tags'], RepoRoot)
