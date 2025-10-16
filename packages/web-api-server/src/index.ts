@@ -3,7 +3,6 @@ import express, { type Request } from 'express'
 import assert from 'node:assert'
 import pino from 'pino'
 import pinoHttp from 'pino-http'
-import sdNotify from 'sd-notify'
 import {
 	assertRootDir,
 	errorHandler,
@@ -14,6 +13,7 @@ import {
 	purgeCdnCache,
 	sendGitFile,
 	sendGitTarball,
+	systemdNotify,
 	updateGitRepo,
 	userAgentEnforcer,
 	verifySignature,
@@ -51,6 +51,11 @@ process
 		logger.fatal(e, 'uncaughtException')
 		process.exit(1)
 	})
+	.on('SIGABRT', (sig) => { logger.fatal(sig) })
+	.on('SIGHUP', (sig) => { logger.fatal(sig) })
+	.on('SIGKILL', (sig) => { logger.fatal(sig) })
+	.on('SIGQUIT', (sig) => { logger.fatal(sig) })
+	.on('SIGTERM', (sig) => { logger.fatal(sig) })
 
 await assertRootDir(rootDir)
 
@@ -151,7 +156,7 @@ const app = express()
 app.listen(port, () => {
 	logger.info({ port, rootDir }, 'Spyglass API server started')
 	if (process.env.NOTIFY_SOCKET) {
-		sdNotify.ready()
+		systemdNotify('READY').catch((e) => logger.error(e, 'systemd-notify error'))
 	}
 })
 
@@ -160,7 +165,7 @@ if (process.env.NOTIFY_SOCKET) {
 		try {
 			const data = await (await fetch(`http://localhost:${port}/mcje/versions`)).json()
 			assert(data instanceof Array && data.length > 0 && typeof data[0].id === 'string')
-			sdNotify.watchdog()
+			systemdNotify('WATCHDOG').catch((e) => logger.error(e, 'systemd-notify error'))
 		} catch (e) {
 			logger.error(e, 'Watchdog failure')
 		}

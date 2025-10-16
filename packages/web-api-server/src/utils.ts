@@ -1,13 +1,16 @@
 import { Mutex } from 'async-mutex'
-import { createHmac, timingSafeEqual } from 'crypto'
 import type { NextFunction, Request, Response } from 'express'
-import fs from 'fs/promises'
-import path from 'path'
+import { spawn as spawnCallback } from 'node:child_process'
+import { createHmac, timingSafeEqual } from 'node:crypto'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import { Transform } from 'node:stream'
+import { promisify } from 'node:util'
 import type { Logger } from 'pino'
 import simpleGit, { GitConstructError } from 'simple-git'
 import type { SimpleGit } from 'simple-git'
-import { Transform } from 'stream'
 
+const spawn = promisify(spawnCallback)
 const gitMutex = new Mutex()
 
 interface Config {
@@ -238,6 +241,10 @@ export async function purgeCdnCache(apiKey: string, pullZoneId: string) {
 	if (!response.ok) {
 		throw new Error(`Error status: ${response.status} ${response.statusText}`)
 	}
+}
+
+export function systemdNotify(variable: string) {
+	return spawn('systemd-notify', [`${variable}=1`], {})
 }
 
 export const getVersionValidator =

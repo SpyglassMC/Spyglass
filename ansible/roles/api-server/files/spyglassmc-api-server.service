@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 Type=notify
+NotifyAccess=all
 User=api-server
 Group=api-server
 WorkingDirectory=/var/lib/api-server

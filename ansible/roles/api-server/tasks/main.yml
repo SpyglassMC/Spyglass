@@ -4,7 +4,6 @@
     name:
       - g++
       - git
-      - libsystemd-dev
       - make
 
 - name: Install API server

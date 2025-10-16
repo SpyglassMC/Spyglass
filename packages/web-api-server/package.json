@@ -1,6 +1,6 @@
 {
   "name": "@spyglassmc/web-api-server",
-  "version": "0.1.8-alpha.1",
+  "version": "0.1.0-PLACEHOLDER",
   "type": "module",
   "description": "api.spyglassmc.com server",
   "main": "./lib/index.js",
@@ -23,13 +23,11 @@
     "pino-discord-webhook": "^0.1.7",
     "pino-http": "^10.5.0",
     "pino-pretty": "^13.1.1",
-    "sd-notify": "^2.8.0",
     "simple-git": "^3.27.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/sd-notify": "^2.8.2"
+    "@types/express": "^5.0.0"
   },
   "publishConfig": {
     "access": "public"
