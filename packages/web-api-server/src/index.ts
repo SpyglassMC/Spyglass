@@ -57,9 +57,6 @@ process
 	.on('SIGHUP', (sig) => {
 		logger.fatal(sig)
 	})
-	.on('SIGKILL', (sig) => {
-		logger.fatal(sig)
-	})
 	.on('SIGQUIT', (sig) => {
 		logger.fatal(sig)
 	})
