@@ -1,3 +1,10 @@
+- name: Install apt packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - cron
+      - curl
+
 - name: Install acme.sh
   become: true
   ansible.builtin.shell:
@@ -10,7 +17,7 @@
 - name: Create certificate directory
   become: true
   ansible.builtin.file:
-    path: /etc/nginx/ssl/spyglassmc.com/
+    path: /etc/nginx/ssl/{{ common_base_domain }}/
     state: directory
     mode: '755'
 
@@ -27,14 +34,14 @@
     cmd: |
       set -e
       set -o pipefail
-      (umask 066; touch /etc/nginx/ssl/spyglassmc.com/key.pem)
-      (umask 022; touch /etc/nginx/ssl/spyglassmc.com/cert.pem)
+      (umask 066; touch /etc/nginx/ssl/{{ common_base_domain }}/key.pem)
+      (umask 022; touch /etc/nginx/ssl/{{ common_base_domain }}/cert.pem)
       export HEdyn_key={{ acmesh_dynamic_dns_key }}
-      /root/.acme.sh/acme.sh --issue --server letsencrypt \
-        -d *.spyglassmc.com --dns dns_hedyn
-      /root/.acme.sh/acme.sh --install-cert -d *.spyglassmc.com \
-        --key-file /etc/nginx/ssl/spyglassmc.com/key.pem \
-        --fullchain-file /etc/nginx/ssl/spyglassmc.com/cert.pem \
+      /root/.acme.sh/acme.sh --issue {% if common_is_prod %}--server letsencrypt{% else %}--staging{% endif %} \
+        -d *.{{ common_base_domain }} --dns dns_hedyn
+      /root/.acme.sh/acme.sh --install-cert -d *.{{ common_base_domain }} \
+        --key-file /etc/nginx/ssl/{{ common_base_domain }}/key.pem \
+        --fullchain-file /etc/nginx/ssl/{{ common_base_domain }}/cert.pem \
         --reloadcmd "service nginx reload"
     executable: /bin/bash
-    creates: /etc/nginx/ssl/spyglassmc.com/key.pem
+    creates: /etc/nginx/ssl/{{ common_base_domain }}/key.pem

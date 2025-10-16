@@ -1,6 +1,6 @@
 {
   "name": "@spyglassmc/web-api-server",
-  "version": "0.1.0-PLACEHOLDER",
+  "version": "0.1.8-alpha.1",
   "type": "module",
   "description": "api.spyglassmc.com server",
   "main": "./lib/index.js",

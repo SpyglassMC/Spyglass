@@ -9,7 +9,7 @@ Group=api-server
 WorkingDirectory=/var/lib/api-server
 EnvironmentFile=/etc/default/spyglassmc-api-server
 ExecStart=/usr/local/bin/spyglassmc-web-api-server
-TimeoutStartSec=600
+TimeoutStartSec=900
 WatchdogSec=30
 Restart=always
 

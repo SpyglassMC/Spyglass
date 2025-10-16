@@ -110,10 +110,9 @@ export async function initGitRepos(logger: Logger, rootDir: string) {
 				repoGit = getRepoGit()
 				// Make sure 'git repack' doesn't take up all RAM for mcmeta.
 				// https://stackoverflow.com/a/4829883
-				await gitCloner.addConfig('pack.windowMemory', '10m')
-				await gitCloner.addConfig('pack.packSizeLimit', '20m')
+				await repoGit.addConfig('pack.windowMemory', '10m')
+				await repoGit.addConfig('pack.packSizeLimit', '20m')
 				logger.info({ owner, repo }, 'Cloned')
-				repoGit = getRepoGit()
 			} else {
 				throw e
 			}

@@ -1,9 +1,19 @@
+- name: Install apt packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - g++
+      - git
+      - libsystemd-dev
+      - make
+
 - name: Install API server
   become: true
   community.general.npm:
     name: '@spyglassmc/web-api-server'
+    version: "{% if common_is_prod %}latest{% else %}alpha{% endif %}"
     global: true
-    state: latest
+    state: present
   notify: Restart API server service
 
 - name: Create user

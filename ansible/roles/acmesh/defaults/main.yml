@@ -1,4 +1,4 @@
-# (str) Dynamic DNS key for TXT record on _acme-challenge.spyglassmc.com on Hurricane Electric DNS
+# (str) Dynamic DNS key for TXT record on _acme-challenge.{{ common_base_domain }} on Hurricane Electric DNS
 acmesh_dynamic_dns_key: null
 # (str) Email used for generating certificates with Let's Encrypt
 acmesh_email: null

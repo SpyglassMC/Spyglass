@@ -3,7 +3,7 @@ import express, { type Request } from 'express'
 import assert from 'node:assert'
 import pino from 'pino'
 import pinoHttp from 'pino-http'
-import { ready, watchdog } from 'sd-notify'
+import sdNotify from 'sd-notify'
 import {
 	assertRootDir,
 	errorHandler,
@@ -151,7 +151,7 @@ const app = express()
 app.listen(port, () => {
 	logger.info({ port, rootDir }, 'Spyglass API server started')
 	if (process.env.NOTIFY_SOCKET) {
-		ready()
+		sdNotify.ready()
 	}
 })
 
@@ -160,7 +160,7 @@ if (process.env.NOTIFY_SOCKET) {
 		try {
 			const data = await (await fetch(`http://localhost:${port}/mcje/versions`)).json()
 			assert(data instanceof Array && data.length > 0 && typeof data[0].id === 'string')
-			watchdog()
+			sdNotify.watchdog()
 		} catch (e) {
 			logger.error(e, 'Watchdog failure')
 		}
