@@ -7,6 +7,7 @@ permissions:
 env:
   BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
   BOT_NAME: ${{ secrets.BOT_NAME }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   OVSX_PAT: ${{ secrets.OVSX_PAT }}
   VSCE_PAT: ${{ secrets.VSCE_PAT }}
 jobs:
