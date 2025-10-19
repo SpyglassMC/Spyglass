@@ -18,6 +18,7 @@ export const RegistryCategories = Object.freeze(
 		'activity',
 		'armor_material', // Removed
 		'attribute',
+		'attribute_type',
 		'block',
 		'block_entity_type',
 		'block_predicate_type',
@@ -43,6 +44,7 @@ export const RegistryCategories = Object.freeze(
 		'enchantment_value_effect_type',
 		'entity_sub_predicate_type',
 		'entity_type',
+		'environment_attribute',
 		'float_provider_type',
 		'fluid',
 		'game_event',
