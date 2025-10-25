@@ -457,7 +457,9 @@ type ConfigEvent = { config: Config }
 type ErrorEvent = { error: unknown; uri: string }
 
 export class ConfigService implements ExternalEventEmitter {
-	static readonly ConfigFileNames = Object.freeze(['spyglass.json', '.spyglassrc', '.spyglassrc.json'] as const)
+	static readonly ConfigFileNames = Object.freeze(
+		['spyglass.json', '.spyglassrc', '.spyglassrc.json'] as const,
+	)
 
 	readonly #eventEmitter: ExternalEventEmitter
 
