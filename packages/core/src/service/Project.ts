@@ -29,6 +29,7 @@ import {
 } from './Context.js'
 import type { Dependency } from './Dependency.js'
 import { DependencyKey } from './Dependency.js'
+import type { Downloader } from './Downloader.js'
 import { LinterErrorReporter } from './ErrorReporter.js'
 import {
 	ArchiveUriSupporter,
@@ -48,6 +49,7 @@ export type ProjectInitializerContext = Pick<
 	Project,
 	| 'cacheRoot'
 	| 'config'
+	| 'downloader'
 	| 'externals'
 	| 'isDebugging'
 	| 'logger'
@@ -67,6 +69,7 @@ export type ProjectInitializer = SyncProjectInitializer | AsyncProjectInitialize
 export interface ProjectOptions {
 	cacheRoot: RootUriString
 	defaultConfig?: Config
+	downloader?: Downloader
 	externals: Externals
 	fs?: FileService
 	initializers?: readonly ProjectInitializer[]
@@ -107,6 +110,7 @@ export type ProjectData = Pick<
 	Project,
 	| 'cacheRoot'
 	| 'config'
+	| 'downloader'
 	| 'ensureBindingStarted'
 	| 'externals'
 	| 'fs'
@@ -184,6 +188,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	config!: Config
+	readonly downloader: Downloader
 	readonly externals: Externals
 	readonly fs: FileService
 	readonly isDebugging: boolean
@@ -301,6 +306,7 @@ export class Project implements ExternalEventEmitter {
 			cacheRoot,
 			defaultConfig,
 			externals,
+			downloader,
 			fs = FileService.create(externals, cacheRoot),
 			initializers = [],
 			isDebugging = false,
@@ -321,6 +327,7 @@ export class Project implements ExternalEventEmitter {
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
+		this.downloader = downloader ?? new Downloader(cacheRoot, externals, logger)
 		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
 
 		this.#ctx = {}
@@ -393,6 +400,7 @@ export class Project implements ExternalEventEmitter {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
 				config: this.config,
+				downloader: this.downloader,
 				externals: this.externals,
 				isDebugging: this.isDebugging,
 				logger: this.logger,

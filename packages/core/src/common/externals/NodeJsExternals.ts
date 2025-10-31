@@ -1,10 +1,12 @@
 // https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/60592
 import chokidar from 'chokidar'
 import decompress from 'decompress'
+import followRedirects from 'follow-redirects'
 import { Buffer } from 'node:buffer'
 import cp from 'node:child_process'
 import crypto from 'node:crypto'
 import { EventEmitter } from 'node:events'
+import type { IncomingMessage } from 'node:http'
 import fs, { promises as fsp } from 'node:fs'
 import os from 'node:os'
 import process from 'node:process'
@@ -13,12 +15,36 @@ import type streamWeb from 'node:stream/web'
 import url from 'node:url'
 import { promisify } from 'node:util'
 import zlib from 'node:zlib'
+import type {
+	ExternalDownloader,
+	ExternalDownloaderOptions,
+	RemoteUriString,
+} from './downloader.js'
 import type { RootUriString } from '../../index.js'
-import { Uri } from '../util.js'
+import { Uri, promisifyAsyncIterable } from '../util.js'
 import type { Externals, FsLocation, FsWatcher } from './index.js'
 
+const { http, https } = followRedirects
 const gunzip = promisify(zlib.gunzip)
 const gzip = promisify(zlib.gzip)
+
+class NodeJsExternalDownloader implements ExternalDownloader {
+	get(uri: RemoteUriString, options: ExternalDownloaderOptions = {}): Promise<Uint8Array> {
+		const protocol = new Uri(uri).protocol
+		return new Promise((resolve, reject) => {
+			const backend = protocol === 'http:' ? http : https
+			backend.get(uri, options, (res: IncomingMessage) => {
+				if (res.statusCode !== 200) {
+					reject(new Error(`Status code ${res.statusCode}: ${res.statusMessage}`))
+				} else {
+					resolve(promisifyAsyncIterable(res, (chunks) => Buffer.concat(chunks)))
+				}
+			}).on('error', (e) => {
+				reject(e)
+			})
+		})
+	}
+}
 
 export function getNodeJsExternals({ cacheRoot }: { cacheRoot?: RootUriString } = {}) {
 	return Object.freeze(
@@ -44,6 +70,7 @@ export function getNodeJsExternals({ cacheRoot }: { cacheRoot?: RootUriString } 
 					return hash.digest('hex')
 				},
 			},
+			downloader: new NodeJsExternalDownloader(),
 			error: {
 				createKind(kind, message) {
 					const error = new Error(message)

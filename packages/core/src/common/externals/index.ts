@@ -1,4 +1,7 @@
 import type { Uri } from '../util.js'
+import type { ExternalDownloader } from './downloader.js'
+
+export * from './downloader.js'
 
 export interface Externals {
 	archive: {
@@ -15,6 +18,7 @@ export interface Externals {
 		 */
 		getSha1: (data: string | Uint8Array) => Promise<string>
 	}
+	downloader: ExternalDownloader
 	error: {
 		/**
 		 * @returns an error of the specified kind

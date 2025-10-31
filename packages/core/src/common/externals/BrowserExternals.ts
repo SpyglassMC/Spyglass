@@ -2,6 +2,11 @@ import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from '
 import pako from 'pako'
 import { fileUtil } from '../../service/fileUtil.js'
 import type {
+	ExternalDownloader,
+	ExternalDownloaderOptions,
+	RemoteUriString,
+} from './downloader.js'
+import type {
 	ExternalEventEmitter,
 	ExternalFileSystem,
 	Externals,
@@ -45,6 +50,24 @@ export class BrowserEventEmitter implements ExternalEventEmitter {
 		listeners.all.add(listener)
 		listeners.once.add(listener)
 		return this
+	}
+}
+
+class BrowserExternalDownloader implements ExternalDownloader {
+	async get(uri: RemoteUriString, options: ExternalDownloaderOptions = {}): Promise<Uint8Array> {
+		const headers = new Headers()
+		for (const [name, value] of Object.entries(options?.headers ?? {})) {
+			const values = typeof value === 'string' ? [value] : value
+			for (const v of values) {
+				headers.append(name, v)
+			}
+		}
+		const res = await fetch(uri, { headers, redirect: 'follow' })
+		if (!res.ok) {
+			throw new Error(`Status code ${res.status}: ${res.ok}`)
+		} else {
+			return new Uint8Array(await res.arrayBuffer())
+		}
 	}
 }
 
@@ -165,6 +188,7 @@ export const BrowserExternals: Externals = {
 			return uint8ArrayToHex(new Uint8Array(hash))
 		},
 	},
+	downloader: new BrowserExternalDownloader(),
 	error: {
 		createKind(kind, message) {
 			return new Error(`${kind}: ${message}`)
