@@ -18,6 +18,7 @@ export const RegistryCategories = Object.freeze(
 		'activity',
 		'armor_material', // Removed
 		'attribute',
+		'attribute_type',
 		'block',
 		'block_entity_type',
 		'block_predicate_type',
@@ -29,8 +30,12 @@ export const RegistryCategories = Object.freeze(
 		'custom_stat',
 		'data_component_predicate_type',
 		'data_component_type',
+		'debug_subscription',
 		'decorated_pot_pattern',
 		'decorated_pot_patterns', // Removed
+		'dialog_action_type',
+		'dialog_body_type',
+		'dialog_type',
 		'enchantment_effect_component_type',
 		'enchantment_entity_effect_type',
 		'enchantment_level_based_value_type',
@@ -39,10 +44,14 @@ export const RegistryCategories = Object.freeze(
 		'enchantment_value_effect_type',
 		'entity_sub_predicate_type',
 		'entity_type',
+		'environment_attribute',
 		'float_provider_type',
 		'fluid',
 		'game_event',
+		'game_rule',
 		'height_provider_type',
+		'incoming_rpc_methods',
+		'input_control_type',
 		'instrument',
 		'int_provider_type',
 		'item',
@@ -59,7 +68,10 @@ export const RegistryCategories = Object.freeze(
 		'mob_effect',
 		'motive', // Removed
 		'number_format_type',
+		'outgoing_rpc_methods',
 		'particle_type',
+		'permission_check_type',
+		'permission_type',
 		'point_of_interest_type',
 		'pos_rule_test',
 		'position_source_type',
@@ -73,6 +85,7 @@ export const RegistryCategories = Object.freeze(
 		'schedule',
 		'sensor_type',
 		'slot_display',
+		'slot_source_type',
 		'sound_event',
 		'spawn_condition_type',
 		'stat_type',
@@ -119,8 +132,10 @@ export const NormalFileCategories = Object.freeze(
 		'banner_pattern',
 		'cat_variant',
 		'chat_type',
+		'chicken_variant',
 		'cow_variant',
 		'damage_type',
+		'dialog',
 		'dimension',
 		'dimension_type',
 		'enchantment',
@@ -206,6 +221,7 @@ export const DatapackCategories = Object.freeze(
 	[
 		'attribute_modifier_uuid',
 		'objective',
+		'player_uuid',
 		'score_holder',
 		'tag',
 		'team',
@@ -241,6 +257,7 @@ export const AssetsFileCategories = Object.freeze(
 		'sounds', // sounds.json
 		'texture',
 		'texture_meta', // *.png.mcmeta
+		'waypoint_style',
 	] as const,
 )
 export type AssetsFileCategory = (typeof AssetsFileCategories)[number]

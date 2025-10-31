@@ -1,5 +1,6 @@
 ungrouped:
   hosts:
-    api.spyglassmc.com:
+    ssh.spyglassmc.com:
   vars:
     ansible_ssh_pipelining: true
+    common_is_prod: true

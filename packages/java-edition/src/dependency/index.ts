@@ -9,7 +9,7 @@ import type {
 	McmetaSummary,
 	McmetaVersions,
 } from './mcmeta.js'
-import { Fluids, getMcmetaSummaryUris } from './mcmeta.js'
+import { Fluids } from './mcmeta.js'
 
 /* istanbul ignore next */
 /**
@@ -19,15 +19,10 @@ import { Fluids, getMcmetaSummaryUris } from './mcmeta.js'
  */
 export async function getVersions(
 	externals: core.Externals,
-	downloader: core.Downloader,
+	logger: core.Logger,
 ): Promise<McmetaVersions | undefined> {
-	return downloader.download<McmetaVersions>({
-		id: 'mc-je/versions.json.gz',
-		uri: 'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
-		transformer: (buffer) => core.parseGzippedJson(externals, buffer) as Promise<McmetaVersions>,
-		cache: core.getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', 'refs/heads/summary'),
-		ttl: core.DownloaderTtl,
-	})
+	return (await core.fetchWithCache(externals, logger, 'https://api.spyglassmc.com/mcje/versions'))
+		.json()
 }
 
 interface GetMcmetaSummaryResult extends Partial<McmetaSummary> {
@@ -42,23 +37,12 @@ interface GetMcmetaSummaryResult extends Partial<McmetaSummary> {
  */
 export async function getMcmetaSummary(
 	externals: core.Externals,
-	downloader: core.Downloader,
 	logger: core.Logger,
 	version: string,
-	isLatest: boolean,
-	source: string,
 	overridePaths: core.EnvConfig['mcmetaSummaryOverrides'] = {},
 ): Promise<GetMcmetaSummaryResult> {
 	type OverrideConfig =
 		core.EnvConfig['mcmetaSummaryOverrides'][keyof core.EnvConfig['mcmetaSummaryOverrides']]
-	const ref = core.getGitRef({
-		defaultBranch: 'summary',
-		getTag: (v) => `${v}-summary`,
-		isLatest,
-		version,
-	})
-	const uris = getMcmetaSummaryUris(version, isLatest, source)
-	let checksum: string | undefined
 
 	async function handleOverride<T>(currentValue: T, overrideConfig: OverrideConfig) {
 		if (overrideConfig) {
@@ -80,68 +64,72 @@ export async function getMcmetaSummary(
 	}
 
 	const getResource = async <T extends object>(
-		type: 'blocks' | 'commands' | 'registries',
+		type: 'block_states' | 'commands' | 'registries',
 		overrideConfig: OverrideConfig,
-	): Promise<T | undefined> => {
-		const out: core.DownloaderDownloadOut = {}
-		const data = await downloader.download<T>({
-			id: `mc-je/${version}/${type}.json.gz`,
-			uri: uris[type],
-			transformer: (buffer) => core.parseGzippedJson(externals, buffer) as Promise<T>,
-			cache: core.getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', ref),
-			ttl: core.DownloaderTtl,
-		}, out)
-		checksum ||= out.checksum
-		return handleOverride(data, overrideConfig)
+	): Promise<{ data: T | undefined; checksum: string }> => {
+		const response = await core.fetchWithCache(
+			externals,
+			logger,
+			`https://api.spyglassmc.com/mcje/versions/${encodeURIComponent(version)}/${type}`,
+		)
+		return {
+			data: await handleOverride(await response.json(), overrideConfig),
+			checksum: response.headers.get('etag') ?? '',
+		}
 	}
 
 	const [blocks, commands, fluids, registries] = [
-		await getResource<McmetaStates>('blocks', overridePaths.blocks),
+		await getResource<McmetaStates>('block_states', overridePaths.blocks),
 		await getResource<McmetaCommands>('commands', overridePaths.commands),
-		await handleOverride<McmetaStates>(Fluids, overridePaths.fluids),
+		{
+			data: await handleOverride<McmetaStates>(Fluids, overridePaths.fluids),
+			checksum: 'v1',
+		},
 		await getResource<McmetaRegistries>('registries', overridePaths.registries),
 	]
 
-	return { blocks, commands, fluids, registries, checksum }
+	return {
+		blocks: blocks.data,
+		commands: commands.data,
+		fluids: fluids.data,
+		registries: registries.data,
+		checksum: `${blocks.checksum}-${commands.checksum}-${fluids.checksum}-${registries.checksum}`,
+	}
 }
 
 /* istanbul ignore next */
 /**
  * @throws Network/file system errors.
- *
- * @returns
- * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
- * 	- `uri`: URI to the `.tar.gz` file.
  */
 export async function getVanillaDatapack(
-	downloader: core.Downloader,
+	externals: core.Externals,
+	logger: core.Logger,
 	version: string,
-	isLatest: boolean,
 ): Promise<core.Dependency> {
-	const uri = await core.downloadGitHubRepo({
-		defaultBranch: 'data',
-		downloader,
-		getTag: (v) => `${v}-data`,
-		owner: 'misode',
-		repo: 'mcmeta',
-		isLatest,
-		version,
-	})
-	return { info: { startDepth: 1 }, uri }
+	return {
+		type: 'tarball-ram',
+		name: 'vanilla-datapack',
+		data: new Uint8Array(
+			await (await core.fetchWithCache(
+				externals,
+				logger,
+				`https://api.spyglassmc.com/mcje/versions/${
+					encodeURIComponent(version)
+				}/vanilla-data/tarball`,
+			)).arrayBuffer(),
+		),
+		stripLevel: 0,
+	}
 }
 
 /* istanbul ignore next */
 /**
  * @throws Network/file system errors.
- *
- * @returns
- * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
- * 	- `uri`: URI to the `.tar.gz` file.
  */
 export async function getVanillaResourcepack(
-	downloader: core.Downloader,
+	externals: core.Externals,
+	logger: core.Logger,
 	version: string,
-	isLatest: boolean,
 ): Promise<core.Dependency> {
 	const uri = await core.downloadGitHubRepo({
 		defaultBranch: 'assets-tiny',
@@ -154,28 +142,39 @@ export async function getVanillaResourcepack(
 		suffix: '-assets',
 	})
 	return { info: { startDepth: 1 }, uri }
+	return {
+		type: 'tarball-ram',
+		name: 'vanilla-assets-tiny',
+		data: new Uint8Array(
+			await (await core.fetchWithCache(
+				externals,
+				logger,
+				`https://api.spyglassmc.com/mcje/versions/${
+					encodeURIComponent(version)
+				}/vanilla-assets-tiny/tarball`,
+			)).arrayBuffer(),
+		),
+		stripLevel: 0,
+	}
 }
 
 /**
  * @throws Network/file system errors.
- *
- * @returns
- * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
- * 	- `uri`: URI to the `.tar.gz` file.
  */
-export async function getVanillaMcdoc(downloader: core.Downloader): Promise<core.Dependency> {
-	const owner = 'SpyglassMC'
-	const repo = 'vanilla-mcdoc'
-	const ref = 'refs/heads/main'
-	const out: core.DownloaderDownloadOut = {}
-	await downloader.download<Uint8Array>({
-		id: 'mc-je/vanilla-mcdoc.tar.gz',
-		uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
-		transformer: (b) => b,
-		cache: core.getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
-		options: core.GitHubApiDownloadOptions,
-		ttl: core.DownloaderTtl,
-	}, out)
-
-	return { info: { startDepth: 1 }, uri: out.cacheUri! }
+export async function getVanillaMcdoc(
+	externals: core.Externals,
+	logger: core.Logger,
+): Promise<core.Dependency> {
+	return {
+		type: 'tarball-ram',
+		name: 'vanilla-mcdoc',
+		data: new Uint8Array(
+			await (await core.fetchWithCache(
+				externals,
+				logger,
+				`https://api.spyglassmc.com/vanilla-mcdoc/tarball`,
+			)).arrayBuffer(),
+		),
+		stripLevel: 0,
+	}
 }

@@ -1,0 +1,243 @@
+:page-layout: default
+:page-title: Attributes
+:page-parent: Mcdoc
+:page-grand_parent: Home
+
+:toc:
+
+== Attributes
+This page lists the most commonly used attributes currently supported by Spyglass.
+
+=== `canonical`
+Special attribute that marks a union member as the canonical member. If a union has a canonical member, trying to read that union will always expect the canonical member.
+
+.Syntax
+[source, mcdoc]
+----
+type RGB = (
+	#[canonical] int |
+	[float] @ 3 |
+)
+----
+
+=== `color`
+Represents a color. This attribute has one required string option which is the format.
+
+.Syntax
+[source, mcdoc]
+----
+#[color="dec_rgb"] [float] @ 3
+
+#[color="composite_rgb"] int
+
+#[color="hex_rgb"] string
+----
+
+=== `command`
+Specifies that the string contains a command. This attribute has several options.
+
+.Syntax
+[source, mcdoc]
+----
+#[command(slash="allowed")] string
+
+#[command(slash="allowed",empty="allowed",max_length=32500)] string
+
+#[command(macro="implicit")] string
+----
+
+=== `deprecated`
+Marks the field as deprecated. Editors may strikethrough the field when used. It takes as argument a string specifying the version that it was deprecated in.
+
+.Syntax
+[source, mcdoc]
+----
+#[deprecated="1.16"] 
+value?: Text,
+----
+
+=== `dispatcher_key`
+Specifies that a string should match a key of a given dispatcher.
+
+.Syntax
+[source, mcdoc]
+----
+#[dispatcher_key="mcdoc:custom_data"] string
+----
+
+=== `divisible_by`
+Specifies that a numeric value must be divisible by a given number
+
+.Syntax
+[source, mcdoc]
+----
+#[divisible_by=16] int
+----
+
+=== `entity`
+Represents a selector, player name or uuid. Not to be confused with <<score_holder>> This attribute has two options:
+
+* `amount`: either `multiple` or `single`
+* `type`: either `entities` or `players`
+
+.Syntax
+[source, mcdoc]
+----
+#[entity(amount="single",type="entities")] string
+----
+
+=== `game_rule`
+Specifies that a string should contain the name of a game rule. This attribute has one option:
+
+* `type`: either `boolean` or `int`
+
+.Syntax
+[source, mcdoc]
+----
+#[game_rule(type="int")] string
+----
+
+=== `id`
+Specifies that a string should contain a resource location. It has a required option `registry` which can either be written as a shortform, or with more options:
+
+* `registry`: any registry or pack category like `item`, `block`, `loot_table`, etc.
+* `tags`: one of `allowed`, `implicit`, or `required`
+
+.Syntax
+[source, mcdoc]
+----
+#[id="item"] string
+
+#[id(registry="item",tags="allowed")] string
+----
+
+=== `match_regex`
+Specifies that a string needs to match a given regex pattern. Not to be confused with <<regex_pattern>>
+
+.Syntax
+[source, mcdoc]
+----
+#[match_regex="^[a-z_]+$"] string
+----
+
+=== `nbt`
+A string containing SNBT. It has one option which is the type that the stringified SNBT needs to match.
+
+.Syntax
+[source, mcdoc]
+----
+#[nbt=ItemStack] string
+----
+
+=== `nbt_path`
+A string containing an NBT path.
+
+.Syntax
+[source, mcdoc]
+----
+#[nbt_path] string
+----
+
+=== `objective`
+A string containing a scoreboard objective name.
+
+.Syntax
+[source, mcdoc]
+----
+#[objective] string
+----
+
+=== `regex_pattern`
+A string containing a regex pattern. Not to be confused with <<match_regex>>.
+
+.Syntax
+[source, mcdoc]
+----
+#[regex_pattern] string
+----
+
+=== `score_holder`
+Allows the `*` wildcard, entity selectors and player names. Not to be confused with <<entity>>.
+
+.Syntax
+[source, mcdoc]
+----
+#[score_holder] string
+----
+
+=== `since`
+Makes the field or union member only available starting at a given version. Only release versions (no snapshots) are allowed. See also <<until>>.
+
+.Syntax
+[source, mcdoc]
+----
+struct Example1 {
+   #[since="1.19"]
+   entity: string,
+}
+
+type Example2 = (
+   string |
+   #[since="1.20.5"] int |
+)
+----
+
+.❌ Invalid
+[source, mcdoc]
+----
+struct Example {
+   entity: #[since="1.19"] string,
+}
+----
+
+===  `tag`
+A string containing a command tag name (obtained with `/tag` or in the `Tags` entity field).
+
+.Syntax
+[source, mcdoc]
+----
+#[tag] string
+----
+
+===  `team`
+A string containing a team name.
+
+.Syntax
+[source, mcdoc]
+----
+#[team] string
+----
+
+===  `text_component`
+A string containing stringified JSON representing a text component. Note that in versions since 1.21.5, you should use the `::java::util::text::Text` type instead of stringified JSON.
+
+.Syntax
+[source, mcdoc]
+----
+#[text_component] string
+----
+
+=== `until`
+Makes the field or union member unavailable starting at a given version. Only release versions (no snapshots) are allowed. Note that the given version is not included in the range of versions where this field or member is accepted. See also <<since>>.
+
+.Syntax
+[source, mcdoc]
+----
+struct Example1 {
+   #[until="1.19"]
+   entity: string,
+}
+
+type Example2 = (
+   string |
+   #[until="1.20.5"] int |
+)
+----
+
+.❌ Invalid
+[source, mcdoc]
+----
+struct Example {
+   entity: #[until="1.19"] string,
+}
+----

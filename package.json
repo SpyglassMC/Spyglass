@@ -7,8 +7,8 @@
 		"node": "^18.18.0 || >=20.0.0"
 	},
 	"scripts": {
-		"ansible:prod": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml\" ansible/playbook.yml",
-		"ansible:prod:verbose": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml\" ansible/playbook.yml -vvv",
+		"ansible:prod": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml",
+		"ansible:prod:verbose": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml -vvv",
 		"build": "wireit",
 		"build:dev": "wireit",
 		"watch": "npm run build:dev --watch",
@@ -25,7 +25,7 @@
 		"release:dry": "ts-node scripts/release.ts --dry-run",
 		"set-tsconfig-references": "ts-node scripts/set_tsconfig_references",
 		"start-discord-bot": "node packages/discord-bot/lib/index.js",
-		"start-web-api-server": "node packages/web-api-server/bin/server.js",
+		"start-web-api-server": "npm start --workspace=packages/web-api-server",
 		"test": "nyc mocha",
 		"test:local": "nyc mocha --config .mocharc.local.jsonc",
 		"bench": "node packages/benchmarks/lib/index.js"

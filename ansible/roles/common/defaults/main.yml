@@ -1,0 +1,4 @@
+# (str)
+common_base_domain: spyglassmc.com
+# (bool)
+common_is_prod: false

@@ -162,6 +162,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
 			return wrap(typeRefParser('::java::server::util::text::Text'))
+		case 'minecraft:dialog':
+			return wrap(resourceOrInline('dialog'))
 		case 'minecraft:dimension':
 			return wrap(core.resourceLocation({ category: 'dimension' }))
 		case 'minecraft:entity':
@@ -258,6 +260,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			)
 		case 'minecraft:resource_location':
 			return wrap(core.resourceLocation(treeNode.properties ?? { pool: [], allowUnknown: true }))
+		case 'minecraft:resource_selector':
+			return wrap(resourceSelector(treeNode.properties.registry))
 		case 'minecraft:rotation':
 			return wrap(vector({ dimension: 2, noLocal: true }))
 		case 'minecraft:score_holder':
@@ -793,6 +797,21 @@ function resourceOrInline(category: core.FileCategory) {
 			return ans
 		}),
 	}])
+}
+
+const LegalResourceSelectorCharacters = new Set([
+	...core.LegalResourceLocationCharacters,
+	':',
+	'/',
+	'*',
+	'?',
+])
+
+function resourceSelector(registry: string): core.InfallibleParser<core.StringNode> {
+	return core.string({
+		colorTokenType: 'resourceLocation',
+		unquotable: { allowList: LegalResourceSelectorCharacters },
+	})
 }
 
 function selectorPrefix(ignoreInvalidPrefix: boolean): core.InfallibleParser<core.LiteralNode> {

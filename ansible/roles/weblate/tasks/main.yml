@@ -13,9 +13,12 @@
   notify: Restart weblate
 
 - name: Create override settings
+  become: true
   ansible.builtin.template:
     src: docker-compose.override.yml
     dest: '{{ weblate_docker_project_src }}/docker-compose.override.yml'
+    owner: root
+    group: root
     mode: '600'
   notify: Restart weblate
 

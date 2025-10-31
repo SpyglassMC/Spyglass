@@ -1,0 +1,3 @@
+type MyType = (int | string)
+
+// This comment will be parsed as part of the union, but it shouldn't make the union multiline since it comes after the union.

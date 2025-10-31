@@ -3,7 +3,7 @@ import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { jsonUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
-import type { McmetaSummary, McmetaVersions, PackInfo } from './dependency/index.js'
+import type { McmetaSummary, PackInfo } from './dependency/index.js'
 import {
 	getMcmetaSummary,
 	getVanillaDatapack,
@@ -25,7 +25,7 @@ export * from './mcdocAttributes.js'
 export * as mcf from './mcfunction/index.js'
 
 export const initialize: core.ProjectInitializer = async (ctx) => {
-	const { config, downloader, externals, logger, meta, projectRoots } = ctx
+	const { config, externals, logger, meta, projectRoots } = ctx
 
 	async function readPackFormat(uri: string): Promise<number | undefined> {
 		try {
@@ -69,7 +69,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	registerUriBuilders(meta)
 
 	const [versions, packs] = await Promise.all([
-		getVersions(ctx.externals, ctx.downloader),
+		getVersions(externals, logger),
 		findPackMcmetas(),
 	])
 	if (!versions) {
@@ -84,23 +84,20 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 
 	meta.registerDependencyProvider(
 		'@vanilla-datapack',
-		() => getVanillaDatapack(downloader, version.id, version.isLatest),
+		() => getVanillaDatapack(externals, logger, version.id),
 	)
 
 	meta.registerDependencyProvider(
 		'@vanilla-resourcepack',
-		() => getVanillaResourcepack(downloader, version.id, version.isLatest),
+		() => getVanillaResourcepack(externals, logger, version.id),
 	)
 
-	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader))
+	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(externals, logger))
 
 	const summary = await getMcmetaSummary(
 		ctx.externals,
-		downloader,
 		logger,
 		version.id,
-		version.isLatest,
-		config.env.dataSource,
 		config.env.mcmetaSummaryOverrides,
 	)
 	if (!summary.blocks || !summary.commands || !summary.fluids || !summary.registries) {
@@ -111,7 +108,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	}
 
 	meta.registerSymbolRegistrar('mcmeta-summary', {
-		checksum: `${summary.checksum}_v3`,
+		checksum: `${summary.checksum}-v4`,
 		registrar: symbolRegistrar(summary as McmetaSummary, release),
 	})
 

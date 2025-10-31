@@ -3,12 +3,16 @@ Description=SpyglassMC API server service
 After=network.target
 
 [Service]
+Type=notify
+NotifyAccess=all
 User=api-server
 Group=api-server
 WorkingDirectory=/var/lib/api-server
-ExecStart=/var/lib/api-server/start.sh
+EnvironmentFile=/etc/default/spyglassmc-api-server
+ExecStart=/usr/local/bin/spyglassmc-web-api-server
+TimeoutStartSec=900
+WatchdogSec=30
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
-

@@ -1,0 +1,8 @@
+enum(int) MyEnum {
+    #[unit] ONE = 1,
+    TWO = 2,
+    // Please fix >:(
+    /// Sorry :'(
+    FORGOT_THE_NAME_AGAIN = 3,
+    FOUR = 4,
+}

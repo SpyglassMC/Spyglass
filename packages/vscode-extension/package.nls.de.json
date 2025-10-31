@@ -1,1 +1,9 @@
-{}
+{
+	"spyglassmc.commands.resetProjectCache.title": "Projekt-Cache zurücksetzen",
+	"spyglassmc.commands.showCacheRoot.title": "Cache-Ordner öffnen",
+	"spyglassmc.commands.showOutput.title": "Ausgabe anzeigen",
+	"spyglassmc.description": "Umfangreiche Sprachfunktionen für Minecraft: Java Edition Datenpaketdateien",
+	"spyglassmc.displayName": "Datapack Helper Plus von Spyglass",
+	"spyglassmc.env.gameVersion": "Die zu verwendende Minecraft-Version. Wenn auf auto gesetzt, wird die Version aus der Datei `pack.mcmeta` abgeleitet. Andere Versionen können in einer Konfigurationsdatei `spyglass.json` angegeben werden.",
+	"spyglassmc.trace.server": "Verfolgt die Kommunikation zwischen VS Code und dem Spyglass Language Server."
+}
