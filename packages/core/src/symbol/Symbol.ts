@@ -82,7 +82,7 @@ export const RegistryCategories = Object.freeze(
 		'recipe_type',
 		'rule_block_entity_modifier',
 		'rule_test',
-		'schedule',
+		'schedule', // Removed
 		'sensor_type',
 		'slot_display',
 		'slot_source_type',
@@ -153,11 +153,13 @@ export const NormalFileCategories = Object.freeze(
 		'structure',
 		'test_environment',
 		'test_instance',
+		'timeline',
 		'trial_spawner',
 		'trim_material',
 		'trim_pattern',
 		'wolf_sound_variant',
 		'wolf_variant',
+		'zombie_nautilus_variant',
 	] as const,
 )
 export type NormalFileCategory = (typeof NormalFileCategories)[number]
