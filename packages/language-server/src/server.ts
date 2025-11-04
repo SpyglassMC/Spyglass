@@ -184,7 +184,7 @@ connection.workspace.onDidRenameFiles(({}) => {})
 
 connection.onCodeAction(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.codeActions) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -208,7 +208,7 @@ connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) =
 })
 connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.colors) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -218,7 +218,7 @@ connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 
 connection.onCompletion(async ({ textDocument: { uri }, position, context }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.completions) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -309,7 +309,7 @@ connection.onTypeDefinition(async ({ textDocument: { uri }, position }) => {
 
 connection.onDocumentHighlight(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.documentHighlighting) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -339,7 +339,7 @@ connection.onDocumentSymbol(async ({ textDocument: { uri } }) => {
 
 connection.onHover(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.hover) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -367,7 +367,7 @@ connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {
 
 connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.semanticColoring) {
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
@@ -380,7 +380,7 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 })
 connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.semanticColoring) {
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
@@ -394,7 +394,7 @@ connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, rang
 
 connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.signatures) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -412,7 +412,7 @@ connection.onWorkspaceSymbol(({ query }) => {
 
 connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.formatting) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
