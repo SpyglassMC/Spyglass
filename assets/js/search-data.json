@@ -73,63 +73,63 @@
   },"12": {
     "doc": "Config",
     "title": "Config",
-    "content": "The config file can be put under the root of your workspace with either of the following names. | spyglass.json . | .spyglassrc.json . | . There&#8217;s no support for multiple config files or inheriting/overriding config files yet. ",
+    "content": "The config file can be put under the root of your workspace with either of the following names. | spyglass.json . | .spyglassrc . | .spyglassrc.json . | . There&#8217;s no support for multiple config files or inheriting/overriding config files yet. ",
     "url": "/user/config.html",
     "relUrl": "/user/config.html"
   },"13": {
-    "doc": "Developer Guides",
-    "title": "Developer Guides",
-    "content": " ",
-    "url": "/developer/",
-    "relUrl": "/developer/"
-  },"14": {
-    "doc": "Mcdoc",
-    "title": "Writing Your Own",
-    "content": "Any file with the .mcdoc extension will be picked up by Spyglass. If you start having multiple mcdoc files, it can be helpful to organize them in a mcdoc/ folder in your pack root, but this is not required. Defining an mcdoc type is pretty straightforward: . use ::java::util::text::Text use ::java::world::item::ItemStack struct MyQuest { type: string, prompt: Text, /// The item given to the player when completing the quest. reward_item?: ItemStack, } . The above example describes a type MyQuest, which is an object or compound (in mcdoc this is called a struct). The struct has 3 fields. Two required fields type and prompt. One optional field reward_item (indicated by the ?: field separator). Fields can have doc comments. These are comments above the field starting with /// and will be shown as a description of fields during autocomplete and hover interactions. At the top of the file you can see use statements. These can import types from other files. The example imports types from vanilla-mcdoc using the absolute path of the struct. If the above file was placed in quests.mcdoc, the absolute path of the struct type would be ::quests::MyQuest. ",
-    "url": "/user/mcdoc/#writing-your-own",
-    "relUrl": "/user/mcdoc/#writing-your-own"
-  },"15": {
-    "doc": "Mcdoc",
-    "title": "Dispatching Types",
-    "content": "A type on its own isn&#8217;t very useful. We need to tell Spyglass where this type is used in the data pack. This is where dispatchers are used. dispatch minecraft:storage[example:quests] to struct QuestsStorage { available?: [MyQuest], } . This dispatch statement tells Spyglass that the storage example:quests should have the type QuestsStorage, which in turn can reference other types in the file. Writing the following line in function file, you will notice that Spyglass suggests fields and gives errors for missing required fields: . data merge storage example:quests {available:[{ }]} . ",
-    "url": "/user/mcdoc/#dispatching-types",
-    "relUrl": "/user/mcdoc/#dispatching-types"
-  },"16": {
-    "doc": "Mcdoc",
-    "title": "Mcdoc",
-    "content": "Table of Contents . | Writing Your Own | Dispatching Types | . Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs. It is a custom language that is interpreted by the Spyglass language server. The entirety of vanilla Minecraft is documented at the vanilla-mcdoc repository. This is a great place to look to learn about the syntax beyond this documentation! . ",
-    "url": "/user/mcdoc/",
-    "relUrl": "/user/mcdoc/"
-  },"17": {
-    "doc": "Home",
-    "title": "User Testimonials",
-    "content": "By far, by a huge margin, the best extension I&#8217;ve found for it. &#8212; slicedlime during his Twitch stream ",
-    "url": "/#user-testimonials",
-    "relUrl": "/#user-testimonials"
-  },"18": {
-    "doc": "Home",
-    "title": "Getting Started",
-    "content": "You can enjoy features provided by Spyglass on various text editors. VS Code . Install from the Marketplace. VSCodium . Install from the Open VSX Registry. Sublime Text . Planned. Zed Editor . Planned. ",
-    "url": "/#getting-started",
-    "relUrl": "/#getting-started"
-  },"19": {
-    "doc": "Home",
-    "title": "Contributing",
-    "content": ". | Create an issue . | GitHub Repository . | Localization . | . ",
-    "url": "/#contributing",
-    "relUrl": "/#contributing"
-  },"20": {
-    "doc": "Home",
-    "title": "Home",
-    "content": "Welcome to the documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real-time diagnostics, semantic coloring and such. It is planned to support multiple text editors, but for now, the only officially supported release is our vscode extension. ",
-    "url": "/",
-    "relUrl": "/"
-  },"21": {
     "doc": "Maintainer Guides",
     "title": "Maintainer Guides",
     "content": " ",
     "url": "/maintainer/",
     "relUrl": "/maintainer/"
+  },"14": {
+    "doc": "Developer Guides",
+    "title": "Developer Guides",
+    "content": " ",
+    "url": "/developer/",
+    "relUrl": "/developer/"
+  },"15": {
+    "doc": "Mcdoc",
+    "title": "Writing Your Own",
+    "content": "Any file with the .mcdoc extension will be picked up by Spyglass. If you start having multiple mcdoc files, it can be helpful to organize them in a mcdoc/ folder in your pack root, but this is not required. Defining an mcdoc type is pretty straightforward: . use ::java::util::text::Text use ::java::world::item::ItemStack struct MyQuest { type: string, prompt: Text, /// The item given to the player when completing the quest. reward_item?: ItemStack, } . The above example describes a type MyQuest, which is an object or compound (in mcdoc this is called a struct). The struct has 3 fields. Two required fields type and prompt. One optional field reward_item (indicated by the ?: field separator). Fields can have doc comments. These are comments above the field starting with /// and will be shown as a description of fields during autocomplete and hover interactions. At the top of the file you can see use statements. These can import types from other files. The example imports types from vanilla-mcdoc using the absolute path of the struct. If the above file was placed in quests.mcdoc, the absolute path of the struct type would be ::quests::MyQuest. ",
+    "url": "/user/mcdoc/#writing-your-own",
+    "relUrl": "/user/mcdoc/#writing-your-own"
+  },"16": {
+    "doc": "Mcdoc",
+    "title": "Dispatching Types",
+    "content": "A type on its own isn&#8217;t very useful. We need to tell Spyglass where this type is used in the data pack. This is where dispatchers are used. dispatch minecraft:storage[example:quests] to struct QuestsStorage { available?: [MyQuest], } . This dispatch statement tells Spyglass that the storage example:quests should have the type QuestsStorage, which in turn can reference other types in the file. Writing the following line in function file, you will notice that Spyglass suggests fields and gives errors for missing required fields: . data merge storage example:quests {available:[{ }]} . ",
+    "url": "/user/mcdoc/#dispatching-types",
+    "relUrl": "/user/mcdoc/#dispatching-types"
+  },"17": {
+    "doc": "Mcdoc",
+    "title": "Mcdoc",
+    "content": "Table of Contents . | Writing Your Own | Dispatching Types | . Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs. It is a custom language that is interpreted by the Spyglass language server. The entirety of vanilla Minecraft is documented at the vanilla-mcdoc repository. This is a great place to look to learn about the syntax beyond this documentation! . ",
+    "url": "/user/mcdoc/",
+    "relUrl": "/user/mcdoc/"
+  },"18": {
+    "doc": "Home",
+    "title": "User Testimonials",
+    "content": "By far, by a huge margin, the best extension I&#8217;ve found for it. &#8212; slicedlime during his Twitch stream ",
+    "url": "/#user-testimonials",
+    "relUrl": "/#user-testimonials"
+  },"19": {
+    "doc": "Home",
+    "title": "Getting Started",
+    "content": "You can enjoy features provided by Spyglass on various text editors. VS Code . Install from the Marketplace. VSCodium . Install from the Open VSX Registry. Sublime Text . Planned. Zed Editor . Planned. ",
+    "url": "/#getting-started",
+    "relUrl": "/#getting-started"
+  },"20": {
+    "doc": "Home",
+    "title": "Contributing",
+    "content": ". | Create an issue . | GitHub Repository . | Localization . | . ",
+    "url": "/#contributing",
+    "relUrl": "/#contributing"
+  },"21": {
+    "doc": "Home",
+    "title": "Home",
+    "content": "Welcome to the documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real-time diagnostics, semantic coloring and such. It is planned to support multiple text editors, but for now, the only officially supported release is our vscode extension. ",
+    "url": "/",
+    "relUrl": "/"
   },"22": {
     "doc": "Initialization Options",
     "title": "Initialization Options",
