@@ -94,11 +94,13 @@ resource('painting_variant', { since: '1.21' })
 resource('pig_variant', { since: '1.21.5' })
 resource('test_instance', { since: '1.21.5' })
 resource('test_environment', { since: '1.21.5' })
+resource('timeline', { since: '1.21.11' })
 resource('trial_spawner', { since: '1.21.2' })
 resource('trim_pattern', { since: '1.19.4' })
 resource('trim_material', { since: '1.19.4' })
 resource('wolf_sound_variant', { since: '1.21.5' })
 resource('wolf_variant', { since: '1.20.5' })
+resource('zombie_nautilus_variant', { since: '1.21.11' })
 
 // Worldgen
 resource('dimension', { since: '1.16' })

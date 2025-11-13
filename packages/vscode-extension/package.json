@@ -123,10 +123,12 @@
           "data/*/tags/**/*.json",
           "data/*/test_instance/**/*.json",
           "data/*/test_environment/**/*.json",
+          "data/*/timeline/**/*.json",
           "data/*/trim_material/**/*.json",
           "data/*/trim_pattern/**/*.json",
           "data/*/wolf_sound_variant/**/*.json",
           "data/*/wolf_variant/**/*.json",
+          "data/*/zombie_nautilus_variant/**/*.json",
           "data/*/worldgen/**/*.json",
           "data/minecraft/**/*.json"
         ],
@@ -135,6 +137,7 @@
       {
         "fileMatch": [
           "spyglass.json",
+          ".spyglassrc",
           ".spyglassrc.json"
         ],
         "url": "./resource/spyglass.json"
