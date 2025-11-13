@@ -17,7 +17,7 @@
   },
   "scripts": {
     "release": "npm publish",
-    "release:dry": "npm publish --dry-run",
+    "release:dry": "npm publish --tag release --dry-run",
     "start": "node lib/index.js"
   },
   "engines": {

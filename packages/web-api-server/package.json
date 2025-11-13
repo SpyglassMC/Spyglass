@@ -12,7 +12,7 @@
   "license": "MIT",
   "scripts": {
     "release": "npm publish",
-    "release:dry": "npm publish --dry-run",
+    "release:dry": "npm publish --tag release --dry-run",
     "start": "./bin/server.js | pino-pretty"
   },
   "dependencies": {
