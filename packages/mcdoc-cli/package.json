@@ -23,7 +23,7 @@
   },
   "scripts": {
     "release": "npm publish",
-    "release:dry": "npm publish --tag release --dry-run",
+    "release:dry": "npm publish --tag latest --dry-run",
     "setup": "git clone https://github.com/SpyglassMC/vanilla-mcdoc",
     "test": "rm -rf out/generated/module/* && cd vanilla-mcdoc && git pull && cd .. && tsc -b && node lib/index.js generate vanilla-mcdoc/ -l -m -p"
   },

@@ -11,7 +11,7 @@
   },
   "scripts": {
     "release": "npm publish",
-    "release:dry": "npm publish --tag release --dry-run"
+    "release:dry": "npm publish --tag latest --dry-run"
   },
   "publishConfig": {
     "access": "public"
