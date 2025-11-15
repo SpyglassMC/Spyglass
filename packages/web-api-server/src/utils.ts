@@ -64,23 +64,28 @@ export async function assertRootDir(rootDir: string) {
 	}
 }
 
-function createLoggerStream(logger: Logger, level: 'error' | 'info') {
+function createLoggerStream(
+	repo: string,
+	fd: 'stdout' | 'stderr',
+	logger: Logger,
+	level: 'debug' | 'error' | 'info',
+) {
 	return new Writable({
 		write(chunk, _encoding, callback) {
-			logger[level](chunk.toString().trimEnd())
+			logger[level]({ repo, fd }, chunk.toString().trimEnd())
 			callback()
 		},
 	})
 }
 
-function pipeChildStdioToLogger(child: ChildProcess, logger: Logger) {
-	child.stdout?.pipe(createLoggerStream(logger, 'info'))
-	child.stderr?.pipe(createLoggerStream(logger, 'error'))
+function pipeChildStdioToLogger(repo: string, child: ChildProcess, logger: Logger) {
+	child.stdout?.pipe(createLoggerStream(repo, 'stdout', logger, 'debug'))
+	child.stderr?.pipe(createLoggerStream(repo, 'stderr', logger, 'debug'))
 }
 
-function pipeChildStdioToResponse(child: ChildProcess, res: Response) {
+function pipeChildStdioToResponse(repo: string, child: ChildProcess, res: Response) {
 	child.stdout?.pipe(res)
-	child.stderr?.pipe(createLoggerStream(res.log, 'error'))
+	child.stderr?.pipe(createLoggerStream(repo, 'stderr', res.log, 'error'))
 }
 
 function childProcessExits(child: ChildProcess) {
@@ -105,7 +110,7 @@ export async function initGitRepos(logger: Logger, rootDir: string) {
 					'git',
 					['clone', `git@github.com:${owner}/${repo}.git`, repoDir, '--mirror', '--progress'],
 				)
-				pipeChildStdioToLogger(clonerChild, logger)
+				pipeChildStdioToLogger(repo, clonerChild, logger)
 				await childProcessExits(clonerChild)
 
 				// Make sure 'git repack' doesn't take up all RAM for mcmeta.
@@ -115,7 +120,7 @@ export async function initGitRepos(logger: Logger, rootDir: string) {
 					['config', 'pack.windowMemory', '10m'],
 					{ cwd: repoDir },
 				)
-				pipeChildStdioToLogger(configChild, logger)
+				pipeChildStdioToLogger(repo, configChild, logger)
 				await childProcessExits(configChild)
 
 				configChild = spawn(
@@ -123,7 +128,7 @@ export async function initGitRepos(logger: Logger, rootDir: string) {
 					['config', 'pack.packSizeLimit', '20m'],
 					{ cwd: repoDir },
 				)
-				pipeChildStdioToLogger(configChild, logger)
+				pipeChildStdioToLogger(repo, configChild, logger)
 				await childProcessExits(configChild)
 
 				logger.info({ owner, repo }, 'Cloned')
@@ -151,7 +156,7 @@ export async function updateGitRepo(logger: Logger, repo: string, repoDir: strin
 		const child = spawn('git', ['remote', 'update', '--prune'], {
 			cwd: repoDir,
 		})
-		pipeChildStdioToLogger(child, logger)
+		pipeChildStdioToLogger(repo, child, logger)
 		await childProcessExits(child)
 		logger.debug({ repo }, 'Updated')
 	})
@@ -195,7 +200,7 @@ export async function sendGitFile(
 		['show', `${branch}:${filePath}`],
 		{ cwd: repoDir },
 	)
-	pipeChildStdioToResponse(child, res)
+	pipeChildStdioToResponse(repoDir, child, res)
 	await childProcessExits(child)
 }
 
@@ -228,7 +233,7 @@ export async function sendGitTarball(
 		['archive', '--format=tar.gz', branch],
 		{ cwd: repoDir },
 	)
-	pipeChildStdioToResponse(child, res)
+	pipeChildStdioToResponse(repoDir, child, res)
 	await childProcessExits(child)
 }
 
