@@ -1,6 +1,5 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import { literal } from '../../lib/parser/index.js'
 
 describe('mcfunction parser literal()', () => {
@@ -12,9 +11,9 @@ describe('mcfunction parser literal()', () => {
 		{ content: 'tellraw @a "World!"' },
 	]
 	for (const { content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
 			const parser = literal(options)
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })

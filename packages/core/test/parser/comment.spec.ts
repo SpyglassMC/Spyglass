@@ -1,5 +1,5 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import { comment } from '../../lib/index.js'
 import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
@@ -11,13 +11,13 @@ describe('comment()', () => {
 		{ prefixes: new Set(['//']), content: '# Whoops.\n// The world is burning!' },
 	]
 	for (const { prefixes, content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
 			const parser = comment({ singleLinePrefixes: prefixes })
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
-		it(`Parse "${showWhitespaceGlyph(content)}" with "includesEol" on`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}" with "includesEol" on`, (t) => {
 			const parser = comment({ singleLinePrefixes: prefixes, includesEol: true })
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })

@@ -1,5 +1,4 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import { NumericRange } from '../../lib/type/index.js'
 
 describe('NumericRange', () => {
@@ -18,9 +17,9 @@ describe('NumericRange', () => {
 			[{ kind: 0b00 }, { kind: 0b00 }],
 		]
 		for (const [a, b] of suites) {
-			it(`${NumericRange.toString(a)} & ${NumericRange.toString(b)}`, () => {
+			it(`${NumericRange.toString(a)} & ${NumericRange.toString(b)}`, (t) => {
 				const intersection = NumericRange.intersect(a, b)
-				snapshot(NumericRange.toString(intersection))
+				t.assert.snapshot(NumericRange.toString(intersection))
 			})
 		}
 	})

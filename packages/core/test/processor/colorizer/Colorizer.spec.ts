@@ -1,5 +1,5 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import { ColorToken, Range } from '../../../lib/index.js'
 import { showWhitespaceGlyph } from '../../utils.ts'
 
@@ -34,8 +34,8 @@ describe('ColorToken', () => {
 			targetRange: Range.create(0, 20),
 		}]
 		for (const { title, sourceTokens, targetRange } of suites) {
-			it(`Fill for “${showWhitespaceGlyph(title)}”`, () => {
-				snapshot(ColorToken.fillGap(sourceTokens, targetRange, 'string'))
+			it(`Fill for “${showWhitespaceGlyph(title)}”`, (t) => {
+				t.assert.snapshot(ColorToken.fillGap(sourceTokens, targetRange, 'string'))
 			})
 		}
 	})

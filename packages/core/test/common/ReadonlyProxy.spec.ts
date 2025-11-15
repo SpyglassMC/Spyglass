@@ -1,31 +1,31 @@
 import { ReadonlyProxy } from '@spyglassmc/core'
 import assert from 'assert'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import { assertError } from '../utils.ts'
 
 describe('ReadonlyProxy', () => {
-	it('Should create a deeply readonly proxy', () => {
+	it('Should create a deeply readonly proxy', (t) => {
 		const testObj = { foo: { baz: { qux: true }, bax: true }, bar: true }
 		const proxy = ReadonlyProxy.create(testObj)
 
 		assertError(() => {
 			// @ts-expect-error
 			proxy.bar = false
-		}, (e) => snapshot((e as Error).message))
+		}, (e) => t.assert.snapshot((e as Error).message))
 		assertError(() => {
 			// @ts-expect-error
 			proxy.foo.bax = false
-		}, (e) => snapshot((e as Error).message))
+		}, (e) => t.assert.snapshot((e as Error).message))
 		assertError(() => {
 			// @ts-expect-error
 			proxy.foo.baz.qux = false
-		}, (e) => snapshot((e as Error).message))
+		}, (e) => t.assert.snapshot((e as Error).message))
 		assertError(() => {
 			// @ts-expect-error
 			delete proxy.foo.baz.qux
-		}, (e) => snapshot((e as Error).message))
-		snapshot(testObj)
+		}, (e) => t.assert.snapshot((e as Error).message))
+		t.assert.snapshot(testObj)
 		assert.deepEqual(testObj, proxy)
 	})
 	it('Should not proxy prototype', () => {

@@ -1,19 +1,16 @@
-**/coverage
 **/node_modules
 **/.eslintcache
-**/.nyc_output
 **/.wireit
 **/*.cpuprofile
 **/*.tsbuildinfo
 
+/.helix/languages.toml
 /.history
 /.vscode/settings.json
-/.mocharc.local.jsonc
 /.idea
 
 /packages/*/lib
 /packages/*/out
 /packages/*/dist
-/packages/*/test-out
 
 /packages/vscode-extension/**/*.vsix

@@ -1,5 +1,5 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import { number } from '../../lib/parser/number.js'
 
 describe('JSON number parser', () => {
@@ -17,8 +17,8 @@ describe('JSON number parser', () => {
 			{ content: '1.342E-10' },
 		]
 		for (const { content } of cases) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-				snapshot(testParser(number, content))
+			it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+				t.assert.snapshot(testParser(number, content))
 			})
 		}
 	})

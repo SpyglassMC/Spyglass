@@ -1,5 +1,5 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import type { BooleanNode } from '../../lib/index.js'
 import { boolean } from '../../lib/index.js'
 import { type Options, prefixed } from '../../lib/parser/prefixed.js'
@@ -15,9 +15,9 @@ describe('prefixed()', () => {
 		{ content: '!!true' },
 	]
 	for (const { content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
 			const parser = prefixed(options)
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })

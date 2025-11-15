@@ -37,7 +37,7 @@ jobs:
 
       - run: npm run build
 
-      - run: npm test -- --forbid-only
+      - run: npm test
 
       - run: npm run lint
 

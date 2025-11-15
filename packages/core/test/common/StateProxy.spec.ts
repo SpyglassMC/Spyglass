@@ -1,7 +1,6 @@
 import { StateProxy } from '@spyglassmc/core'
 import assert from 'assert'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 
 const getTestObj = () => ({
 	symbols: { advancement: { foo: { category: 'advancement' } } },
@@ -9,10 +8,10 @@ const getTestObj = () => ({
 })
 
 describe('StateProxy', () => {
-	it('Should create enumerable proxy', () => {
+	it('Should create enumerable proxy', (t) => {
 		const testObj = getTestObj()
 		const proxy = StateProxy.create(testObj)
-		snapshot(proxy)
+		t.assert.snapshot(proxy)
 	})
 	it('Should return the same reference for the same property', () => {
 		const testObj = getTestObj()
@@ -54,50 +53,50 @@ describe('StateProxy', () => {
 		assert.strictEqual(StateProxy.dereference(proxy.node.children), testObj.node.children)
 		assert.strictEqual(StateProxy.dereference(proxy.node.children[0]), testObj.node.children[0])
 	})
-	it('Should undo and redo changes correctly', () => {
+	it('Should undo and redo changes correctly', (t) => {
 		const testObj = getTestObj() as any
 		const proxy = StateProxy.create(testObj) as StateProxy<any>
-		snapshot(proxy)
+		t.assert.snapshot(proxy)
 
 		const barSymbol = { category: 'advancement', data: 1 }
 		proxy.symbols.advancement.bar = barSymbol
 		proxy.node.children[0].symbol = barSymbol
 		proxy.symbols.advancement.bar.data = 42
 		proxy.node.children[0].type = 'modified_symbol'
-		snapshot(proxy)
+		t.assert.snapshot(proxy)
 		assert.strictEqual(testObj.symbols.advancement.bar, barSymbol)
 		assert.strictEqual(testObj.node.children[0].symbol, barSymbol)
 
 		StateProxy.undoChanges(proxy)
-		snapshot(proxy)
+		t.assert.snapshot(proxy)
 
 		StateProxy.redoChanges(proxy)
-		snapshot(proxy)
+		t.assert.snapshot(proxy)
 	})
-	it('Should branch off correctly', () => {
+	it('Should branch off correctly', (t) => {
 		const testObj = getTestObj()
 		const proxy0 = StateProxy.create(testObj)
-		snapshot(testObj)
+		t.assert.snapshot(testObj)
 
 		proxy0.node.children[0].type = 'modified_symbol'
-		snapshot(testObj)
+		t.assert.snapshot(testObj)
 
 		const proxy0_0 = StateProxy.branchOff(proxy0)
 		proxy0_0.symbols.advancement.foo.category = 'not_advancement'
-		snapshot(testObj)
+		t.assert.snapshot(testObj)
 
 		StateProxy.undoChanges(proxy0_0)
-		snapshot(testObj)
+		t.assert.snapshot(testObj)
 
 		const proxy0_1 = StateProxy.branchOff(proxy0)
 		proxy0_1.symbols.advancement.foo.category = 'not_not_advancement'
-		snapshot(testObj)
+		t.assert.snapshot(testObj)
 
 		StateProxy.undoChanges(proxy0)
-		snapshot(testObj)
+		t.assert.snapshot(testObj)
 
 		StateProxy.redoChanges(proxy0)
-		snapshot(testObj)
+		t.assert.snapshot(testObj)
 	})
 	it('Should not proxy prototype', () => {
 		const testArr = [0, 1, 2, 3]

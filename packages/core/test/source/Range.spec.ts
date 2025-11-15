@@ -1,19 +1,18 @@
 import { strict as assert } from 'assert'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import type { AstNode } from '../../lib/index.js'
 import { Range, RangeContainer, Source } from '../../lib/index.js'
 
 describe('Range', () => {
 	describe('create()', () => {
-		it('Should create correctly', () => {
-			snapshot(Range.create(1, 2))
-			snapshot(Range.create(5))
+		it('Should create correctly', (t) => {
+			t.assert.snapshot(Range.create(1, 2))
+			t.assert.snapshot(Range.create(5))
 			const src = new Source('')
 			src.cursor = 6
-			snapshot(Range.create(src))
-			snapshot(Range.create(1, src))
-			snapshot(Range.create(src, () => src.skip(2)))
+			t.assert.snapshot(Range.create(src))
+			t.assert.snapshot(Range.create(1, src))
+			t.assert.snapshot(Range.create(src, () => src.skip(2)))
 		})
 	})
 	describe('get()', () => {
@@ -157,9 +156,9 @@ describe('Range', () => {
 		}
 	})
 	describe('constants', () => {
-		it('Should initialize correctly', () => {
-			snapshot(Range.Beginning)
-			snapshot(Range.Full)
+		it('Should initialize correctly', (t) => {
+			t.assert.snapshot(Range.Beginning)
+			t.assert.snapshot(Range.Full)
 		})
 	})
 })

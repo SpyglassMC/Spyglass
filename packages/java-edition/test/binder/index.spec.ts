@@ -1,7 +1,6 @@
 import { UriBinderContext, VanillaConfig } from '@spyglassmc/core'
 import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import { dissectUri, registerCustomResources } from '../../lib/binder/index.js'
 
 describe('dissectUri()', () => {
@@ -19,11 +18,11 @@ describe('dissectUri()', () => {
 		{ uri: 'file:///data/minecraft/entities/foo.json' },
 	]
 	for (const { uri, version } of suites) {
-		it(`Dissect Uri "${uri}"${version ? ' in ' + version : ''}`, () => {
+		it(`Dissect Uri "${uri}"${version ? ' in ' + version : ''}`, (t) => {
 			const ctx = UriBinderContext.create(
 				mockProjectData({ roots: ['file:///'], ctx: { loadedVersion: version ?? '1.15' } }),
 			)
-			snapshot(dissectUri(uri, ctx) ?? 'undefined')
+			t.assert.snapshot(dissectUri(uri, ctx) ?? 'undefined')
 		})
 	}
 })
@@ -36,7 +35,7 @@ describe('dissectUri() with customResources', () => {
 		{ uri: 'file:///data/qux/tags/custom_registry/nested/bar.json' },
 	]
 	for (const { uri, version } of suites) {
-		it(`Dissect Uri "${uri}"${version ? ' in ' + version : ''}`, () => {
+		it(`Dissect Uri "${uri}"${version ? ' in ' + version : ''}`, (t) => {
 			const ctx = UriBinderContext.create(
 				mockProjectData({
 					config: {
@@ -54,7 +53,7 @@ describe('dissectUri() with customResources', () => {
 				}),
 			)
 			registerCustomResources(ctx.config)
-			snapshot(dissectUri(uri, ctx) ?? 'undefined')
+			t.assert.snapshot(dissectUri(uri, ctx) ?? 'undefined')
 		})
 	}
 })

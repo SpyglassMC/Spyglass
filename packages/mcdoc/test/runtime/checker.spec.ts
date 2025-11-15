@@ -3,8 +3,7 @@ import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import { localeQuote } from '@spyglassmc/locales'
 import { McdocCheckerContext, typeDefinition } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
 import type { McdocType, UnionType } from '@spyglassmc/mcdoc/lib/type/index.js'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { McdocRuntimeError } from '../../lib/runtime/checker/error.js'
 
@@ -663,7 +662,7 @@ describe('mcdoc runtime checker', () => {
 	for (const { name, type, values, init } of suites) {
 		describe(`typeDefinition ${localeQuote(name)}`, () => {
 			for (const value of values) {
-				it(`with value ${JSON.stringify(value)}`, () => {
+				it(`with value ${JSON.stringify(value)}`, (t) => {
 					const errors: McdocRuntimeError<JsValue>[] = []
 					const project = mockProjectData()
 					init?.(project.symbols)
@@ -706,7 +705,7 @@ describe('mcdoc runtime checker', () => {
 						type,
 						ctx,
 					)
-					snapshot(errors)
+					t.assert.snapshot(errors)
 				})
 			}
 		})

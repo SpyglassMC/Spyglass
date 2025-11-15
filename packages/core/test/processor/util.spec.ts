@@ -1,5 +1,4 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import type { AstNode } from '../../lib/index.js'
 import { Range, traversePreOrder } from '../../lib/index.js'
 
@@ -35,12 +34,12 @@ const DiscontinuousTestNode: AstNode = {
 
 describe('processor/util.ts', () => {
 	describe('traversePreOrder()', () => {
-		it('Should traverse nodes that match the predicates', () => {
+		it('Should traverse nodes that match the predicates', (t) => {
 			traversePreOrder(
 				TestNode,
 				(_) => true,
 				(node) => node.type === 'leaf_1' || node.type === 'not_leaf_3',
-				(node, parents) => snapshot({ node: node.type, parents: parents.map((p) => p.type) }),
+				(node, parents) => t.assert.snapshot({ node: node.type, parents: parents.map((p) => p.type) }),
 			)
 		})
 	})

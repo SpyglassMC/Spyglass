@@ -27,25 +27,31 @@ import {
 	VanillaConfig,
 } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
-import { fail } from 'assert'
-import type { RootHookObject } from 'mocha'
-import { core as snapshotCore } from 'snap-shot-core'
-import type { URL } from 'url'
-import { fileURLToPath } from 'url'
-import { format } from 'util'
+import { fail } from 'node:assert'
+import path from 'node:path'
+import type { TestContext } from 'node:test'
+import type { URL } from 'node:url'
+import { fileURLToPath } from 'node:url'
+import { format } from 'node:util'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
-export const mochaHooks: RootHookObject = {
-	beforeAll(done) {
-		// Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
-		Object.defineProperty(BigInt.prototype, 'toJSON', {
-			get() {
-				return () => String(this)
-			},
-		})
+export function resolveSnapshotPath(testPath: string | undefined): string {
+	if (!testPath) {
+		throw new Error("testPath is undefined. This shouldn't happen as we are not in a REPL")
+	}
 
-		done()
-	},
+	const packagesIndex = testPath.lastIndexOf(`${path.sep}packages${path.sep}`)
+	if (packagesIndex === -1) {
+		throw new Error(`Could not find '/packages/' directory in testPath: ${testPath}`)
+	}
+
+	return path.join(
+		testPath.slice(0, packagesIndex),
+		'__snapshots__',
+		testPath.slice(packagesIndex + 1)
+			.replace(new RegExp(`${path.sep}test${path.sep}`), `${path.sep}test-out${path.sep}`)
+			.replace(/\.spec\.(ts|mts|cts)$/, '.spec.js'),
+	)
 }
 
 export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
@@ -148,7 +154,7 @@ export function testParser(
 
 /**
  * A helper function for testing types.
- * This function has a signature similar to mocha's `describe` and `it` methods.
+ * This function has a signature similar to the `describe` and `it` methods from node:test.
  * The method passed into this function is never actually executed.
  */
 export function typing(_title: string, _fn: () => void): void {}
@@ -175,15 +181,10 @@ export function assertError(fn: () => void, errorCallback: (e: unknown) => void 
 }
 
 export function snapshotWithUri(
-	{ specName, uri, value }: { specName: string; uri: URL; value: {} },
+	t: TestContext,
+	{ uri, value }: { uri: URL; value: object },
 ): void {
-	snapshotCore({
-		what: value,
-		file: fileURLToPath(uri),
-		specName,
-		ext: '.spec.ts.js',
-		opts: { sortSnapshots: true, useRelativePath: true },
-	})
+	t.assert.fileSnapshot(value, resolveSnapshotPath(fileURLToPath(uri)))
 }
 
 export interface SimpleProjectState {

@@ -1,5 +1,5 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import type { StringNode } from '../../lib/index.js'
 import { list, string } from '../../lib/index.js'
 import type { Options } from '../../lib/parser/list.js'
@@ -30,9 +30,9 @@ describe('list()', () => {
 	for (const { title, options, contents } of suites) {
 		describe(title, () => {
 			for (const content of contents) {
-				it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+				it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
 					const parser = list(options)
-					snapshot(testParser(parser, content))
+					t.assert.snapshot(testParser(parser, content))
 				})
 			}
 		})

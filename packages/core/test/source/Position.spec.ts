@@ -1,16 +1,15 @@
 import { strict as assert } from 'assert'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import { Position } from '../../lib/index.js'
 
 describe('Position', () => {
 	describe('create()', () => {
-		it('Should create correctly', () => {
-			snapshot(Position.create(1, 2))
-			snapshot(Position.create({}))
-			snapshot(Position.create({ line: 1 }))
-			snapshot(Position.create({ character: 2 }))
-			snapshot(Position.create({ line: 1, character: 2 }))
+		it('Should create correctly', (t) => {
+			t.assert.snapshot(Position.create(1, 2))
+			t.assert.snapshot(Position.create({}))
+			t.assert.snapshot(Position.create({ line: 1 }))
+			t.assert.snapshot(Position.create({ character: 2 }))
+			t.assert.snapshot(Position.create({ line: 1, character: 2 }))
 		})
 		it('Should create a new object from the passed-in Position', () => {
 			const incoming = Position.create(4, 2)
@@ -56,9 +55,9 @@ describe('Position', () => {
 		}
 	})
 	describe('constants', () => {
-		it('Should initialize correctly', () => {
-			snapshot(Position.Beginning)
-			snapshot(Position.Infinity)
+		it('Should initialize correctly', (t) => {
+			t.assert.snapshot(Position.Beginning)
+			t.assert.snapshot(Position.Infinity)
 		})
 	})
 })

@@ -1,5 +1,5 @@
 import { strict as assert } from 'assert'
-import { describe, it } from 'mocha'
+import { describe, it } from 'node:test'
 import { IndexMap, Range } from '../../lib/index.js'
 
 describe('IndexMap', () => {

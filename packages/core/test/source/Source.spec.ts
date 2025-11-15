@@ -1,6 +1,5 @@
 import { strict as assert } from 'assert'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import type { IndexMap } from '../../lib/index.js'
 import { Range, Source } from '../../lib/index.js'
 import { markOffsetInString, showWhitespaceGlyph } from '../utils.ts'
@@ -546,9 +545,9 @@ describe('Source', () => {
 		]
 
 		for (const { string, indexMap } of suites) {
-			it(`Should visualize the index map for "${string}"`, () => {
+			it(`Should visualize the index map for "${string}"`, (t) => {
 				const src = new Source(string, indexMap)
-				snapshot(src.visualizeIndexMap())
+				t.assert.snapshot(src.visualizeIndexMap())
 			})
 		}
 	})

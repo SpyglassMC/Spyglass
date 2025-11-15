@@ -8,7 +8,7 @@ import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.j
 import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
 import * as json from '@spyglassmc/json'
 import * as nbt from '@spyglassmc/nbt'
-import { describe, it } from 'mocha'
+import { describe, it } from 'node:test'
 
 const Suites: Partial<
 	Record<ArgumentTreeNode['parser'], { content: string[]; properties?: any; version?: string }[]>
@@ -233,13 +233,12 @@ describe('mcfunction argument parser', () => {
 					const itTitle = `Parse "${
 						showWhitespaceGlyph(string)
 					}"${propertiesString}${versionString}`
-					it(itTitle, () => {
-						snapshotWithUri({
-							specName: `mcfunction argument ${parserName} ${itTitle}`,
+					it(itTitle, (t) => {
+						snapshotWithUri(t, {
 							uri: new URL(
 								`./argument/${
 									parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())
-								}.spec.ts.js`,
+								}.spec.js`,
 								import.meta.url,
 							),
 							value: testParser(argument(treeNode, [])!, string, {

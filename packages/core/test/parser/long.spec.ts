@@ -1,5 +1,5 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import { long } from '../../lib/index.js'
 import type { Options } from '../../lib/parser/long.js'
 import { showWhitespaceGlyph, testParser } from '../utils.ts'
@@ -22,9 +22,9 @@ describe('long()', () => {
 		for (const option of options) {
 			describe('long()', () => {
 				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+					it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
 						const parser = long(option as any)
-						snapshot(testParser(parser, content))
+						t.assert.snapshot(testParser(parser, content))
 					})
 				}
 			})
@@ -33,9 +33,9 @@ describe('long()', () => {
 
 	describe('long(failsOnEmpty)', () => {
 		describe('long(failsOnEmpty=true)', () => {
-			it('Parse ""', () => {
+			it('Parse ""', (t) => {
 				const parser = long({ pattern, failsOnEmpty: true })
-				snapshot(testParser(parser, ''))
+				t.assert.snapshot(testParser(parser, ''))
 			})
 		})
 	})
@@ -51,9 +51,9 @@ describe('long()', () => {
 		for (const option of options) {
 			describe(`long(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+					it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
 						const parser = long(option as any)
-						snapshot(testParser(parser, content))
+						t.assert.snapshot(testParser(parser, content))
 					})
 				}
 			})
