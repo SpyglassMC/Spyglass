@@ -6,7 +6,7 @@ import pino from 'pino'
 const OUTPUT_URL = new URL('./output/', import.meta.url)
 const HOST = 'http://localhost:3003'
 /** Requests per second */
-const RPS = 10
+const RPS = 100
 const DURATION_MS = 5_000
 const PATH = '/mcje/versions/1.21.10/vanilla-data/tarball'
 
