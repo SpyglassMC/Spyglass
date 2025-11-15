@@ -10,7 +10,7 @@ import {
 	Failure,
 	Range,
 } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 interface LiteralNode extends AstNode {
 	type: 'literal'

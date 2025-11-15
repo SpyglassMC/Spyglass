@@ -2,7 +2,7 @@ import { ReadonlyProxy } from '@spyglassmc/core'
 import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { assertError } from '../utils.js'
+import { assertError } from '../utils.ts'
 
 describe('ReadonlyProxy', () => {
 	it('Should create a deeply readonly proxy', () => {

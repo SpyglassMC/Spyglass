@@ -10,7 +10,7 @@ const REPO_URL = 'https://github.com/SpyglassMC/Spyglass'
 
 async function main() {
 	const repoRoot = path.join(__dirname, '..')
-	const gitLog = await execFile('git', ['log', "--pretty=format:%H %an %s"], { cwd: repoRoot })
+	const gitLog = await execFile('git', ['log', '--pretty=format:%H %an %s'], { cwd: repoRoot })
 	const commits = gitLog.stdout.split('\n')
 		.map(line => {
 			const [hash, author, ...messageParts] = line.split(' ')
@@ -26,7 +26,10 @@ async function main() {
 		const match = c.message.match(/ \((#[0-9]+)\)$/)
 		const pr = match ? ` ([${match[1]}](${REPO_URL}/pull/${match[1].slice(1)}))` : ''
 		let message = match ? c.message.slice(0, c.message.length - match[0].length) : c.message
-		message = message.replace(/^[:\w]*:?\s?/, '').replace(/^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}✨🐛]+\s?/u, '') // Uhhh ChatGPT did this
+		message = message.replace(/^[:\w]*:?\s?/, '').replace(
+			/^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}✨🐛]+\s?/u,
+			'',
+		) // Uhhh ChatGPT did this
 		if (c.message.startsWith(':sparkles:') || c.message.startsWith('✨')) {
 			newFeatures.push(`- ${hash} ${message}${pr}`)
 		} else if (c.message.startsWith(':bug:') || c.message.startsWith('🐛')) {
@@ -44,7 +47,7 @@ async function main() {
 	}
 
 	const existingContent = await readFile(CHANGELOG_PATH, 'utf-8')
-	await writeFile(CHANGELOG_PATH, `${lines.join('\n')}\n${existingContent}`, { encoding: 'utf-8'})
+	await writeFile(CHANGELOG_PATH, `${lines.join('\n')}\n${existingContent}`, { encoding: 'utf-8' })
 }
 
 main()

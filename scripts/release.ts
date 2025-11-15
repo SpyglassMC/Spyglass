@@ -1,4 +1,4 @@
-// Usage: ts-node scripts/release.td [--dry-run]
+// Usage: node scripts/release.ts [--dry-run]
 // Environment Variables:
 // - BOT_EMAIL
 // - BOT_NAME
@@ -8,15 +8,21 @@ import cp from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import { promisify } from 'util'
-import { PackagesInfo, PackageVersion, readPackagesInfo, savePackagesInfo } from './common'
+import {
+	type PackagesInfo,
+	type PackageVersion,
+	readPackagesInfo,
+	savePackagesInfo,
+} from './common.ts'
 
 const execFile = promisify(cp.execFile)
 
-const enum BumpType {
-	Patch,
-	Minor,
-	Major,
-}
+const BumpType = Object.freeze({
+	Patch: 0,
+	Minor: 1,
+	Major: 2,
+})
+type BumpType = (typeof BumpType)[keyof typeof BumpType]
 
 function bumpTypeToString(type: BumpType): string {
 	return ['patch', 'minor', 'major'][type]
@@ -37,23 +43,33 @@ function getCommitType(emoji: string | number | undefined): BumpType {
 }
 
 interface Commit {
-	hash: string,
-	message: string,
-	type: BumpType,
+	hash: string
+	message: string
+	type: BumpType
 }
 
 async function getRootVersion(): Promise<string> {
-	const latestCommitHash = (await execFile('git', ['rev-parse', 'HEAD'], { cwd: path.join(__dirname, '..') })).stdout.trim()
+	const latestCommitHash =
+		(await execFile('git', ['rev-parse', 'HEAD'], { cwd: path.join(__dirname, '..') })).stdout
+			.trim()
 	const time = new Date()
-	return `${time.getUTCFullYear()}.${time.getUTCMonth() + 1}.${time.getUTCDate()}+${latestCommitHash.slice(0, 6)}`
+	return `${time.getUTCFullYear()}.${time.getUTCMonth() + 1}.${time.getUTCDate()}+${
+		latestCommitHash.slice(0, 6)
+	}`
 }
 
 async function getPackageCommits(name: string): Promise<Commit[]> {
-	const result = await execFile('git', ['log', '--format=format:%H %s', '--', `packages/${name}`], { cwd: path.join(__dirname, '..') })
+	const result = await execFile(
+		'git',
+		['log', '--format=format:%H %s', '--', `packages/${name}`],
+		{ cwd: path.join(__dirname, '..') },
+	)
 	return result.stdout.split(/\r?\n/).map(line => {
 		const [hash, ...messageParts] = line.split(' ')
 		const message = messageParts.join(' ').trimStart()
-		const emoji = message.startsWith(':') ? message.slice(0, message.indexOf(':', 1) + 1) : message.codePointAt(0)
+		const emoji = message.startsWith(':')
+			? message.slice(0, message.indexOf(':', 1) + 1)
+			: message.codePointAt(0)
 		const ans: Commit = {
 			hash,
 			message,
@@ -64,7 +80,11 @@ async function getPackageCommits(name: string): Promise<Commit[]> {
 }
 
 function bumpVersion(version: PackageVersion, type: BumpType): PackageVersion {
-	function getVersion(major: number | bigint, minor: number | bigint, patch: number | bigint): PackageVersion {
+	function getVersion(
+		major: number | bigint,
+		minor: number | bigint,
+		patch: number | bigint,
+	): PackageVersion {
 		return `${major}.${minor}.${patch}` as PackageVersion
 	}
 
@@ -83,8 +103,8 @@ function bumpVersion(version: PackageVersion, type: BumpType): PackageVersion {
 }
 
 interface PackageJson {
-	version: string,
-	dependencies?: Record<string, string>,
+	version: string
+	dependencies?: Record<string, string>
 }
 
 function setPackageJsons(infos: PackagesInfo, isDryRun: boolean) {
@@ -98,7 +118,8 @@ function setPackageJsons(infos: PackagesInfo, isDryRun: boolean) {
 			if (info.dependencies?.length) {
 				packageJson.dependencies ??= {}
 				for (const dependency of info.dependencies) {
-					packageJson.dependencies[`@spyglassmc/${dependency}`] = infos[dependency].released!.version
+					packageJson.dependencies[`@spyglassmc/${dependency}`] =
+						infos[dependency].released!.version
 				}
 			}
 			fs.writeFileSync(filePath, JSON.stringify(packageJson, undefined, 2) + '\n', 'utf-8')
@@ -107,7 +128,12 @@ function setPackageJsons(infos: PackagesInfo, isDryRun: boolean) {
 	}
 }
 
-async function shell(file: string, args: readonly string[], cwd: string, env?: Record<string, string>) {
+async function shell(
+	file: string,
+	args: readonly string[],
+	cwd: string,
+	env?: Record<string, string>,
+) {
 	console.log(`Running ${file} with ${JSON.stringify(args)} at ${cwd}...`)
 	const result = await execFile(file, args, { cwd, env })
 	console.log(result.stdout.split(/\r?\n/).map(v => `\t${v}`).join('\n'))
@@ -117,7 +143,13 @@ async function shell(file: string, args: readonly string[], cwd: string, env?: R
 	return result
 }
 
-async function dryRunableShell(isDryRun: boolean, file: string, args: readonly string[], cwd: string, env?: Record<string, string>): Promise<unknown> {
+async function dryRunableShell(
+	isDryRun: boolean,
+	file: string,
+	args: readonly string[],
+	cwd: string,
+	env?: Record<string, string>,
+): Promise<unknown> {
 	if (isDryRun) {
 		console.log(`[Dry run mode] Would have run ${file} with ${JSON.stringify(args)} at ${cwd}.`)
 	} else {
@@ -128,7 +160,7 @@ async function dryRunableShell(isDryRun: boolean, file: string, args: readonly s
 
 async function main(): Promise<void> {
 	if (process.argv[2] && process.argv[2] !== '--dry-run') {
-		throw new Error('Usage: ts-node scripts/release.td [--dry-run]')
+		throw new Error('Usage: node scripts/release.ts [--dry-run]')
 	}
 
 	const isDryRun = !!process.argv[2]
@@ -155,7 +187,7 @@ async function main(): Promise<void> {
 
 	const addPackageToBump = (name: string, type: BumpType): void => {
 		if (packagesToBump.has(name)) {
-			packagesToBump.set(name, Math.max(packagesToBump.get(name)!, type))
+			packagesToBump.set(name, Math.max(packagesToBump.get(name)!, type) as BumpType)
 		} else {
 			packagesToBump.set(name, type)
 			for (const [key, info] of Object.entries(packagesInfo)) {
@@ -183,8 +215,12 @@ async function main(): Promise<void> {
 				if (commit.hash === info.released.commit) {
 					break
 				}
-				type = type === undefined ? commit.type : Math.max(type, commit.type)
-				console.log(`\t${commit.hash} is ${bumpTypeToString(commit.type)}; proper bump is ${bumpTypeToString(type)}`)
+				type = type === undefined ? commit.type : Math.max(type, commit.type) as BumpType
+				console.log(
+					`\t${commit.hash} is ${bumpTypeToString(commit.type)}; proper bump is ${
+						bumpTypeToString(type)
+					}`,
+				)
 			}
 			if (type !== undefined) {
 				info.released.commit = commits[0].hash
@@ -203,7 +239,11 @@ async function main(): Promise<void> {
 		} else {
 			const oldVersion = info.released!.version
 			info.released!.version = bumpVersion(packagesInfo[key].released!.version, type)
-			versionSummaries.push(`${displayableKey} ${oldVersion} -> ${info.released!.version} (${bumpTypeToString(type)})`)
+			versionSummaries.push(
+				`${displayableKey} ${oldVersion} -> ${info.released!.version} (${
+					bumpTypeToString(type)
+				})`,
+			)
 		}
 	}
 	const versionSummary = versionSummaries.join('\n')
@@ -233,9 +273,20 @@ async function main(): Promise<void> {
 		} as const
 		await dryRunableShell(isDryRun, 'git', ['restore', 'packages/*/package.json'], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['add', '.'], RepoRoot)
-		await dryRunableShell(isDryRun, 'git', ['commit', `-m ${commitMessage}\n\n${versionSummary}`], RepoRoot, commitEnvVariables)
+		await dryRunableShell(
+			isDryRun,
+			'git',
+			['commit', `-m ${commitMessage}\n\n${versionSummary}`],
+			RepoRoot,
+			commitEnvVariables,
+		)
 		await dryRunableShell(isDryRun, 'git', ['tag', `v${rootVersion}`], RepoRoot)
-		await dryRunableShell(isDryRun, 'git', ['remote', 'set-url', 'origin', `https://${botName}:${githubToken}@github.com/SpyglassMC/Spyglass.git`], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', [
+			'remote',
+			'set-url',
+			'origin',
+			`https://${botName}:${githubToken}@github.com/SpyglassMC/Spyglass.git`,
+		], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['pull', '--rebase'], RepoRoot, commitEnvVariables)
 		await dryRunableShell(isDryRun, 'git', ['push'], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['push', '--tags'], RepoRoot)

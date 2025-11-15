@@ -1,5 +1,5 @@
 import { SymbolFormatter, UriBinderContext } from '@spyglassmc/core'
-import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
+import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import { uriBinder } from '@spyglassmc/mcdoc/lib/uri_processors.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'

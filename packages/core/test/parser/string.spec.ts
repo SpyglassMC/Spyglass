@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type { StringOptions } from '../../lib/index.js'
 import { BrigadierUnquotableCharacterSet, string } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('string()', () => {
 	const suites: { title: string; options: StringOptions; contents: string[] }[] = [{

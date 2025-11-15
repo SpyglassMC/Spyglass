@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type { ResourceLocationOptions } from '../../lib/index.js'
 import { resourceLocation } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('resourceLocation()', () => {
 	const suites: { options: ResourceLocationOptions; content: string }[] = [

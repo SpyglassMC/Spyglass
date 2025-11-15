@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { float } from '../../lib/index.js'
 import type { Options } from '../../lib/parser/float.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('float()', () => {
 	const pattern = /[-+]?(?:[0-9]+\.|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?/i

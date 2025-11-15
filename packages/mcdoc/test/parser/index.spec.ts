@@ -1,9 +1,5 @@
 import type { Parser } from '@spyglassmc/core'
-import {
-	showWhitespaceGlyph,
-	snapshotWithUri,
-	testParser,
-} from '@spyglassmc/core/test-out/utils.js'
+import { showWhitespaceGlyph, snapshotWithUri, testParser } from '@spyglassmc/core/test/utils.ts'
 import { describe, it } from 'mocha'
 
 const Suites: Record<
@@ -265,7 +261,7 @@ describe('mcdoc parser', async () => {
 			const parser =
 				(functionParams ? importedParser(...functionParams) : importedParser) as Parser
 			const describeTitle = `${parserName}${functionParams ? '()' : ''}`
-			const uri = new URL(`./${directory}/${parserName}.spec.js`, import.meta.url)
+			const uri = new URL(`./${directory}/${parserName}.spec.ts.js`, import.meta.url)
 			describe(describeTitle, () => {
 				for (const content of Suites[directory as keyof typeof Suites][parserName].content) {
 					const itTitle = `Parse "${showWhitespaceGlyph(content)}"`

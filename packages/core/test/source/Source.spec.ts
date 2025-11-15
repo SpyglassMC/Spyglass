@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type { IndexMap } from '../../lib/index.js'
 import { Range, Source } from '../../lib/index.js'
-import { markOffsetInString, showWhitespaceGlyph } from '../utils.js'
+import { markOffsetInString, showWhitespaceGlyph } from '../utils.ts'
 
 describe('Source', () => {
 	describe('getCharRange()', () => {

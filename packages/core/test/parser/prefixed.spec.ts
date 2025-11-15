@@ -3,7 +3,7 @@ import snapshot from 'snap-shot-it'
 import type { BooleanNode } from '../../lib/index.js'
 import { boolean } from '../../lib/index.js'
 import { type Options, prefixed } from '../../lib/parser/prefixed.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('prefixed()', () => {
 	const options: Options<BooleanNode> = { prefix: '!', child: boolean }

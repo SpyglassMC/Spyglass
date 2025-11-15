@@ -3,7 +3,7 @@ import snapshot from 'snap-shot-it'
 import type { StringNode } from '../../lib/index.js'
 import { list, string } from '../../lib/index.js'
 import type { Options } from '../../lib/parser/list.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('list()', () => {
 	const quotedString = string({ quotes: ['"'] })

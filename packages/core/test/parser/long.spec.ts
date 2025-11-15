@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { long } from '../../lib/index.js'
 import type { Options } from '../../lib/parser/long.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('long()', () => {
 	const pattern = /^[+-]?(?:0|[1-9][0-9]*)$/

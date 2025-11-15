@@ -1,5 +1,5 @@
 import { MetaRegistry } from '@spyglassmc/core'
-import { SimpleProject, snapshotWithUri } from '@spyglassmc/core/test-out/utils.js'
+import { SimpleProject, snapshotWithUri } from '@spyglassmc/core/test/utils.ts'
 import { initialize } from '@spyglassmc/mcdoc'
 import fs from 'fs/promises'
 import { URL } from 'url'
@@ -25,7 +25,10 @@ describe('mcdoc __fixture__', async () => {
 			await project.bind()
 			snapshotWithUri({
 				specName: `mcdoc __fixture__ ${caseName}`,
-				uri: new URL(`./__fixture__/${caseNameToFileName(caseName)}.spec.js`, import.meta.url),
+				uri: new URL(
+					`./__fixture__/${caseNameToFileName(caseName)}.spec.ts.js`,
+					import.meta.url,
+				),
 				value: project.dumpState(['global', 'nodes']),
 			})
 		})

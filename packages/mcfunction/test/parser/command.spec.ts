@@ -1,9 +1,9 @@
-import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
+import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
 import { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { command } from '../../lib/parser/index.js'
-import { tree } from './utils.js'
+import { tree } from './utils.ts'
 
 describe('mcfunction parser command()', () => {
 	const cases: { content: string }[] = [

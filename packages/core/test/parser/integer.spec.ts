@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { integer } from '../../lib/index.js'
 import type { Options } from '../../lib/parser/integer.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('integer()', () => {
 	const pattern = /^[+-]?(?:0|[1-9][0-9]*)$/

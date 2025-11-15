@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { comment } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('comment()', () => {
 	const suites: { prefixes: Set<string>; content: string }[] = [

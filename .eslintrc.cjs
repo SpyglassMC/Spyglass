@@ -27,7 +27,6 @@ module.exports = {
 		"**/dist",
 		"**/lib",
 		"**/out",
-		"**/test-out",
 
 		"/scripts",
 	],

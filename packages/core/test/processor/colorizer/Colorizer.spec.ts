@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { ColorToken, Range } from '../../../lib/index.js'
-import { showWhitespaceGlyph } from '../../utils.js'
+import { showWhitespaceGlyph } from '../../utils.ts'
 
 describe('ColorToken', () => {
 	describe('fillGap()', () => {

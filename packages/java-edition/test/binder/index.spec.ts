@@ -1,5 +1,5 @@
 import { UriBinderContext, VanillaConfig } from '@spyglassmc/core'
-import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
+import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { dissectUri, registerCustomResources } from '../../lib/binder/index.js'

@@ -1,4 +1,4 @@
-import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
+import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
 import snapshot from 'snap-shot-it'
 import { number } from '../../lib/parser/number.js'
 

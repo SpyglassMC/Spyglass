@@ -1,5 +1,5 @@
 import type * as core from '@spyglassmc/core'
-import { showWhitespaceGlyph } from '@spyglassmc/core/test-out/utils.js'
+import { showWhitespaceGlyph } from '@spyglassmc/core/test/utils.ts'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type * as ls from 'vscode-languageserver/node.js'

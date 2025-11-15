@@ -181,7 +181,7 @@ export function snapshotWithUri(
 		what: value,
 		file: fileURLToPath(uri),
 		specName,
-		ext: '.spec.js',
+		ext: '.spec.ts.js',
 		opts: { sortSnapshots: true, useRelativePath: true },
 	})
 }
@@ -199,27 +199,33 @@ export class SimpleProject {
 
 	readonly #symbols = new SymbolUtil(this.#global, NodeJsExternals.event.EventEmitter)
 
+	readonly #meta: MetaRegistry
+	readonly #files: readonly { uri: string; content: string }[]
+
 	#hasDumped = false
 
 	get projectData(): ProjectData {
 		return mockProjectData({
 			cacheRoot: 'file:///.cache/',
 			ensureBindingStarted: async (uri) => this.bindSingleFile(uri),
-			meta: this.meta,
+			meta: this.#meta,
 			roots: ['file:///'],
 			symbols: this.#symbols,
 		})
 	}
 
 	constructor(
-		private readonly meta: MetaRegistry,
-		private readonly files: readonly { uri: string; content: string }[],
+		meta: MetaRegistry,
+		files: readonly { uri: string; content: string }[],
 	) {
+		this.#meta = meta
+		this.#files = files
+
 		// Bind URIs
 		const ctx = UriBinderContext.create(this.projectData)
 		ctx.symbols.contributeAs('uri_binder', () => {
 			const uris = files.map((f) => f.uri)
-			for (const binder of this.meta.uriBinders) {
+			for (const binder of this.#meta.uriBinders) {
 				binder(uris, ctx)
 			}
 		})
@@ -230,13 +236,13 @@ export class SimpleProject {
 			throw new Error('dumpState() has been called.')
 		}
 
-		for (const { uri, content } of this.files) {
+		for (const { uri, content } of this.#files) {
 			const src = new Source(content)
 			const languageId = uri.slice(uri.lastIndexOf('.') + 1)
 			const ctx = ParserContext.create(this.projectData, {
 				doc: TextDocument.create(uri, languageId, 0, content),
 			})
-			const parser = this.meta.getParserForLanguageId(languageId)!
+			const parser = this.#meta.getParserForLanguageId(languageId)!
 			const node = file(parser)(src, ctx)
 			this.#nodes[uri] = node
 		}
@@ -247,7 +253,7 @@ export class SimpleProject {
 			throw new Error('dumpState() has been called.')
 		}
 
-		for (const { uri, content } of this.files) {
+		for (const { uri, content } of this.#files) {
 			await this.bindSingleFile(uri, content)
 		}
 	}
@@ -255,7 +261,7 @@ export class SimpleProject {
 	readonly #bindingInProgressUris = new Set<string>()
 	private async bindSingleFile(
 		uri: string,
-		content: string = this.files.find((f) => f.uri === uri)?.content!,
+		content: string = this.#files.find((f) => f.uri === uri)?.content!,
 	): Promise<void> {
 		if (this.#bindingInProgressUris.has(uri)) {
 			return
@@ -264,7 +270,7 @@ export class SimpleProject {
 		this.#bindingInProgressUris.add(uri)
 		const node = this.#nodes[uri]
 		try {
-			const binder = this.meta.getBinder(node.type)
+			const binder = this.#meta.getBinder(node.type)
 			const ctx = BinderContext.create(this.projectData, {
 				doc: TextDocument.create(uri, '', 0, content),
 			})

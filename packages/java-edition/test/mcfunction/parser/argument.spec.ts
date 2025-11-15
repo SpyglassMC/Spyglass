@@ -3,7 +3,7 @@ import {
 	showWhitespaceGlyph,
 	snapshotWithUri,
 	testParser,
-} from '@spyglassmc/core/test-out/utils.js'
+} from '@spyglassmc/core/test/utils.ts'
 import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.js'
 import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
 import * as json from '@spyglassmc/json'
@@ -239,7 +239,7 @@ describe('mcfunction argument parser', () => {
 							uri: new URL(
 								`./argument/${
 									parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())
-								}.spec.js`,
+								}.spec.ts.js`,
 								import.meta.url,
 							),
 							value: testParser(argument(treeNode, [])!, string, {

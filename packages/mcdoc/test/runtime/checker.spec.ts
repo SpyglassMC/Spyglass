@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core/lib/index.js'
-import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
+import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import { localeQuote } from '@spyglassmc/locales'
 import { McdocCheckerContext, typeDefinition } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
 import type { McdocType, UnionType } from '@spyglassmc/mcdoc/lib/type/index.js'

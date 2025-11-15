@@ -3,8 +3,9 @@
 	"private": true,
 	"version": "1.0.0",
 	"license": "MIT",
+	"type": "module",
 	"engines": {
-		"node": "^18.18.0 || >=20.0.0"
+		"node": ">=20.0.0"
 	},
 	"scripts": {
 		"ansible:prod": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml",
@@ -13,7 +14,7 @@
 		"build:dev": "wireit",
 		"watch": "npm run build:dev --watch",
 		"clean": "tsc -b packages --clean",
-		"clean:full": "rm -rf packages/*/lib packages/*/out packages/*/dist packages/*/test-out packages/*/*.tsbuildinfo .wireit packages/*/.wireit",
+		"clean:full": "rm -rf packages/*/lib packages/*/out packages/*/dist packages/*/*.tsbuildinfo .wireit packages/*/.wireit",
 		"commit": "gitmoji -c",
 		"docs:install": "cd docs && (bundle || true) && cd ..",
 		"docs:start": "cd docs && (bundle exec jekyll serve --incremental || true) && cd ..",
@@ -21,9 +22,9 @@
 		"fmt:check": "dprint check",
 		"lint": "eslint --cache --max-warnings=0 \"packages/*/{src,test}/**/*.{cts,mts,ts}\"",
 		"lint:fix": "eslint --cache --max-warnings=0 --fix \"packages/*/{src,test}/**/*.{cts,mts,ts}\"",
-		"release": "ts-node scripts/release.ts",
-		"release:dry": "ts-node scripts/release.ts --dry-run",
-		"set-tsconfig-references": "ts-node scripts/set_tsconfig_references",
+		"release": "node scripts/release.ts",
+		"release:dry": "node scripts/release.ts --dry-run",
+		"set-tsconfig-references": "node scripts/set_tsconfig_references",
 		"start-discord-bot": "node packages/discord-bot/lib/index.js",
 		"start-web-api-server": "npm start --workspace=packages/web-api-server",
 		"test": "nyc mocha",
@@ -79,7 +80,6 @@
 		"source-map-loader": "^4.0.1",
 		"source-map-support": "^0.5.21",
 		"ts-loader": "^9.4.2",
-		"ts-node": "^10.9.1",
 		"typescript": "^5.9.3",
 		"webpack": "^5.95.0",
 		"webpack-cli": "^5.0.2",

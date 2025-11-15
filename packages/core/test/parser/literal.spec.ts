@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type { LiteralOptions } from '../../lib/index.js'
 import { literal } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('literal()', () => {
 	const cases: { options: string[] | [LiteralOptions]; content: string }[] = [

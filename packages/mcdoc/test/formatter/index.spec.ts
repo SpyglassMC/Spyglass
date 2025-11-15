@@ -1,6 +1,6 @@
 import type { AstNode } from '@spyglassmc/core'
 import { FormatterContext, MetaRegistry } from '@spyglassmc/core'
-import { mockProjectData, testParser } from '@spyglassmc/core/test-out/utils.js'
+import { mockProjectData, testParser } from '@spyglassmc/core/test/utils.ts'
 import { strict as assert } from 'assert'
 import fs from 'fs/promises'
 import { describe, it } from 'mocha'

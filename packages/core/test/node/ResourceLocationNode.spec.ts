@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert'
 import { describe, it } from 'mocha'
 import { ResourceLocationNode } from '../../lib/index.js'
-import { showWhitespaceGlyph } from '../utils.js'
+import { showWhitespaceGlyph } from '../utils.ts'
 
 describe('ResourceLocationNode', () => {
 	describe('toString()', () => {

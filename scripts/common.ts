@@ -1,17 +1,17 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 
 export type PackageName = `@spyglassmc/${string}`
 export type PackageVersion = `${bigint}.${bigint}.${bigint}`
 
 export type PackagesInfo = Record<string, PackageInfo>
 export interface PackageInfo {
-	dependencies?: string[],
-	devDependencies?: string[],
+	dependencies?: string[]
+	devDependencies?: string[]
 	released?: {
-		commit: string,
-		version: PackageVersion,
-	},
+		commit: string
+		version: PackageVersion
+	}
 }
 
 export function readPackagesInfo(): PackagesInfo {
