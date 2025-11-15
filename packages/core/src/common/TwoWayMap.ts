@@ -62,19 +62,19 @@ export class TwoWayMap<K, V> implements Map<K, V> {
 		}
 	}
 
-	entries(): IterableIterator<[K, V]> {
+	entries(): MapIterator<[K, V]> {
 		return this._map.entries()
 	}
 
-	keys(): IterableIterator<K> {
+	keys(): MapIterator<K> {
 		return this._map.keys()
 	}
 
-	values(): IterableIterator<V> {
+	values(): MapIterator<V> {
 		return this._map.values()
 	}
 
-	[Symbol.iterator](): IterableIterator<[K, V]> {
+	[Symbol.iterator](): MapIterator<[K, V]> {
 		return this._map.entries()
 	}
 

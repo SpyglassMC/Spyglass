@@ -13,7 +13,7 @@ import type streamWeb from 'node:stream/web'
 import url from 'node:url'
 import { promisify } from 'node:util'
 import zlib from 'node:zlib'
-import type { RootUriString } from '../../index.js'
+import type { DecompressedFile, RootUriString } from '../../index.js'
 import { Uri } from '../util.js'
 import type { Externals, FsLocation, FsWatcher } from './index.js'
 
@@ -28,7 +28,10 @@ export function getNodeJsExternals({ cacheRoot }: { cacheRoot?: RootUriString } 
 					if (!(buffer instanceof Buffer)) {
 						buffer = Buffer.from(buffer)
 					}
-					return decompress(buffer as Buffer, { strip: options?.stripLevel })
+					return decompress(
+						buffer as Buffer<ArrayBuffer>,
+						{ strip: options?.stripLevel },
+					) as Promise<DecompressedFile[]>
 				},
 				gunzip(buffer) {
 					return gunzip(buffer)

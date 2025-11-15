@@ -187,7 +187,10 @@ export function promisifyAsyncIterable<T, U>(
 	})()
 }
 
-export async function parseGzippedJson(externals: Externals, buffer: Uint8Array): Promise<unknown> {
+export async function parseGzippedJson(
+	externals: Externals,
+	buffer: Uint8Array<ArrayBuffer>,
+): Promise<unknown> {
 	return JSON.parse(bufferToString(await externals.archive.gunzip(buffer)))
 }
 

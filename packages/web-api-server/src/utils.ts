@@ -1,17 +1,15 @@
 import { Mutex } from 'async-mutex'
 import type { NextFunction, Request, Response } from 'express'
-import { spawn as spawnCallback } from 'node:child_process'
+import { type ChildProcess, execFile as execFileCallback, spawn } from 'node:child_process'
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { Transform } from 'node:stream'
+import { Writable } from 'node:stream'
 import { promisify } from 'node:util'
 import type { Logger } from 'pino'
-import simpleGit, { GitConstructError } from 'simple-git'
-import type { SimpleGit } from 'simple-git'
 
-const spawn = promisify(spawnCallback)
-const gitMutex = new Mutex()
+const execFile = promisify(execFileCallback)
+const gitMutexes = new Map<string, Mutex>()
 
 interface Config {
 	bunnyCdnApiKey: string
@@ -66,21 +64,32 @@ export async function assertRootDir(rootDir: string) {
 	}
 }
 
-function createErrorStream(logger: Logger) {
-	return new Transform({
-		transform(chunk, _encoding, callback) {
-			logger.error(chunk.toString().trimEnd())
+function createLoggerStream(
+	repo: string,
+	fd: 'stdout' | 'stderr',
+	logger: Logger,
+	level: 'debug' | 'error' | 'info',
+) {
+	return new Writable({
+		write(chunk, _encoding, callback) {
+			logger[level]({ repo, fd }, chunk.toString().trimEnd())
 			callback()
 		},
 	})
 }
 
-const defaultOutputHandler = (
-	_command: string,
-	_stdout: NodeJS.ReadableStream,
-	stderr: NodeJS.ReadableStream,
-) => {
-	stderr.pipe(process.stderr)
+function pipeChildStdioToLogger(repo: string, child: ChildProcess, logger: Logger) {
+	child.stdout?.pipe(createLoggerStream(repo, 'stdout', logger, 'debug'))
+	child.stderr?.pipe(createLoggerStream(repo, 'stderr', logger, 'debug'))
+}
+
+function pipeChildStdioToResponse(repo: string, child: ChildProcess, res: Response) {
+	child.stdout?.pipe(res)
+	child.stderr?.pipe(createLoggerStream(repo, 'stderr', res.log, 'error'))
+}
+
+function childProcessExits(child: ChildProcess) {
+	return new Promise((resolve) => child.on('exit', resolve))
 }
 
 /**
@@ -88,63 +97,93 @@ const defaultOutputHandler = (
  * directory path for each of the local repos.
  */
 export async function initGitRepos(logger: Logger, rootDir: string) {
-	const gitCloner = simpleGit({})
-		.outputHandler((_command, stdout, stderr) => {
-			stdout.pipe(process.stdout)
-			stderr.pipe(process.stderr)
-		})
-
 	async function initGitRepo(owner: string, repo: string) {
 		const repoDir = path.join(rootDir, repo)
-		const getRepoGit = () => simpleGit({ baseDir: repoDir }).outputHandler(defaultOutputHandler)
-		let repoGit: SimpleGit
 		try {
-			repoGit = getRepoGit() // Throws if the directory does not exist.
+			await fs.access(repoDir)
 			logger.info({ owner, repo }, 'Already cloned')
-			await updateGitRepo(logger, repo, repoGit)
+			await updateGitRepo(logger, repo, repoDir)
 		} catch (e) {
-			if (e instanceof GitConstructError && e.message.match(/directory.*not exist/i)) {
+			if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
 				logger.info({ owner, repo }, 'Cloning...')
-				await gitCloner.clone(
-					`git@github.com:${owner}/${repo}.git`,
-					path.join(rootDir, repo),
-					['--mirror', '--progress'],
+				const clonerChild = spawn(
+					'git',
+					['clone', `git@github.com:${owner}/${repo}.git`, repoDir, '--mirror', '--progress'],
 				)
-				repoGit = getRepoGit()
+				pipeChildStdioToLogger(repo, clonerChild, logger)
+				await childProcessExits(clonerChild)
+
 				// Make sure 'git repack' doesn't take up all RAM for mcmeta.
 				// https://stackoverflow.com/a/4829883
-				await repoGit.addConfig('pack.windowMemory', '10m')
-				await repoGit.addConfig('pack.packSizeLimit', '20m')
+				let configChild = spawn(
+					'git',
+					['config', 'pack.windowMemory', '10m'],
+					{ cwd: repoDir },
+				)
+				pipeChildStdioToLogger(repo, configChild, logger)
+				await childProcessExits(configChild)
+
+				configChild = spawn(
+					'git',
+					['config', 'pack.packSizeLimit', '20m'],
+					{ cwd: repoDir },
+				)
+				pipeChildStdioToLogger(repo, configChild, logger)
+				await childProcessExits(configChild)
+
 				logger.info({ owner, repo }, 'Cloned')
 			} else {
 				throw e
 			}
 		}
-		return repoGit
+		return repoDir
 	}
 
+	const [mcmeta, vanillaMcdoc] = await Promise.all([
+		initGitRepo('misode', 'mcmeta'),
+		initGitRepo('SpyglassMC', 'vanilla-mcdoc'),
+	])
+
 	return {
-		mcmeta: await initGitRepo('misode', 'mcmeta'),
-		'vanilla-mcdoc': await initGitRepo('SpyglassMC', 'vanilla-mcdoc'),
+		mcmeta,
+		'vanilla-mcdoc': vanillaMcdoc,
 	}
 }
 
-export async function updateGitRepo(logger: Logger, name: string, git: SimpleGit) {
-	await gitMutex.runExclusive(async () => {
-		logger.debug({ repo: name }, 'Updating...')
-		await git.remote(['update', '--prune'])
-		logger.debug({ repo: name }, 'Updated')
+export async function updateGitRepo(logger: Logger, repo: string, repoDir: string) {
+	await getGitMutex(repo).runExclusive(async () => {
+		logger.debug({ repo }, 'Updating...')
+		const child = spawn('git', ['remote', 'update', '--prune'], {
+			cwd: repoDir,
+		})
+		pipeChildStdioToLogger(repo, child, logger)
+		await childProcessExits(child)
+		logger.debug({ repo }, 'Updated')
 	})
+}
+
+function getGitMutex(repo: string): Mutex {
+	if (gitMutexes.has(repo)) {
+		return gitMutexes.get(repo)!
+	}
+
+	const mutex = new Mutex()
+	gitMutexes.set(repo, mutex)
+	return mutex
 }
 
 export async function sendGitFile(
 	req: Request,
 	res: Response,
-	git: SimpleGit,
+	repoDir: string,
 	branch: string,
-	path: string,
+	filePath: string,
 ) {
-	const hash = (await git.log(['--format=%H', '-1', branch, '--', path])).latest!.hash
+	const hash = (await execFile(
+		'git',
+		['log', '--format=%H', '-1', branch, '--', filePath],
+		{ cwd: repoDir },
+	)).stdout.trim()
 	// Git commit sha is a [weak validator](https://datatracker.ietf.org/doc/html/rfc2616#section-3.11),
 	// since the same value is used for different representations of the same resource (e.g. gzip
 	// compressed v.s. no compression). It can only guarantee semantic equivalence, not byte-for-byte
@@ -153,45 +192,49 @@ export async function sendGitFile(
 	res.setHeader('ETag', etag)
 	if (req.headers['if-none-match'] === etag) {
 		res.status(304).end()
-	} else {
-		git.outputHandler((_command, stdout, stderr) => {
-			stdout.pipe(res)
-			stderr.pipe(createErrorStream(req.log))
-		})
-		try {
-			await git.show(`${branch}:${path}`)
-		} finally {
-			git.outputHandler(defaultOutputHandler)
-		}
+		return
 	}
+
+	const child = spawn(
+		'git',
+		['show', `${branch}:${filePath}`],
+		{ cwd: repoDir },
+	)
+	pipeChildStdioToResponse(repoDir, child, res)
+	await childProcessExits(child)
 }
 
 export async function sendGitTarball(
 	req: Request,
 	res: Response,
-	git: SimpleGit,
+	repoDir: string,
 	branch: string,
 	fileName = branch,
 ) {
-	const hash = (await git.log(['--format=%H', '-1', branch])).latest!.hash
+	const hash = (await execFile(
+		'git',
+		['log', '--format=%H', '-1', branch],
+		{ cwd: repoDir },
+	)).stdout.trim()
 	// See comments in sendGitFile() for why this is a weak validator.
 	const etag = `W/"${hash}"`
 	res.setHeader('ETag', etag)
 	if (req.headers['if-none-match'] === etag) {
 		res.status(304).end()
-	} else {
-		res.contentType('application/gzip')
-		res.appendHeader('Content-Disposition', `attachment; filename="${fileName}.tar.gz"`)
-		git.outputHandler((_command, stdout, stderr) => {
-			stdout.pipe(res)
-			stderr.pipe(createErrorStream(req.log))
-		})
-		try {
-			await git.raw(['archive', '--format=tar.gz', branch])
-		} finally {
-			git.outputHandler(defaultOutputHandler)
-		}
+		return
 	}
+
+	res
+		.type('application/gzip')
+		.attachment(`${fileName}.tar.gz`)
+
+	const child = spawn(
+		'git',
+		['archive', '--format=tar.gz', branch],
+		{ cwd: repoDir },
+	)
+	pipeChildStdioToResponse(repoDir, child, res)
+	await childProcessExits(child)
 }
 
 export function verifySignature(
@@ -244,7 +287,7 @@ export async function purgeCdnCache(apiKey: string, pullZoneId: string) {
 }
 
 export function systemdNotify(variable: string) {
-	return spawn('systemd-notify', [`${variable}=1`], {})
+	return execFile('systemd-notify', [`${variable}=1`])
 }
 
 export const getVersionValidator =
@@ -262,13 +305,16 @@ export const getVersionValidator =
 export class MemCache {
 	#versions: { id: string }[] | undefined
 
-	constructor(private readonly mcmetaGit: SimpleGit) {}
+	constructor(private readonly mcmetaDir: string) {}
 
 	async getVersions() {
 		if (!this.#versions) {
-			this.#versions = JSON.parse(await this.mcmetaGit.show('summary:versions/data.json')) as {
-				id: string
-			}[]
+			const content = (await execFile(
+				'git',
+				['show', 'summary:versions/data.json'],
+				{ cwd: this.mcmetaDir, maxBuffer: 10_000_000 },
+			)).stdout
+			this.#versions = JSON.parse(content) as { id: string }[]
 		}
 		return this.#versions
 	}

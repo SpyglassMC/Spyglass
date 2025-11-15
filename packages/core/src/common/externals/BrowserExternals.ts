@@ -96,7 +96,7 @@ class BrowserFileSystem implements ExternalFileSystem {
 		// Not implemented
 		return []
 	}
-	async readFile(location: FsLocation): Promise<Uint8Array> {
+	async readFile(location: FsLocation): Promise<Uint8Array<ArrayBuffer>> {
 		location = location.toString()
 		const entry = this.states[location]
 		if (!entry) {
@@ -131,14 +131,14 @@ class BrowserFileSystem implements ExternalFileSystem {
 	}
 	async writeFile(
 		location: FsLocation,
-		data: string | Uint8Array,
+		data: string | Uint8Array<ArrayBuffer>,
 		_options?: { mode: number } | undefined,
 	): Promise<void> {
 		location = location.toString()
 		if (typeof data === 'string') {
 			data = new TextEncoder().encode(data)
 		}
-		data = arrayBufferToBase64(data)
+		data = arrayBufferToBase64(data.buffer)
 		this.states[location] = { type: 'file', content: data }
 		this.saveStates()
 	}
@@ -150,10 +150,10 @@ export const BrowserExternals: Externals = {
 			throw new Error('decompressBall not supported on browser.')
 		},
 		async gunzip(buffer) {
-			return pako.inflate(buffer)
+			return pako.inflate(buffer) as Uint8Array<ArrayBuffer>
 		},
 		async gzip(buffer) {
-			return pako.gzip(buffer)
+			return pako.gzip(buffer) as Uint8Array<ArrayBuffer>
 		},
 	},
 	crypto: {
@@ -161,7 +161,7 @@ export const BrowserExternals: Externals = {
 			if (typeof data === 'string') {
 				data = new TextEncoder().encode(data)
 			}
-			const hash = await crypto.subtle.digest('SHA-1', data)
+			const hash = await crypto.subtle.digest('SHA-1', data.buffer)
 			return uint8ArrayToHex(new Uint8Array(hash))
 		},
 	},

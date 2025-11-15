@@ -3,17 +3,17 @@ import type { Uri } from '../util.js'
 export interface Externals {
 	archive: {
 		decompressBall: (
-			buffer: Uint8Array,
+			buffer: Uint8Array<ArrayBuffer>,
 			options?: { stripLevel?: number },
 		) => Promise<DecompressedFile[]>
-		gzip: (buffer: Uint8Array) => Promise<Uint8Array>
-		gunzip: (buffer: Uint8Array) => Promise<Uint8Array>
+		gzip: (buffer: Uint8Array<ArrayBuffer>) => Promise<Uint8Array<ArrayBuffer>>
+		gunzip: (buffer: Uint8Array<ArrayBuffer>) => Promise<Uint8Array<ArrayBuffer>>
 	}
 	crypto: {
 		/**
 		 * @returns SHA-1 digest of the given data in hexadecimal format.
 		 */
-		getSha1: (data: string | Uint8Array) => Promise<string>
+		getSha1: (data: string | Uint8Array<ArrayBuffer>) => Promise<string>
 	}
 	error: {
 		/**
@@ -34,7 +34,7 @@ export interface Externals {
 }
 
 export interface DecompressedFile {
-	data: Uint8Array
+	data: Uint8Array<ArrayBuffer>
 	mode: number
 	mtime: string
 	path: string
@@ -63,7 +63,7 @@ export interface ExternalFileSystem {
 	): Promise<
 		{ name: string; isDirectory(): boolean; isFile(): boolean; isSymbolicLink(): boolean }[]
 	>
-	readFile(location: FsLocation): Promise<Uint8Array>
+	readFile(location: FsLocation): Promise<Uint8Array<ArrayBuffer>>
 	/**
 	 * Show the file/directory in the platform-specific explorer program.
 	 *
@@ -78,7 +78,7 @@ export interface ExternalFileSystem {
 	 */
 	writeFile(
 		location: FsLocation,
-		data: string | Uint8Array,
+		data: string | Uint8Array<ArrayBuffer>,
 		options?: { mode: number },
 	): Promise<void>
 }

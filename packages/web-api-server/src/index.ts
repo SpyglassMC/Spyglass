@@ -66,8 +66,8 @@ process
 
 await assertRootDir(rootDir)
 
-const gits = await initGitRepos(logger, rootDir)
-const cache = new MemCache(gits.mcmeta)
+const repoDirs = await initGitRepos(logger, rootDir)
+const cache = new MemCache(repoDirs.mcmeta)
 
 const DOC_URI = 'https://spyglassmc.com/developer/web-api.html'
 const MAX_REQUST_BODY_SIZE = '2MB'
@@ -77,23 +77,23 @@ const versionRoute = express.Router({ mergeParams: true })
 	.use(getVersionValidator(cache))
 	.get('/block_states', async (req: Request<{ version: string }>, res) => {
 		const { version } = req.params
-		await sendGitFile(req, res, gits.mcmeta, `${version}-summary`, 'blocks/data.json')
+		await sendGitFile(req, res, repoDirs.mcmeta, `${version}-summary`, 'blocks/data.json')
 	})
 	.get('/commands', async (req: Request<{ version: string }>, res) => {
 		const { version } = req.params
-		await sendGitFile(req, res, gits.mcmeta, `${version}-summary`, 'commands/data.json')
+		await sendGitFile(req, res, repoDirs.mcmeta, `${version}-summary`, 'commands/data.json')
 	})
 	.get('/registries', async (req: Request<{ version: string }>, res) => {
 		const { version } = req.params
-		await sendGitFile(req, res, gits.mcmeta, `${version}-summary`, 'registries/data.json')
+		await sendGitFile(req, res, repoDirs.mcmeta, `${version}-summary`, 'registries/data.json')
 	})
 	.get('/vanilla-assets-tiny/tarball', async (req: Request<{ version: string }>, res) => {
 		const { version } = req.params
-		await sendGitTarball(req, res, gits.mcmeta, `${version}-assets-tiny`)
+		await sendGitTarball(req, res, repoDirs.mcmeta, `${version}-assets-tiny`)
 	})
 	.get('/vanilla-data/tarball', async (req: Request<{ version: string }>, res) => {
 		const { version } = req.params
-		await sendGitTarball(req, res, gits.mcmeta, `${version}-data`)
+		await sendGitTarball(req, res, repoDirs.mcmeta, `${version}-data`)
 	})
 
 const app = express()
@@ -115,14 +115,14 @@ const app = express()
 	})
 	.use(userAgentEnforcer)
 	.get('/mcje/versions', async (req, res) => {
-		await sendGitFile(req, res, gits.mcmeta, 'summary', 'versions/data.json')
+		await sendGitFile(req, res, repoDirs.mcmeta, 'summary', 'versions/data.json')
 	})
 	.use('/mcje/versions/:version', versionRoute)
 	.get('/vanilla-mcdoc/symbols', async (req, res) => {
-		await sendGitFile(req, res, gits['vanilla-mcdoc'], `generated`, 'symbols.json')
+		await sendGitFile(req, res, repoDirs['vanilla-mcdoc'], `generated`, 'symbols.json')
 	})
 	.get('/vanilla-mcdoc/tarball', async (req, res) => {
-		await sendGitTarball(req, res, gits['vanilla-mcdoc'], 'main', 'vanilla-mcdoc')
+		await sendGitTarball(req, res, repoDirs['vanilla-mcdoc'], 'main', 'vanilla-mcdoc')
 	})
 	.post(
 		'/hooks/github',
@@ -146,7 +146,7 @@ const app = express()
 			}
 			assert(name === 'vanilla-mcdoc' || name === 'mcmeta')
 			req.log.debug({ repo: name }, `Received GitHub push event`)
-			await updateGitRepo(req.log, name, gits[name])
+			await updateGitRepo(req.log, name, repoDirs[name])
 			cache.invalidate()
 			await purgeCdnCache(bunnyCdnApiKey, bunnyCdnPullZoneId)
 			req.log.debug('Purged CDN cache')

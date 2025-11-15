@@ -38,7 +38,6 @@
     "@types/fs-extra": "^11.0.2",
     "@types/klaw": "^3.0.4",
     "@types/line-column": "^1.0.0",
-    "@types/node": "18.11.17",
     "@types/yargs": "17.0.17",
     "typescript": "^5.4.5"
   },

@@ -229,7 +229,10 @@ export namespace fileUtil {
 		return externals.fs.unlink(path)
 	}
 
-	export async function readFile(externals: Externals, path: FsLocation): Promise<Uint8Array> {
+	export async function readFile(
+		externals: Externals,
+		path: FsLocation,
+	): Promise<Uint8Array<ArrayBuffer>> {
 		return externals.fs.readFile(path)
 	}
 
@@ -249,7 +252,7 @@ export namespace fileUtil {
 	export async function writeFile(
 		externals: Externals,
 		path: FsLocation,
-		data: Uint8Array | string,
+		data: Uint8Array<ArrayBuffer> | string,
 		mode: number = 0o666,
 	): Promise<void> {
 		await ensureParentOfFile(externals, path)
@@ -285,7 +288,7 @@ export namespace fileUtil {
 	export async function readGzippedFile(
 		externals: Externals,
 		path: FsLocation,
-	): Promise<Uint8Array> {
+	): Promise<Uint8Array<ArrayBuffer>> {
 		return externals.archive.gunzip(await readFile(externals, path))
 	}
 
@@ -295,7 +298,7 @@ export namespace fileUtil {
 	export async function writeGzippedFile(
 		externals: Externals,
 		path: FsLocation,
-		buffer: Uint8Array | string,
+		buffer: Uint8Array<ArrayBuffer> | string,
 	): Promise<void> {
 		if (typeof buffer === 'string') {
 			buffer = new TextEncoder().encode(buffer)
