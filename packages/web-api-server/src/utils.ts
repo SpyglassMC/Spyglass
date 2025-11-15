@@ -1,10 +1,10 @@
 import { Mutex } from 'async-mutex'
 import type { NextFunction, Request, Response } from 'express'
-import { ChildProcess, execFile as execFileCallback, spawn, StdioOptions } from 'node:child_process'
+import { type ChildProcess, execFile as execFileCallback, spawn } from 'node:child_process'
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { Transform, Writable } from 'node:stream'
+import { Writable } from 'node:stream'
 import { promisify } from 'node:util'
 import type { Logger } from 'pino'
 
@@ -95,7 +95,7 @@ export async function initGitRepos(logger: Logger, rootDir: string) {
 	async function initGitRepo(owner: string, repo: string) {
 		const repoDir = path.join(rootDir, repo)
 		try {
-			fs.access(repoDir)
+			await fs.access(repoDir)
 			logger.info({ owner, repo }, 'Already cloned')
 			await updateGitRepo(logger, repo, repoDir)
 		} catch (e) {
@@ -193,7 +193,7 @@ export async function sendGitFile(
 	const child = spawn(
 		'git',
 		['show', `${branch}:${filePath}`],
-		{ cwd: repoDir, },
+		{ cwd: repoDir },
 	)
 	pipeChildStdioToResponse(child, res)
 	await childProcessExits(child)

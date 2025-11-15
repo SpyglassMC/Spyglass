@@ -22,7 +22,7 @@ export interface UriProtocolSupporter {
 	 * @returns The content of the file at `uri`.
 	 * @throws If the URI doesn't exist in the file system.
 	 */
-	readFile(uri: string): Promise<Uint8Array>
+	readFile(uri: string): Promise<Uint8Array<ArrayBuffer>>
 
 	listFiles(): Iterable<string>
 	/**
@@ -115,7 +115,7 @@ export class FileServiceImpl implements FileService {
 	/**
 	 * @throws
 	 */
-	readFile(uri: string): Promise<Uint8Array> {
+	readFile(uri: string): Promise<Uint8Array<ArrayBuffer>> {
 		const protocol = this.getSupportedProtocol(uri)
 		return this.supporters.get(protocol)!.readFile(uri)
 	}
@@ -238,7 +238,6 @@ export class FileUriSupporter implements UriProtocolSupporter {
 
 export class ArchiveUriSupporter implements UriProtocolSupporter {
 	public static readonly Protocol = 'archive:'
-	private static readonly SupportedArchiveExtnames = ['.tar', '.tar.bz2', '.tar.gz', '.zip']
 
 	readonly protocol = ArchiveUriSupporter.Protocol
 
@@ -262,7 +261,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		}
 	}
 
-	async readFile(uri: string): Promise<Uint8Array> {
+	async readFile(uri: string): Promise<Uint8Array<ArrayBuffer>> {
 		const { archiveName, pathInArchive } = ArchiveUriSupporter.decodeUri(new Uri(uri))
 		return this.getDataInArchive(archiveName, pathInArchive)
 	}
@@ -270,7 +269,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	/**
 	 * @throws
 	 */
-	private getDataInArchive(archiveName: string, pathInArchive: string): Uint8Array {
+	private getDataInArchive(archiveName: string, pathInArchive: string): Uint8Array<ArrayBuffer> {
 		const entries = this.entries.get(archiveName)
 		if (!entries) {
 			throw this.externals.error.createKind(

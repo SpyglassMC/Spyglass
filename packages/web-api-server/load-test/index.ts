@@ -14,7 +14,7 @@ const log = pino()
 
 interface RequestResult {
 	latencyMs: number
-	buffer: Uint8Array
+	buffer: Uint8Array<ArrayBuffer>
 	hash: string
 }
 
