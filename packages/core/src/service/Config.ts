@@ -83,13 +83,13 @@ export interface EnvConfig {
 		colors: boolean
 		completions: boolean
 		documentHighlighting: boolean
-		documentLinks: boolean
-		foldingRanges: boolean
+		documentLinks: boolean // Request is not implemented
+		foldingRanges: boolean // Request is not implemented
 		formatting: boolean
 		hover: boolean
 		inlayHint: boolean | { enabledNodes: string[] }
 		semanticColoring: boolean
-		selectionRanges: boolean
+		selectionRanges: boolean // Request is not implemented
 		signatures: boolean
 	}
 	/**
@@ -446,7 +446,9 @@ type ConfigEvent = { config: Config }
 type ErrorEvent = { error: unknown; uri: string }
 
 export class ConfigService implements ExternalEventEmitter {
-	static readonly ConfigFileNames = Object.freeze(['spyglass.json', '.spyglassrc.json'] as const)
+	static readonly ConfigFileNames = Object.freeze(
+		['spyglass.json', '.spyglassrc', '.spyglassrc.json'] as const,
+	)
 
 	readonly #eventEmitter: ExternalEventEmitter
 

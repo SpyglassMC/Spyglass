@@ -1,1 +1,10 @@
-{}
+{
+	"spyglassmc.commands.dataHackPubify.title": "Data Hack Pubify",
+	"spyglassmc.commands.resetProjectCache.title": "重置專案快取消",
+	"spyglassmc.commands.showCacheRoot.title": "打開快取資料夾",
+	"spyglassmc.commands.showOutput.title": "顯示輸出",
+	"spyglassmc.description": "為《我的世界：Java版》資料包文件提供強大的語言功能",
+	"spyglassmc.displayName": "Datapack Helper Plus by Spyglass",
+	"spyglassmc.env.gameVersion": "使用的 Minecraft 版本。當設置為 auto，版本將會自動從`pack.mcmeta`推斷。其他版本可以透過`spyglass.json` 設定文件指定。",
+	"spyglassmc.trace.server": "追縱 VS Code 和 Spyglass 語言伺服器間的通訊。"
+}

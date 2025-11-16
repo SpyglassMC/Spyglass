@@ -9,3 +9,6 @@
     name: spyglassmc-api-server
     enabled: true
     state: restarted
+
+- name: Print SSH public key
+  ansible.builtin.include_tasks: print_public_key.yml

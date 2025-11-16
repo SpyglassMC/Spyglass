@@ -6,6 +6,7 @@
 The config file can be put under the root of your workspace with either of the following names.
 
 * `spyglass.json`
+* `.spyglassrc`
 * `.spyglassrc.json`
 
 There's no support for multiple config files or inheriting/overriding config files yet.

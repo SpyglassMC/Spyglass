@@ -543,7 +543,13 @@ export namespace ParticleNode {
 		],
 	)
 	export type OptionType = typeof SpecialTypes extends Set<infer T> ? T : undefined
-	export function requiresOptions(type: string | undefined): type is OptionType {
+	export function requiresOptions(
+		type: string | undefined,
+		release: ReleaseVersion,
+	): type is OptionType {
+		if (type === 'flash' && ReleaseVersion.cmp(release, '1.21.9') >= 0) {
+			return true
+		}
 		return OptionTypes.has(type as OptionType)
 	}
 

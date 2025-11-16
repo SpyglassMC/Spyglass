@@ -1,11 +1,6 @@
 import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from 'base64-arraybuffer'
 import pako from 'pako'
 import { fileUtil } from '../../service/fileUtil.js'
-import type {
-	ExternalDownloader,
-	ExternalDownloaderOptions,
-	RemoteUriString,
-} from './downloader.js'
 import type { ExternalEventEmitter, ExternalFileSystem, Externals, FsLocation } from './index.js'
 
 type Listener = (...args: unknown[]) => unknown
@@ -47,24 +42,6 @@ export class BrowserEventEmitter implements ExternalEventEmitter {
 	}
 }
 
-class BrowserExternalDownloader implements ExternalDownloader {
-	async get(uri: RemoteUriString, options: ExternalDownloaderOptions = {}): Promise<Uint8Array> {
-		const headers = new Headers()
-		for (const [name, value] of Object.entries(options?.headers ?? {})) {
-			const values = typeof value === 'string' ? [value] : value
-			for (const v of values) {
-				headers.append(name, v)
-			}
-		}
-		const res = await fetch(uri, { headers, redirect: 'follow' })
-		if (!res.ok) {
-			throw new Error(`Status code ${res.status}: ${res.ok}`)
-		} else {
-			return new Uint8Array(await res.arrayBuffer())
-		}
-	}
-}
-
 class BrowserFileSystem implements ExternalFileSystem {
 	private static readonly LocalStorageKey = 'spyglassmc-browser-fs'
 	private states: Record<string, { type: 'file'; content: string } | { type: 'directory' }>
@@ -95,7 +72,7 @@ class BrowserFileSystem implements ExternalFileSystem {
 		// Not implemented
 		return []
 	}
-	async readFile(location: FsLocation): Promise<Uint8Array> {
+	async readFile(location: FsLocation): Promise<Uint8Array<ArrayBuffer>> {
 		location = location.toString()
 		const entry = this.states[location]
 		if (!entry) {
@@ -127,14 +104,14 @@ class BrowserFileSystem implements ExternalFileSystem {
 	}
 	async writeFile(
 		location: FsLocation,
-		data: string | Uint8Array,
+		data: string | Uint8Array<ArrayBuffer>,
 		_options?: { mode: number } | undefined,
 	): Promise<void> {
 		location = location.toString()
 		if (typeof data === 'string') {
 			data = new TextEncoder().encode(data)
 		}
-		data = arrayBufferToBase64(data)
+		data = arrayBufferToBase64(data.buffer)
 		this.states[location] = { type: 'file', content: data }
 		this.saveStates()
 	}
@@ -146,10 +123,10 @@ export const BrowserExternals: Externals = {
 			throw new Error('decompressBall not supported on browser.')
 		},
 		async gunzip(buffer) {
-			return pako.inflate(buffer)
+			return pako.inflate(buffer) as Uint8Array<ArrayBuffer>
 		},
 		async gzip(buffer) {
-			return pako.gzip(buffer)
+			return pako.gzip(buffer) as Uint8Array<ArrayBuffer>
 		},
 	},
 	crypto: {
@@ -157,11 +134,10 @@ export const BrowserExternals: Externals = {
 			if (typeof data === 'string') {
 				data = new TextEncoder().encode(data)
 			}
-			const hash = await crypto.subtle.digest('SHA-1', data)
+			const hash = await crypto.subtle.digest('SHA-1', data.buffer)
 			return uint8ArrayToHex(new Uint8Array(hash))
 		},
 	},
-	downloader: new BrowserExternalDownloader(),
 	error: {
 		createKind(kind, message) {
 			return new Error(`${kind}: ${message}`)
@@ -172,6 +148,10 @@ export const BrowserExternals: Externals = {
 	},
 	event: { EventEmitter: BrowserEventEmitter },
 	fs: new BrowserFileSystem(),
+	web: {
+		fetch,
+		getCache: () => window.caches.open('spyglassmc'),
+	},
 }
 
 function uint8ArrayToHex(array: Uint8Array) {

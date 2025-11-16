@@ -33,7 +33,7 @@
   become: true
   ansible.builtin.copy:
     src: spyglassmc-discord-bot.service
-    dest: /lib/systemd/system/spyglassmc-discord-bot.service
+    dest: /etc/systemd/system/spyglassmc-discord-bot.service
     mode: '644'
   notify: Reload systemctl daemon
 

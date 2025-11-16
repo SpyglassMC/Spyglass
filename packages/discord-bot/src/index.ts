@@ -1,6 +1,5 @@
 import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
 import {
-	CompletionItem,
 	ErrorSeverity,
 	FileNode,
 	fileUtil,
@@ -28,8 +27,8 @@ import {
 } from 'discord.js'
 import type {
 	APIActionRowComponent,
+	APIButtonComponent,
 	APIEmbed,
-	APIMessageActionRowComponent,
 	ApplicationCommandOptionChoiceData,
 } from 'discord.js'
 import { join } from 'path'
@@ -238,7 +237,7 @@ function getReplyOptions(
 	expired = false,
 ): {
 	content: string
-	components: APIActionRowComponent<APIMessageActionRowComponent>[]
+	components: APIActionRowComponent<APIButtonComponent>[]
 	embeds: APIEmbed[]
 	fetchReply: true
 } {

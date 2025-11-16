@@ -9,5 +9,13 @@ export function localizeTag(type: NbtNode['type']) {
 export function newSyntax(ctx: ParserContext) {
 	// TODO: don't have this inline java-edition version check
 	const release = ctx.project['loadedVersion'] as string | undefined
-	return !release || Number(release.slice(2)) >= Number('1.21.5'.slice(2))
+	if (!release) {
+		return true
+	}
+	const [minorA, patchA = 0] = release.slice(2).split('.')
+	const [minorB, patchB = 0] = '1.21.5'.slice(2).split('.')
+	if (minorA !== minorB) {
+		return Number(minorA) >= Number(minorB)
+	}
+	return Number(patchA) >= Number(patchB)
 }

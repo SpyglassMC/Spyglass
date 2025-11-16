@@ -11,7 +11,6 @@ import type {
 import {
 	AstNode,
 	BinderContext,
-	Downloader,
 	Failure,
 	file,
 	FileService,
@@ -53,12 +52,10 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 	const cacheRoot: RootUriString = data.cacheRoot ?? 'file:///cache/'
 	const externals = data.externals ?? NodeJsExternals
 	const logger = data.logger ?? Logger.create()
-	const downloader = data.downloader ?? new Downloader(cacheRoot, externals, logger)
 	return {
 		cacheRoot,
 		config: data.config ?? VanillaConfig,
 		ctx: data.ctx ?? {},
-		downloader,
 		ensureBindingStarted: data.ensureBindingStarted!,
 		externals,
 		fs: data.fs ?? FileService.create(externals, cacheRoot),

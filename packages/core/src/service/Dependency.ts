@@ -1,4 +1,7 @@
-export type Dependency = { uri: string; info?: Record<string, any> }
+export type Dependency =
+	| { type: 'directory'; uri: string }
+	| { type: 'tarball-file'; uri: string; stripLevel?: number }
+	| { type: 'tarball-ram'; name: string; data: Uint8Array<ArrayBuffer>; stripLevel?: number }
 
 export type DependencyKey = `@${string}`
 export namespace DependencyKey {

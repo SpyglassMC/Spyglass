@@ -7,8 +7,8 @@
 		"node": "^18.18.0 || >=20.0.0"
 	},
 	"scripts": {
-		"ansible:prod": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml\" ansible/playbook.yml",
-		"ansible:prod:verbose": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml\" ansible/playbook.yml -vvv",
+		"ansible:prod": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml",
+		"ansible:prod:verbose": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml -vvv",
 		"build": "wireit",
 		"build:dev": "wireit",
 		"watch": "npm run build:dev --watch",
@@ -25,7 +25,7 @@
 		"release:dry": "ts-node scripts/release.ts --dry-run",
 		"set-tsconfig-references": "ts-node scripts/set_tsconfig_references",
 		"start-discord-bot": "node packages/discord-bot/lib/index.js",
-		"start-web-api-server": "node packages/web-api-server/bin/server.js",
+		"start-web-api-server": "npm start --workspace=packages/web-api-server",
 		"test": "nyc mocha",
 		"test:local": "nyc mocha --config .mocharc.local.jsonc",
 		"bench": "node packages/benchmarks/lib/index.js"
@@ -58,12 +58,11 @@
 	"devDependencies": {
 		"@types/benchmark": "^2.1.2",
 		"@types/mocha": "^10.0.1",
-		"@types/node": "^18.16.3",
+		"@types/node": "^24.10.1",
 		"@types/snap-shot-core": "^10.2.0",
 		"@types/webpack": "^5.28.1",
 		"@typescript-eslint/eslint-plugin": "^7.9.0",
 		"@typescript-eslint/parser": "^7.9.0",
-		"all-contributors-cli": "^6.25.0",
 		"benchmark": "^2.1.4",
 		"circular-dependency-plugin": "^5.2.2",
 		"dprint": "^0.45.1",
@@ -81,7 +80,7 @@
 		"source-map-support": "^0.5.21",
 		"ts-loader": "^9.4.2",
 		"ts-node": "^10.9.1",
-		"typescript": "^5.0.4",
+		"typescript": "^5.9.3",
 		"webpack": "^5.95.0",
 		"webpack-cli": "^5.0.2",
 		"wireit": "^0.9.5"

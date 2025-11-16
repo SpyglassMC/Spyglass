@@ -22,7 +22,7 @@ export interface UriProtocolSupporter {
 	 * @returns The content of the file at `uri`.
 	 * @throws If the URI doesn't exist in the file system.
 	 */
-	readFile(uri: string): Promise<Uint8Array>
+	readFile(uri: string): Promise<Uint8Array<ArrayBuffer>>
 
 	listFiles(): Iterable<string>
 	/**
@@ -115,7 +115,7 @@ export class FileServiceImpl implements FileService {
 	/**
 	 * @throws
 	 */
-	readFile(uri: string): Promise<Uint8Array> {
+	readFile(uri: string): Promise<Uint8Array<ArrayBuffer>> {
 		const protocol = this.getSupportedProtocol(uri)
 		return this.supporters.get(protocol)!.readFile(uri)
 	}
@@ -215,7 +215,12 @@ export class FileUriSupporter implements UriProtocolSupporter {
 		const roots: RootUriString[] = []
 		const files = new Map<string, string[]>()
 
-		for (let { uri } of dependencies) {
+		for (const dependency of dependencies) {
+			if (dependency.type !== 'directory') {
+				continue
+			}
+
+			let { uri } = dependency
 			try {
 				if (fileUtil.isFileUri(uri) && (await externals.fs.stat(uri)).isDirectory()) {
 					uri = fileUtil.ensureEndingSlash(uri)
@@ -233,7 +238,6 @@ export class FileUriSupporter implements UriProtocolSupporter {
 
 export class ArchiveUriSupporter implements UriProtocolSupporter {
 	public static readonly Protocol = 'archive:'
-	private static readonly SupportedArchiveExtnames = ['.tar', '.tar.bz2', '.tar.gz', '.zip']
 
 	readonly protocol = ArchiveUriSupporter.Protocol
 
@@ -257,7 +261,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		}
 	}
 
-	async readFile(uri: string): Promise<Uint8Array> {
+	async readFile(uri: string): Promise<Uint8Array<ArrayBuffer>> {
 		const { archiveName, pathInArchive } = ArchiveUriSupporter.decodeUri(new Uri(uri))
 		return this.getDataInArchive(archiveName, pathInArchive)
 	}
@@ -265,7 +269,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	/**
 	 * @throws
 	 */
-	private getDataInArchive(archiveName: string, pathInArchive: string): Uint8Array {
+	private getDataInArchive(archiveName: string, pathInArchive: string): Uint8Array<ArrayBuffer> {
 		const entries = this.entries.get(archiveName)
 		if (!entries) {
 			throw this.externals.error.createKind(
@@ -335,29 +339,31 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	): Promise<ArchiveUriSupporter> {
 		const entries = new Map<string, Map<string, DecompressedFile>>()
 
-		for (const { uri, info } of dependencies) {
+		for (const dependency of dependencies) {
+			if (dependency.type === 'directory') {
+				continue
+			}
+
+			const archiveName = dependency.type === 'tarball-file'
+				? fileUtil.basename(dependency.uri)
+				: dependency.name
 			try {
-				if (
-					uri.startsWith('file:')
-					&& ArchiveUriSupporter.SupportedArchiveExtnames.some((ext) => uri.endsWith(ext))
-					&& (await externals.fs.stat(uri)).isFile()
-				) {
-					const archiveName = fileUtil.basename(uri)
-					if (entries.has(archiveName)) {
-						throw new Error(`A different URI with ${archiveName} already exists`)
-					}
-					const files = await externals.archive.decompressBall(
-						await externals.fs.readFile(uri),
-						{ stripLevel: typeof info?.startDepth === 'number' ? info.startDepth : 0 },
-					)
-					/// Debug message for #1609
-					logger.info(
-						`[ArchiveUriSupporter#create] Extracted ${files.length} files from ${archiveName}`,
-					)
-					entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
+				if (entries.has(archiveName)) {
+					throw new Error(`A different archive with ${archiveName} already exists`)
 				}
+				const files = await externals.archive.decompressBall(
+					dependency.type === 'tarball-file'
+						? await externals.fs.readFile(dependency.uri)
+						: dependency.data,
+					{ stripLevel: dependency.stripLevel ?? 0 },
+				)
+				/// Debug message for #1609
+				logger.info(
+					`[ArchiveUriSupporter#create] Extracted ${files.length} files from ${archiveName}`,
+				)
+				entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
 			} catch (e) {
-				logger.error(`[ArchiveUriSupporter#create] Bad dependency ${uri}`, e)
+				logger.error(`[ArchiveUriSupporter#create] Bad dependency ${archiveName}`, e)
 			}
 		}
 

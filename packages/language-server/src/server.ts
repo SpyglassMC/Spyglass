@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
-import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
+import { getNodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as locales from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
@@ -25,7 +25,8 @@ if (process.argv.length === 2) {
 	process.argv.push('--stdio')
 }
 
-const { cache: cacheRoot } = envPaths('spyglassmc')
+const { cache: cacheRootPath } = envPaths('spyglassmc')
+const cacheRoot = fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRootPath).toString())
 
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
@@ -33,7 +34,7 @@ let workspaceFolders!: ls.WorkspaceFolder[]
 let projectRoots!: core.RootUriString[]
 let hasShutdown = false
 
-const externals = NodeJsExternals
+const externals = getNodeJsExternals({ cacheRoot })
 const logger: core.Logger = {
 	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
 	info: (msg: any, ...args: any[]): void => connection.console.info(util.format(msg, ...args)),
@@ -83,7 +84,7 @@ connection.onInitialize(async (params) => {
 				defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
 					env: { gameVersion: initializationOptions?.gameVersion },
 				}),
-				cacheRoot: fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRoot).toString()),
+				cacheRoot,
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
 				projectRoots,
@@ -126,8 +127,6 @@ connection.onInitialize(async (params) => {
 			declarationProvider: {},
 			definitionProvider: {},
 			implementationProvider: {},
-			// TODO: re-enable this
-			// documentFormattingProvider: {},
 			referencesProvider: {},
 			typeDefinitionProvider: {},
 			documentHighlightProvider: {},
@@ -157,6 +156,13 @@ connection.onInitialize(async (params) => {
 })
 
 connection.onInitialized(async () => {
+	if (capabilities.textDocument?.formatting?.dynamicRegistration) {
+		void connection.client.register(
+			ls.DocumentFormattingRequest.type,
+			{ documentSelector: [{ language: 'mcdoc' }] },
+		)
+	}
+
 	// Initializes LspFsWatcher only when client supports didChangeWatchedFiles notifications.
 	const fsWatcher = capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration
 		? new LspFsWatcher({
@@ -199,7 +205,7 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 
 connection.onCodeAction(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.codeActions) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -223,7 +229,7 @@ connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) =
 })
 connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.colors) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -233,7 +239,7 @@ connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 
 connection.onCompletion(async ({ textDocument: { uri }, position, context }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.completions) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -324,7 +330,7 @@ connection.onTypeDefinition(async ({ textDocument: { uri }, position }) => {
 
 connection.onDocumentHighlight(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.documentHighlighting) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -354,7 +360,7 @@ connection.onDocumentSymbol(async ({ textDocument: { uri } }) => {
 
 connection.onHover(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.hover) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -382,7 +388,7 @@ connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {
 
 connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.semanticColoring) {
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
@@ -395,7 +401,7 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 })
 connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.semanticColoring) {
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
@@ -409,7 +415,7 @@ connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, rang
 
 connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.signatures) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -427,10 +433,14 @@ connection.onWorkspaceSymbol(({ query }) => {
 
 connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
+	if (!docAndNode || !service.project.config.env.feature.formatting) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
+	if (node.parserErrors.length !== 0) {
+		// Don't format if there are errors.
+		return undefined
+	}
 	let text = service.format(node, doc, options.tabSize, options.insertSpaces)
 	if (options.insertFinalNewline && text.charAt(text.length - 1) !== '\n') {
 		text += '\n'
