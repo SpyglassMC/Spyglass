@@ -47,8 +47,8 @@ module.exports = {
 					{
 						from: "package",
 						package: "node:test",
-						name: ["describe", "it", "only", "skip", "todo"]
-					}
+						name: ["describe", "it", "only", "skip", "todo"],
+					},
 				],
 			},
 		],

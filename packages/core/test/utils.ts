@@ -95,7 +95,6 @@ function removeExtraProperties(
 	}
 }
 
-/* eslint-disable @typescript-eslint/indent */
 export function testParser(
 	parser: Parser<Returnable>,
 	text: string,
@@ -117,7 +116,6 @@ export function testParser(
 		simplifySymbol?: boolean
 	} = {},
 ): { node: Returnable | 'FAILURE'; errors: readonly LanguageError[] } {
-	/* eslint-enable @typescript-eslint/indent */
 	const src = new Source(text)
 	const ctx = ParserContext.create(mockProjectData(project), {
 		doc: TextDocument.create(uri, languageID, 0, text),

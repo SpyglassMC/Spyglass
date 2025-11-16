@@ -1,10 +1,18 @@
 [[language]]
 name = "javascript"
 indent = { tab-width = 3, unit = "\t" }
+language-servers = [
+  "typescript-language-server",
+  "vscode-eslint-language-server",
+]
 formatter = { command = "npx", args = [ "dprint", "fmt", "--stdin", "js" ] }
 
 [[language]]
 name = "typescript"
 indent = { tab-width = 3, unit = "\t" }
+language-servers = [
+  "typescript-language-server",
+  "vscode-eslint-language-server",
+]
 formatter = { command = "npx", args = [ "dprint", "fmt", "--stdin", "ts" ] }
 auto-format = true
