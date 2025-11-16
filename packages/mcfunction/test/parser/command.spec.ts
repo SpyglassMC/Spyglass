@@ -1,5 +1,5 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
-import { fail } from 'assert'
+import { fail } from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { command } from '../../lib/parser/index.js'
 import { tree } from './utils.ts'
@@ -16,7 +16,7 @@ describe('mcfunction parser command()', () => {
 		{ content: 'execute if true if true run say hi' },
 	]
 	for (const { content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = command(tree, () => undefined)
 			t.assert.snapshot(testParser(parser, content))
 		})

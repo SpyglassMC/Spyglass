@@ -7,7 +7,7 @@ describe('nbt compound()', () => {
 		content: '{}',
 	}, { content: '{ foo: true }' }]
 	for (const { content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = compound
 			t.assert.snapshot(testParser(parser, content))
 		})

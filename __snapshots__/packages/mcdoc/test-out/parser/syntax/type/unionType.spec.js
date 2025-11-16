@@ -1,9 +1,19 @@
-exports['mcdoc unionType Parse "" 1'] = {
-  "node": "FAILURE",
+exports[`mcdoc parser > unionType > Parse \"()\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:type/union",
+    "children": [],
+    "range": {
+      "start": 0,
+      "end": 2
+    }
+  },
   "errors": []
 }
+`;
 
-exports['mcdoc unionType Parse "(" 1'] = {
+exports[`mcdoc parser > unionType > Parse \"(\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/union",
     "children": [
@@ -58,20 +68,10 @@ exports['mcdoc unionType Parse "(" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc unionType Parse "()" 1'] = {
-  "node": {
-    "type": "mcdoc:type/union",
-    "children": [],
-    "range": {
-      "start": 0,
-      "end": 2
-    }
-  },
-  "errors": []
-}
-
-exports['mcdoc unionType Parse "(boolean | string | )" 1'] = {
+exports[`mcdoc parser > unionType > Parse \"(boolean | string | )\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/union",
     "children": [
@@ -119,8 +119,10 @@ exports['mcdoc unionType Parse "(boolean | string | )" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc unionType Parse "(boolean | string)" 1'] = {
+exports[`mcdoc parser > unionType > Parse \"(boolean | string)\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/union",
     "children": [
@@ -168,8 +170,10 @@ exports['mcdoc unionType Parse "(boolean | string)" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc unionType Parse "(boolean)" 1'] = {
+exports[`mcdoc parser > unionType > Parse \"(boolean)\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/union",
     "children": [
@@ -199,8 +203,10 @@ exports['mcdoc unionType Parse "(boolean)" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc unionType Parse "(↓⮀⮀⮀⮀⮀#[until=1.16]↓⮀⮀⮀⮀⮀#[uuid] string |↓⮀⮀⮀⮀⮀#[since=1.16]↓⮀⮀⮀⮀⮀#[uuid] int[] @ 4 |↓⮀⮀⮀⮀)" 1'] = {
+exports[`mcdoc parser > unionType > Parse \"(↓⮀⮀⮀⮀⮀#[until=1.16]↓⮀⮀⮀⮀⮀#[uuid] string |↓⮀⮀⮀⮀⮀#[since=1.16]↓⮀⮀⮀⮀⮀#[uuid] int[] @ 4 |↓⮀⮀⮀⮀)\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/union",
     "children": [
@@ -393,8 +399,10 @@ exports['mcdoc unionType Parse "(↓⮀⮀⮀⮀⮀#[until=1.16]↓⮀⮀⮀⮀�
   },
   "errors": []
 }
+`;
 
-exports['mcdoc unionType Parse "(↓⮀⮀⮀⮀⮀int |↓⮀⮀⮀⮀⮀[int, int] |↓⮀⮀⮀⮀⮀struct {↓⮀⮀⮀⮀⮀⮀min: int,↓⮀⮀⮀⮀⮀⮀max: int,↓⮀⮀⮀⮀⮀} |↓⮀⮀⮀⮀)" 1'] = {
+exports[`mcdoc parser > unionType > Parse \"(↓⮀⮀⮀⮀⮀int |↓⮀⮀⮀⮀⮀[int, int] |↓⮀⮀⮀⮀⮀struct {↓⮀⮀⮀⮀⮀⮀min: int,↓⮀⮀⮀⮀⮀⮀max: int,↓⮀⮀⮀⮀⮀} |↓⮀⮀⮀⮀)\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/union",
     "children": [
@@ -566,3 +574,11 @@ exports['mcdoc unionType Parse "(↓⮀⮀⮀⮀⮀int |↓⮀⮀⮀⮀⮀[int, 
   },
   "errors": []
 }
+`;
+
+exports[`mcdoc parser > unionType > Parse \"\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": []
+}
+`;

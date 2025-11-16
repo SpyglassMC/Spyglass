@@ -25,10 +25,7 @@ describe('mcdoc __fixture__', async () => {
 			project.parse()
 			await project.bind()
 			snapshotWithUri(t, {
-				uri: new URL(
-					`./__fixture__/${caseNameToFileName(caseName)}.spec.js`,
-					import.meta.url,
-				),
+				uri: new URL(`./__fixture__/${caseNameToFileName(caseName)}.spec.ts`, import.meta.url),
 				value: project.dumpState(['global', 'nodes']),
 			})
 		})

@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
+exports[`mcfunction argument parser > minecraft:game_profile > Parse \"0123\" 1`] = `
+{
   "node": {
     "type": "mcfunction:entity",
     "range": {
@@ -50,8 +51,10 @@ exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
+exports[`mcfunction argument parser > minecraft:game_profile > Parse \"@e\" 1`] = `
+{
   "node": {
     "type": "mcfunction:entity",
     "range": {
@@ -83,7 +86,7 @@ exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
         ],
         "single": false,
         "typeLimited": false,
-        "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
+        "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
       }
     ],
     "selector": {
@@ -110,7 +113,7 @@ exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
       ],
       "single": false,
       "typeLimited": false,
-      "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
+      "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
     }
   },
   "errors": [
@@ -124,8 +127,10 @@ exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
+exports[`mcfunction argument parser > minecraft:game_profile > Parse \"Player\" 1`] = `
+{
   "node": {
     "type": "mcfunction:entity",
     "range": {
@@ -177,8 +182,10 @@ exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:game_profile Parse "dd12be42-52a9-4a91-a8a1-11c01849e498" 1'] = {
+exports[`mcfunction argument parser > minecraft:game_profile > Parse \"dd12be42-52a9-4a91-a8a1-11c01849e498\" 1`] = `
+{
   "node": {
     "type": "mcfunction:entity",
     "range": {
@@ -221,3 +228,4 @@ exports['mcfunction argument minecraft:game_profile Parse "dd12be42-52a9-4a91-a8
     }
   ]
 }
+`;

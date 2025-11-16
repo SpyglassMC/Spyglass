@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:float_range Parse "-100.76.." 1'] = {
+exports[`mcfunction argument parser > minecraft:float_range > Parse \"-100.76..\" 1`] = `
+{
   "node": {
     "type": "mcfunction:float_range",
     "range": {
@@ -30,8 +31,10 @@ exports['mcfunction argument minecraft:float_range Parse "-100.76.." 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:float_range Parse "-5.4" 1'] = {
+exports[`mcfunction argument parser > minecraft:float_range > Parse \"-5.4\" 1`] = `
+{
   "node": {
     "type": "mcfunction:float_range",
     "range": {
@@ -55,13 +58,10 @@ exports['mcfunction argument minecraft:float_range Parse "-5.4" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:float_range Parse ".." 1'] = {
-  "node": "FAILURE",
-  "errors": []
-}
-
-exports['mcfunction argument minecraft:float_range Parse "..100" 1'] = {
+exports[`mcfunction argument parser > minecraft:float_range > Parse \"..100\" 1`] = `
+{
   "node": {
     "type": "mcfunction:float_range",
     "range": {
@@ -93,33 +93,17 @@ exports['mcfunction argument minecraft:float_range Parse "..100" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:float_range Parse "0" 1'] = {
-  "node": {
-    "type": "mcfunction:float_range",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "children": [
-      {
-        "type": "float",
-        "range": {
-          "start": 0,
-          "end": 1
-        },
-        "value": 0
-      }
-    ],
-    "value": [
-      0,
-      0
-    ]
-  },
+exports[`mcfunction argument parser > minecraft:float_range > Parse \"..\" 1`] = `
+{
+  "node": "FAILURE",
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:float_range Parse "0..5.2" 1'] = {
+exports[`mcfunction argument parser > minecraft:float_range > Parse \"0..5.2\" 1`] = `
+{
   "node": {
     "type": "mcfunction:float_range",
     "range": {
@@ -159,3 +143,31 @@ exports['mcfunction argument minecraft:float_range Parse "0..5.2" 1'] = {
   },
   "errors": []
 }
+`;
+
+exports[`mcfunction argument parser > minecraft:float_range > Parse \"0\" 1`] = `
+{
+  "node": {
+    "type": "mcfunction:float_range",
+    "range": {
+      "start": 0,
+      "end": 1
+    },
+    "children": [
+      {
+        "type": "float",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": 0
+      }
+    ],
+    "value": [
+      0,
+      0
+    ]
+  },
+  "errors": []
+}
+`;

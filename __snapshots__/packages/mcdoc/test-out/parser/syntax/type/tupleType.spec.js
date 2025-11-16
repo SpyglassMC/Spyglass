@@ -1,9 +1,5 @@
-exports['mcdoc tupleType Parse "" 1'] = {
-  "node": "FAILURE",
-  "errors": []
-}
-
-exports['mcdoc tupleType Parse "[" 1'] = {
+exports[`mcdoc parser > tupleType > Parse \"[\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -16,8 +12,10 @@ exports['mcdoc tupleType Parse "[" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc tupleType Parse "[]" 1'] = {
+exports[`mcdoc parser > tupleType > Parse \"[]\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -30,13 +28,10 @@ exports['mcdoc tupleType Parse "[]" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc tupleType Parse "[boolean" 1'] = {
-  "node": "FAILURE",
-  "errors": []
-}
-
-exports['mcdoc tupleType Parse "[boolean," 1'] = {
+exports[`mcdoc parser > tupleType > Parse \"[boolean,\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/tuple",
     "children": [
@@ -109,8 +104,10 @@ exports['mcdoc tupleType Parse "[boolean," 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc tupleType Parse "[boolean,]" 1'] = {
+exports[`mcdoc parser > tupleType > Parse \"[boolean,]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/tuple",
     "children": [
@@ -140,8 +137,10 @@ exports['mcdoc tupleType Parse "[boolean,]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc tupleType Parse "[boolean,string]" 1'] = {
+exports[`mcdoc parser > tupleType > Parse \"[boolean,string]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/tuple",
     "children": [
@@ -189,13 +188,24 @@ exports['mcdoc tupleType Parse "[boolean,string]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc tupleType Parse "[boolean]" 1'] = {
+exports[`mcdoc parser > tupleType > Parse \"[boolean\" 1`] = `
+{
   "node": "FAILURE",
   "errors": []
 }
+`;
 
-exports['mcdoc tupleType Parse "[false,true,[string,],]" 1'] = {
+exports[`mcdoc parser > tupleType > Parse \"[boolean]\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > tupleType > Parse \"[false,true,[string,],]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/tuple",
     "children": [
@@ -270,3 +280,11 @@ exports['mcdoc tupleType Parse "[false,true,[string,],]" 1'] = {
   },
   "errors": []
 }
+`;
+
+exports[`mcdoc parser > tupleType > Parse \"\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": []
+}
+`;

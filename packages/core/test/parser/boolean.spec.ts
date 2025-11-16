@@ -11,7 +11,7 @@ describe('boolean()', () => {
 		{ content: 'foo' },
 	]
 	for (const { content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = boolean
 			t.assert.snapshot(testParser(parser, content))
 		})

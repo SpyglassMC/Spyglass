@@ -238,7 +238,7 @@ describe('mcfunction argument parser', () => {
 							uri: new URL(
 								`./argument/${
 									parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())
-								}.spec.js`,
+								}.spec.ts`,
 								import.meta.url,
 							),
 							value: testParser(argument(treeNode, [])!, string, {

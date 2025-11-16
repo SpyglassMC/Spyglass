@@ -1,5 +1,5 @@
 import { ReadonlyProxy } from '@spyglassmc/core'
-import assert from 'assert'
+import assert from 'node:assert'
 import { describe, it } from 'node:test'
 
 import { assertError } from '../utils.ts'

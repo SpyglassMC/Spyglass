@@ -1,18 +1,5 @@
-exports['mcdoc anyType Parse "" 1'] = {
-  "node": "FAILURE",
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "message": "Expected “any” but got “”",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcdoc anyType Parse "#[id] any" 1'] = {
+exports[`mcdoc parser > anyType > Parse \"#[id] any\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/any",
     "children": [
@@ -50,8 +37,26 @@ exports['mcdoc anyType Parse "#[id] any" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc anyType Parse "any" 1'] = {
+exports[`mcdoc parser > anyType > Parse \"\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected “any” but got “”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > anyType > Parse \"any\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/any",
     "children": [
@@ -72,8 +77,10 @@ exports['mcdoc anyType Parse "any" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc anyType Parse "other" 1'] = {
+exports[`mcdoc parser > anyType > Parse \"other\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -86,3 +93,4 @@ exports['mcdoc anyType Parse "other" 1'] = {
     }
   ]
 }
+`;

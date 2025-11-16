@@ -1,4 +1,5 @@
-exports['mcdoc literal() Parse "" 1'] = {
+exports[`mcdoc parser > literal() > Parse \"\" 1`] = `
+{
   "node": {
     "type": "mcdoc:literal",
     "range": {
@@ -18,8 +19,10 @@ exports['mcdoc literal() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc literal() Parse "foo something else;" 1'] = {
+exports[`mcdoc parser > literal() > Parse \"foo something else;\" 1`] = `
+{
   "node": {
     "type": "mcdoc:literal",
     "range": {
@@ -30,8 +33,10 @@ exports['mcdoc literal() Parse "foo something else;" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc literal() Parse "foo" 1'] = {
+exports[`mcdoc parser > literal() > Parse \"foo\" 1`] = `
+{
   "node": {
     "type": "mcdoc:literal",
     "range": {
@@ -42,8 +47,10 @@ exports['mcdoc literal() Parse "foo" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc literal() Parse "foobar" 1'] = {
+exports[`mcdoc parser > literal() > Parse \"foobar\" 1`] = `
+{
   "node": {
     "type": "mcdoc:literal",
     "range": {
@@ -63,3 +70,4 @@ exports['mcdoc literal() Parse "foobar" 1'] = {
     }
   ]
 }
+`;

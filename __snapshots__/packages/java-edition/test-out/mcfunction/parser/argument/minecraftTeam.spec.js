@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:team Parse "123" 1'] = {
+exports[`mcfunction argument parser > minecraft:team > Parse \"123\" 1`] = `
+{
   "node": {
     "type": "symbol",
     "range": {
@@ -9,8 +10,10 @@ exports['mcfunction argument minecraft:team Parse "123" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:team Parse "foo" 1'] = {
+exports[`mcfunction argument parser > minecraft:team > Parse \"foo\" 1`] = `
+{
   "node": {
     "type": "symbol",
     "range": {
@@ -21,3 +24,4 @@ exports['mcfunction argument minecraft:team Parse "foo" 1'] = {
   },
   "errors": []
 }
+`;

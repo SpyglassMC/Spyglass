@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"type": "module",
 	"engines": {
-		"node": ">=20.0.0"
+		"node": ">=22.14.0"
 	},
 	"scripts": {
 		"ansible:prod": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml",
@@ -29,6 +29,7 @@
 		"start-web-api-server": "npm start --workspace=packages/web-api-server",
 		"test": "node --import=./packages/core/test/snapshot-setup.ts --test --test-isolation none",
 		"test:update-snapshots": "npm test -- --test-update-snapshots",
+		"test:watch": "npm test -- --watch",
 		"bench": "node packages/benchmarks/lib/index.js"
 	},
 	"wireit": {

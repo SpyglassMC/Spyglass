@@ -1,4 +1,5 @@
-exports['PositionRange constants Should initialize correctly 1'] = {
+exports[`PositionRange > constants > Should initialize correctly 1`] = `
+{
   "start": {
     "line": 0,
     "character": 0
@@ -8,8 +9,10 @@ exports['PositionRange constants Should initialize correctly 1'] = {
     "character": 1
   }
 }
+`;
 
-exports['PositionRange constants Should initialize correctly 2'] = {
+exports[`PositionRange > constants > Should initialize correctly 2`] = `
+{
   "start": {
     "line": 0,
     "character": 0
@@ -19,8 +22,10 @@ exports['PositionRange constants Should initialize correctly 2'] = {
     "character": null
   }
 }
+`;
 
-exports['PositionRange create() Should create correctly 1'] = {
+exports[`PositionRange > create() > Should create correctly 1`] = `
+{
   "start": {
     "line": 1,
     "character": 2
@@ -30,8 +35,10 @@ exports['PositionRange create() Should create correctly 1'] = {
     "character": 4
   }
 }
+`;
 
-exports['PositionRange create() Should create correctly 2'] = {
+exports[`PositionRange > create() > Should create correctly 2`] = `
+{
   "start": {
     "line": 1,
     "character": 2
@@ -41,8 +48,10 @@ exports['PositionRange create() Should create correctly 2'] = {
     "character": 4
   }
 }
+`;
 
-exports['PositionRange create() Should create correctly 3'] = {
+exports[`PositionRange > create() > Should create correctly 3`] = `
+{
   "start": {
     "line": 0,
     "character": 0
@@ -52,8 +61,10 @@ exports['PositionRange create() Should create correctly 3'] = {
     "character": 0
   }
 }
+`;
 
-exports['PositionRange create() Should create correctly 4'] = {
+exports[`PositionRange > create() > Should create correctly 4`] = `
+{
   "start": {
     "line": 1,
     "character": 2
@@ -63,8 +74,10 @@ exports['PositionRange create() Should create correctly 4'] = {
     "character": 0
   }
 }
+`;
 
-exports['PositionRange create() Should create correctly 5'] = {
+exports[`PositionRange > create() > Should create correctly 5`] = `
+{
   "start": {
     "line": 0,
     "character": 0
@@ -74,8 +87,10 @@ exports['PositionRange create() Should create correctly 5'] = {
     "character": 4
   }
 }
+`;
 
-exports['PositionRange create() Should create correctly 6'] = {
+exports[`PositionRange > create() > Should create correctly 6`] = `
+{
   "start": {
     "line": 1,
     "character": 2
@@ -85,3 +100,4 @@ exports['PositionRange create() Should create correctly 6'] = {
     "character": 4
   }
 }
+`;

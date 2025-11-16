@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ use statement/reference alias 1'] = {
+exports[`mcdoc __fixture__ > use statement/reference alias 1`] = `
+{
   "global": {
     "mcdoc": {
       "::module": {
@@ -501,3 +502,4 @@ exports['mcdoc __fixture__ use statement/reference alias 1'] = {
     }
   }
 }
+`;

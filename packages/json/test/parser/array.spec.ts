@@ -1,6 +1,6 @@
 import type { LanguageError } from '@spyglassmc/core'
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
-import assert from 'assert'
+import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { array } from '../../lib/parser/array.js'
 
@@ -19,7 +19,7 @@ describe('JSON array parser', () => {
 			{ content: '["\\z"]' },
 		]
 		for (const { content } of cases) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				t.assert.snapshot(testParser(array, content))
 			})
 		}

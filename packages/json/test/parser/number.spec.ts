@@ -17,7 +17,7 @@ describe('JSON number parser', () => {
 			{ content: '1.342E-10' },
 		]
 		for (const { content } of cases) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				t.assert.snapshot(testParser(number, content))
 			})
 		}

@@ -1,4 +1,5 @@
-exports['boolean() Parse "" 1'] = {
+exports[`boolean() > Parse '' 1`] = `
+{
   "node": {
     "type": "boolean",
     "range": {
@@ -17,8 +18,10 @@ exports['boolean() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['boolean() Parse "false" 1'] = {
+exports[`boolean() > Parse 'false' 1`] = `
+{
   "node": {
     "type": "boolean",
     "range": {
@@ -29,8 +32,10 @@ exports['boolean() Parse "false" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['boolean() Parse "foo" 1'] = {
+exports[`boolean() > Parse 'foo' 1`] = `
+{
   "node": {
     "type": "boolean",
     "range": {
@@ -49,8 +54,10 @@ exports['boolean() Parse "foo" 1'] = {
     }
   ]
 }
+`;
 
-exports['boolean() Parse "true" 1'] = {
+exports[`boolean() > Parse 'true' 1`] = `
+{
   "node": {
     "type": "boolean",
     "range": {
@@ -61,3 +68,4 @@ exports['boolean() Parse "true" 1'] = {
   },
   "errors": []
 }
+`;

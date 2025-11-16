@@ -1,4 +1,5 @@
-exports['ConfigService merge() Should merge empty overrides correctly 1'] = {
+exports[`ConfigService > merge() > Should merge empty overrides correctly 1`] = `
+{
   "env": {
     "dataSource": "GitHub",
     "dependencies": [
@@ -10,8 +11,10 @@ exports['ConfigService merge() Should merge empty overrides correctly 1'] = {
     }
   }
 }
+`;
 
-exports['ConfigService merge() Should merge empty overrides correctly 2'] = {
+exports[`ConfigService > merge() > Should merge empty overrides correctly 2`] = `
+{
   "env": {
     "dataSource": "GitHub",
     "dependencies": [
@@ -23,8 +26,10 @@ exports['ConfigService merge() Should merge empty overrides correctly 2'] = {
     }
   }
 }
+`;
 
-exports['ConfigService merge() Should merge empty overrides correctly 3'] = {
+exports[`ConfigService > merge() > Should merge empty overrides correctly 3`] = `
+{
   "env": {
     "dataSource": "GitHub",
     "dependencies": [
@@ -36,8 +41,10 @@ exports['ConfigService merge() Should merge empty overrides correctly 3'] = {
     }
   }
 }
+`;
 
-exports['ConfigService merge() Should merge multiple overrides correctly 1'] = {
+exports[`ConfigService > merge() > Should merge multiple overrides correctly 1`] = `
+{
   "env": {
     "dataSource": "TEST",
     "dependencies": [
@@ -51,8 +58,10 @@ exports['ConfigService merge() Should merge multiple overrides correctly 1'] = {
     "erm": 3
   }
 }
+`;
 
-exports['ConfigService merge() Should merge nested overrides correctly 1'] = {
+exports[`ConfigService > merge() > Should merge nested overrides correctly 1`] = `
+{
   "env": {
     "dataSource": "TEST",
     "dependencies": [
@@ -64,8 +73,10 @@ exports['ConfigService merge() Should merge nested overrides correctly 1'] = {
     }
   }
 }
+`;
 
-exports['ConfigService merge() Should merge nested overrides correctly 2'] = {
+exports[`ConfigService > merge() > Should merge nested overrides correctly 2`] = `
+{
   "env": {
     "dataSource": "GitHub",
     "dependencies": [
@@ -77,8 +88,10 @@ exports['ConfigService merge() Should merge nested overrides correctly 2'] = {
     }
   }
 }
+`;
 
-exports['ConfigService merge() Should merge nested overrides correctly 3'] = {
+exports[`ConfigService > merge() > Should merge nested overrides correctly 3`] = `
+{
   "env": {
     "dataSource": "GitHub",
     "dependencies": [
@@ -90,8 +103,10 @@ exports['ConfigService merge() Should merge nested overrides correctly 3'] = {
     }
   }
 }
+`;
 
-exports['ConfigService merge() Should merge nested overrides correctly 4'] = {
+exports[`ConfigService > merge() > Should merge nested overrides correctly 4`] = `
+{
   "env": {
     "dataSource": "GitHub",
     "dependencies": [
@@ -104,8 +119,10 @@ exports['ConfigService merge() Should merge nested overrides correctly 4'] = {
     }
   }
 }
+`;
 
-exports['ConfigService merge() Should merge nested overrides correctly 5'] = {
+exports[`ConfigService > merge() > Should merge nested overrides correctly 5`] = `
+{
   "env": {
     "dataSource": "GitHub",
     "dependencies": [],
@@ -115,8 +132,10 @@ exports['ConfigService merge() Should merge nested overrides correctly 5'] = {
     }
   }
 }
+`;
 
-exports['ConfigService merge() Should merge top-level overrides correctly 1'] = {
+exports[`ConfigService > merge() > Should merge top-level overrides correctly 1`] = `
+{
   "env": {
     "dataSource": "GitHub",
     "dependencies": [
@@ -129,3 +148,4 @@ exports['ConfigService merge() Should merge top-level overrides correctly 1'] = 
   },
   "test": true
 }
+`;

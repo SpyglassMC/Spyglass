@@ -1,4 +1,5 @@
-exports['nbt path() Parse "" 1'] = {
+exports[`nbt path() > Parse '' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [],
@@ -18,51 +19,10 @@ exports['nbt path() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt path() Parse ""foo"" 1'] = {
-  "node": {
-    "type": "nbt:path",
-    "children": [
-      {
-        "type": "nbt:path/key",
-        "range": {
-          "start": 0,
-          "end": 5
-        },
-        "children": [
-          {
-            "type": "nbt:string",
-            "range": {
-              "start": 0,
-              "end": 5
-            },
-            "value": "foo",
-            "valueMap": [
-              {
-                "inner": {
-                  "start": 0,
-                  "end": 0
-                },
-                "outer": {
-                  "start": 1,
-                  "end": 1
-                }
-              }
-            ],
-            "quote": "\""
-          }
-        ]
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 5
-    }
-  },
-  "errors": []
-}
-
-exports['nbt path() Parse "\'foo\'" 1'] = {
+exports[`nbt path() > Parse ''foo'' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -104,8 +64,10 @@ exports['nbt path() Parse "\'foo\'" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "[ ]" 1'] = {
+exports[`nbt path() > Parse '[ ]' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -133,8 +95,55 @@ exports['nbt path() Parse "[ ]" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt path() Parse "foo" 1'] = {
+exports[`nbt path() > Parse '\"foo\"' 1`] = `
+{
+  "node": {
+    "type": "nbt:path",
+    "children": [
+      {
+        "type": "nbt:path/key",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "children": [
+          {
+            "type": "nbt:string",
+            "range": {
+              "start": 0,
+              "end": 5
+            },
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 1,
+                  "end": 1
+                }
+              }
+            ],
+            "quote": "\\""
+          }
+        ]
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 5
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt path() > Parse 'foo' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -175,8 +184,10 @@ exports['nbt path() Parse "foo" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "foo.[ ]" 1'] = {
+exports[`nbt path() > Parse 'foo.[ ]' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -224,8 +235,10 @@ exports['nbt path() Parse "foo.[ ]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "foo.bar" 1'] = {
+exports[`nbt path() > Parse 'foo.bar' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -295,8 +308,10 @@ exports['nbt path() Parse "foo.bar" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "foo.{ }" 1'] = {
+exports[`nbt path() > Parse 'foo.{ }' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -367,8 +382,10 @@ exports['nbt path() Parse "foo.{ }" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt path() Parse "foo[ 0 ]" 1'] = {
+exports[`nbt path() > Parse 'foo[ 0 ]' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -426,8 +443,10 @@ exports['nbt path() Parse "foo[ 0 ]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "foo[ ]" 1'] = {
+exports[`nbt path() > Parse 'foo[ ]' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -475,8 +494,10 @@ exports['nbt path() Parse "foo[ ]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "foo[ ].[ ]" 1'] = {
+exports[`nbt path() > Parse 'foo[ ].[ ]' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -531,8 +552,10 @@ exports['nbt path() Parse "foo[ ].[ ]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "foo[ ].bar" 1'] = {
+exports[`nbt path() > Parse 'foo[ ].bar' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -609,8 +632,10 @@ exports['nbt path() Parse "foo[ ].bar" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "foo[ ][ ]" 1'] = {
+exports[`nbt path() > Parse 'foo[ ][ ]' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -665,8 +690,10 @@ exports['nbt path() Parse "foo[ ][ ]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "foo[ { } ]" 1'] = {
+exports[`nbt path() > Parse 'foo[ { } ]' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -728,8 +755,10 @@ exports['nbt path() Parse "foo[ { } ]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "foo{ }" 1'] = {
+exports[`nbt path() > Parse 'foo{ }' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -791,8 +820,10 @@ exports['nbt path() Parse "foo{ }" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "{ }" 1'] = {
+exports[`nbt path() > Parse '{ }' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -825,8 +856,10 @@ exports['nbt path() Parse "{ }" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "{ }.foo" 1'] = {
+exports[`nbt path() > Parse '{ }.foo' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -888,8 +921,10 @@ exports['nbt path() Parse "{ }.foo" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt path() Parse "文字" 1'] = {
+exports[`nbt path() > Parse '文字' 1`] = `
+{
   "node": {
     "type": "nbt:path",
     "children": [
@@ -930,3 +965,4 @@ exports['nbt path() Parse "文字" 1'] = {
   },
   "errors": []
 }
+`;

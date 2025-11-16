@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ type parameter/implicit type parameter passing 1'] = {
+exports[`mcdoc __fixture__ > type parameter/implicit type parameter passing 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -746,3 +747,4 @@ exports['mcdoc __fixture__ type parameter/implicit type parameter passing 1'] = 
     }
   }
 }
+`;

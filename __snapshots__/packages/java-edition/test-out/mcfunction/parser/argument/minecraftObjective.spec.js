@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:objective Parse "012" 1'] = {
+exports[`mcfunction argument parser > minecraft:objective > Parse \"012\" 1`] = `
+{
   "node": {
     "type": "symbol",
     "range": {
@@ -9,8 +10,10 @@ exports['mcfunction argument minecraft:objective Parse "012" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:objective Parse "foo" 1'] = {
+exports[`mcfunction argument parser > minecraft:objective > Parse \"foo\" 1`] = `
+{
   "node": {
     "type": "symbol",
     "range": {
@@ -21,3 +24,4 @@ exports['mcfunction argument minecraft:objective Parse "foo" 1'] = {
   },
   "errors": []
 }
+`;

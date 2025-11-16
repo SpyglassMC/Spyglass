@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:time Parse "0" 1'] = {
+exports[`mcfunction argument parser > minecraft:time > Parse \"0\" 1`] = `
+{
   "node": {
     "type": "mcfunction:time",
     "range": {
@@ -19,8 +20,10 @@ exports['mcfunction argument minecraft:time Parse "0" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:time Parse "0d" 1'] = {
+exports[`mcfunction argument parser > minecraft:time > Parse \"0d\" 1`] = `
+{
   "node": {
     "type": "mcfunction:time",
     "range": {
@@ -50,8 +53,10 @@ exports['mcfunction argument minecraft:time Parse "0d" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:time Parse "0foo" 1'] = {
+exports[`mcfunction argument parser > minecraft:time > Parse \"0foo\" 1`] = `
+{
   "node": {
     "type": "mcfunction:time",
     "range": {
@@ -72,8 +77,10 @@ exports['mcfunction argument minecraft:time Parse "0foo" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:time Parse "0s" 1'] = {
+exports[`mcfunction argument parser > minecraft:time > Parse \"0s\" 1`] = `
+{
   "node": {
     "type": "mcfunction:time",
     "range": {
@@ -103,8 +110,10 @@ exports['mcfunction argument minecraft:time Parse "0s" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:time Parse "0t" 1'] = {
+exports[`mcfunction argument parser > minecraft:time > Parse \"0t\" 1`] = `
+{
   "node": {
     "type": "mcfunction:time",
     "range": {
@@ -134,3 +143,4 @@ exports['mcfunction argument minecraft:time Parse "0t" 1'] = {
   },
   "errors": []
 }
+`;

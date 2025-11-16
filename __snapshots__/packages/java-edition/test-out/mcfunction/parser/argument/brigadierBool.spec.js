@@ -1,4 +1,5 @@
-exports['mcfunction argument brigadier:bool Parse "false" 1'] = {
+exports[`mcfunction argument parser > brigadier:bool > Parse \"false\" 1`] = `
+{
   "node": {
     "type": "boolean",
     "range": {
@@ -9,8 +10,10 @@ exports['mcfunction argument brigadier:bool Parse "false" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:bool Parse "true" 1'] = {
+exports[`mcfunction argument parser > brigadier:bool > Parse \"true\" 1`] = `
+{
   "node": {
     "type": "boolean",
     "range": {
@@ -21,3 +24,4 @@ exports['mcfunction argument brigadier:bool Parse "true" 1'] = {
   },
   "errors": []
 }
+`;

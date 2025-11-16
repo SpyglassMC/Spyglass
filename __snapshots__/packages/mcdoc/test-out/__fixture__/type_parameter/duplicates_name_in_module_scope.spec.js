@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ type parameter/duplicates name in module scope 1'] = {
+exports[`mcdoc __fixture__ > type parameter/duplicates name in module scope 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -361,3 +362,4 @@ exports['mcdoc __fixture__ type parameter/duplicates name in module scope 1'] = 
     }
   }
 }
+`;

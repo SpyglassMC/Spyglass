@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:color Parse "green" 1'] = {
+exports[`mcfunction argument parser > minecraft:color > Parse \"green\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -15,8 +16,10 @@ exports['mcfunction argument minecraft:color Parse "green" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:color Parse "red" 1'] = {
+exports[`mcfunction argument parser > minecraft:color > Parse \"red\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -33,3 +36,4 @@ exports['mcfunction argument minecraft:color Parse "red" 1'] = {
   },
   "errors": []
 }
+`;

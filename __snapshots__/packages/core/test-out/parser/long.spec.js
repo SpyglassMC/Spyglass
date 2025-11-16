@@ -1,4 +1,5 @@
-exports['long() long() long() Parse "" 1'] = {
+exports[`long() > long() > long() > Parse '' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -18,8 +19,10 @@ exports['long() long() long() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['long() long() long() Parse "+" 1'] = {
+exports[`long() > long() > long() > Parse '+' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -39,8 +42,10 @@ exports['long() long() long() Parse "+" 1'] = {
     }
   ]
 }
+`;
 
-exports['long() long() long() Parse "+1" 1'] = {
+exports[`long() > long() > long() > Parse '+1' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -51,8 +56,10 @@ exports['long() long() long() Parse "+1" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['long() long() long() Parse "-1" 1'] = {
+exports[`long() > long() > long() > Parse '-1' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -63,8 +70,10 @@ exports['long() long() long() Parse "-1" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['long() long() long() Parse "-123" 1'] = {
+exports[`long() > long() > long() > Parse '-123' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -75,8 +84,10 @@ exports['long() long() long() Parse "-123" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['long() long() long() Parse "0123" 1'] = {
+exports[`long() > long() > long() > Parse '0123' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -96,8 +107,10 @@ exports['long() long() long() Parse "0123" 1'] = {
     }
   ]
 }
+`;
 
-exports['long() long() long() Parse "123" 1'] = {
+exports[`long() > long() > long() > Parse '123' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -108,8 +121,10 @@ exports['long() long() long() Parse "123" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['long() long() long() Parse "foo" 1'] = {
+exports[`long() > long() > long() > Parse 'foo' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -129,13 +144,17 @@ exports['long() long() long() Parse "foo" 1'] = {
     }
   ]
 }
+`;
 
-exports['long() long(failsOnEmpty) long(failsOnEmpty=true) Parse "" 1'] = {
+exports[`long() > long(failsOnEmpty) > long(failsOnEmpty=true) > Parse '' 1`] = `
+{
   "node": "FAILURE",
   "errors": []
 }
+`;
 
-exports['long() long(min, max, onOutOfRange) long(1, 6, true) Parse "0" 1'] = {
+exports[`long() > long(min, max, onOutOfRange) > long(1, 6, true) > Parse '0' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -155,8 +174,10 @@ exports['long() long(min, max, onOutOfRange) long(1, 6, true) Parse "0" 1'] = {
     }
   ]
 }
+`;
 
-exports['long() long(min, max, onOutOfRange) long(1, 6, true) Parse "3" 1'] = {
+exports[`long() > long(min, max, onOutOfRange) > long(1, 6, true) > Parse '3' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -167,8 +188,10 @@ exports['long() long(min, max, onOutOfRange) long(1, 6, true) Parse "3" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['long() long(min, max, onOutOfRange) long(1, 6, true) Parse "9" 1'] = {
+exports[`long() > long(min, max, onOutOfRange) > long(1, 6, true) > Parse '9' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -188,8 +211,10 @@ exports['long() long(min, max, onOutOfRange) long(1, 6, true) Parse "9" 1'] = {
     }
   ]
 }
+`;
 
-exports['long() long(min, max, onOutOfRange) long(1, undefined, false) Parse "0" 1'] = {
+exports[`long() > long(min, max, onOutOfRange) > long(1, undefined, false) > Parse '0' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -209,8 +234,10 @@ exports['long() long(min, max, onOutOfRange) long(1, undefined, false) Parse "0"
     }
   ]
 }
+`;
 
-exports['long() long(min, max, onOutOfRange) long(1, undefined, false) Parse "3" 1'] = {
+exports[`long() > long(min, max, onOutOfRange) > long(1, undefined, false) > Parse '3' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -221,8 +248,10 @@ exports['long() long(min, max, onOutOfRange) long(1, undefined, false) Parse "3"
   },
   "errors": []
 }
+`;
 
-exports['long() long(min, max, onOutOfRange) long(1, undefined, false) Parse "9" 1'] = {
+exports[`long() > long(min, max, onOutOfRange) > long(1, undefined, false) > Parse '9' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -233,8 +262,10 @@ exports['long() long(min, max, onOutOfRange) long(1, undefined, false) Parse "9"
   },
   "errors": []
 }
+`;
 
-exports['long() long(min, max, onOutOfRange) long(undefined, 6, false) Parse "0" 1'] = {
+exports[`long() > long(min, max, onOutOfRange) > long(undefined, 6, false) > Parse '0' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -245,8 +276,10 @@ exports['long() long(min, max, onOutOfRange) long(undefined, 6, false) Parse "0"
   },
   "errors": []
 }
+`;
 
-exports['long() long(min, max, onOutOfRange) long(undefined, 6, false) Parse "3" 1'] = {
+exports[`long() > long(min, max, onOutOfRange) > long(undefined, 6, false) > Parse '3' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -257,8 +290,10 @@ exports['long() long(min, max, onOutOfRange) long(undefined, 6, false) Parse "3"
   },
   "errors": []
 }
+`;
 
-exports['long() long(min, max, onOutOfRange) long(undefined, 6, false) Parse "9" 1'] = {
+exports[`long() > long(min, max, onOutOfRange) > long(undefined, 6, false) > Parse '9' 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -278,3 +313,4 @@ exports['long() long(min, max, onOutOfRange) long(undefined, 6, false) Parse "9"
     }
   ]
 }
+`;

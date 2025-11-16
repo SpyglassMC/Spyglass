@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
+exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -1407,7 +1408,7 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                                           }
                                         }
                                       ],
-                                      "quote": "\""
+                                      "quote": "\\""
                                     }
                                   ],
                                   "range": {
@@ -1437,7 +1438,7 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                                           }
                                         }
                                       ],
-                                      "quote": "\""
+                                      "quote": "\\""
                                     }
                                   ],
                                   "range": {
@@ -1550,3 +1551,4 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
     }
   }
 }
+`;

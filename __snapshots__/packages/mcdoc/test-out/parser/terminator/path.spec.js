@@ -1,34 +1,5 @@
-exports['mcdoc path Parse "" 1'] = {
-  "node": {
-    "type": "mcdoc:path",
-    "children": [
-      {
-        "type": "mcdoc:identifier",
-        "range": {
-          "start": 0,
-          "end": 0
-        },
-        "value": ""
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 0
-    }
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "message": "Expected an identifier",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcdoc path Parse "::foo::bar" 1'] = {
+exports[`mcdoc parser > path > Parse \"::foo::bar\" 1`] = `
+{
   "node": {
     "type": "mcdoc:path",
     "children": [
@@ -57,8 +28,10 @@ exports['mcdoc path Parse "::foo::bar" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc path Parse "foo" 1'] = {
+exports[`mcdoc parser > path > Parse \"\" 1`] = `
+{
   "node": {
     "type": "mcdoc:path",
     "children": [
@@ -66,20 +39,31 @@ exports['mcdoc path Parse "foo" 1'] = {
         "type": "mcdoc:identifier",
         "range": {
           "start": 0,
-          "end": 3
+          "end": 0
         },
-        "value": "foo"
+        "value": ""
       }
     ],
     "range": {
       "start": 0,
-      "end": 3
+      "end": 0
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    }
+  ]
 }
+`;
 
-exports['mcdoc path Parse "foo::bar" 1'] = {
+exports[`mcdoc parser > path > Parse \"foo::bar\" 1`] = `
+{
   "node": {
     "type": "mcdoc:path",
     "children": [
@@ -107,8 +91,33 @@ exports['mcdoc path Parse "foo::bar" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc path Parse "super::foo something else;" 1'] = {
+exports[`mcdoc parser > path > Parse \"foo\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:path",
+    "children": [
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "value": "foo"
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 3
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > path > Parse \"super::foo something else;\" 1`] = `
+{
   "node": {
     "type": "mcdoc:path",
     "children": [
@@ -136,37 +145,10 @@ exports['mcdoc path Parse "super::foo something else;" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc path Parse "super::foo" 1'] = {
-  "node": {
-    "type": "mcdoc:path",
-    "children": [
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 0,
-          "end": 5
-        },
-        "value": "super"
-      },
-      {
-        "type": "mcdoc:identifier",
-        "range": {
-          "start": 7,
-          "end": 10
-        },
-        "value": "foo"
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 10
-    }
-  },
-  "errors": []
-}
-
-exports['mcdoc path Parse "super::foo::bar" 1'] = {
+exports[`mcdoc parser > path > Parse \"super::foo::bar\" 1`] = `
+{
   "node": {
     "type": "mcdoc:path",
     "children": [
@@ -202,3 +184,35 @@ exports['mcdoc path Parse "super::foo::bar" 1'] = {
   },
   "errors": []
 }
+`;
+
+exports[`mcdoc parser > path > Parse \"super::foo\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:path",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "value": "super"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 7,
+          "end": 10
+        },
+        "value": "foo"
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 10
+    }
+  },
+  "errors": []
+}
+`;

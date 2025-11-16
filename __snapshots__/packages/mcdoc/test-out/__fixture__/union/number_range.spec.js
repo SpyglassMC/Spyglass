@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ union/number range 1'] = {
+exports[`mcdoc __fixture__ > union/number range 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -469,3 +470,4 @@ exports['mcdoc __fixture__ union/number range 1'] = {
     }
   }
 }
+`;

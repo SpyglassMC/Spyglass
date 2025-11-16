@@ -8,7 +8,7 @@ describe('error()', () => {
 		content: 'whatever\nall errors',
 	}]
 	for (const { content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			t.assert.snapshot(testParser(error, content))
 		})
 	}

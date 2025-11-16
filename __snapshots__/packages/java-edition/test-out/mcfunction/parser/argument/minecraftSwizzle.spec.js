@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:swizzle Parse "x" 1'] = {
+exports[`mcfunction argument parser > minecraft:swizzle > Parse \"x\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -9,8 +10,10 @@ exports['mcfunction argument minecraft:swizzle Parse "x" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:swizzle Parse "xyz" 1'] = {
+exports[`mcfunction argument parser > minecraft:swizzle > Parse \"xyz\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -21,3 +24,4 @@ exports['mcfunction argument minecraft:swizzle Parse "xyz" 1'] = {
   },
   "errors": []
 }
+`;

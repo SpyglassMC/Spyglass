@@ -11,11 +11,11 @@ describe('comment()', () => {
 		{ prefixes: new Set(['//']), content: '# Whoops.\n// The world is burning!' },
 	]
 	for (const { prefixes, content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = comment({ singleLinePrefixes: prefixes })
 			t.assert.snapshot(testParser(parser, content))
 		})
-		it(`Parse "${showWhitespaceGlyph(content)}" with "includesEol" on`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}' with 'includesEol' on`, (t) => {
 			const parser = comment({ singleLinePrefixes: prefixes, includesEol: true })
 			t.assert.snapshot(testParser(parser, content))
 		})

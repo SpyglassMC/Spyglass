@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = {
+exports[`mcfunction argument parser > minecraft:nbt_compound_tag > Parse \"{foo:bar}\" 1`] = `
+{
   "node": {
     "type": "mcfunction:nbt",
     "range": {
@@ -116,8 +117,10 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = 
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:nbt_compound_tag Parse "{}" 1'] = {
+exports[`mcfunction argument parser > minecraft:nbt_compound_tag > Parse \"{}\" 1`] = `
+{
   "node": {
     "type": "mcfunction:nbt",
     "range": {
@@ -141,3 +144,4 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{}" 1'] = {
   },
   "errors": []
 }
+`;

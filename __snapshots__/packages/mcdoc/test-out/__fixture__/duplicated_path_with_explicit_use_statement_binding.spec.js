@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1'] = {
+exports[`mcdoc __fixture__ > duplicated path with explicit use statement binding 1`] = `
+{
   "global": {
     "mcdoc": {
       "::module": {
@@ -481,3 +482,4 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
     }
   }
 }
+`;

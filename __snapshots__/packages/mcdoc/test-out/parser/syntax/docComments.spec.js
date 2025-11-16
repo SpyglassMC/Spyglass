@@ -1,4 +1,5 @@
-exports['mcdoc docComments Parse "/// First line↓⮀⮀⮀⮀/// Second line↓⮀⮀⮀⮀Not comment" 1'] = {
+exports[`mcdoc parser > docComments > Parse \"/// First line↓⮀⮀⮀⮀/// Second line↓⮀⮀⮀⮀Not comment\" 1`] = `
+{
   "node": {
     "type": "mcdoc:doc_comments",
     "children": [
@@ -8,7 +9,7 @@ exports['mcdoc docComments Parse "/// First line↓⮀⮀⮀⮀/// Second line�
           "start": 0,
           "end": 15
         },
-        "comment": " First line\n",
+        "comment": " First line\\n",
         "prefix": "///"
       },
       {
@@ -17,7 +18,7 @@ exports['mcdoc docComments Parse "/// First line↓⮀⮀⮀⮀/// Second line�
           "start": 19,
           "end": 35
         },
-        "comment": " Second line\n",
+        "comment": " Second line\\n",
         "prefix": "///"
       }
     ],
@@ -28,3 +29,4 @@ exports['mcdoc docComments Parse "/// First line↓⮀⮀⮀⮀/// Second line�
   },
   "errors": []
 }
+`;

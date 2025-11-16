@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ dispatcher/indexed 1'] = {
+exports[`mcdoc __fixture__ > dispatcher/indexed 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -585,3 +586,4 @@ exports['mcdoc __fixture__ dispatcher/indexed 1'] = {
     }
   }
 }
+`;

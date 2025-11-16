@@ -1,9 +1,12 @@
-exports['error() Parse "" 1'] = {
+exports[`error() > Parse '' 1`] = `
+{
   "node": "undefined",
   "errors": []
 }
+`;
 
-exports['error() Parse "whatever↓all errors" 1'] = {
+exports[`error() > Parse 'whatever↓all errors' 1`] = `
+{
   "node": {
     "type": "error",
     "range": {
@@ -22,8 +25,10 @@ exports['error() Parse "whatever↓all errors" 1'] = {
     }
   ]
 }
+`;
 
-exports['error() Parse "⮀" 1'] = {
+exports[`error() > Parse '⮀' 1`] = `
+{
   "node": {
     "type": "error",
     "range": {
@@ -42,3 +47,4 @@ exports['error() Parse "⮀" 1'] = {
     }
   ]
 }
+`;

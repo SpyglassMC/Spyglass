@@ -27,32 +27,12 @@ import {
 	VanillaConfig,
 } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
-import { fail } from 'node:assert'
-import path from 'node:path'
+import { fail } from 'node:assert/strict'
 import type { TestContext } from 'node:test'
 import type { URL } from 'node:url'
 import { fileURLToPath } from 'node:url'
 import { format } from 'node:util'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-
-export function resolveSnapshotPath(testPath: string | undefined): string {
-	if (!testPath) {
-		throw new Error("testPath is undefined. This shouldn't happen as we are not in a REPL")
-	}
-
-	const packagesIndex = testPath.lastIndexOf(`${path.sep}packages${path.sep}`)
-	if (packagesIndex === -1) {
-		throw new Error(`Could not find '/packages/' directory in testPath: ${testPath}`)
-	}
-
-	return path.join(
-		testPath.slice(0, packagesIndex),
-		'__snapshots__',
-		testPath.slice(packagesIndex + 1)
-			.replace(new RegExp(`${path.sep}test${path.sep}`), `${path.sep}test-out${path.sep}`)
-			.replace(/\.spec\.(ts|mts|cts)$/, '.spec.js'),
-	)
-}
 
 export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 	const cacheRoot: RootUriString = data.cacheRoot ?? 'file:///cache/'
@@ -76,10 +56,10 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 }
 
 /**
- * @returns The string with `\t`, `\r`, `\n`, and `\\` replaced with non-special characters.
+ * @returns The string with `\t`, `\r`, and `\n` replaced with non-special characters.
  */
 export function showWhitespaceGlyph(string: string) {
-	return string.replace(/\t/g, '⮀').replace(/\r/g, '←').replace(/\n/g, '↓').replace(/\\/g, '⧵') // We replace normal back slashes with ⧵ (U+29f5) here, due to the snapshots being stupid and not escaping them before exporting.
+	return string.replace(/\t/g, '⮀').replace(/\r/g, '←').replace(/\n/g, '↓')
 }
 
 export function markOffsetInString(string: string, offset: number) {
@@ -180,11 +160,29 @@ export function assertError(fn: () => void, errorCallback: (e: unknown) => void 
 	}
 }
 
+/**
+ * Stores a snapshot value as if it were created by a test file at the specified `uri`.
+ */
 export function snapshotWithUri(
 	t: TestContext,
 	{ uri, value }: { uri: URL; value: object },
 ): void {
-	t.assert.fileSnapshot(value, resolveSnapshotPath(fileURLToPath(uri)))
+	// A little hacky. `t.assert.snapshot()` uses the `filePath` defined on `t` to decide the path
+	// of the current test file:
+	// https://github.com/nodejs/node/blob/1ce22dd4d642c24bc217ec329cca8e92f5e8e8dc/lib/internal/test_runner/snapshot.js#L197
+	// So we can define our own property descripter at key `filePath` to shadow the one inherited
+	// from its `TestContext` prototype before `t.assert.snapshot()` is called to ensure our own
+	// custom test file path is used for the snapshot.
+	Object.defineProperty(t, 'filePath', {
+		get: () => fileURLToPath(uri),
+		enumerable: false,
+		configurable: true,
+	})
+	try {
+		t.assert.snapshot(value)
+	} finally {
+		Reflect.deleteProperty(t, 'filePath')
+	}
 }
 
 export interface SimpleProjectState {

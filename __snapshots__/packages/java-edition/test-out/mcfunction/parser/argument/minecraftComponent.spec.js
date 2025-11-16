@@ -1,80 +1,5 @@
-exports['mcfunction argument minecraft:component Parse """" 1'] = {
-  "node": {
-    "type": "json:typed",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "children": [
-      {
-        "type": "json:string",
-        "range": {
-          "start": 0,
-          "end": 2
-        },
-        "value": "",
-        "valueMap": [
-          {
-            "inner": {
-              "start": 0,
-              "end": 0
-            },
-            "outer": {
-              "start": 1,
-              "end": 1
-            }
-          }
-        ],
-        "quote": "\""
-      }
-    ],
-    "targetType": {
-      "kind": "reference",
-      "path": "::java::server::util::text::Text"
-    }
-  },
-  "errors": []
-}
-
-exports['mcfunction argument minecraft:component Parse ""hello world"" 1'] = {
-  "node": {
-    "type": "json:typed",
-    "range": {
-      "start": 0,
-      "end": 13
-    },
-    "children": [
-      {
-        "type": "json:string",
-        "range": {
-          "start": 0,
-          "end": 13
-        },
-        "value": "hello world",
-        "valueMap": [
-          {
-            "inner": {
-              "start": 0,
-              "end": 0
-            },
-            "outer": {
-              "start": 1,
-              "end": 1
-            }
-          }
-        ],
-        "quote": "\""
-      }
-    ],
-    "targetType": {
-      "kind": "reference",
-      "path": "::java::server::util::text::Text"
-    }
-  },
-  "errors": []
-}
-
-exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
+exports[`mcfunction argument parser > minecraft:component > Parse \"[\"\"]\" 1`] = `
+{
   "node": {
     "type": "json:typed",
     "range": {
@@ -115,7 +40,7 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               }
             ],
             "value": {
@@ -137,7 +62,7 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             }
           }
         ]
@@ -150,8 +75,90 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 1'] = {
+exports[`mcfunction argument parser > minecraft:component > Parse \"\"\"\" 1`] = `
+{
+  "node": {
+    "type": "json:typed",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "children": [
+      {
+        "type": "json:string",
+        "range": {
+          "start": 0,
+          "end": 2
+        },
+        "value": "",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 1,
+              "end": 1
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "targetType": {
+      "kind": "reference",
+      "path": "::java::server::util::text::Text"
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:component > Parse \"\"hello world\"\" 1`] = `
+{
+  "node": {
+    "type": "json:typed",
+    "range": {
+      "start": 0,
+      "end": 13
+    },
+    "children": [
+      {
+        "type": "json:string",
+        "range": {
+          "start": 0,
+          "end": 13
+        },
+        "value": "hello world",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 1,
+              "end": 1
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "targetType": {
+      "kind": "reference",
+      "path": "::java::server::util::text::Text"
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:component > Parse \"{\"text\":\"hello world\"}\" 1`] = `
+{
   "node": {
     "type": "json:typed",
     "range": {
@@ -192,7 +199,7 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               },
               {
                 "type": "json:string",
@@ -213,7 +220,7 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               }
             ],
             "key": {
@@ -235,7 +242,7 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             },
             "sep": {
               "start": 7,
@@ -260,7 +267,7 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             }
           }
         ],
@@ -277,3 +284,4 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
   },
   "errors": []
 }
+`;

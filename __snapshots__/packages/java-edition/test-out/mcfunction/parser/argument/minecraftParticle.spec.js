@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:particle Parse "block stone" 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"block stone\" 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -60,8 +61,10 @@ exports['mcfunction argument minecraft:particle Parse "block stone" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "block stone" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"block stone\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -93,8 +96,10 @@ exports['mcfunction argument minecraft:particle Parse "block stone" in version 1
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamond_block"}" 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"block{block_state:\"diamond_block\"}\" 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -179,7 +184,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                         }
                       }
                     ],
-                    "quote": "\""
+                    "quote": "\\""
                   }
                 ],
                 "key": {
@@ -225,7 +230,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                       }
                     }
                   ],
-                  "quote": "\""
+                  "quote": "\\""
                 }
               }
             ],
@@ -295,7 +300,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                       }
                     }
                   ],
-                  "quote": "\""
+                  "quote": "\\""
                 }
               ],
               "key": {
@@ -341,7 +346,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               }
             }
           ],
@@ -383,8 +388,10 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamond_block"}" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"block{block_state:\"diamond_block\"}\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -455,7 +462,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               }
             ],
             "key": {
@@ -501,7 +508,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             }
           }
         ],
@@ -524,8 +531,10 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "cloud" 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"cloud\" 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -557,8 +566,10 @@ exports['mcfunction argument minecraft:particle Parse "cloud" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "dust 0.2 0.4 0.6 0.8" 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"dust 0.2 0.4 0.6 0.8\" 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -646,8 +657,10 @@ exports['mcfunction argument minecraft:particle Parse "dust 0.2 0.4 0.6 0.8" 1']
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "dust 0.2 0.4 0.6 0.8" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"dust 0.2 0.4 0.6 0.8\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -679,8 +692,10 @@ exports['mcfunction argument minecraft:particle Parse "dust 0.2 0.4 0.6 0.8" in 
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "dust_color_transition 0.1 0.2 0.3 0.4 0.5 0.6 0.7" 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"dust_color_transition 0.1 0.2 0.3 0.4 0.5 0.6 0.7\" 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -816,8 +831,10 @@ exports['mcfunction argument minecraft:particle Parse "dust_color_transition 0.1
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "end_rod" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"end_rod\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -849,8 +866,10 @@ exports['mcfunction argument minecraft:particle Parse "end_rod" in version 1.20.
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "end_rod{}" 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"end_rod{}\" 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -882,8 +901,10 @@ exports['mcfunction argument minecraft:particle Parse "end_rod{}" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "end_rod{}" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"end_rod{}\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -927,8 +948,10 @@ exports['mcfunction argument minecraft:particle Parse "end_rod{}" in version 1.2
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "item carrot_on_a_stick" 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"item carrot_on_a_stick\" 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -989,8 +1012,10 @@ exports['mcfunction argument minecraft:particle Parse "item carrot_on_a_stick" 1
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "sculk_charge 4.2" 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"sculk_charge 4.2\" 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -1030,8 +1055,10 @@ exports['mcfunction argument minecraft:particle Parse "sculk_charge 4.2" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "shriek 20" 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"shriek 20\" 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -1071,8 +1098,10 @@ exports['mcfunction argument minecraft:particle Parse "shriek 20" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:particle Parse "vibration 0.1 0.2 0.3 40" 1'] = {
+exports[`mcfunction argument parser > minecraft:particle > Parse \"vibration 0.1 0.2 0.3 40\" 1`] = `
+{
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -1149,3 +1178,4 @@ exports['mcfunction argument minecraft:particle Parse "vibration 0.1 0.2 0.3 40"
   },
   "errors": []
 }
+`;

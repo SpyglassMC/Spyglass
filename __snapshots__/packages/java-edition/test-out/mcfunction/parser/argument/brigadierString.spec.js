@@ -1,4 +1,5 @@
-exports['mcfunction argument brigadier:string Parse """" with {"type":"phrase"} 1'] = {
+exports[`mcfunction argument parser > brigadier:string > Parse \"\"\"\" with {\"type\":\"phrase\"} 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -18,19 +19,21 @@ exports['mcfunction argument brigadier:string Parse """" with {"type":"phrase"} 
         }
       }
     ],
-    "quote": "\""
+    "quote": "\\""
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:string Parse ""and symbols"" with {"type":"greedy"} 1'] = {
+exports[`mcfunction argument parser > brigadier:string > Parse \"\"and symbols\"\" with {\"type\":\"greedy\"} 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
       "start": 0,
       "end": 13
     },
-    "value": "\"and symbols\"",
+    "value": "\\"and symbols\\"",
     "valueMap": [
       {
         "inner": {
@@ -46,8 +49,10 @@ exports['mcfunction argument brigadier:string Parse ""and symbols"" with {"type"
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:string Parse ""quoted phrase"" with {"type":"phrase"} 1'] = {
+exports[`mcfunction argument parser > brigadier:string > Parse \"\"quoted phrase\"\" with {\"type\":\"phrase\"} 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -67,12 +72,14 @@ exports['mcfunction argument brigadier:string Parse ""quoted phrase"" with {"typ
         }
       }
     ],
-    "quote": "\""
+    "quote": "\\""
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:string Parse "word" with {"type":"greedy"} 1'] = {
+exports[`mcfunction argument parser > brigadier:string > Parse \"word\" with {\"type\":\"greedy\"} 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -95,8 +102,10 @@ exports['mcfunction argument brigadier:string Parse "word" with {"type":"greedy"
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:string Parse "word" with {"type":"phrase"} 1'] = {
+exports[`mcfunction argument parser > brigadier:string > Parse \"word\" with {\"type\":\"phrase\"} 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -119,8 +128,10 @@ exports['mcfunction argument brigadier:string Parse "word" with {"type":"phrase"
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:string Parse "word" with {"type":"word"} 1'] = {
+exports[`mcfunction argument parser > brigadier:string > Parse \"word\" with {\"type\":\"word\"} 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -143,8 +154,10 @@ exports['mcfunction argument brigadier:string Parse "word" with {"type":"word"} 
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:string Parse "word_with_underscores" with {"type":"word"} 1'] = {
+exports[`mcfunction argument parser > brigadier:string > Parse \"word_with_underscores\" with {\"type\":\"word\"} 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -167,8 +180,10 @@ exports['mcfunction argument brigadier:string Parse "word_with_underscores" with
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:string Parse "words with spaces" with {"type":"greedy"} 1'] = {
+exports[`mcfunction argument parser > brigadier:string > Parse \"words with spaces\" with {\"type\":\"greedy\"} 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -191,3 +206,4 @@ exports['mcfunction argument brigadier:string Parse "words with spaces" with {"t
   },
   "errors": []
 }
+`;

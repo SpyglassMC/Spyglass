@@ -1,4 +1,5 @@
-exports['nbt primitive() Parse "" 1'] = {
+exports[`nbt primitive() > Parse '' 1`] = `
+{
   "node": {
     "type": "nbt:string",
     "range": {
@@ -21,33 +22,10 @@ exports['nbt primitive() Parse "" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt primitive() Parse ""quoted"" 1'] = {
-  "node": {
-    "type": "nbt:string",
-    "range": {
-      "start": 0,
-      "end": 8
-    },
-    "value": "quoted",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 1,
-          "end": 1
-        }
-      }
-    ],
-    "quote": "\""
-  },
-  "errors": []
-}
-
-exports['nbt primitive() Parse "1.23f" 1'] = {
+exports[`nbt primitive() > Parse '1.23f' 1`] = `
+{
   "node": {
     "type": "nbt:float",
     "range": {
@@ -58,8 +36,10 @@ exports['nbt primitive() Parse "1.23f" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt primitive() Parse "1024L" 1'] = {
+exports[`nbt primitive() > Parse '1024L' 1`] = `
+{
   "node": {
     "type": "nbt:long",
     "range": {
@@ -70,8 +50,10 @@ exports['nbt primitive() Parse "1024L" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt primitive() Parse "123456b" 1'] = {
+exports[`nbt primitive() > Parse '123456b' 1`] = `
+{
   "node": {
     "type": "nbt:string",
     "range": {
@@ -103,8 +85,10 @@ exports['nbt primitive() Parse "123456b" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt primitive() Parse "1b" 1'] = {
+exports[`nbt primitive() > Parse '1b' 1`] = `
+{
   "node": {
     "type": "nbt:byte",
     "range": {
@@ -115,8 +99,10 @@ exports['nbt primitive() Parse "1b" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt primitive() Parse "4.56" 1'] = {
+exports[`nbt primitive() > Parse '4.56' 1`] = `
+{
   "node": {
     "type": "nbt:double",
     "range": {
@@ -127,8 +113,10 @@ exports['nbt primitive() Parse "4.56" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt primitive() Parse "4.56d" 1'] = {
+exports[`nbt primitive() > Parse '4.56d' 1`] = `
+{
   "node": {
     "type": "nbt:double",
     "range": {
@@ -139,8 +127,10 @@ exports['nbt primitive() Parse "4.56d" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt primitive() Parse "72s" 1'] = {
+exports[`nbt primitive() > Parse '72s' 1`] = `
+{
   "node": {
     "type": "nbt:short",
     "range": {
@@ -151,8 +141,10 @@ exports['nbt primitive() Parse "72s" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt primitive() Parse "987" 1'] = {
+exports[`nbt primitive() > Parse '987' 1`] = `
+{
   "node": {
     "type": "nbt:int",
     "range": {
@@ -163,8 +155,37 @@ exports['nbt primitive() Parse "987" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt primitive() Parse "false" 1'] = {
+exports[`nbt primitive() > Parse '\"quoted\"' 1`] = `
+{
+  "node": {
+    "type": "nbt:string",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": "quoted",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
+        }
+      }
+    ],
+    "quote": "\\""
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt primitive() > Parse 'false' 1`] = `
+{
   "node": {
     "type": "nbt:byte",
     "range": {
@@ -175,8 +196,10 @@ exports['nbt primitive() Parse "false" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt primitive() Parse "true" 1'] = {
+exports[`nbt primitive() > Parse 'true' 1`] = `
+{
   "node": {
     "type": "nbt:byte",
     "range": {
@@ -187,8 +210,10 @@ exports['nbt primitive() Parse "true" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt primitive() Parse "unquoted" 1'] = {
+exports[`nbt primitive() > Parse 'unquoted' 1`] = `
+{
   "node": {
     "type": "nbt:string",
     "range": {
@@ -211,3 +236,4 @@ exports['nbt primitive() Parse "unquoted" 1'] = {
   },
   "errors": []
 }
+`;

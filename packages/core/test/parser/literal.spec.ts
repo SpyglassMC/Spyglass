@@ -13,7 +13,7 @@ describe('literal()', () => {
 		{ options: [{ pool: ['qux'] }], content: 'wrong' },
 	]
 	for (const { options, content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = literal(...(options as any))
 			t.assert.snapshot(testParser(parser, content))
 		})

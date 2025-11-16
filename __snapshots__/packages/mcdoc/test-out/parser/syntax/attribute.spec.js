@@ -1,9 +1,5 @@
-exports['mcdoc attribute Parse "" 1'] = {
-  "node": "FAILURE",
-  "errors": []
-}
-
-exports['mcdoc attribute Parse "#[" 1'] = {
+exports[`mcdoc parser > attribute > Parse \"#[\" 1`] = `
+{
   "node": {
     "type": "mcdoc:attribute",
     "children": [
@@ -40,8 +36,10 @@ exports['mcdoc attribute Parse "#[" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc attribute Parse "#[]" 1'] = {
+exports[`mcdoc parser > attribute > Parse \"#[]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:attribute",
     "children": [
@@ -70,8 +68,10 @@ exports['mcdoc attribute Parse "#[]" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc attribute Parse "#[advancement_criterion=(type=definition,id=test)]" 1'] = {
+exports[`mcdoc parser > attribute > Parse \"#[advancement_criterion=(type=definition,id=test)]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:attribute",
     "children": [
@@ -178,8 +178,10 @@ exports['mcdoc attribute Parse "#[advancement_criterion=(type=definition,id=test
   },
   "errors": []
 }
+`;
 
-exports['mcdoc attribute Parse "#[bitfield(enum (int) {})]" 1'] = {
+exports[`mcdoc parser > attribute > Parse \"#[bitfield(enum (int) {})]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:attribute",
     "children": [
@@ -253,8 +255,10 @@ exports['mcdoc attribute Parse "#[bitfield(enum (int) {})]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc attribute Parse "#[bitfield=enum (int) {↓⮀⮀⮀⮀⮀Foo = 1,↓⮀⮀⮀⮀⮀Bar = 2,↓⮀⮀⮀⮀⮀Qux = 3,↓⮀⮀⮀⮀}]" 1'] = {
+exports[`mcdoc parser > attribute > Parse \"#[bitfield=enum (int) {↓⮀⮀⮀⮀⮀Foo = 1,↓⮀⮀⮀⮀⮀Bar = 2,↓⮀⮀⮀⮀⮀Qux = 3,↓⮀⮀⮀⮀}]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:attribute",
     "children": [
@@ -412,8 +416,10 @@ exports['mcdoc attribute Parse "#[bitfield=enum (int) {↓⮀⮀⮀⮀⮀Foo = 1
   },
   "errors": []
 }
+`;
 
-exports['mcdoc attribute Parse "#[color=composite_rgb]" 1'] = {
+exports[`mcdoc parser > attribute > Parse \"#[color=composite_rgb]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:attribute",
     "children": [
@@ -459,8 +465,10 @@ exports['mcdoc attribute Parse "#[color=composite_rgb]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc attribute Parse "#[since=1.17]" 1'] = {
+exports[`mcdoc parser > attribute > Parse \"#[since=1.17]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:attribute",
     "children": [
@@ -506,8 +514,10 @@ exports['mcdoc attribute Parse "#[since=1.17]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc attribute Parse "#[uuid]" 1'] = {
+exports[`mcdoc parser > attribute > Parse \"#[uuid]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:attribute",
     "children": [
@@ -527,8 +537,10 @@ exports['mcdoc attribute Parse "#[uuid]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc attribute Parse "#[vector(dimension=3,integer=true)]" 1'] = {
+exports[`mcdoc parser > attribute > Parse \"#[vector(dimension=3,integer=true)]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:attribute",
     "children": [
@@ -627,3 +639,11 @@ exports['mcdoc attribute Parse "#[vector(dimension=3,integer=true)]" 1'] = {
   },
   "errors": []
 }
+`;
+
+exports[`mcdoc parser > attribute > Parse \"\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": []
+}
+`;

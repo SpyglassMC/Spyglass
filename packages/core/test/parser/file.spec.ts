@@ -23,7 +23,7 @@ describe('file()', () => {
 		content: '{test content}\n\t',
 	}, { content: '{test content}\nWhoops errors!' }]
 	for (const { content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = meta.getParserForLanguageId('@spyglassmc/core#file-test')!
 			t.assert.snapshot(
 				testParser(file(parser), content, {

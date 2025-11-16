@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ enum/duplicated keys 1'] = {
+exports[`mcdoc __fixture__ > enum/duplicated keys 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -335,3 +336,4 @@ exports['mcdoc __fixture__ enum/duplicated keys 1'] = {
     }
   }
 }
+`;

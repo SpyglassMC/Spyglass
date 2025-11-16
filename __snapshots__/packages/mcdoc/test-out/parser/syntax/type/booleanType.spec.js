@@ -1,4 +1,5 @@
-exports['mcdoc booleanType Parse "" 1'] = {
+exports[`mcdoc parser > booleanType > Parse \"\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -11,8 +12,10 @@ exports['mcdoc booleanType Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc booleanType Parse "boolean" 1'] = {
+exports[`mcdoc parser > booleanType > Parse \"boolean\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/boolean",
     "children": [
@@ -33,8 +36,10 @@ exports['mcdoc booleanType Parse "boolean" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc booleanType Parse "other" 1'] = {
+exports[`mcdoc parser > booleanType > Parse \"other\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -47,3 +52,4 @@ exports['mcdoc booleanType Parse "other" 1'] = {
     }
   ]
 }
+`;

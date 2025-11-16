@@ -1,4 +1,5 @@
-exports['mcfunction parser command() Parse "" 1'] = {
+exports[`mcfunction parser command() > Parse '' 1`] = `
+{
   "node": {
     "type": "mcfunction:command",
     "range": {
@@ -18,8 +19,10 @@ exports['mcfunction parser command() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcfunction parser command() Parse "execute if true if true run say hi" 1'] = {
+exports[`mcfunction parser command() > Parse 'execute if true if true run say hi' 1`] = `
+{
   "node": {
     "type": "mcfunction:command",
     "range": {
@@ -199,8 +202,10 @@ exports['mcfunction parser command() Parse "execute if true if true run say hi" 
   },
   "errors": []
 }
+`;
 
-exports['mcfunction parser command() Parse "s" 1'] = {
+exports[`mcfunction parser command() > Parse 's' 1`] = `
+{
   "node": {
     "type": "mcfunction:command",
     "range": {
@@ -241,8 +246,10 @@ exports['mcfunction parser command() Parse "s" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcfunction parser command() Parse "say " 1'] = {
+exports[`mcfunction parser command() > Parse 'say ' 1`] = `
+{
   "node": {
     "type": "mcfunction:command",
     "range": {
@@ -283,8 +290,10 @@ exports['mcfunction parser command() Parse "say " 1'] = {
     }
   ]
 }
+`;
 
-exports['mcfunction parser command() Parse "say hi " 1'] = {
+exports[`mcfunction parser command() > Parse 'say hi ' 1`] = `
+{
   "node": {
     "type": "mcfunction:command",
     "range": {
@@ -337,8 +346,10 @@ exports['mcfunction parser command() Parse "say hi " 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction parser command() Parse "say hi garbage text" 1'] = {
+exports[`mcfunction parser command() > Parse 'say hi garbage text' 1`] = `
+{
   "node": {
     "type": "mcfunction:command",
     "range": {
@@ -418,8 +429,10 @@ exports['mcfunction parser command() Parse "say hi garbage text" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcfunction parser command() Parse "say hi" 1'] = {
+exports[`mcfunction parser command() > Parse 'say hi' 1`] = `
+{
   "node": {
     "type": "mcfunction:command",
     "range": {
@@ -472,8 +485,10 @@ exports['mcfunction parser command() Parse "say hi" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction parser command() Parse "say" 1'] = {
+exports[`mcfunction parser command() > Parse 'say' 1`] = `
+{
   "node": {
     "type": "mcfunction:command",
     "range": {
@@ -514,8 +529,10 @@ exports['mcfunction parser command() Parse "say" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcfunction parser command() Should not exceed max call stack 1'] = {
+exports[`mcfunction parser command() > Should not exceed max call stack 1`] = `
+{
   "node": "OMITTED",
   "errors": [
     {
@@ -528,3 +545,4 @@ exports['mcfunction parser command() Should not exceed max call stack 1'] = {
     }
   ]
 }
+`;

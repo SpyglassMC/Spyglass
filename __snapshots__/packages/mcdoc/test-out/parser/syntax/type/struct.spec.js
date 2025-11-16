@@ -1,4 +1,5 @@
-exports['mcdoc struct Parse "" 1'] = {
+exports[`mcdoc parser > struct > Parse \"\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -11,8 +12,10 @@ exports['mcdoc struct Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc struct Parse "other" 1'] = {
+exports[`mcdoc parser > struct > Parse \"other\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -25,8 +28,10 @@ exports['mcdoc struct Parse "other" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc struct Parse "struct Foo {" 1'] = {
+exports[`mcdoc parser > struct > Parse \"struct Foo {\" 1`] = `
+{
   "node": {
     "type": "mcdoc:struct",
     "children": [
@@ -140,8 +145,10 @@ exports['mcdoc struct Parse "struct Foo {" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc struct Parse "struct Foo {}" 1'] = {
+exports[`mcdoc parser > struct > Parse \"struct Foo {}\" 1`] = `
+{
   "node": {
     "type": "mcdoc:struct",
     "children": [
@@ -178,8 +185,10 @@ exports['mcdoc struct Parse "struct Foo {}" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc struct Parse "struct Foo {↓⮀⮀⮀⮀⮀/// Hello world.↓⮀⮀⮀⮀⮀Bar: boolean,↓⮀⮀⮀⮀⮀Boo: struct Duh { Ha: any },↓⮀⮀⮀⮀⮀UUID: #[uuid] int[] @ 4,↓⮀⮀⮀⮀⮀#[meh]↓⮀⮀⮀⮀⮀Qux: enum (int) {},↓⮀⮀⮀⮀⮀#[since=1.17]↓⮀⮀⮀⮀⮀...Lol,↓⮀⮀⮀⮀}" 1'] = {
+exports[`mcdoc parser > struct > Parse \"struct Foo {↓⮀⮀⮀⮀⮀/// Hello world.↓⮀⮀⮀⮀⮀Bar: boolean,↓⮀⮀⮀⮀⮀Boo: struct Duh { Ha: any },↓⮀⮀⮀⮀⮀UUID: #[uuid] int[] @ 4,↓⮀⮀⮀⮀⮀#[meh]↓⮀⮀⮀⮀⮀Qux: enum (int) {},↓⮀⮀⮀⮀⮀#[since=1.17]↓⮀⮀⮀⮀⮀...Lol,↓⮀⮀⮀⮀}\" 1`] = `
+{
   "node": {
     "type": "mcdoc:struct",
     "children": [
@@ -215,7 +224,7 @@ exports['mcdoc struct Parse "struct Foo {↓⮀⮀⮀⮀⮀/// Hello world.↓�
                       "start": 18,
                       "end": 35
                     },
-                    "comment": " Hello world.\n",
+                    "comment": " Hello world.\\n",
                     "prefix": "///"
                   }
                 ],
@@ -581,8 +590,10 @@ exports['mcdoc struct Parse "struct Foo {↓⮀⮀⮀⮀⮀/// Hello world.↓�
   },
   "errors": []
 }
+`;
 
-exports['mcdoc struct Parse "struct Foo" 1'] = {
+exports[`mcdoc parser > struct > Parse \"struct Foo\" 1`] = `
+{
   "node": {
     "type": "mcdoc:struct",
     "children": [
@@ -704,8 +715,10 @@ exports['mcdoc struct Parse "struct Foo" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc struct Parse "struct {}" 1'] = {
+exports[`mcdoc parser > struct > Parse \"struct {}\" 1`] = `
+{
   "node": {
     "type": "mcdoc:struct",
     "children": [
@@ -734,8 +747,10 @@ exports['mcdoc struct Parse "struct {}" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc struct Parse "struct" 1'] = {
+exports[`mcdoc parser > struct > Parse \"struct\" 1`] = `
+{
   "node": {
     "type": "mcdoc:struct",
     "children": [
@@ -849,3 +864,4 @@ exports['mcdoc struct Parse "struct" 1'] = {
     }
   ]
 }
+`;

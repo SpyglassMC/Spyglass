@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:item_enchantment Parse "silk_touch" 1'] = {
+exports[`mcfunction argument parser > minecraft:item_enchantment > Parse \"silk_touch\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -11,8 +12,10 @@ exports['mcfunction argument minecraft:item_enchantment Parse "silk_touch" 1'] =
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_enchantment Parse "unbreaking" 1'] = {
+exports[`mcfunction argument parser > minecraft:item_enchantment > Parse \"unbreaking\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -25,3 +28,4 @@ exports['mcfunction argument minecraft:item_enchantment Parse "unbreaking" 1'] =
   },
   "errors": []
 }
+`;

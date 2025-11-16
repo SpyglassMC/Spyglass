@@ -1,9 +1,5 @@
-exports['mcdoc dispatcherType Parse "" 1'] = {
-  "node": "FAILURE",
-  "errors": []
-}
-
-exports['mcdoc dispatcherType Parse ":entity[]" 1'] = {
+exports[`mcdoc parser > dispatcherType > Parse \":entity[]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/dispatcher",
     "children": [
@@ -52,13 +48,24 @@ exports['mcdoc dispatcherType Parse ":entity[]" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc dispatcherType Parse "entity[cow]" 1'] = {
+exports[`mcdoc parser > dispatcherType > Parse \"\" 1`] = `
+{
   "node": "FAILURE",
   "errors": []
 }
+`;
 
-exports['mcdoc dispatcherType Parse "minecraft:entity[cow,[%parent.id],sheep]" 1'] = {
+exports[`mcdoc parser > dispatcherType > Parse \"entity[cow]\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > dispatcherType > Parse \"minecraft:entity[cow,[%parent.id],sheep]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/dispatcher",
     "children": [
@@ -131,3 +138,4 @@ exports['mcdoc dispatcherType Parse "minecraft:entity[cow,[%parent.id],sheep]" 1
   },
   "errors": []
 }
+`;

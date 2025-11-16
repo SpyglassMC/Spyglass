@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:block_pos Parse "0 0 0" 1'] = {
+exports[`mcfunction argument parser > minecraft:block_pos > Parse \"0 0 0\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -38,8 +39,10 @@ exports['mcfunction argument minecraft:block_pos Parse "0 0 0" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:block_pos Parse "0.5 0 0.5" 1'] = {
+exports[`mcfunction argument parser > minecraft:block_pos > Parse \"0.5 0 0.5\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -112,8 +115,10 @@ exports['mcfunction argument minecraft:block_pos Parse "0.5 0 0.5" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:block_pos Parse "^ ^ ^" 1'] = {
+exports[`mcfunction argument parser > minecraft:block_pos > Parse \"^ ^ ^\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -153,8 +158,10 @@ exports['mcfunction argument minecraft:block_pos Parse "^ ^ ^" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:block_pos Parse "^1 ^ ^-5" 1'] = {
+exports[`mcfunction argument parser > minecraft:block_pos > Parse \"^1 ^ ^-5\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -194,8 +201,10 @@ exports['mcfunction argument minecraft:block_pos Parse "^1 ^ ^-5" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:block_pos Parse "~ ~ ~" 1'] = {
+exports[`mcfunction argument parser > minecraft:block_pos > Parse \"~ ~ ~\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -235,8 +244,10 @@ exports['mcfunction argument minecraft:block_pos Parse "~ ~ ~" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:block_pos Parse "~0.5 ~1 ~-5" 1'] = {
+exports[`mcfunction argument parser > minecraft:block_pos > Parse \"~0.5 ~1 ~-5\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -276,3 +287,4 @@ exports['mcfunction argument minecraft:block_pos Parse "~0.5 ~1 ~-5" 1'] = {
   },
   "errors": []
 }
+`;

@@ -16,7 +16,7 @@ describe('mcfunction parser macro()', () => {
 		{ content: '$say no macro argument specified' },
 	]
 	for (const { content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = macro()
 			t.assert.snapshot(testParser(parser, content))
 		})

@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": true }" 1'] = {
+exports[`mcfunction argument parser > minecraft:style > Parse \"{ \"color\": \"red\", \"italic\": true }\" 1`] = `
+{
   "node": {
     "type": "json:typed",
     "range": {
@@ -39,7 +40,7 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               },
               {
                 "type": "json:string",
@@ -60,7 +61,7 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               }
             ],
             "key": {
@@ -82,7 +83,7 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             },
             "sep": {
               "start": 9,
@@ -107,7 +108,7 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             },
             "end": {
               "start": 16,
@@ -140,7 +141,7 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               },
               {
                 "type": "json:boolean",
@@ -170,7 +171,7 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             },
             "sep": {
               "start": 26,
@@ -199,8 +200,10 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:style Parse "{"bold": true}" 1'] = {
+exports[`mcfunction argument parser > minecraft:style > Parse \"{\"bold\": true}\" 1`] = `
+{
   "node": {
     "type": "json:typed",
     "range": {
@@ -241,7 +244,7 @@ exports['mcfunction argument minecraft:style Parse "{"bold": true}" 1'] = {
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               },
               {
                 "type": "json:boolean",
@@ -271,7 +274,7 @@ exports['mcfunction argument minecraft:style Parse "{"bold": true}" 1'] = {
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             },
             "sep": {
               "start": 7,
@@ -300,3 +303,4 @@ exports['mcfunction argument minecraft:style Parse "{"bold": true}" 1'] = {
   },
   "errors": []
 }
+`;

@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ duplicated path 1'] = {
+exports[`mcdoc __fixture__ > duplicated path 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -228,3 +229,4 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
     }
   }
 }
+`;

@@ -18,7 +18,7 @@ describe('dissectUri()', () => {
 		{ uri: 'file:///data/minecraft/entities/foo.json' },
 	]
 	for (const { uri, version } of suites) {
-		it(`Dissect Uri "${uri}"${version ? ' in ' + version : ''}`, (t) => {
+		it(`Dissect Uri '${uri}'${version ? ' in ' + version : ''}`, (t) => {
 			const ctx = UriBinderContext.create(
 				mockProjectData({ roots: ['file:///'], ctx: { loadedVersion: version ?? '1.15' } }),
 			)
@@ -35,7 +35,7 @@ describe('dissectUri() with customResources', () => {
 		{ uri: 'file:///data/qux/tags/custom_registry/nested/bar.json' },
 	]
 	for (const { uri, version } of suites) {
-		it(`Dissect Uri "${uri}"${version ? ' in ' + version : ''}`, (t) => {
+		it(`Dissect Uri '${uri}'${version ? ' in ' + version : ''}`, (t) => {
 			const ctx = UriBinderContext.create(
 				mockProjectData({
 					config: {

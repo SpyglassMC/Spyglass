@@ -22,7 +22,7 @@ describe('long()', () => {
 		for (const option of options) {
 			describe('long()', () => {
 				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+					it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 						const parser = long(option as any)
 						t.assert.snapshot(testParser(parser, content))
 					})
@@ -33,7 +33,7 @@ describe('long()', () => {
 
 	describe('long(failsOnEmpty)', () => {
 		describe('long(failsOnEmpty=true)', () => {
-			it('Parse ""', (t) => {
+			it("Parse ''", (t) => {
 				const parser = long({ pattern, failsOnEmpty: true })
 				t.assert.snapshot(testParser(parser, ''))
 			})
@@ -51,7 +51,7 @@ describe('long()', () => {
 		for (const option of options) {
 			describe(`long(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+					it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 						const parser = long(option as any)
 						t.assert.snapshot(testParser(parser, content))
 					})

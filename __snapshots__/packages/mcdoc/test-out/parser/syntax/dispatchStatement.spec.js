@@ -1,18 +1,5 @@
-exports['mcdoc dispatchStatement Parse "" 1'] = {
-  "node": "FAILURE",
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "message": "Expected “dispatch” but got “”",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcdoc dispatchStatement Parse "#[since=1.17]↓⮀⮀⮀⮀dispatch minecraft:entity[↓⮀⮀⮀⮀⮀cow,↓⮀⮀⮀⮀⮀sheep,↓⮀⮀⮀⮀] to boolean" 1'] = {
+exports[`mcdoc parser > dispatchStatement > Parse \"#[since=1.17]↓⮀⮀⮀⮀dispatch minecraft:entity[↓⮀⮀⮀⮀⮀cow,↓⮀⮀⮀⮀⮀sheep,↓⮀⮀⮀⮀] to boolean\" 1`] = `
+{
   "node": {
     "type": "mcdoc:dispatch_statement",
     "children": [
@@ -138,8 +125,26 @@ exports['mcdoc dispatchStatement Parse "#[since=1.17]↓⮀⮀⮀⮀dispatch min
   },
   "errors": []
 }
+`;
 
-exports['mcdoc dispatchStatement Parse "dispatch :entity[cow] to boolean" 1'] = {
+exports[`mcdoc parser > dispatchStatement > Parse \"\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected “dispatch” but got “”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > dispatchStatement > Parse \"dispatch :entity[cow] to boolean\" 1`] = `
+{
   "node": {
     "type": "mcdoc:dispatch_statement",
     "children": [
@@ -214,8 +219,10 @@ exports['mcdoc dispatchStatement Parse "dispatch :entity[cow] to boolean" 1'] = 
   },
   "errors": []
 }
+`;
 
-exports['mcdoc dispatchStatement Parse "dispatch minecraft:entity[] to any" 1'] = {
+exports[`mcdoc parser > dispatchStatement > Parse \"dispatch minecraft:entity[] to any\" 1`] = `
+{
   "node": {
     "type": "mcdoc:dispatch_statement",
     "children": [
@@ -299,8 +306,10 @@ exports['mcdoc dispatchStatement Parse "dispatch minecraft:entity[] to any" 1'] 
     }
   ]
 }
+`;
 
-exports['mcdoc dispatchStatement Parse "dispatch" 1'] = {
+exports[`mcdoc parser > dispatchStatement > Parse \"dispatch\" 1`] = `
+{
   "node": {
     "type": "mcdoc:dispatch_statement",
     "children": [
@@ -436,3 +445,4 @@ exports['mcdoc dispatchStatement Parse "dispatch" 1'] = {
     }
   ]
 }
+`;

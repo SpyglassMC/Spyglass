@@ -1,4 +1,4 @@
-exports['mcdoc uriBinder() Bind ["file:///a.mcdoc","minecraft/foo.mcdoc","minecraft/bar.mcdoc","minecraft/qux.mcfunction"] 1'] = `
+exports[`mcdoc uriBinder() > Bind [\"file:///a.mcdoc\",\"minecraft/foo.mcdoc\",\"minecraft/bar.mcdoc\",\"minecraft/qux.mcfunction\"] 1`] = `
 CATEGORY mcdoc
 + SYMBOL ::minecraft::foo {mcdoc (module)} [Public]
 + + definition:
@@ -7,9 +7,9 @@ CATEGORY mcdoc
 + SYMBOL ::minecraft::bar {mcdoc (module)} [Public]
 + + definition:
 + + + {"uri":"file:///root/minecraft/bar.mcdoc","range":{"start":0,"end":0},"posRange":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}}
-`
+`;
 
-exports['mcdoc uriBinder() Bind ["mcdoc/foo.mcdoc","mcdoc/minecraft/bar.mcdoc"] 1'] = `
+exports[`mcdoc uriBinder() > Bind [\"mcdoc/foo.mcdoc\",\"mcdoc/minecraft/bar.mcdoc\"] 1`] = `
 CATEGORY mcdoc
 + SYMBOL ::foo {mcdoc (module)} [Public]
 + + definition:
@@ -18,9 +18,9 @@ CATEGORY mcdoc
 + SYMBOL ::minecraft::bar {mcdoc (module)} [Public]
 + + definition:
 + + + {"uri":"file:///root/mcdoc/minecraft/bar.mcdoc","range":{"start":0,"end":0},"posRange":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}}
-`
+`;
 
-exports['mcdoc uriBinder() Bind ["mcdoc/mod.mcdoc","mcdoc/foo.mcdoc","mcdoc/minecraft/bar.mcdoc"] 1'] = `
+exports[`mcdoc uriBinder() > Bind [\"mcdoc/mod.mcdoc\",\"mcdoc/foo.mcdoc\",\"mcdoc/minecraft/bar.mcdoc\"] 1`] = `
 CATEGORY mcdoc
 + SYMBOL ::mcdoc {mcdoc (module)} [Public]
 + + definition:
@@ -33,9 +33,9 @@ CATEGORY mcdoc
 + SYMBOL ::mcdoc::minecraft::bar {mcdoc (module)} [Public]
 + + definition:
 + + + {"uri":"file:///root/mcdoc/minecraft/bar.mcdoc","range":{"start":0,"end":0},"posRange":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}}
-`
+`;
 
-exports['mcdoc uriBinder() Bind ["mod.mcdoc","minecraft/mod.mcdoc","minecraft/foo/mod.mcdoc"] 1'] = `
+exports[`mcdoc uriBinder() > Bind [\"mod.mcdoc\",\"minecraft/mod.mcdoc\",\"minecraft/foo/mod.mcdoc\"] 1`] = `
 CATEGORY mcdoc
 + SYMBOL :: {mcdoc (module)} [Public]
 + + definition:
@@ -48,9 +48,9 @@ CATEGORY mcdoc
 + SYMBOL ::minecraft::foo {mcdoc (module)} [Public]
 + + definition:
 + + + {"uri":"file:///root/minecraft/foo/mod.mcdoc","range":{"start":0,"end":0},"posRange":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}}
-`
+`;
 
-exports['mcdoc uriBinder() Bind ["qux.mcdoc","mcdoc/foo.mcdoc","mcdoc/minecraft/bar.mcdoc"] 1'] = `
+exports[`mcdoc uriBinder() > Bind [\"qux.mcdoc\",\"mcdoc/foo.mcdoc\",\"mcdoc/minecraft/bar.mcdoc\"] 1`] = `
 CATEGORY mcdoc
 + SYMBOL ::qux {mcdoc (module)} [Public]
 + + definition:
@@ -63,4 +63,4 @@ CATEGORY mcdoc
 + SYMBOL ::mcdoc::minecraft::bar {mcdoc (module)} [Public]
 + + definition:
 + + + {"uri":"file:///root/mcdoc/minecraft/bar.mcdoc","range":{"start":0,"end":0},"posRange":{"start":{"line":0,"character":0},"end":{"line":0,"character":0}}}
-`
+`;

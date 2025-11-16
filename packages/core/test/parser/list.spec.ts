@@ -30,7 +30,7 @@ describe('list()', () => {
 	for (const { title, options, contents } of suites) {
 		describe(title, () => {
 			for (const content of contents) {
-				it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+				it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 					const parser = list(options)
 					t.assert.snapshot(testParser(parser, content))
 				})

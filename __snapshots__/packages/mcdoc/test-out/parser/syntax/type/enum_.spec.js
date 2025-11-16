@@ -1,4 +1,5 @@
-exports['mcdoc enum_ Parse "" 1'] = {
+exports[`mcdoc parser > enum_ > Parse \"\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -11,8 +12,10 @@ exports['mcdoc enum_ Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc enum_ Parse "enum () Foo" 1'] = {
+exports[`mcdoc parser > enum_ > Parse \"enum () Foo\" 1`] = `
+{
   "node": {
     "type": "mcdoc:enum",
     "children": [
@@ -142,8 +145,10 @@ exports['mcdoc enum_ Parse "enum () Foo" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀⮀/// Boo doc↓⮀⮀⮀⮀⮀/// Another line↓⮀⮀⮀⮀⮀Boo = 4.2d,↓⮀⮀⮀⮀⮀/// Qux doc↓⮀⮀⮀⮀⮀Qux = 12e3,↓⮀⮀⮀⮀}" 1'] = {
+exports[`mcdoc parser > enum_ > Parse \"enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀⮀/// Boo doc↓⮀⮀⮀⮀⮀/// Another line↓⮀⮀⮀⮀⮀Boo = 4.2d,↓⮀⮀⮀⮀⮀/// Qux doc↓⮀⮀⮀⮀⮀Qux = 12e3,↓⮀⮀⮀⮀}\" 1`] = `
+{
   "node": {
     "type": "mcdoc:enum",
     "children": [
@@ -188,7 +193,7 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓�
                       "start": 25,
                       "end": 37
                     },
-                    "comment": " Bar doc\n",
+                    "comment": " Bar doc\\n",
                     "prefix": "///"
                   }
                 ],
@@ -240,7 +245,7 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓�
                       "start": 58,
                       "end": 70
                     },
-                    "comment": " Boo doc\n",
+                    "comment": " Boo doc\\n",
                     "prefix": "///"
                   },
                   {
@@ -249,7 +254,7 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓�
                       "start": 75,
                       "end": 92
                     },
-                    "comment": " Another line\n",
+                    "comment": " Another line\\n",
                     "prefix": "///"
                   }
                 ],
@@ -310,7 +315,7 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓�
                       "start": 114,
                       "end": 126
                     },
-                    "comment": " Qux doc\n",
+                    "comment": " Qux doc\\n",
                     "prefix": "///"
                   }
                 ],
@@ -364,8 +369,10 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓�
   },
   "errors": []
 }
+`;
 
-exports['mcdoc enum_ Parse "enum (int) Foo {}" 1'] = {
+exports[`mcdoc parser > enum_ > Parse \"enum (int) Foo {}\" 1`] = `
+{
   "node": {
     "type": "mcdoc:enum",
     "children": [
@@ -411,8 +418,10 @@ exports['mcdoc enum_ Parse "enum (int) Foo {}" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc enum_ Parse "enum (int) Foo" 1'] = {
+exports[`mcdoc parser > enum_ > Parse \"enum (int) Foo\" 1`] = `
+{
   "node": {
     "type": "mcdoc:enum",
     "children": [
@@ -534,8 +543,10 @@ exports['mcdoc enum_ Parse "enum (int) Foo" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc enum_ Parse "enum (int) {" 1'] = {
+exports[`mcdoc parser > enum_ > Parse \"enum (int) {\" 1`] = `
+{
   "node": {
     "type": "mcdoc:enum",
     "children": [
@@ -641,8 +652,10 @@ exports['mcdoc enum_ Parse "enum (int) {" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc enum_ Parse "enum (int) {}" 1'] = {
+exports[`mcdoc parser > enum_ > Parse \"enum (int) {}\" 1`] = `
+{
   "node": {
     "type": "mcdoc:enum",
     "children": [
@@ -680,8 +693,10 @@ exports['mcdoc enum_ Parse "enum (int) {}" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc enum_ Parse "enum Foo" 1'] = {
+exports[`mcdoc parser > enum_ > Parse \"enum Foo\" 1`] = `
+{
   "node": {
     "type": "mcdoc:enum",
     "children": [
@@ -819,8 +834,10 @@ exports['mcdoc enum_ Parse "enum Foo" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc enum_ Parse "enum" 1'] = {
+exports[`mcdoc parser > enum_ > Parse \"enum\" 1`] = `
+{
   "node": {
     "type": "mcdoc:enum",
     "children": [
@@ -958,8 +975,10 @@ exports['mcdoc enum_ Parse "enum" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc enum_ Parse "other" 1'] = {
+exports[`mcdoc parser > enum_ > Parse \"other\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -972,3 +991,4 @@ exports['mcdoc enum_ Parse "other" 1'] = {
     }
   ]
 }
+`;

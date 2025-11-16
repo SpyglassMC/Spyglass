@@ -24,7 +24,7 @@ describe('nbt path()', () => {
 		{ content: '{ }.foo' },
 	]
 	for (const { content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = path
 			t.assert.snapshot(testParser(parser, content))
 		})

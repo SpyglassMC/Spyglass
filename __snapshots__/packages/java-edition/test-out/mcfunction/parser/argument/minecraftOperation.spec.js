@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:operation Parse "<" 1'] = {
+exports[`mcfunction argument parser > minecraft:operation > Parse \"<\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -9,8 +10,10 @@ exports['mcfunction argument minecraft:operation Parse "<" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:operation Parse "=" 1'] = {
+exports[`mcfunction argument parser > minecraft:operation > Parse \"=\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -21,8 +24,10 @@ exports['mcfunction argument minecraft:operation Parse "=" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:operation Parse ">" 1'] = {
+exports[`mcfunction argument parser > minecraft:operation > Parse \">\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -33,3 +38,4 @@ exports['mcfunction argument minecraft:operation Parse ">" 1'] = {
   },
   "errors": []
 }
+`;

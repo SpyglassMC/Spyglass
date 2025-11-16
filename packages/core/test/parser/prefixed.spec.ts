@@ -15,7 +15,7 @@ describe('prefixed()', () => {
 		{ content: '!!true' },
 	]
 	for (const { content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = prefixed(options)
 			t.assert.snapshot(testParser(parser, content))
 		})

@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
+exports[`mcdoc __fixture__ > type parameter/circular twofold identities 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -957,3 +958,4 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
     }
   }
 }
+`;

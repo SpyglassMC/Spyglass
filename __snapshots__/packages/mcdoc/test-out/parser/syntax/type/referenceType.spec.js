@@ -1,43 +1,5 @@
-exports['mcdoc referenceType Parse "" 1'] = {
-  "node": {
-    "type": "mcdoc:type/reference",
-    "children": [
-      {
-        "type": "mcdoc:path",
-        "children": [
-          {
-            "type": "mcdoc:identifier",
-            "range": {
-              "start": 0,
-              "end": 0
-            },
-            "value": ""
-          }
-        ],
-        "range": {
-          "start": 0,
-          "end": 0
-        }
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 0
-    }
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "message": "Expected an identifier",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcdoc referenceType Parse "#[uuid] UuidMostLeast" 1'] = {
+exports[`mcdoc parser > referenceType > Parse \"#[uuid] UuidMostLeast\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/reference",
     "children": [
@@ -83,8 +45,10 @@ exports['mcdoc referenceType Parse "#[uuid] UuidMostLeast" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc referenceType Parse "MinMaxBounds<float @ 1..2>" 1'] = {
+exports[`mcdoc parser > referenceType > Parse \"MinMaxBounds<float @ 1..2>\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/reference",
     "children": [
@@ -173,3 +137,45 @@ exports['mcdoc referenceType Parse "MinMaxBounds<float @ 1..2>" 1'] = {
   },
   "errors": []
 }
+`;
+
+exports[`mcdoc parser > referenceType > Parse \"\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:type/reference",
+    "children": [
+      {
+        "type": "mcdoc:path",
+        "children": [
+          {
+            "type": "mcdoc:identifier",
+            "range": {
+              "start": 0,
+              "end": 0
+            },
+            "value": ""
+          }
+        ],
+        "range": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    }
+  ]
+}
+`;

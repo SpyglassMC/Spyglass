@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:item_predicate Parse "#stick" 1'] = {
+exports[`mcfunction argument parser > minecraft:item_predicate > Parse \"#stick\" 1`] = `
+{
   "node": {
     "type": "mcfunction:item_predicate",
     "range": {
@@ -19,8 +20,10 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'] = {
+exports[`mcfunction argument parser > minecraft:item_predicate > Parse \"#stick{foo:bar}\" 1`] = `
+{
   "node": {
     "type": "mcfunction:item_predicate",
     "range": {
@@ -147,8 +150,10 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_predicate Parse "*[food]" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:item_predicate > Parse \"*[food]\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:item_predicate",
     "range": {
@@ -223,8 +228,10 @@ exports['mcfunction argument minecraft:item_predicate Parse "*[food]" in version
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_predicate Parse "minecraft:stick" 1'] = {
+exports[`mcfunction argument parser > minecraft:item_predicate > Parse \"minecraft:stick\" 1`] = `
+{
   "node": {
     "type": "mcfunction:item_predicate",
     "range": {
@@ -245,8 +252,10 @@ exports['mcfunction argument minecraft:item_predicate Parse "minecraft:stick" 1'
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_predicate Parse "stick" 1'] = {
+exports[`mcfunction argument parser > minecraft:item_predicate > Parse \"stick\" 1`] = `
+{
   "node": {
     "type": "mcfunction:item_predicate",
     "range": {
@@ -266,8 +275,10 @@ exports['mcfunction argument minecraft:item_predicate Parse "stick" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_predicate Parse "stick" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:item_predicate > Parse \"stick\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:item_predicate",
     "range": {
@@ -287,8 +298,10 @@ exports['mcfunction argument minecraft:item_predicate Parse "stick" in version 1
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_predicate Parse "stone[]" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:item_predicate > Parse \"stone[]\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:item_predicate",
     "range": {
@@ -315,3 +328,4 @@ exports['mcfunction argument minecraft:item_predicate Parse "stone[]" in version
   },
   "errors": []
 }
+`;

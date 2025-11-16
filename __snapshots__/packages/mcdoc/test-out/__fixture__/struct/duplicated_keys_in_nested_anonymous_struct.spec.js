@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ struct/duplicated keys in nested anonymous struct 1'] = {
+exports[`mcdoc __fixture__ > struct/duplicated keys in nested anonymous struct 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -463,3 +464,4 @@ exports['mcdoc __fixture__ struct/duplicated keys in nested anonymous struct 1']
     }
   }
 }
+`;

@@ -1,4 +1,5 @@
-exports['mcdoc stringType Parse "" 1'] = {
+exports[`mcdoc parser > stringType > Parse \"\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -11,8 +12,10 @@ exports['mcdoc stringType Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc stringType Parse "other" 1'] = {
+exports[`mcdoc parser > stringType > Parse \"other\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -25,8 +28,10 @@ exports['mcdoc stringType Parse "other" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc stringType Parse "string @" 1'] = {
+exports[`mcdoc parser > stringType > Parse \"string @\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/string",
     "children": [
@@ -73,30 +78,10 @@ exports['mcdoc stringType Parse "string @" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc stringType Parse "string" 1'] = {
-  "node": {
-    "type": "mcdoc:type/string",
-    "children": [
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 0,
-          "end": 6
-        },
-        "value": "string",
-        "colorTokenType": "type"
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 6
-    }
-  },
-  "errors": []
-}
-
-exports['mcdoc stringType Parse "string@42.." 1'] = {
+exports[`mcdoc parser > stringType > Parse \"string@42..\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/string",
     "children": [
@@ -142,3 +127,28 @@ exports['mcdoc stringType Parse "string@42.." 1'] = {
   },
   "errors": []
 }
+`;
+
+exports[`mcdoc parser > stringType > Parse \"string\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:type/string",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 6
+        },
+        "value": "string",
+        "colorTokenType": "type"
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 6
+    }
+  },
+  "errors": []
+}
+`;

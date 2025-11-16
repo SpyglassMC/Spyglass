@@ -1,43 +1,5 @@
-exports['mcdoc literalType Parse "" 1'] = {
-  "node": "FAILURE",
-  "errors": []
-}
-
-exports['mcdoc literalType Parse ""a literal string"" 1'] = {
-  "node": {
-    "type": "mcdoc:type/literal",
-    "children": [
-      {
-        "type": "string",
-        "range": {
-          "start": 0,
-          "end": 18
-        },
-        "value": "a literal string",
-        "valueMap": [
-          {
-            "inner": {
-              "start": 0,
-              "end": 0
-            },
-            "outer": {
-              "start": 1,
-              "end": 1
-            }
-          }
-        ],
-        "quote": "\""
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 18
-    }
-  },
-  "errors": []
-}
-
-exports['mcdoc literalType Parse "1.23e4" 1'] = {
+exports[`mcdoc parser > literalType > Parse \"1.23e4\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/literal",
     "children": [
@@ -66,8 +28,10 @@ exports['mcdoc literalType Parse "1.23e4" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc literalType Parse "1b" 1'] = {
+exports[`mcdoc parser > literalType > Parse \"1b\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/literal",
     "children": [
@@ -105,8 +69,10 @@ exports['mcdoc literalType Parse "1b" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc literalType Parse "42" 1'] = {
+exports[`mcdoc parser > literalType > Parse \"42\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/literal",
     "children": [
@@ -135,8 +101,10 @@ exports['mcdoc literalType Parse "42" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc literalType Parse "9.1f" 1'] = {
+exports[`mcdoc parser > literalType > Parse \"9.1f\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/literal",
     "children": [
@@ -174,8 +142,53 @@ exports['mcdoc literalType Parse "9.1f" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc literalType Parse "false" 1'] = {
+exports[`mcdoc parser > literalType > Parse \"\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > literalType > Parse \"\"a literal string\"\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:type/literal",
+    "children": [
+      {
+        "type": "string",
+        "range": {
+          "start": 0,
+          "end": 18
+        },
+        "value": "a literal string",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 1,
+              "end": 1
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 18
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > literalType > Parse \"false\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/literal",
     "children": [
@@ -196,13 +209,17 @@ exports['mcdoc literalType Parse "false" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc literalType Parse "other" 1'] = {
+exports[`mcdoc parser > literalType > Parse \"other\" 1`] = `
+{
   "node": "FAILURE",
   "errors": []
 }
+`;
 
-exports['mcdoc literalType Parse "true" 1'] = {
+exports[`mcdoc parser > literalType > Parse \"true\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/literal",
     "children": [
@@ -223,3 +240,4 @@ exports['mcdoc literalType Parse "true" 1'] = {
   },
   "errors": []
 }
+`;

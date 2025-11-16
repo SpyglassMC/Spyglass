@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:message Parse "@e" 1'] = {
+exports[`mcfunction argument parser > minecraft:message > Parse \"@e\" 1`] = `
+{
   "node": {
     "type": "mcfunction:message",
     "range": {
@@ -30,14 +31,16 @@ exports['mcfunction argument minecraft:message Parse "@e" 1'] = {
         ],
         "single": false,
         "typeLimited": false,
-        "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
+        "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
       }
     ]
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
+exports[`mcfunction argument parser > minecraft:message > Parse \"Hello @p :)\" 1`] = `
+{
   "node": {
     "type": "mcfunction:message",
     "range": {
@@ -86,7 +89,7 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
         "playersOnly": true,
         "single": true,
         "typeLimited": true,
-        "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+        "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
       },
       {
         "type": "string",
@@ -112,8 +115,10 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:message Parse "Hello world!" 1'] = {
+exports[`mcfunction argument parser > minecraft:message > Parse \"Hello world!\" 1`] = `
+{
   "node": {
     "type": "mcfunction:message",
     "range": {
@@ -145,8 +150,10 @@ exports['mcfunction argument minecraft:message Parse "Hello world!" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:message Parse "foo" 1'] = {
+exports[`mcfunction argument parser > minecraft:message > Parse \"foo\" 1`] = `
+{
   "node": {
     "type": "mcfunction:message",
     "range": {
@@ -178,3 +185,4 @@ exports['mcfunction argument minecraft:message Parse "foo" 1'] = {
   },
   "errors": []
 }
+`;

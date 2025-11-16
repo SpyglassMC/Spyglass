@@ -1,35 +1,5 @@
-exports['translationValueParser() Parse "hello %" 1'] = {
-  "node": {
-    "type": "java_edition:translation_value",
-    "range": {
-      "start": 0,
-      "end": 7
-    },
-    "children": [
-      {
-        "type": "literal",
-        "range": {
-          "start": 6,
-          "end": 7
-        },
-        "value": "%"
-      }
-    ],
-    "value": "hello %"
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 7,
-        "end": 7
-      },
-      "message": "Expected “s”. If you want to display a literal percent sign, use “%%” instead",
-      "severity": 3
-    }
-  ]
-}
-
-exports['translationValueParser() Parse "hello %$s" 1'] = {
+exports[`translationValueParser() > Parse 'hello %$s' 1`] = `
+{
   "node": {
     "type": "java_edition:translation_value",
     "range": {
@@ -59,8 +29,10 @@ exports['translationValueParser() Parse "hello %$s" 1'] = {
     }
   ]
 }
+`;
 
-exports['translationValueParser() Parse "hello %%" 1'] = {
+exports[`translationValueParser() > Parse 'hello %%' 1`] = `
+{
   "node": {
     "type": "java_edition:translation_value",
     "range": {
@@ -81,8 +53,100 @@ exports['translationValueParser() Parse "hello %%" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['translationValueParser() Parse "hello %1" 1'] = {
+exports[`translationValueParser() > Parse 'hello %' 1`] = `
+{
+  "node": {
+    "type": "java_edition:translation_value",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "literal",
+        "range": {
+          "start": 6,
+          "end": 7
+        },
+        "value": "%"
+      }
+    ],
+    "value": "hello %"
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 7,
+        "end": 7
+      },
+      "message": "Expected “s”. If you want to display a literal percent sign, use “%%” instead",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`translationValueParser() > Parse 'hello %1$' 1`] = `
+{
+  "node": {
+    "type": "java_edition:translation_value",
+    "range": {
+      "start": 0,
+      "end": 9
+    },
+    "children": [
+      {
+        "type": "literal",
+        "range": {
+          "start": 6,
+          "end": 9
+        },
+        "value": "%1$"
+      }
+    ],
+    "value": "hello %1$"
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 9,
+        "end": 9
+      },
+      "message": "Expected “s”. If you want to display a literal percent sign, use “%%” instead",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`translationValueParser() > Parse 'hello %1$s' 1`] = `
+{
+  "node": {
+    "type": "java_edition:translation_value",
+    "range": {
+      "start": 0,
+      "end": 10
+    },
+    "children": [
+      {
+        "type": "literal",
+        "range": {
+          "start": 6,
+          "end": 10
+        },
+        "value": "%1$s"
+      }
+    ],
+    "value": "hello %1$s"
+  },
+  "errors": []
+}
+`;
+
+exports[`translationValueParser() > Parse 'hello %1' 1`] = `
+{
   "node": {
     "type": "java_edition:translation_value",
     "range": {
@@ -120,61 +184,10 @@ exports['translationValueParser() Parse "hello %1" 1'] = {
     }
   ]
 }
+`;
 
-exports['translationValueParser() Parse "hello %1$" 1'] = {
-  "node": {
-    "type": "java_edition:translation_value",
-    "range": {
-      "start": 0,
-      "end": 9
-    },
-    "children": [
-      {
-        "type": "literal",
-        "range": {
-          "start": 6,
-          "end": 9
-        },
-        "value": "%1$"
-      }
-    ],
-    "value": "hello %1$"
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 9,
-        "end": 9
-      },
-      "message": "Expected “s”. If you want to display a literal percent sign, use “%%” instead",
-      "severity": 3
-    }
-  ]
-}
-
-exports['translationValueParser() Parse "hello %1$s" 1'] = {
-  "node": {
-    "type": "java_edition:translation_value",
-    "range": {
-      "start": 0,
-      "end": 10
-    },
-    "children": [
-      {
-        "type": "literal",
-        "range": {
-          "start": 6,
-          "end": 10
-        },
-        "value": "%1$s"
-      }
-    ],
-    "value": "hello %1$s"
-  },
-  "errors": []
-}
-
-exports['translationValueParser() Parse "hello %s %42$s" 1'] = {
+exports[`translationValueParser() > Parse 'hello %s %42$s' 1`] = `
+{
   "node": {
     "type": "java_edition:translation_value",
     "range": {
@@ -203,13 +216,15 @@ exports['translationValueParser() Parse "hello %s %42$s" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['translationValueParser() Parse "hello %s" 1'] = {
+exports[`translationValueParser() > Parse 'hello %s%%' 1`] = `
+{
   "node": {
     "type": "java_edition:translation_value",
     "range": {
       "start": 0,
-      "end": 8
+      "end": 10
     },
     "children": [
       {
@@ -219,14 +234,24 @@ exports['translationValueParser() Parse "hello %s" 1'] = {
           "end": 8
         },
         "value": "%s"
+      },
+      {
+        "type": "literal",
+        "range": {
+          "start": 8,
+          "end": 10
+        },
+        "value": "%%"
       }
     ],
-    "value": "hello %s"
+    "value": "hello %s%%"
   },
   "errors": []
 }
+`;
 
-exports['translationValueParser() Parse "hello %s%" 1'] = {
+exports[`translationValueParser() > Parse 'hello %s%' 1`] = `
+{
   "node": {
     "type": "java_edition:translation_value",
     "range": {
@@ -264,13 +289,15 @@ exports['translationValueParser() Parse "hello %s%" 1'] = {
     }
   ]
 }
+`;
 
-exports['translationValueParser() Parse "hello %s%%" 1'] = {
+exports[`translationValueParser() > Parse 'hello %s' 1`] = `
+{
   "node": {
     "type": "java_edition:translation_value",
     "range": {
       "start": 0,
-      "end": 10
+      "end": 8
     },
     "children": [
       {
@@ -280,22 +307,16 @@ exports['translationValueParser() Parse "hello %s%%" 1'] = {
           "end": 8
         },
         "value": "%s"
-      },
-      {
-        "type": "literal",
-        "range": {
-          "start": 8,
-          "end": 10
-        },
-        "value": "%%"
       }
     ],
-    "value": "hello %s%%"
+    "value": "hello %s"
   },
   "errors": []
 }
+`;
 
-exports['translationValueParser() Parse "hello world" 1'] = {
+exports[`translationValueParser() > Parse 'hello world' 1`] = `
+{
   "node": {
     "type": "java_edition:translation_value",
     "range": {
@@ -307,3 +328,4 @@ exports['translationValueParser() Parse "hello world" 1'] = {
   },
   "errors": []
 }
+`;

@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"*\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -16,8 +17,10 @@ exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"mu
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"single"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"*\" with {\"amount\":\"single\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -35,8 +38,10 @@ exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"si
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "0123" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"0123\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -54,8 +59,10 @@ exports['mcfunction argument minecraft:score_holder Parse "0123" with {"amount":
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "0123" with {"amount":"single"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"0123\" with {\"amount\":\"single\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -73,8 +80,10 @@ exports['mcfunction argument minecraft:score_holder Parse "0123" with {"amount":
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ = 1 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -282,7 +291,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": [
@@ -304,8 +313,10 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 1.. , } , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ scores = { foo = 1.. , } , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -929,13 +940,15 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , scores = { } , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ scores = { } , scores = { } , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -1393,7 +1406,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": [
@@ -1407,8 +1420,10 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ sort = arbitrary , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -1736,13 +1751,15 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag = ! bar , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ tag = foo , tag = ! bar , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -2344,13 +2361,15 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , team = ! bar , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ team = ! foo , team = ! bar , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -2984,13 +3003,15 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team = bar , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ team = foo , team = bar , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -3560,7 +3581,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": [
@@ -3574,8 +3595,10 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ type = zombie ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -3895,7 +3918,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": [
@@ -3909,8 +3932,10 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ unknown = 1 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -4118,7 +4143,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": [
@@ -4140,8 +4165,10 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0 , dz = 0.0, dz = 0.0 , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x = 0.0 , x = 0.0 , dz = 0.0, dz = 0.0 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -4941,7 +4968,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Great\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`true\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": [
@@ -4963,8 +4990,10 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0 , z = 0.0 , dx = 0.0 , dy = 0.0 , dz = 0.0 , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x = 0.0 , y = 0.0 , z = 0.0 , dx = 0.0 , dy = 0.0 , dz = 0.0 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -6136,13 +6165,15 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Great\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`true\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.9..-179.9 ,  x_rotation = 179.9..-179.9 , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x_rotation = 179.9..-179.9 ,  x_rotation = 179.9..-179.9 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -6800,7 +6831,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": [
@@ -6814,8 +6845,10 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.9..-179.9 ,  y_rotation = 179.9..-179.9 , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x_rotation = 179.9..-179.9 ,  y_rotation = 179.9..-179.9 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -7473,96 +7506,15 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`"
     }
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@e" with {"amount":"multiple"} 1'] = {
-  "node": {
-    "type": "mcfunction:score_holder",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "selector": {
-      "type": "mcfunction:entity_selector",
-      "range": {
-        "start": 0,
-        "end": 2
-      },
-      "children": [
-        {
-          "type": "literal",
-          "range": {
-            "start": 0,
-            "end": 2
-          },
-          "value": "@e"
-        }
-      ],
-      "variable": "e",
-      "currentEntity": false,
-      "playersOnly": false,
-      "predicates": [
-        "Entity::isAlive"
-      ],
-      "single": false,
-      "typeLimited": false,
-      "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
-    }
-  },
-  "errors": []
-}
-
-exports['mcfunction argument minecraft:score_holder Parse "@e" with {"amount":"single"} 1'] = {
-  "node": {
-    "type": "mcfunction:score_holder",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "selector": {
-      "type": "mcfunction:entity_selector",
-      "range": {
-        "start": 0,
-        "end": 2
-      },
-      "children": [
-        {
-          "type": "literal",
-          "range": {
-            "start": 0,
-            "end": 2
-          },
-          "value": "@e"
-        }
-      ],
-      "variable": "e",
-      "currentEntity": false,
-      "playersOnly": false,
-      "predicates": [
-        "Entity::isAlive"
-      ],
-      "single": false,
-      "typeLimited": false,
-      "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
-    }
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 2
-      },
-      "message": "The selector contains multiple entities",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton , type = ! zombie , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type = ! skeleton , type = ! zombie , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -8231,13 +8183,15 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
       ],
       "single": false,
       "typeLimited": false,
-      "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
+      "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
     }
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , type = #tag2 , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type = #tag1 , type = #tag2 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -8858,13 +8812,15 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
       ],
       "single": false,
       "typeLimited": false,
-      "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
+      "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
     }
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type = player ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -9187,13 +9143,15 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
       ],
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
+      "hover": "**Performance**: Good\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`true\`\\n- \`typeLimited\`: \`true\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
     }
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton , type = zombie , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type = skeleton , type = zombie , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -9798,7 +9756,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
       ],
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `true`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
+      "hover": "**Performance**: 😅\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`true\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
     }
   },
   "errors": [
@@ -9812,8 +9770,97 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary , sort = unknown , ]" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e\" with {\"amount\":\"multiple\"} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:score_holder",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "selector": {
+      "type": "mcfunction:entity_selector",
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "children": [
+        {
+          "type": "literal",
+          "range": {
+            "start": 0,
+            "end": 2
+          },
+          "value": "@e"
+        }
+      ],
+      "variable": "e",
+      "currentEntity": false,
+      "playersOnly": false,
+      "predicates": [
+        "Entity::isAlive"
+      ],
+      "single": false,
+      "typeLimited": false,
+      "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e\" with {\"amount\":\"single\"} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:score_holder",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "selector": {
+      "type": "mcfunction:entity_selector",
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "children": [
+        {
+          "type": "literal",
+          "range": {
+            "start": 0,
+            "end": 2
+          },
+          "value": "@e"
+        }
+      ],
+      "variable": "e",
+      "currentEntity": false,
+      "playersOnly": false,
+      "predicates": [
+        "Entity::isAlive"
+      ],
+      "single": false,
+      "typeLimited": false,
+      "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "message": "The selector contains multiple entities",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@s[ sort = arbitrary , sort = unknown , ]\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -10415,7 +10462,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
       "playersOnly": false,
       "single": true,
       "typeLimited": false,
-      "hover": "**Performance**: 😌👌\n- `currentEntity`: `true`"
+      "hover": "**Performance**: 😌👌\\n- \`currentEntity\`: \`true\`"
     }
   },
   "errors": [
@@ -10453,8 +10500,10 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "Player" with {"amount":"multiple"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"Player\" with {\"amount\":\"multiple\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -10472,8 +10521,10 @@ exports['mcfunction argument minecraft:score_holder Parse "Player" with {"amount
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:score_holder Parse "Player" with {"amount":"single"} 1'] = {
+exports[`mcfunction argument parser > minecraft:score_holder > Parse \"Player\" with {\"amount\":\"single\"} 1`] = `
+{
   "node": {
     "type": "mcfunction:score_holder",
     "range": {
@@ -10491,3 +10542,4 @@ exports['mcfunction argument minecraft:score_holder Parse "Player" with {"amount
   },
   "errors": []
 }
+`;

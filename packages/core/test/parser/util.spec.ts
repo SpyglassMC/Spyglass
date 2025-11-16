@@ -65,7 +65,7 @@ describe('any()', () => {
 		},
 	]
 	for (const { content, parsers, parserToString } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}" with "${parserToString}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}' with '${parserToString}'`, (t) => {
 			const parser = any(parsers)
 			t.assert.snapshot(testParser(parser, content))
 		})
@@ -109,7 +109,7 @@ describe('concatOnTrailingBackslash()', () => {
 	}]
 	for (const { parser, suites } of parsers) {
 		for (const { content } of suites) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				const wrappedParser = concatOnTrailingBackslash(parser)
 				t.assert.snapshot(testParser(wrappedParser, content))
 			})

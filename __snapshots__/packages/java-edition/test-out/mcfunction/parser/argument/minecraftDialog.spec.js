@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:dialog Parse "minecraft:custom_options" 1'] = {
+exports[`mcfunction argument parser > minecraft:dialog > Parse \"minecraft:custom_options\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -12,8 +13,10 @@ exports['mcfunction argument minecraft:dialog Parse "minecraft:custom_options" 1
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:dialog Parse "{type:"notice",title:"Hello"}" 1'] = {
+exports[`mcfunction argument parser > minecraft:dialog > Parse \"{type:\"notice\",title:\"Hello\"}\" 1`] = `
+{
   "node": {
     "type": "mcfunction:nbt_resource",
     "range": {
@@ -74,7 +77,7 @@ exports['mcfunction argument minecraft:dialog Parse "{type:"notice",title:"Hello
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               }
             ],
             "key": {
@@ -120,7 +123,7 @@ exports['mcfunction argument minecraft:dialog Parse "{type:"notice",title:"Hello
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             },
             "end": {
               "start": 14,
@@ -173,7 +176,7 @@ exports['mcfunction argument minecraft:dialog Parse "{type:"notice",title:"Hello
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               }
             ],
             "key": {
@@ -219,7 +222,7 @@ exports['mcfunction argument minecraft:dialog Parse "{type:"notice",title:"Hello
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             }
           }
         ],
@@ -233,3 +236,4 @@ exports['mcfunction argument minecraft:dialog Parse "{type:"notice",title:"Hello
   },
   "errors": []
 }
+`;

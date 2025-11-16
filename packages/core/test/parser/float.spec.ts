@@ -17,7 +17,7 @@ describe('float()', () => {
 			{ content: '7e+3' },
 		]
 		for (const { content } of cases) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				const parser = float(option as any)
 				t.assert.snapshot(testParser(parser, content))
 			})
@@ -37,7 +37,7 @@ describe('float()', () => {
 		for (const option of options) {
 			describe(`float(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+					it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 						const parser = float(option as any)
 						t.assert.snapshot(testParser(parser, content))
 					})
@@ -50,7 +50,7 @@ describe('float()', () => {
 		const option: Options = { pattern, failsOnEmpty: true }
 		const cases: { content: string }[] = [{ content: '' }, { content: '7e+3' }]
 		for (const { content } of cases) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				const parser = float(option as any)
 				t.assert.snapshot(testParser(parser, content))
 			})

@@ -1,4 +1,5 @@
-exports['ErrorReporter absorb() Should absorb another reporter 1'] = {
+exports[`ErrorReporter > absorb() > Should absorb another reporter 1`] = `
+{
   "errors": [
     {
       "range": {
@@ -34,8 +35,10 @@ exports['ErrorReporter absorb() Should absorb another reporter 1'] = {
     }
   ]
 }
+`;
 
-exports['ErrorReporter absorb() Should absorb another reporter 2'] = {
+exports[`ErrorReporter > absorb() > Should absorb another reporter 2`] = `
+{
   "errors": [
     {
       "range": {
@@ -55,8 +58,10 @@ exports['ErrorReporter absorb() Should absorb another reporter 2'] = {
     }
   ]
 }
+`;
 
-exports['ErrorReporter report() & dump() Should report and dump errors correctly 1'] = [
+exports[`ErrorReporter > report() & dump() > Should report and dump errors correctly 1`] = `
+[
   {
     "range": {
       "start": 0,
@@ -74,8 +79,10 @@ exports['ErrorReporter report() & dump() Should report and dump errors correctly
     "severity": 2
   }
 ]
+`;
 
-exports['ErrorReporter report() & dump() Should report and dump errors correctly 2'] = [
+exports[`ErrorReporter > report() & dump() > Should report and dump errors correctly 2`] = `
+[
   {
     "range": {
       "start": 4,
@@ -85,3 +92,4 @@ exports['ErrorReporter report() & dump() Should report and dump errors correctly
     "severity": 3
   }
 ]
+`;

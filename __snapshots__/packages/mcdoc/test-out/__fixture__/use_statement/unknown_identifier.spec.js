@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ use statement/unknown identifier 1'] = {
+exports[`mcdoc __fixture__ > use statement/unknown identifier 1`] = `
+{
   "global": {
     "mcdoc": {
       "::module": {
@@ -258,3 +259,4 @@ exports['mcdoc __fixture__ use statement/unknown identifier 1'] = {
     }
   }
 }
+`;

@@ -1,4 +1,4 @@
-import { strict as assert } from 'assert'
+import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import type { AstNode } from '../../lib/index.js'
 import { Range, RangeContainer, Source } from '../../lib/index.js'

@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_smelt"}]" 1'] = {
+exports[`mcfunction argument parser > minecraft:loot_modifier > Parse \"[{function:\"furnace_smelt\"}]\" 1`] = `
+{
   "node": {
     "type": "mcfunction:nbt_resource",
     "range": {
@@ -73,7 +74,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                             }
                           }
                         ],
-                        "quote": "\""
+                        "quote": "\\""
                       }
                     ],
                     "key": {
@@ -119,7 +120,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                           }
                         }
                       ],
-                      "quote": "\""
+                      "quote": "\\""
                     }
                   }
                 ],
@@ -182,7 +183,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                           }
                         }
                       ],
-                      "quote": "\""
+                      "quote": "\\""
                     }
                   ],
                   "key": {
@@ -228,7 +229,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                         }
                       }
                     ],
-                    "quote": "\""
+                    "quote": "\\""
                   }
                 }
               ],
@@ -246,8 +247,10 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:loot_modifier Parse "foo:bar" 1'] = {
+exports[`mcfunction argument parser > minecraft:loot_modifier > Parse \"foo:bar\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -261,3 +264,4 @@ exports['mcfunction argument minecraft:loot_modifier Parse "foo:bar" 1'] = {
   },
   "errors": []
 }
+`;

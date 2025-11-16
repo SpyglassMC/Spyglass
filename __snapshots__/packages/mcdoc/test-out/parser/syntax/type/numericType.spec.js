@@ -1,4 +1,5 @@
-exports['mcdoc numericType Parse "" 1'] = {
+exports[`mcdoc parser > numericType > Parse \"\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -11,8 +12,10 @@ exports['mcdoc numericType Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc numericType Parse "byte" 1'] = {
+exports[`mcdoc parser > numericType > Parse \"byte\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/numeric_type",
     "children": [
@@ -33,8 +36,10 @@ exports['mcdoc numericType Parse "byte" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc numericType Parse "double@4.2..5.5" 1'] = {
+exports[`mcdoc parser > numericType > Parse \"double@4.2..5.5\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/numeric_type",
     "children": [
@@ -88,8 +93,10 @@ exports['mcdoc numericType Parse "double@4.2..5.5" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc numericType Parse "double[]" 1'] = {
+exports[`mcdoc parser > numericType > Parse \"double[]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/numeric_type",
     "children": [
@@ -110,8 +117,10 @@ exports['mcdoc numericType Parse "double[]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc numericType Parse "int @ ..4" 1'] = {
+exports[`mcdoc parser > numericType > Parse \"int @ ..4\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/numeric_type",
     "children": [
@@ -157,8 +166,10 @@ exports['mcdoc numericType Parse "int @ ..4" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc numericType Parse "int @ 0..1" 1'] = {
+exports[`mcdoc parser > numericType > Parse \"int @ 0..1\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/numeric_type",
     "children": [
@@ -212,47 +223,10 @@ exports['mcdoc numericType Parse "int @ 0..1" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc numericType Parse "int @ 4" 1'] = {
-  "node": {
-    "type": "mcdoc:type/numeric_type",
-    "children": [
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "value": "int",
-        "colorTokenType": "type"
-      },
-      {
-        "type": "mcdoc:int_range",
-        "children": [
-          {
-            "type": "integer",
-            "range": {
-              "start": 6,
-              "end": 7
-            },
-            "value": 4
-          }
-        ],
-        "range": {
-          "start": 6,
-          "end": 7
-        }
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 7
-    }
-  },
-  "errors": []
-}
-
-exports['mcdoc numericType Parse "int @ 4.." 1'] = {
+exports[`mcdoc parser > numericType > Parse \"int @ 4..\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/numeric_type",
     "children": [
@@ -298,8 +272,51 @@ exports['mcdoc numericType Parse "int @ 4.." 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc numericType Parse "other" 1'] = {
+exports[`mcdoc parser > numericType > Parse \"int @ 4\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:type/numeric_type",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "value": "int",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:int_range",
+        "children": [
+          {
+            "type": "integer",
+            "range": {
+              "start": 6,
+              "end": 7
+            },
+            "value": 4
+          }
+        ],
+        "range": {
+          "start": 6,
+          "end": 7
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 7
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > numericType > Parse \"other\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -312,3 +329,4 @@ exports['mcdoc numericType Parse "other" 1'] = {
     }
   ]
 }
+`;

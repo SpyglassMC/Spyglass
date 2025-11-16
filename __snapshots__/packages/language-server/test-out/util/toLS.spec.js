@@ -1,4 +1,5 @@
-exports['semanticTokens Tokenize "foo" with multiline token support 1'] = [
+exports[`semanticTokens > Tokenize \"foo\" with multiline token support 1`] = `
+[
   {
     "deltaLine": 0,
     "deltaStartChar": 0,
@@ -7,8 +8,10 @@ exports['semanticTokens Tokenize "foo" with multiline token support 1'] = [
     "tokenModifiers": 0
   }
 ]
+`;
 
-exports['semanticTokens Tokenize "foo" without multiline token support 1'] = [
+exports[`semanticTokens > Tokenize \"foo\" without multiline token support 1`] = `
+[
   {
     "deltaLine": 0,
     "deltaStartChar": 0,
@@ -17,8 +20,10 @@ exports['semanticTokens Tokenize "foo" without multiline token support 1'] = [
     "tokenModifiers": 0
   }
 ]
+`;
 
-exports['semanticTokens Tokenize "foo↓bar" with multiline token support 1'] = [
+exports[`semanticTokens > Tokenize \"foo↓bar\" with multiline token support 1`] = `
+[
   {
     "deltaLine": 0,
     "deltaStartChar": 0,
@@ -27,8 +32,10 @@ exports['semanticTokens Tokenize "foo↓bar" with multiline token support 1'] = 
     "tokenModifiers": 0
   }
 ]
+`;
 
-exports['semanticTokens Tokenize "foo↓bar" without multiline token support 1'] = [
+exports[`semanticTokens > Tokenize \"foo↓bar\" without multiline token support 1`] = `
+[
   {
     "deltaLine": 0,
     "deltaStartChar": 0,
@@ -44,8 +51,10 @@ exports['semanticTokens Tokenize "foo↓bar" without multiline token support 1']
     "tokenModifiers": 0
   }
 ]
+`;
 
-exports['semanticTokens Tokenize "foo↓bar↓qux" with multiline token support 1'] = [
+exports[`semanticTokens > Tokenize \"foo↓bar↓qux\" with multiline token support 1`] = `
+[
   {
     "deltaLine": 0,
     "deltaStartChar": 0,
@@ -54,8 +63,10 @@ exports['semanticTokens Tokenize "foo↓bar↓qux" with multiline token support 
     "tokenModifiers": 0
   }
 ]
+`;
 
-exports['semanticTokens Tokenize "foo↓bar↓qux" without multiline token support 1'] = [
+exports[`semanticTokens > Tokenize \"foo↓bar↓qux\" without multiline token support 1`] = `
+[
   {
     "deltaLine": 0,
     "deltaStartChar": 0,
@@ -78,3 +89,4 @@ exports['semanticTokens Tokenize "foo↓bar↓qux" without multiline token suppo
     "tokenModifiers": 0
   }
 ]
+`;

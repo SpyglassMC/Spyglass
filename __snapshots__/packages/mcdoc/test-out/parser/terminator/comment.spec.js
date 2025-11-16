@@ -1,14 +1,5 @@
-exports['mcdoc comment Parse "" 1'] = {
-  "node": "FAILURE",
-  "errors": []
-}
-
-exports['mcdoc comment Parse "/" 1'] = {
-  "node": "FAILURE",
-  "errors": []
-}
-
-exports['mcdoc comment Parse "// This is a comment." 1'] = {
+exports[`mcdoc parser > comment > Parse \"// This is a comment.\" 1`] = `
+{
   "node": {
     "type": "comment",
     "range": {
@@ -20,8 +11,10 @@ exports['mcdoc comment Parse "// This is a comment." 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc comment Parse "// This is a comment.↓next line test;" 1'] = {
+exports[`mcdoc parser > comment > Parse \"// This is a comment.↓next line test;\" 1`] = `
+{
   "node": {
     "type": "comment",
     "range": {
@@ -33,21 +26,10 @@ exports['mcdoc comment Parse "// This is a comment.↓next line test;" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc comment Parse "//" 1'] = {
-  "node": {
-    "type": "comment",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "comment": "",
-    "prefix": "//"
-  },
-  "errors": []
-}
-
-exports['mcdoc comment Parse "/// This is a doc comment." 1'] = {
+exports[`mcdoc parser > comment > Parse \"/// This is a doc comment.\" 1`] = `
+{
   "node": {
     "type": "comment",
     "range": {
@@ -68,3 +50,33 @@ exports['mcdoc comment Parse "/// This is a doc comment." 1'] = {
     }
   ]
 }
+`;
+
+exports[`mcdoc parser > comment > Parse \"//\" 1`] = `
+{
+  "node": {
+    "type": "comment",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "comment": "",
+    "prefix": "//"
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > comment > Parse \"/\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > comment > Parse \"\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": []
+}
+`;

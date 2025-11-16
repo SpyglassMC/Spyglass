@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:gamemode Parse "adventure" 1'] = {
+exports[`mcfunction argument parser > minecraft:gamemode > Parse \"adventure\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -9,8 +10,10 @@ exports['mcfunction argument minecraft:gamemode Parse "adventure" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:gamemode Parse "creative" 1'] = {
+exports[`mcfunction argument parser > minecraft:gamemode > Parse \"creative\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -21,8 +24,10 @@ exports['mcfunction argument minecraft:gamemode Parse "creative" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:gamemode Parse "spectator" 1'] = {
+exports[`mcfunction argument parser > minecraft:gamemode > Parse \"spectator\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -33,8 +38,10 @@ exports['mcfunction argument minecraft:gamemode Parse "spectator" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:gamemode Parse "survival" 1'] = {
+exports[`mcfunction argument parser > minecraft:gamemode > Parse \"survival\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -45,3 +52,4 @@ exports['mcfunction argument minecraft:gamemode Parse "survival" 1'] = {
   },
   "errors": []
 }
+`;

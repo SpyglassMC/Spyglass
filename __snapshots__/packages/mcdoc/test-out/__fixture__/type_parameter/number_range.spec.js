@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ type parameter/number range 1'] = {
+exports[`mcdoc __fixture__ > type parameter/number range 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -965,3 +966,4 @@ exports['mcdoc __fixture__ type parameter/number range 1'] = {
     }
   }
 }
+`;

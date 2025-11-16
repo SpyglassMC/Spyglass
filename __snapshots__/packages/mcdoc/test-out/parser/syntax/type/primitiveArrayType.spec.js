@@ -1,4 +1,5 @@
-exports['mcdoc primitiveArrayType Parse "" 1'] = {
+exports[`mcdoc parser > primitiveArrayType > Parse \"\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -19,8 +20,10 @@ exports['mcdoc primitiveArrayType Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc primitiveArrayType Parse "byte @ 0..1 [] @ 0.." 1'] = {
+exports[`mcdoc parser > primitiveArrayType > Parse \"byte @ 0..1 [] @ 0..\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/primitive_array",
     "children": [
@@ -107,22 +110,10 @@ exports['mcdoc primitiveArrayType Parse "byte @ 0..1 [] @ 0.." 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc primitiveArrayType Parse "byte" 1'] = {
-  "node": "FAILURE",
-  "errors": [
-    {
-      "range": {
-        "start": 4,
-        "end": 4
-      },
-      "message": "Expected “[]” but got “”",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcdoc primitiveArrayType Parse "byte@0..1[]" 1'] = {
+exports[`mcdoc parser > primitiveArrayType > Parse \"byte@0..1[]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/primitive_array",
     "children": [
@@ -184,8 +175,10 @@ exports['mcdoc primitiveArrayType Parse "byte@0..1[]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc primitiveArrayType Parse "byte[]" 1'] = {
+exports[`mcdoc parser > primitiveArrayType > Parse \"byte[]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/primitive_array",
     "children": [
@@ -214,8 +207,26 @@ exports['mcdoc primitiveArrayType Parse "byte[]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc primitiveArrayType Parse "int[] @ 4" 1'] = {
+exports[`mcdoc parser > primitiveArrayType > Parse \"byte\" 1`] = `
+{
+  "node": "FAILURE",
+  "errors": [
+    {
+      "range": {
+        "start": 4,
+        "end": 4
+      },
+      "message": "Expected “[]” but got “”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > primitiveArrayType > Parse \"int[] @ 4\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/primitive_array",
     "children": [
@@ -261,8 +272,10 @@ exports['mcdoc primitiveArrayType Parse "int[] @ 4" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc primitiveArrayType Parse "other[]" 1'] = {
+exports[`mcdoc parser > primitiveArrayType > Parse \"other[]\" 1`] = `
+{
   "node": {
     "type": "mcdoc:type/primitive_array",
     "children": [
@@ -300,3 +313,4 @@ exports['mcdoc primitiveArrayType Parse "other[]" 1'] = {
     }
   ]
 }
+`;

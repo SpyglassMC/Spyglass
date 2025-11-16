@@ -1,4 +1,4 @@
-import { strict as assert } from 'assert'
+import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import type { IndexMap } from '../../lib/index.js'
 import { Range, Source } from '../../lib/index.js'
@@ -545,7 +545,7 @@ describe('Source', () => {
 		]
 
 		for (const { string, indexMap } of suites) {
-			it(`Should visualize the index map for "${string}"`, (t) => {
+			it(`Should visualize the index map for '${string}'`, (t) => {
 				const src = new Source(string, indexMap)
 				t.assert.snapshot(src.visualizeIndexMap())
 			})

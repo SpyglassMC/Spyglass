@@ -1,4 +1,5 @@
-exports['JSON number parser number() Parse "+1" 1'] = {
+exports[`JSON number parser > number() > Parse '+1' 1`] = `
+{
   "node": {
     "type": "json:number",
     "children": [
@@ -30,13 +31,15 @@ exports['JSON number parser number() Parse "+1" 1'] = {
         "start": 0,
         "end": 2
       },
-      "message": "Illegal float numeral that doesn't follow /^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][-+]?\\d+)?$/",
+      "message": "Illegal float numeral that doesn't follow /^-?(?:0|[1-9]\\\\d*)(?:\\\\.\\\\d+)?(?:[eE][-+]?\\\\d+)?$/",
       "severity": 3
     }
   ]
 }
+`;
 
-exports['JSON number parser number() Parse "-1" 1'] = {
+exports[`JSON number parser > number() > Parse '-1' 1`] = `
+{
   "node": {
     "type": "json:number",
     "children": [
@@ -64,8 +67,10 @@ exports['JSON number parser number() Parse "-1" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['JSON number parser number() Parse "0" 1'] = {
+exports[`JSON number parser > number() > Parse '0' 1`] = `
+{
   "node": {
     "type": "json:number",
     "children": [
@@ -93,8 +98,10 @@ exports['JSON number parser number() Parse "0" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['JSON number parser number() Parse "0.0" 1'] = {
+exports[`JSON number parser > number() > Parse '0.0' 1`] = `
+{
   "node": {
     "type": "json:number",
     "children": [
@@ -122,8 +129,10 @@ exports['JSON number parser number() Parse "0.0" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['JSON number parser number() Parse "1" 1'] = {
+exports[`JSON number parser > number() > Parse '1' 1`] = `
+{
   "node": {
     "type": "json:number",
     "children": [
@@ -151,8 +160,10 @@ exports['JSON number parser number() Parse "1" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['JSON number parser number() Parse "1.0" 1'] = {
+exports[`JSON number parser > number() > Parse '1.0' 1`] = `
+{
   "node": {
     "type": "json:number",
     "children": [
@@ -180,8 +191,10 @@ exports['JSON number parser number() Parse "1.0" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['JSON number parser number() Parse "1.0232E2" 1'] = {
+exports[`JSON number parser > number() > Parse '1.0232E2' 1`] = `
+{
   "node": {
     "type": "json:number",
     "children": [
@@ -209,8 +222,10 @@ exports['JSON number parser number() Parse "1.0232E2" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['JSON number parser number() Parse "1.2" 1'] = {
+exports[`JSON number parser > number() > Parse '1.2' 1`] = `
+{
   "node": {
     "type": "json:number",
     "children": [
@@ -238,8 +253,10 @@ exports['JSON number parser number() Parse "1.2" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['JSON number parser number() Parse "1.342E-10" 1'] = {
+exports[`JSON number parser > number() > Parse '1.342E-10' 1`] = `
+{
   "node": {
     "type": "json:number",
     "children": [
@@ -267,8 +284,10 @@ exports['JSON number parser number() Parse "1.342E-10" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['JSON number parser number() Parse "1E12" 1'] = {
+exports[`JSON number parser > number() > Parse '1E12' 1`] = `
+{
   "node": {
     "type": "json:number",
     "children": [
@@ -296,3 +315,4 @@ exports['JSON number parser number() Parse "1E12" 1'] = {
   },
   "errors": []
 }
+`;

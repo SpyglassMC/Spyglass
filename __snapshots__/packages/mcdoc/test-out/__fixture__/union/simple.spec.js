@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ union/simple 1'] = {
+exports[`mcdoc __fixture__ > union/simple 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -180,3 +181,4 @@ exports['mcdoc __fixture__ union/simple 1'] = {
     }
   }
 }
+`;

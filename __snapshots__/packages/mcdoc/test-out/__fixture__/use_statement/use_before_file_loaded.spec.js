@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ use statement/use before file loaded 1'] = {
+exports[`mcdoc __fixture__ > use statement/use before file loaded 1`] = `
+{
   "global": {
     "mcdoc": {
       "::client": {
@@ -559,3 +560,4 @@ exports['mcdoc __fixture__ use statement/use before file loaded 1'] = {
     }
   }
 }
+`;

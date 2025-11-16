@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:rotation Parse "0 0" 1'] = {
+exports[`mcfunction argument parser > minecraft:rotation > Parse \"0 0\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -29,8 +30,10 @@ exports['mcfunction argument minecraft:rotation Parse "0 0" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:rotation Parse "~ ~" 1'] = {
+exports[`mcfunction argument parser > minecraft:rotation > Parse \"~ ~\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -61,8 +64,10 @@ exports['mcfunction argument minecraft:rotation Parse "~ ~" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:rotation Parse "~-5 ~5" 1'] = {
+exports[`mcfunction argument parser > minecraft:rotation > Parse \"~-5 ~5\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -93,3 +98,4 @@ exports['mcfunction argument minecraft:rotation Parse "~-5 ~5" 1'] = {
   },
   "errors": []
 }
+`;

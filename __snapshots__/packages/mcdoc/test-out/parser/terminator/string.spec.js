@@ -1,4 +1,5 @@
-exports['mcdoc string Parse "" 1'] = {
+exports[`mcdoc parser > string > Parse \"\" 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -25,106 +26,15 @@ exports['mcdoc string Parse "" 1'] = {
         "start": 0,
         "end": 0
       },
-      "message": "Expected “\"”",
+      "message": "Expected “\\"”",
       "severity": 3
     }
   ]
 }
+`;
 
-exports['mcdoc string Parse ""foo" 1'] = {
-  "node": {
-    "type": "string",
-    "range": {
-      "start": 0,
-      "end": 4
-    },
-    "value": "foo",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 1,
-          "end": 1
-        }
-      }
-    ],
-    "quote": "\""
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 4,
-        "end": 4
-      },
-      "message": "Expected “\"”",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcdoc string Parse ""foo"" 1'] = {
-  "node": {
-    "type": "string",
-    "range": {
-      "start": 0,
-      "end": 5
-    },
-    "value": "foo",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 1,
-          "end": 1
-        }
-      }
-    ],
-    "quote": "\""
-  },
-  "errors": []
-}
-
-exports['mcdoc string Parse ""fo↓o"" 1'] = {
-  "node": {
-    "type": "string",
-    "range": {
-      "start": 0,
-      "end": 3
-    },
-    "value": "fo",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 1,
-          "end": 1
-        }
-      }
-    ],
-    "quote": "\""
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 3,
-        "end": 3
-      },
-      "message": "Expected “\"”",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcdoc string Parse ""fo⧵Ao"" 1'] = {
+exports[`mcdoc parser > string > Parse \"\"fo\\Ao\"\" 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -154,7 +64,7 @@ exports['mcdoc string Parse ""fo⧵Ao"" 1'] = {
         }
       }
     ],
-    "quote": "\""
+    "quote": "\\""
   },
   "errors": [
     {
@@ -167,15 +77,17 @@ exports['mcdoc string Parse ""fo⧵Ao"" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc string Parse ""fo⧵no"" 1'] = {
+exports[`mcdoc parser > string > Parse \"\"fo\\no\"\" 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
       "start": 0,
       "end": 7
     },
-    "value": "fo\no",
+    "value": "fo\\no",
     "valueMap": [
       {
         "inner": {
@@ -198,12 +110,113 @@ exports['mcdoc string Parse ""fo⧵no"" 1'] = {
         }
       }
     ],
-    "quote": "\""
+    "quote": "\\""
   },
   "errors": []
 }
+`;
 
-exports['mcdoc string Parse "foo" 1'] = {
+exports[`mcdoc parser > string > Parse \"\"foo\" 1`] = `
+{
+  "node": {
+    "type": "string",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "value": "foo",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
+        }
+      }
+    ],
+    "quote": "\\""
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 4,
+        "end": 4
+      },
+      "message": "Expected “\\"”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > string > Parse \"\"foo\"\" 1`] = `
+{
+  "node": {
+    "type": "string",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": "foo",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
+        }
+      }
+    ],
+    "quote": "\\""
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > string > Parse \"\"fo↓o\"\" 1`] = `
+{
+  "node": {
+    "type": "string",
+    "range": {
+      "start": 0,
+      "end": 3
+    },
+    "value": "fo",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
+        }
+      }
+    ],
+    "quote": "\\""
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 3,
+        "end": 3
+      },
+      "message": "Expected “\\"”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > string > Parse \"foo\" 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -230,8 +243,9 @@ exports['mcdoc string Parse "foo" 1'] = {
         "start": 0,
         "end": 0
       },
-      "message": "Expected “\"”",
+      "message": "Expected “\\"”",
       "severity": 3
     }
   ]
 }
+`;

@@ -1,34 +1,5 @@
-exports['mcdoc intRange Parse "" 1'] = {
-  "node": {
-    "type": "mcdoc:int_range",
-    "children": [
-      {
-        "type": "integer",
-        "range": {
-          "start": 0,
-          "end": 0
-        },
-        "value": 0
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 0
-    }
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "message": "Expected an integer",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcdoc intRange Parse "..2" 1'] = {
+exports[`mcdoc parser > intRange > Parse \"..2\" 1`] = `
+{
   "node": {
     "type": "mcdoc:int_range",
     "children": [
@@ -56,8 +27,10 @@ exports['mcdoc intRange Parse "..2" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc intRange Parse "..<2" 1'] = {
+exports[`mcdoc parser > intRange > Parse \"..<2\" 1`] = `
+{
   "node": {
     "type": "mcdoc:int_range",
     "children": [
@@ -85,58 +58,10 @@ exports['mcdoc intRange Parse "..<2" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc intRange Parse "1" 1'] = {
-  "node": {
-    "type": "mcdoc:int_range",
-    "children": [
-      {
-        "type": "integer",
-        "range": {
-          "start": 0,
-          "end": 1
-        },
-        "value": 1
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 1
-    }
-  },
-  "errors": []
-}
-
-exports['mcdoc intRange Parse "1.." 1'] = {
-  "node": {
-    "type": "mcdoc:int_range",
-    "children": [
-      {
-        "type": "integer",
-        "range": {
-          "start": 0,
-          "end": 1
-        },
-        "value": 1
-      },
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 1,
-          "end": 3
-        },
-        "value": ".."
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 3
-    }
-  },
-  "errors": []
-}
-
-exports['mcdoc intRange Parse "1..1" 1'] = {
+exports[`mcdoc parser > intRange > Parse \"1..1\" 1`] = `
+{
   "node": {
     "type": "mcdoc:int_range",
     "children": [
@@ -172,8 +97,10 @@ exports['mcdoc intRange Parse "1..1" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc intRange Parse "1..2" 1'] = {
+exports[`mcdoc parser > intRange > Parse \"1..2\" 1`] = `
+{
   "node": {
     "type": "mcdoc:int_range",
     "children": [
@@ -209,8 +136,10 @@ exports['mcdoc intRange Parse "1..2" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc intRange Parse "1<.." 1'] = {
+exports[`mcdoc parser > intRange > Parse \"1..\" 1`] = `
+{
   "node": {
     "type": "mcdoc:int_range",
     "children": [
@@ -226,20 +155,22 @@ exports['mcdoc intRange Parse "1<.." 1'] = {
         "type": "mcdoc:literal",
         "range": {
           "start": 1,
-          "end": 4
+          "end": 3
         },
-        "value": "<.."
+        "value": ".."
       }
     ],
     "range": {
       "start": 0,
-      "end": 4
+      "end": 3
     }
   },
   "errors": []
 }
+`;
 
-exports['mcdoc intRange Parse "1<..<2" 1'] = {
+exports[`mcdoc parser > intRange > Parse \"1<..<2\" 1`] = `
+{
   "node": {
     "type": "mcdoc:int_range",
     "children": [
@@ -275,3 +206,90 @@ exports['mcdoc intRange Parse "1<..<2" 1'] = {
   },
   "errors": []
 }
+`;
+
+exports[`mcdoc parser > intRange > Parse \"1<..\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:int_range",
+    "children": [
+      {
+        "type": "integer",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": 1
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 1,
+          "end": 4
+        },
+        "value": "<.."
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 4
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > intRange > Parse \"1\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:int_range",
+    "children": [
+      {
+        "type": "integer",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": 1
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 1
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > intRange > Parse \"\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:int_range",
+    "children": [
+      {
+        "type": "integer",
+        "range": {
+          "start": 0,
+          "end": 0
+        },
+        "value": 0
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected an integer",
+      "severity": 3
+    }
+  ]
+}
+`;

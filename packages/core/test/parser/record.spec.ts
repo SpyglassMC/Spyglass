@@ -55,7 +55,7 @@ describe('record()', () => {
 	for (const { title, options, contents } of suites) {
 		describe(title, () => {
 			for (const content of contents) {
-				it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+				it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 					const parser = record(options)
 					t.assert.snapshot(testParser(parser, content))
 				})

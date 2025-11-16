@@ -17,7 +17,7 @@ describe('translationValueParser()', () => {
 		'hello %s %42$s',
 	]
 	for (const content of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			t.assert.snapshot(testParser(translationValueParser, content))
 		})
 	}

@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:entity_anchor Parse "eyes" 1'] = {
+exports[`mcfunction argument parser > minecraft:entity_anchor > Parse \"eyes\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -9,8 +10,10 @@ exports['mcfunction argument minecraft:entity_anchor Parse "eyes" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:entity_anchor Parse "feet" 1'] = {
+exports[`mcfunction argument parser > minecraft:entity_anchor > Parse \"feet\" 1`] = `
+{
   "node": {
     "type": "literal",
     "range": {
@@ -21,3 +24,4 @@ exports['mcfunction argument minecraft:entity_anchor Parse "feet" 1'] = {
   },
   "errors": []
 }
+`;

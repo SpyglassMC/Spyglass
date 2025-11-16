@@ -19,7 +19,7 @@ describe('nbt primitive()', () => {
 		{ content: '123456b' },
 	]
 	for (const { content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = primitive
 			t.assert.snapshot(testParser(parser, content))
 		})

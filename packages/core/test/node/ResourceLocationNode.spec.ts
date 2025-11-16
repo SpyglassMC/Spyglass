@@ -1,4 +1,4 @@
-import { strict as assert } from 'assert'
+import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { ResourceLocationNode } from '../../lib/index.js'
 import { showWhitespaceGlyph } from '../utils.ts'
@@ -72,7 +72,7 @@ describe('ResourceLocationNode', () => {
 			},
 		]
 		for (const { node, type, includesTagPrefix, expected } of suites) {
-			it(`It should convert to "${showWhitespaceGlyph(expected)}"`, () => {
+			it(`It should convert to '${showWhitespaceGlyph(expected)}'`, () => {
 				const actual = ResourceLocationNode.toString(
 					node as ResourceLocationNode,
 					type,

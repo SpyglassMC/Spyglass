@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:loot_predicate Parse "custom:maybe" 1'] = {
+exports[`mcfunction argument parser > minecraft:loot_predicate > Parse \"custom:maybe\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -12,8 +13,10 @@ exports['mcfunction argument minecraft:loot_predicate Parse "custom:maybe" 1'] =
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_chance",chance:0.2}" 1'] = {
+exports[`mcfunction argument parser > minecraft:loot_predicate > Parse \"{condition:\"random_chance\",chance:0.2}\" 1`] = `
+{
   "node": {
     "type": "mcfunction:nbt_resource",
     "range": {
@@ -74,7 +77,7 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
                     }
                   }
                 ],
-                "quote": "\""
+                "quote": "\\""
               }
             ],
             "key": {
@@ -120,7 +123,7 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
                   }
                 }
               ],
-              "quote": "\""
+              "quote": "\\""
             },
             "end": {
               "start": 26,
@@ -207,3 +210,4 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
   },
   "errors": []
 }
+`;

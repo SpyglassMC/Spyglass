@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ enum/string 1'] = {
+exports[`mcdoc __fixture__ > enum/string 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -297,7 +298,7 @@ exports['mcdoc __fixture__ enum/string 1'] = {
                               }
                             }
                           ],
-                          "quote": "\""
+                          "quote": "\\""
                         }
                       ],
                       "range": {
@@ -342,7 +343,7 @@ exports['mcdoc __fixture__ enum/string 1'] = {
                               }
                             }
                           ],
-                          "quote": "\""
+                          "quote": "\\""
                         }
                       ],
                       "range": {
@@ -375,3 +376,4 @@ exports['mcdoc __fixture__ enum/string 1'] = {
     }
   }
 }
+`;

@@ -1,4 +1,5 @@
-exports['mcfunction argument brigadier:integer Parse "-123" 1'] = {
+exports[`mcfunction argument parser > brigadier:integer > Parse \"-123\" 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -9,8 +10,10 @@ exports['mcfunction argument brigadier:integer Parse "-123" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:integer Parse "0" 1'] = {
+exports[`mcfunction argument parser > brigadier:integer > Parse \"0\" 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -21,8 +24,10 @@ exports['mcfunction argument brigadier:integer Parse "0" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:integer Parse "123" 1'] = {
+exports[`mcfunction argument parser > brigadier:integer > Parse \"123\" 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -33,3 +38,4 @@ exports['mcfunction argument brigadier:integer Parse "123" 1'] = {
   },
   "errors": []
 }
+`;

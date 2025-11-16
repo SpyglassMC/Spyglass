@@ -1,4 +1,5 @@
-exports['mcdoc useStatement Parse "" 1'] = {
+exports[`mcdoc parser > useStatement > Parse \"\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -11,8 +12,10 @@ exports['mcdoc useStatement Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc useStatement Parse "other" 1'] = {
+exports[`mcdoc parser > useStatement > Parse \"other\" 1`] = `
+{
   "node": "FAILURE",
   "errors": [
     {
@@ -25,8 +28,10 @@ exports['mcdoc useStatement Parse "other" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc useStatement Parse "use foo as bar" 1'] = {
+exports[`mcdoc parser > useStatement > Parse \"use foo as bar\" 1`] = `
+{
   "node": {
     "type": "mcdoc:use_statement",
     "children": [
@@ -80,8 +85,10 @@ exports['mcdoc useStatement Parse "use foo as bar" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc useStatement Parse "use foo" 1'] = {
+exports[`mcdoc parser > useStatement > Parse \"use foo/// Trailing doc comment.\" 1`] = `
+{
   "node": {
     "type": "mcdoc:use_statement",
     "children": [
@@ -119,47 +126,10 @@ exports['mcdoc useStatement Parse "use foo" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc useStatement Parse "use foo/// Trailing doc comment." 1'] = {
-  "node": {
-    "type": "mcdoc:use_statement",
-    "children": [
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "value": "use",
-        "colorTokenType": "keyword"
-      },
-      {
-        "type": "mcdoc:path",
-        "children": [
-          {
-            "type": "mcdoc:identifier",
-            "range": {
-              "start": 4,
-              "end": 7
-            },
-            "value": "foo"
-          }
-        ],
-        "range": {
-          "start": 4,
-          "end": 7
-        }
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 7
-    }
-  },
-  "errors": []
-}
-
-exports['mcdoc useStatement Parse "use foo::bar as qux// Trailing comment." 1'] = {
+exports[`mcdoc parser > useStatement > Parse \"use foo::bar as qux// Trailing comment.\" 1`] = `
+{
   "node": {
     "type": "mcdoc:use_statement",
     "children": [
@@ -221,8 +191,51 @@ exports['mcdoc useStatement Parse "use foo::bar as qux// Trailing comment." 1'] 
   },
   "errors": []
 }
+`;
 
-exports['mcdoc useStatement Parse "use" 1'] = {
+exports[`mcdoc parser > useStatement > Parse \"use foo\" 1`] = `
+{
+  "node": {
+    "type": "mcdoc:use_statement",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "value": "use",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:path",
+        "children": [
+          {
+            "type": "mcdoc:identifier",
+            "range": {
+              "start": 4,
+              "end": 7
+            },
+            "value": "foo"
+          }
+        ],
+        "range": {
+          "start": 4,
+          "end": 7
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 7
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > useStatement > Parse \"use\" 1`] = `
+{
   "node": {
     "type": "mcdoc:use_statement",
     "children": [
@@ -269,3 +282,4 @@ exports['mcdoc useStatement Parse "use" 1'] = {
     }
   ]
 }
+`;

@@ -20,7 +20,7 @@ describe('integer()', () => {
 			{ content: '0123' },
 		]
 		for (const { content } of cases) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				const parser = integer(option)
 				t.assert.snapshot(testParser(parser, content))
 			})
@@ -29,7 +29,7 @@ describe('integer()', () => {
 
 	describe('integer(failsOnEmpty)', () => {
 		describe('integer(failsOnEmpty=true)', () => {
-			it('Parse ""', (t) => {
+			it("Parse ''", (t) => {
 				const parser = integer({ pattern, failsOnEmpty: true })
 				t.assert.snapshot(testParser(parser, ''))
 			})
@@ -47,7 +47,7 @@ describe('integer()', () => {
 		for (const option of options) {
 			describe(`integer(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+					it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 						const parser = integer(option as any)
 						t.assert.snapshot(testParser(parser, content))
 					})

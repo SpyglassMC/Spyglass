@@ -1,16 +1,5 @@
-exports['mcfunction parser entry() Parse "" 1'] = {
-  "node": {
-    "type": "mcfunction:entry",
-    "range": {
-      "start": 0,
-      "end": 0
-    },
-    "children": []
-  },
-  "errors": []
-}
-
-exports['mcfunction parser entry() Parse "# this is a comment ⧵ ↓ still a comment" 1'] = {
+exports[`mcfunction parser entry() > Parse '# this is a comment \\ ↓ still a comment' 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
@@ -31,8 +20,10 @@ exports['mcfunction parser entry() Parse "# this is a comment ⧵ ↓ still a co
   },
   "errors": []
 }
+`;
 
-exports['mcfunction parser entry() Parse "# this is a comment" 1'] = {
+exports[`mcfunction parser entry() > Parse '# this is a comment' 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
@@ -53,8 +44,10 @@ exports['mcfunction parser entry() Parse "# this is a comment" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction parser entry() Parse "# this is a comment↓say hi↓$this is a $(macro) ↓" 1'] = {
+exports[`mcfunction parser entry() > Parse '# this is a comment↓say hi↓$this is a $(macro) ↓' 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
@@ -165,61 +158,10 @@ exports['mcfunction parser entry() Parse "# this is a comment↓say hi↓$this i
   },
   "errors": []
 }
+`;
 
-exports['mcfunction parser entry() Parse "$this is a $(macro) command" 1'] = {
-  "node": {
-    "type": "mcfunction:entry",
-    "range": {
-      "start": 0,
-      "end": 27
-    },
-    "children": [
-      {
-        "type": "mcfunction:macro",
-        "range": {
-          "start": 0,
-          "end": 27
-        },
-        "children": [
-          {
-            "type": "mcfunction:macro/prefix",
-            "range": {
-              "start": 0,
-              "end": 1
-            }
-          },
-          {
-            "type": "mcfunction:macro/other",
-            "range": {
-              "start": 1,
-              "end": 11
-            },
-            "value": "this is a "
-          },
-          {
-            "type": "mcfunction:macro/argument",
-            "range": {
-              "start": 11,
-              "end": 19
-            },
-            "value": "macro"
-          },
-          {
-            "type": "mcfunction:macro/other",
-            "range": {
-              "start": 19,
-              "end": 27
-            },
-            "value": " command"
-          }
-        ]
-      }
-    ]
-  },
-  "errors": []
-}
-
-exports['mcfunction parser entry() Parse "$this is a $(macro) ⧵ ↓ this is $(still) a macro" 1'] = {
+exports[`mcfunction parser entry() > Parse '$this is a $(macro) \\ ↓ this is $(still) a macro' 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
@@ -287,8 +229,65 @@ exports['mcfunction parser entry() Parse "$this is a $(macro) ⧵ ↓ this is $(
   },
   "errors": []
 }
+`;
 
-exports['mcfunction parser entry() Parse "$this is a macro command $(with_args)" without macro support 1'] = {
+exports[`mcfunction parser entry() > Parse '$this is a $(macro) command' 1`] = `
+{
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 27
+    },
+    "children": [
+      {
+        "type": "mcfunction:macro",
+        "range": {
+          "start": 0,
+          "end": 27
+        },
+        "children": [
+          {
+            "type": "mcfunction:macro/prefix",
+            "range": {
+              "start": 0,
+              "end": 1
+            }
+          },
+          {
+            "type": "mcfunction:macro/other",
+            "range": {
+              "start": 1,
+              "end": 11
+            },
+            "value": "this is a "
+          },
+          {
+            "type": "mcfunction:macro/argument",
+            "range": {
+              "start": 11,
+              "end": 19
+            },
+            "value": "macro"
+          },
+          {
+            "type": "mcfunction:macro/other",
+            "range": {
+              "start": 19,
+              "end": 27
+            },
+            "value": " command"
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction parser entry() > Parse '$this is a macro command $(with_args)' without macro support 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
@@ -316,8 +315,10 @@ exports['mcfunction parser entry() Parse "$this is a macro command $(with_args)"
     }
   ]
 }
+`;
 
-exports['mcfunction parser entry() Parse "$this is a macro command" without macro support 1'] = {
+exports[`mcfunction parser entry() > Parse '$this is a macro command' without macro support 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
@@ -345,8 +346,24 @@ exports['mcfunction parser entry() Parse "$this is a macro command" without macr
     }
   ]
 }
+`;
 
-exports['mcfunction parser entry() Parse "execute if true if true run say hi" 1'] = {
+exports[`mcfunction parser entry() > Parse '' 1`] = `
+{
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 0
+    },
+    "children": []
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction parser entry() > Parse 'execute if true if true run say hi' 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
@@ -535,34 +552,36 @@ exports['mcfunction parser entry() Parse "execute if true if true run say hi" 1'
   },
   "errors": []
 }
+`;
 
-exports['mcfunction parser entry() Parse "say hi" 1'] = {
+exports[`mcfunction parser entry() > Parse 'sa\\  ↓  y \\ ↓ hi' 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
       "start": 0,
-      "end": 6
+      "end": 16
     },
     "children": [
       {
         "type": "mcfunction:command",
         "range": {
           "start": 0,
-          "end": 6
+          "end": 16
         },
         "children": [
           {
             "type": "mcfunction:command_child",
             "range": {
               "start": 0,
-              "end": 3
+              "end": 9
             },
             "children": [
               {
                 "type": "mcfunction:command_child/literal",
                 "range": {
                   "start": 0,
-                  "end": 3
+                  "end": 9
                 },
                 "value": "say"
               }
@@ -574,15 +593,15 @@ exports['mcfunction parser entry() Parse "say hi" 1'] = {
           {
             "type": "mcfunction:command_child",
             "range": {
-              "start": 4,
-              "end": 6
+              "start": 14,
+              "end": 16
             },
             "children": [
               {
                 "type": "mcfunction:command_child/literal",
                 "range": {
-                  "start": 4,
-                  "end": 6
+                  "start": 14,
+                  "end": 16
                 },
                 "value": "hi"
               }
@@ -598,20 +617,22 @@ exports['mcfunction parser entry() Parse "say hi" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction parser entry() Parse "say hi" without backslash continuation 1'] = {
+exports[`mcfunction parser entry() > Parse 'sa\\  ↓  y \\ ↓ hi' without backslash continuation 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
       "start": 0,
-      "end": 6
+      "end": 16
     },
     "children": [
       {
         "type": "mcfunction:command",
         "range": {
           "start": 0,
-          "end": 6
+          "end": 5
         },
         "children": [
           {
@@ -627,435 +648,27 @@ exports['mcfunction parser entry() Parse "say hi" without backslash continuation
                   "start": 0,
                   "end": 3
                 },
-                "value": "say"
+                "value": "sa\\\\"
               }
             ],
             "path": [
-              "say"
+              "sa\\\\"
             ]
           },
           {
             "type": "mcfunction:command_child",
             "range": {
-              "start": 4,
-              "end": 6
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 4,
-                  "end": 6
-                },
-                "value": "hi"
-              }
-            ],
-            "path": [
-              "say",
-              "hi"
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "errors": []
-}
-
-exports['mcfunction parser entry() Parse "say hi↓say hi" 1'] = {
-  "node": {
-    "type": "mcfunction:entry",
-    "range": {
-      "start": 0,
-      "end": 13
-    },
-    "children": [
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 0,
-          "end": 6
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 0,
-              "end": 3
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 0,
-                  "end": 3
-                },
-                "value": "say"
-              }
-            ],
-            "path": [
-              "say"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 4,
-              "end": 6
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 4,
-                  "end": 6
-                },
-                "value": "hi"
-              }
-            ],
-            "path": [
-              "say",
-              "hi"
-            ]
-          }
-        ]
-      },
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 7,
-          "end": 13
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 7,
-              "end": 10
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 7,
-                  "end": 10
-                },
-                "value": "say"
-              }
-            ],
-            "path": [
-              "say"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 11,
-              "end": 13
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 11,
-                  "end": 13
-                },
-                "value": "hi"
-              }
-            ],
-            "path": [
-              "say",
-              "hi"
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "errors": []
-}
-
-exports['mcfunction parser entry() Parse "say hi↓say hi" without backslash continuation 1'] = {
-  "node": {
-    "type": "mcfunction:entry",
-    "range": {
-      "start": 0,
-      "end": 13
-    },
-    "children": [
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 0,
-          "end": 6
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 0,
-              "end": 3
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 0,
-                  "end": 3
-                },
-                "value": "say"
-              }
-            ],
-            "path": [
-              "say"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 4,
-              "end": 6
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 4,
-                  "end": 6
-                },
-                "value": "hi"
-              }
-            ],
-            "path": [
-              "say",
-              "hi"
-            ]
-          }
-        ]
-      },
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 7,
-          "end": 13
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 7,
-              "end": 10
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 7,
-                  "end": 10
-                },
-                "value": "say"
-              }
-            ],
-            "path": [
-              "say"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 11,
-              "end": 13
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 11,
-                  "end": 13
-                },
-                "value": "hi"
-              }
-            ],
-            "path": [
-              "say",
-              "hi"
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "errors": []
-}
-
-exports['mcfunction parser entry() Parse "say trailing ⧵↓ data" 1'] = {
-  "node": {
-    "type": "mcfunction:entry",
-    "range": {
-      "start": 0,
-      "end": 20
-    },
-    "children": [
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 0,
-          "end": 20
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 0,
-              "end": 3
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 0,
-                  "end": 3
-                },
-                "value": "say"
-              }
-            ],
-            "path": [
-              "say"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 4,
-              "end": 12
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 4,
-                  "end": 12
-                },
-                "value": "trailing"
-              }
-            ],
-            "path": [
-              "say",
-              "trailing"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 12,
-              "end": 20
+              "start": 3,
+              "end": 5
             },
             "children": [
               {
                 "type": "mcfunction:command_child/trailing",
                 "range": {
-                  "start": 12,
-                  "end": 20
+                  "start": 3,
+                  "end": 5
                 },
-                "value": " data"
-              }
-            ],
-            "path": []
-          }
-        ]
-      }
-    ]
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 4,
-        "end": 12
-      },
-      "message": "Expected “hi”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 12,
-        "end": 20
-      },
-      "message": "Trailing data encountered: “ data”",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcfunction parser entry() Parse "say trailing ⧵↓ data" without backslash continuation 1'] = {
-  "node": {
-    "type": "mcfunction:entry",
-    "range": {
-      "start": 0,
-      "end": 20
-    },
-    "children": [
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 0,
-          "end": 14
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 0,
-              "end": 3
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 0,
-                  "end": 3
-                },
-                "value": "say"
-              }
-            ],
-            "path": [
-              "say"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 4,
-              "end": 12
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 4,
-                  "end": 12
-                },
-                "value": "trailing"
-              }
-            ],
-            "path": [
-              "say",
-              "trailing"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 12,
-              "end": 14
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/trailing",
-                "range": {
-                  "start": 12,
-                  "end": 14
-                },
-                "value": " \\"
+                "value": "  "
               }
             ],
             "path": []
@@ -1065,28 +678,75 @@ exports['mcfunction parser entry() Parse "say trailing ⧵↓ data" without back
       {
         "type": "mcfunction:command",
         "range": {
-          "start": 16,
-          "end": 20
+          "start": 8,
+          "end": 12
         },
         "children": [
           {
             "type": "mcfunction:command_child",
             "range": {
-              "start": 16,
-              "end": 20
+              "start": 8,
+              "end": 9
             },
             "children": [
               {
                 "type": "mcfunction:command_child/literal",
                 "range": {
-                  "start": 16,
-                  "end": 20
+                  "start": 8,
+                  "end": 9
                 },
-                "value": "data"
+                "value": "y"
               }
             ],
             "path": [
-              "data"
+              "y"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 9,
+              "end": 12
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/trailing",
+                "range": {
+                  "start": 9,
+                  "end": 12
+                },
+                "value": " \\\\ "
+              }
+            ],
+            "path": []
+          }
+        ]
+      },
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 14,
+          "end": 16
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 14,
+              "end": 16
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 14,
+                  "end": 16
+                },
+                "value": "hi"
+              }
+            ],
+            "path": [
+              "hi"
             ]
           }
         ]
@@ -1096,32 +756,50 @@ exports['mcfunction parser entry() Parse "say trailing ⧵↓ data" without back
   "errors": [
     {
       "range": {
-        "start": 4,
+        "start": 0,
+        "end": 3
+      },
+      "message": "Expected “execute” or “say”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 3,
+        "end": 5
+      },
+      "message": "Trailing data encountered: “  ”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 8,
+        "end": 9
+      },
+      "message": "Expected “execute” or “say”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 9,
         "end": 12
       },
-      "message": "Expected “hi”",
+      "message": "Trailing data encountered: “ \\\\ ”",
       "severity": 3
     },
     {
       "range": {
-        "start": 12,
-        "end": 14
-      },
-      "message": "Trailing data encountered: “ \\”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 16,
-        "end": 20
+        "start": 14,
+        "end": 16
       },
       "message": "Expected “execute” or “say”",
       "severity": 3
     }
   ]
 }
+`;
 
-exports['mcfunction parser entry() Parse "say ⧵↓ hi ↓ # comment start ⧵↓ end ↓ say hi" 1'] = {
+exports[`mcfunction parser entry() > Parse 'say \\↓ hi ↓ # comment start \\↓ end ↓ say hi' 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
@@ -1242,83 +920,22 @@ exports['mcfunction parser entry() Parse "say ⧵↓ hi ↓ # comment start ⧵�
   },
   "errors": []
 }
+`;
 
-exports['mcfunction parser entry() Parse "sa⧵  ↓  y ⧵ ↓ hi" 1'] = {
+exports[`mcfunction parser entry() > Parse 'say hi' 1`] = `
+{
   "node": {
     "type": "mcfunction:entry",
     "range": {
       "start": 0,
-      "end": 16
+      "end": 6
     },
     "children": [
       {
         "type": "mcfunction:command",
         "range": {
           "start": 0,
-          "end": 16
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 0,
-              "end": 9
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 0,
-                  "end": 9
-                },
-                "value": "say"
-              }
-            ],
-            "path": [
-              "say"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 14,
-              "end": 16
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 14,
-                  "end": 16
-                },
-                "value": "hi"
-              }
-            ],
-            "path": [
-              "say",
-              "hi"
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "errors": []
-}
-
-exports['mcfunction parser entry() Parse "sa⧵  ↓  y ⧵ ↓ hi" without backslash continuation 1'] = {
-  "node": {
-    "type": "mcfunction:entry",
-    "range": {
-      "start": 0,
-      "end": 16
-    },
-    "children": [
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 0,
-          "end": 5
+          "end": 6
         },
         "children": [
           {
@@ -1334,105 +951,539 @@ exports['mcfunction parser entry() Parse "sa⧵  ↓  y ⧵ ↓ hi" without back
                   "start": 0,
                   "end": 3
                 },
-                "value": "sa\\"
+                "value": "say"
               }
             ],
             "path": [
-              "sa\\"
+              "say"
             ]
           },
           {
             "type": "mcfunction:command_child",
             "range": {
-              "start": 3,
-              "end": 5
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/trailing",
-                "range": {
-                  "start": 3,
-                  "end": 5
-                },
-                "value": "  "
-              }
-            ],
-            "path": []
-          }
-        ]
-      },
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 8,
-          "end": 12
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 8,
-              "end": 9
+              "start": 4,
+              "end": 6
             },
             "children": [
               {
                 "type": "mcfunction:command_child/literal",
                 "range": {
-                  "start": 8,
-                  "end": 9
-                },
-                "value": "y"
-              }
-            ],
-            "path": [
-              "y"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 9,
-              "end": 12
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/trailing",
-                "range": {
-                  "start": 9,
-                  "end": 12
-                },
-                "value": " \\ "
-              }
-            ],
-            "path": []
-          }
-        ]
-      },
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 14,
-          "end": 16
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 14,
-              "end": 16
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 14,
-                  "end": 16
+                  "start": 4,
+                  "end": 6
                 },
                 "value": "hi"
               }
             ],
             "path": [
+              "say",
               "hi"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction parser entry() > Parse 'say hi' without backslash continuation 1`] = `
+{
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 6
+    },
+    "children": [
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 0,
+          "end": 6
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 0,
+                  "end": 3
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 4,
+              "end": 6
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 4,
+                  "end": 6
+                },
+                "value": "hi"
+              }
+            ],
+            "path": [
+              "say",
+              "hi"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction parser entry() > Parse 'say hi↓say hi' 1`] = `
+{
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 13
+    },
+    "children": [
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 0,
+          "end": 6
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 0,
+                  "end": 3
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 4,
+              "end": 6
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 4,
+                  "end": 6
+                },
+                "value": "hi"
+              }
+            ],
+            "path": [
+              "say",
+              "hi"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 7,
+          "end": 13
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 7,
+              "end": 10
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 7,
+                  "end": 10
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 11,
+              "end": 13
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 11,
+                  "end": 13
+                },
+                "value": "hi"
+              }
+            ],
+            "path": [
+              "say",
+              "hi"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction parser entry() > Parse 'say hi↓say hi' without backslash continuation 1`] = `
+{
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 13
+    },
+    "children": [
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 0,
+          "end": 6
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 0,
+                  "end": 3
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 4,
+              "end": 6
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 4,
+                  "end": 6
+                },
+                "value": "hi"
+              }
+            ],
+            "path": [
+              "say",
+              "hi"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 7,
+          "end": 13
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 7,
+              "end": 10
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 7,
+                  "end": 10
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 11,
+              "end": 13
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 11,
+                  "end": 13
+                },
+                "value": "hi"
+              }
+            ],
+            "path": [
+              "say",
+              "hi"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction parser entry() > Parse 'say trailing \\↓ data' 1`] = `
+{
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 20
+    },
+    "children": [
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 0,
+          "end": 20
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 0,
+                  "end": 3
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 4,
+              "end": 12
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 4,
+                  "end": 12
+                },
+                "value": "trailing"
+              }
+            ],
+            "path": [
+              "say",
+              "trailing"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 12,
+              "end": 20
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/trailing",
+                "range": {
+                  "start": 12,
+                  "end": 20
+                },
+                "value": " data"
+              }
+            ],
+            "path": []
+          }
+        ]
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 4,
+        "end": 12
+      },
+      "message": "Expected “hi”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 12,
+        "end": 20
+      },
+      "message": "Trailing data encountered: “ data”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcfunction parser entry() > Parse 'say trailing \\↓ data' without backslash continuation 1`] = `
+{
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 20
+    },
+    "children": [
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 0,
+          "end": 14
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 0,
+                  "end": 3
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 4,
+              "end": 12
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 4,
+                  "end": 12
+                },
+                "value": "trailing"
+              }
+            ],
+            "path": [
+              "say",
+              "trailing"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 12,
+              "end": 14
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/trailing",
+                "range": {
+                  "start": 12,
+                  "end": 14
+                },
+                "value": " \\\\"
+              }
+            ],
+            "path": []
+          }
+        ]
+      },
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 16,
+          "end": 20
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 16,
+              "end": 20
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 16,
+                  "end": 20
+                },
+                "value": "data"
+              }
+            ],
+            "path": [
+              "data"
             ]
           }
         ]
@@ -1442,43 +1493,28 @@ exports['mcfunction parser entry() Parse "sa⧵  ↓  y ⧵ ↓ hi" without back
   "errors": [
     {
       "range": {
-        "start": 0,
-        "end": 3
-      },
-      "message": "Expected “execute” or “say”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 3,
-        "end": 5
-      },
-      "message": "Trailing data encountered: “  ”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 8,
-        "end": 9
-      },
-      "message": "Expected “execute” or “say”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 9,
+        "start": 4,
         "end": 12
       },
-      "message": "Trailing data encountered: “ \\ ”",
+      "message": "Expected “hi”",
       "severity": 3
     },
     {
       "range": {
-        "start": 14,
-        "end": 16
+        "start": 12,
+        "end": 14
+      },
+      "message": "Trailing data encountered: “ \\\\”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 16,
+        "end": 20
       },
       "message": "Expected “execute” or “say”",
       "severity": 3
     }
   ]
 }
+`;

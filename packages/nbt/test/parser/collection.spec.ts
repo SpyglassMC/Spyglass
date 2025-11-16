@@ -11,7 +11,7 @@ describe('nbt list()', () => {
 		{ content: '["string", 1b]', version: '1.21.5' },
 	]
 	for (const { content, version } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"${version ? ` in ${version}` : ''}`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'${version ? ` in ${version}` : ''}`, (t) => {
 			const parser = list
 			const ctx = version ? { project: { ctx: { loadedVersion: version } } } : undefined
 			t.assert.snapshot(testParser(parser, content, ctx))
@@ -24,7 +24,7 @@ describe('nbt byteArray()', () => {
 		content: '[B; true, 1b]',
 	}, { content: '[B; true, 1b, 2]' }]
 	for (const { content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = byteArray
 			t.assert.snapshot(testParser(parser, content))
 		})
@@ -36,7 +36,7 @@ describe('nbt intArray()', () => {
 		content: '[I; 0, 1]',
 	}, { content: '[I; 0, 1.]' }]
 	for (const { content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = intArray
 			t.assert.snapshot(testParser(parser, content))
 		})
@@ -48,7 +48,7 @@ describe('nbt longArray()', () => {
 		content: '[L; 0L, 1L]',
 	}, { content: '[L; 0L, 2, "string"]' }]
 	for (const { content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = longArray
 			t.assert.snapshot(testParser(parser, content))
 		})

@@ -1,4 +1,5 @@
-exports['prefixed() Parse "!!true" 1'] = {
+exports[`prefixed() > Parse '!!true' 1`] = `
+{
   "node": {
     "type": "prefixed",
     "range": {
@@ -35,8 +36,10 @@ exports['prefixed() Parse "!!true" 1'] = {
     }
   ]
 }
+`;
 
-exports['prefixed() Parse "!false" 1'] = {
+exports[`prefixed() > Parse '!false' 1`] = `
+{
   "node": {
     "type": "prefixed",
     "range": {
@@ -65,8 +68,10 @@ exports['prefixed() Parse "!false" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['prefixed() Parse "!test" 1'] = {
+exports[`prefixed() > Parse '!test' 1`] = `
+{
   "node": {
     "type": "prefixed",
     "range": {
@@ -103,8 +108,10 @@ exports['prefixed() Parse "!test" 1'] = {
     }
   ]
 }
+`;
 
-exports['prefixed() Parse "" 1'] = {
+exports[`prefixed() > Parse '' 1`] = `
+{
   "node": {
     "type": "prefixed",
     "range": {
@@ -149,8 +156,10 @@ exports['prefixed() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['prefixed() Parse "false" 1'] = {
+exports[`prefixed() > Parse 'false' 1`] = `
+{
   "node": {
     "type": "prefixed",
     "range": {
@@ -188,3 +197,4 @@ exports['prefixed() Parse "false" 1'] = {
     }
   ]
 }
+`;

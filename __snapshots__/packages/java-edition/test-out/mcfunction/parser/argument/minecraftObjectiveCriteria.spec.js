@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:objective_criteria Parse "dummy" 1'] = {
+exports[`mcfunction argument parser > minecraft:objective_criteria > Parse \"dummy\" 1`] = `
+{
   "node": {
     "type": "mcfunction:objective_criteria",
     "range": {
@@ -9,8 +10,10 @@ exports['mcfunction argument minecraft:objective_criteria Parse "dummy" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:objective_criteria Parse "minecraft.used:minecraft.spyglass" 1'] = {
+exports[`mcfunction argument parser > minecraft:objective_criteria > Parse \"minecraft.used:minecraft.spyglass\" 1`] = `
+{
   "node": {
     "type": "mcfunction:objective_criteria",
     "range": {
@@ -44,8 +47,10 @@ exports['mcfunction argument minecraft:objective_criteria Parse "minecraft.used:
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:objective_criteria Parse "teamkill.aqua" 1'] = {
+exports[`mcfunction argument parser > minecraft:objective_criteria > Parse \"teamkill.aqua\" 1`] = `
+{
   "node": {
     "type": "mcfunction:objective_criteria",
     "range": {
@@ -56,8 +61,10 @@ exports['mcfunction argument minecraft:objective_criteria Parse "teamkill.aqua" 
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:objective_criteria Parse "used:spyglass" 1'] = {
+exports[`mcfunction argument parser > minecraft:objective_criteria > Parse \"used:spyglass\" 1`] = `
+{
   "node": {
     "type": "mcfunction:objective_criteria",
     "range": {
@@ -89,3 +96,4 @@ exports['mcfunction argument minecraft:objective_criteria Parse "used:spyglass" 
   },
   "errors": []
 }
+`;

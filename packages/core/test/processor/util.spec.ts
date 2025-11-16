@@ -39,7 +39,8 @@ describe('processor/util.ts', () => {
 				TestNode,
 				(_) => true,
 				(node) => node.type === 'leaf_1' || node.type === 'not_leaf_3',
-				(node, parents) => t.assert.snapshot({ node: node.type, parents: parents.map((p) => p.type) }),
+				(node, parents) =>
+					t.assert.snapshot({ node: node.type, parents: parents.map((p) => p.type) }),
 			)
 		})
 	})

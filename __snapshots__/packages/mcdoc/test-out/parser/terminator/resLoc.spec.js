@@ -1,4 +1,23 @@
-exports['mcdoc resLoc() Parse "" 1'] = {
+exports[`mcdoc parser > resLoc() > Parse \":/\" 1`] = `
+{
+  "node": {
+    "type": "resource_location",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "namespace": "",
+    "path": [
+      "",
+      ""
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > resLoc() > Parse \"\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -25,47 +44,10 @@ exports['mcdoc resLoc() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc resLoc() Parse ":/" 1'] = {
-  "node": {
-    "type": "resource_location",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "namespace": "",
-    "path": [
-      "",
-      ""
-    ]
-  },
-  "errors": []
-}
-
-exports['mcdoc resLoc() Parse "foo" 1'] = {
-  "node": {
-    "type": "resource_location",
-    "range": {
-      "start": 0,
-      "end": 3
-    },
-    "path": [
-      "foo"
-    ]
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 3
-      },
-      "message": "Expected the colon (“:”) of resource locations",
-      "severity": 3
-    }
-  ]
-}
-
-exports['mcdoc resLoc() Parse "foo:" 1'] = {
+exports[`mcdoc parser > resLoc() > Parse \"foo:\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -79,23 +61,10 @@ exports['mcdoc resLoc() Parse "foo:" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc resLoc() Parse "foo:bar" 1'] = {
-  "node": {
-    "type": "resource_location",
-    "range": {
-      "start": 0,
-      "end": 7
-    },
-    "namespace": "foo",
-    "path": [
-      "bar"
-    ]
-  },
-  "errors": []
-}
-
-exports['mcdoc resLoc() Parse "foo:bar/baz" 1'] = {
+exports[`mcdoc parser > resLoc() > Parse \"foo:bar/baz\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -110,8 +79,10 @@ exports['mcdoc resLoc() Parse "foo:bar/baz" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcdoc resLoc() Parse "foo:bar:baz" 1'] = {
+exports[`mcdoc parser > resLoc() > Parse \"foo:bar:baz\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -134,8 +105,10 @@ exports['mcdoc resLoc() Parse "foo:bar:baz" 1'] = {
     }
   ]
 }
+`;
 
-exports['mcdoc resLoc() Parse "foo:bar↓something else;" 1'] = {
+exports[`mcdoc parser > resLoc() > Parse \"foo:bar\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -149,3 +122,46 @@ exports['mcdoc resLoc() Parse "foo:bar↓something else;" 1'] = {
   },
   "errors": []
 }
+`;
+
+exports[`mcdoc parser > resLoc() > Parse \"foo:bar↓something else;\" 1`] = `
+{
+  "node": {
+    "type": "resource_location",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "namespace": "foo",
+    "path": [
+      "bar"
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > resLoc() > Parse \"foo\" 1`] = `
+{
+  "node": {
+    "type": "resource_location",
+    "range": {
+      "start": 0,
+      "end": 3
+    },
+    "path": [
+      "foo"
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 3
+      },
+      "message": "Expected the colon (“:”) of resource locations",
+      "severity": 3
+    }
+  ]
+}
+`;

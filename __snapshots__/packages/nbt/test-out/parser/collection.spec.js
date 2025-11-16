@@ -1,4 +1,5 @@
-exports['nbt byteArray() Parse "" 1'] = {
+exports[`nbt byteArray() > Parse '' 1`] = `
+{
   "node": {
     "type": "nbt:byte_array",
     "range": {
@@ -18,8 +19,10 @@ exports['nbt byteArray() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt byteArray() Parse "[B; true, 1b, 2]" 1'] = {
+exports[`nbt byteArray() > Parse '[B; true, 1b, 2]' 1`] = `
+{
   "node": {
     "type": "nbt:byte_array",
     "range": {
@@ -123,8 +126,10 @@ exports['nbt byteArray() Parse "[B; true, 1b, 2]" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt byteArray() Parse "[B; true, 1b]" 1'] = {
+exports[`nbt byteArray() > Parse '[B; true, 1b]' 1`] = `
+{
   "node": {
     "type": "nbt:byte_array",
     "range": {
@@ -190,8 +195,10 @@ exports['nbt byteArray() Parse "[B; true, 1b]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt byteArray() Parse "[B;]" 1'] = {
+exports[`nbt byteArray() > Parse '[B;]' 1`] = `
+{
   "node": {
     "type": "nbt:byte_array",
     "range": {
@@ -202,8 +209,10 @@ exports['nbt byteArray() Parse "[B;]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt intArray() Parse "" 1'] = {
+exports[`nbt intArray() > Parse '' 1`] = `
+{
   "node": {
     "type": "nbt:int_array",
     "range": {
@@ -223,8 +232,10 @@ exports['nbt intArray() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt intArray() Parse "[I; 0, 1.]" 1'] = {
+exports[`nbt intArray() > Parse '[I; 0, 1.]' 1`] = `
+{
   "node": {
     "type": "nbt:int_array",
     "range": {
@@ -299,8 +310,10 @@ exports['nbt intArray() Parse "[I; 0, 1.]" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt intArray() Parse "[I; 0, 1]" 1'] = {
+exports[`nbt intArray() > Parse '[I; 0, 1]' 1`] = `
+{
   "node": {
     "type": "nbt:int_array",
     "range": {
@@ -366,8 +379,10 @@ exports['nbt intArray() Parse "[I; 0, 1]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt intArray() Parse "[I;]" 1'] = {
+exports[`nbt intArray() > Parse '[I;]' 1`] = `
+{
   "node": {
     "type": "nbt:int_array",
     "range": {
@@ -378,8 +393,10 @@ exports['nbt intArray() Parse "[I;]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt list() Parse "" 1'] = {
+exports[`nbt list() > Parse '' 1`] = `
+{
   "node": {
     "type": "nbt:list",
     "range": {
@@ -399,8 +416,10 @@ exports['nbt list() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt list() Parse "["string", 1b]" in 1.21.4 1'] = {
+exports[`nbt list() > Parse '[\"string\", 1b]' in 1.21.4 1`] = `
+{
   "node": {
     "type": "nbt:list",
     "range": {
@@ -434,7 +453,7 @@ exports['nbt list() Parse "["string", 1b]" in 1.21.4 1'] = {
                 }
               }
             ],
-            "quote": "\""
+            "quote": "\\""
           }
         ],
         "value": {
@@ -456,7 +475,7 @@ exports['nbt list() Parse "["string", 1b]" in 1.21.4 1'] = {
               }
             }
           ],
-          "quote": "\""
+          "quote": "\\""
         },
         "sep": {
           "start": 9,
@@ -502,8 +521,10 @@ exports['nbt list() Parse "["string", 1b]" in 1.21.4 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt list() Parse "["string", 1b]" in 1.21.5 1'] = {
+exports[`nbt list() > Parse '[\"string\", 1b]' in 1.21.5 1`] = `
+{
   "node": {
     "type": "nbt:list",
     "range": {
@@ -537,7 +558,7 @@ exports['nbt list() Parse "["string", 1b]" in 1.21.5 1'] = {
                 }
               }
             ],
-            "quote": "\""
+            "quote": "\\""
           }
         ],
         "value": {
@@ -559,7 +580,7 @@ exports['nbt list() Parse "["string", 1b]" in 1.21.5 1'] = {
               }
             }
           ],
-          "quote": "\""
+          "quote": "\\""
         },
         "sep": {
           "start": 9,
@@ -596,8 +617,10 @@ exports['nbt list() Parse "["string", 1b]" in 1.21.5 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt list() Parse "["string"]" 1'] = {
+exports[`nbt list() > Parse '[\"string\"]' 1`] = `
+{
   "node": {
     "type": "nbt:list",
     "range": {
@@ -631,7 +654,7 @@ exports['nbt list() Parse "["string"]" 1'] = {
                 }
               }
             ],
-            "quote": "\""
+            "quote": "\\""
           }
         ],
         "value": {
@@ -653,7 +676,7 @@ exports['nbt list() Parse "["string"]" 1'] = {
               }
             }
           ],
-          "quote": "\""
+          "quote": "\\""
         }
       }
     ],
@@ -661,8 +684,10 @@ exports['nbt list() Parse "["string"]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt list() Parse "[]" 1'] = {
+exports[`nbt list() > Parse '[]' 1`] = `
+{
   "node": {
     "type": "nbt:list",
     "range": {
@@ -673,8 +698,10 @@ exports['nbt list() Parse "[]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt longArray() Parse "" 1'] = {
+exports[`nbt longArray() > Parse '' 1`] = `
+{
   "node": {
     "type": "nbt:long_array",
     "range": {
@@ -694,8 +721,10 @@ exports['nbt longArray() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt longArray() Parse "[L; 0L, 1L]" 1'] = {
+exports[`nbt longArray() > Parse '[L; 0L, 1L]' 1`] = `
+{
   "node": {
     "type": "nbt:long_array",
     "range": {
@@ -761,8 +790,10 @@ exports['nbt longArray() Parse "[L; 0L, 1L]" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
+exports[`nbt longArray() > Parse '[L; 0L, 2, \"string\"]' 1`] = `
+{
   "node": {
     "type": "nbt:long_array",
     "range": {
@@ -854,7 +885,7 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
                 }
               }
             ],
-            "quote": "\""
+            "quote": "\\""
           }
         ],
         "value": {
@@ -876,7 +907,7 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
               }
             }
           ],
-          "quote": "\""
+          "quote": "\\""
         }
       }
     ]
@@ -900,8 +931,10 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt longArray() Parse "[L;]" 1'] = {
+exports[`nbt longArray() > Parse '[L;]' 1`] = `
+{
   "node": {
     "type": "nbt:long_array",
     "range": {
@@ -912,3 +945,4 @@ exports['nbt longArray() Parse "[L;]" 1'] = {
   },
   "errors": []
 }
+`;

@@ -1,4 +1,5 @@
-exports['StateProxy Should branch off correctly 1'] = {
+exports[`StateProxy > Should branch off correctly 1`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -15,8 +16,10 @@ exports['StateProxy Should branch off correctly 1'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should branch off correctly 2'] = {
+exports[`StateProxy > Should branch off correctly 2`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -33,8 +36,10 @@ exports['StateProxy Should branch off correctly 2'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should branch off correctly 3'] = {
+exports[`StateProxy > Should branch off correctly 3`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -51,8 +56,10 @@ exports['StateProxy Should branch off correctly 3'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should branch off correctly 4'] = {
+exports[`StateProxy > Should branch off correctly 4`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -69,8 +76,10 @@ exports['StateProxy Should branch off correctly 4'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should branch off correctly 5'] = {
+exports[`StateProxy > Should branch off correctly 5`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -87,8 +96,10 @@ exports['StateProxy Should branch off correctly 5'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should branch off correctly 6'] = {
+exports[`StateProxy > Should branch off correctly 6`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -105,8 +116,10 @@ exports['StateProxy Should branch off correctly 6'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should branch off correctly 7'] = {
+exports[`StateProxy > Should branch off correctly 7`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -123,8 +136,10 @@ exports['StateProxy Should branch off correctly 7'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should create enumerable proxy 1'] = {
+exports[`StateProxy > Should create enumerable proxy 1`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -141,8 +156,10 @@ exports['StateProxy Should create enumerable proxy 1'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should undo and redo changes correctly 1'] = {
+exports[`StateProxy > Should undo and redo changes correctly 1`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -159,8 +176,10 @@ exports['StateProxy Should undo and redo changes correctly 1'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should undo and redo changes correctly 2'] = {
+exports[`StateProxy > Should undo and redo changes correctly 2`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -185,8 +204,10 @@ exports['StateProxy Should undo and redo changes correctly 2'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should undo and redo changes correctly 3'] = {
+exports[`StateProxy > Should undo and redo changes correctly 3`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -203,8 +224,10 @@ exports['StateProxy Should undo and redo changes correctly 3'] = {
     ]
   }
 }
+`;
 
-exports['StateProxy Should undo and redo changes correctly 4'] = {
+exports[`StateProxy > Should undo and redo changes correctly 4`] = `
+{
   "symbols": {
     "advancement": {
       "foo": {
@@ -229,3 +252,4 @@ exports['StateProxy Should undo and redo changes correctly 4'] = {
     ]
   }
 }
+`;

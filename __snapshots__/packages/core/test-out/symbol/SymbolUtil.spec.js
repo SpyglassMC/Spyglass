@@ -1,4 +1,4 @@
-exports['SymbolUtil clear() Should clear all 1'] = `
+exports[`SymbolUtil > clear() > Should clear all 1`] = `
 CATEGORY mcdoc
 + SYMBOL ShouldBeKept1 {mcdoc} [Public]
 + + definition:
@@ -31,9 +31,9 @@ CATEGORY mcdoc
 + + + SYMBOL ShouldBeKept3.ShouldBeRemoved3 {mcdoc} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil clear() Should clear all 2'] = `
+exports[`SymbolUtil > clear() > Should clear all 2`] = `
 CATEGORY mcdoc
 + SYMBOL ShouldBeKept1 {mcdoc} [Public]
 + + definition:
@@ -54,17 +54,17 @@ CATEGORY mcdoc
 + + + SYMBOL ShouldBeKept3.ShouldBeKept5 {mcdoc} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://another_test_file"}
-`
+`;
 
-exports['SymbolUtil contributeAs Should execute correctly 1'] = `
+exports[`SymbolUtil > contributeAs > Should execute correctly 1`] = `
 CATEGORY test
 + SYMBOL Bound {test} [Public]
 + + description: This symbol is URI bound.
 + + reference:
 + + + {"uri":"spyglassmc://test_file","contributor":"uri_binder"}
-`
+`;
 
-exports['SymbolUtil lookup() Should return correctly for “Foo.Bar.Qux.Xer” 1'] = `
+exports[`SymbolUtil > lookup() > Should return correctly for “Foo.Bar.Qux.Xer” 1`] = `
 parentSymbol:
 + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + definition:
@@ -73,28 +73,9 @@ parentMap:
 undefined
 symbol:
 undefined
-`
+`;
 
-exports['SymbolUtil lookup() Should return correctly for “Foo.Bar.Qux” 1'] = `
-parentSymbol:
-+ SYMBOL Foo.Bar {advancement} [Public]
-+ + definition:
-+ + + {"uri":"spyglassmc://test_file"}
-+ + members:
-+ + + SYMBOL Foo.Bar.Qux {advancement} [Public]
-+ + + + definition:
-+ + + + + {"uri":"spyglassmc://test_file"}
-parentMap:
-+ SYMBOL Foo.Bar.Qux {advancement} [Public]
-+ + definition:
-+ + + {"uri":"spyglassmc://test_file"}
-symbol:
-+ SYMBOL Foo.Bar.Qux {advancement} [Public]
-+ + definition:
-+ + + {"uri":"spyglassmc://test_file"}
-`
-
-exports['SymbolUtil lookup() Should return correctly for “Foo.Bar.Unknown” 1'] = `
+exports[`SymbolUtil > lookup() > Should return correctly for “Foo.Bar.Qux” 1`] = `
 parentSymbol:
 + SYMBOL Foo.Bar {advancement} [Public]
 + + definition:
@@ -108,10 +89,29 @@ parentMap:
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 symbol:
-undefined
-`
++ SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + definition:
++ + + {"uri":"spyglassmc://test_file"}
+`;
 
-exports['SymbolUtil lookup() Should return correctly for “Foo.Bar” 1'] = `
+exports[`SymbolUtil > lookup() > Should return correctly for “Foo.Bar.Unknown” 1`] = `
+parentSymbol:
++ SYMBOL Foo.Bar {advancement} [Public]
++ + definition:
++ + + {"uri":"spyglassmc://test_file"}
++ + members:
++ + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + definition:
++ + + + + {"uri":"spyglassmc://test_file"}
+parentMap:
++ SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + definition:
++ + + {"uri":"spyglassmc://test_file"}
+symbol:
+undefined
+`;
+
+exports[`SymbolUtil > lookup() > Should return correctly for “Foo.Bar” 1`] = `
 parentSymbol:
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -140,43 +140,18 @@ symbol:
 + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil lookup() Should return correctly for “Foo.Baz.Xer” 1'] = `
+exports[`SymbolUtil > lookup() > Should return correctly for “Foo.Baz.Xer” 1`] = `
 parentSymbol:
 undefined
 parentMap:
 undefined
 symbol:
 undefined
-`
+`;
 
-exports['SymbolUtil lookup() Should return correctly for “Foo.Baz” 1'] = `
-parentSymbol:
-+ SYMBOL Foo {advancement} [Public]
-+ + definition:
-+ + + {"uri":"spyglassmc://test_file"}
-+ + members:
-+ + + SYMBOL Foo.Bar {advancement} [Public]
-+ + + + definition:
-+ + + + + {"uri":"spyglassmc://test_file"}
-+ + + + members:
-+ + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
-+ + + + + + definition:
-+ + + + + + + {"uri":"spyglassmc://test_file"}
-parentMap:
-+ SYMBOL Foo.Bar {advancement} [Public]
-+ + definition:
-+ + + {"uri":"spyglassmc://test_file"}
-+ + members:
-+ + + SYMBOL Foo.Bar.Qux {advancement} [Public]
-+ + + + definition:
-+ + + + + {"uri":"spyglassmc://test_file"}
-symbol:
-undefined
-`
-
-exports['SymbolUtil lookup() Should return correctly for “Foo.Unknown” 1'] = `
+exports[`SymbolUtil > lookup() > Should return correctly for “Foo.Baz” 1`] = `
 parentSymbol:
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -199,9 +174,34 @@ parentMap:
 + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
 undefined
-`
+`;
 
-exports['SymbolUtil lookup() Should return correctly for “Foo” 1'] = `
+exports[`SymbolUtil > lookup() > Should return correctly for “Foo.Unknown” 1`] = `
+parentSymbol:
++ SYMBOL Foo {advancement} [Public]
++ + definition:
++ + + {"uri":"spyglassmc://test_file"}
++ + members:
++ + + SYMBOL Foo.Bar {advancement} [Public]
++ + + + definition:
++ + + + + {"uri":"spyglassmc://test_file"}
++ + + + members:
++ + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + + + definition:
++ + + + + + + {"uri":"spyglassmc://test_file"}
+parentMap:
++ SYMBOL Foo.Bar {advancement} [Public]
++ + definition:
++ + + {"uri":"spyglassmc://test_file"}
++ + members:
++ + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + definition:
++ + + + + {"uri":"spyglassmc://test_file"}
+symbol:
+undefined
+`;
+
+exports[`SymbolUtil > lookup() > Should return correctly for “Foo” 1`] = `
 parentSymbol:
 undefined
 parentMap:
@@ -228,9 +228,9 @@ symbol:
 + + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + + + + + definition:
 + + + + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil lookup() Should return correctly for “Unknown” 1'] = `
+exports[`SymbolUtil > lookup() > Should return correctly for “Unknown” 1`] = `
 parentSymbol:
 undefined
 parentMap:
@@ -247,9 +247,9 @@ parentMap:
 + + + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
 undefined
-`
+`;
 
-exports['SymbolUtil lookup() Should return correctly for “” 1'] = `
+exports[`SymbolUtil > lookup() > Should return correctly for “” 1`] = `
 parentSymbol:
 undefined
 parentMap:
@@ -266,9 +266,9 @@ parentMap:
 + + + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
 undefined
-`
+`;
 
-exports['SymbolUtil lookup() Should return correctly when URI is not specified 1'] = `
+exports[`SymbolUtil > lookup() > Should return correctly when URI is not specified 1`] = `
 parentSymbol:
 undefined
 parentMap:
@@ -295,18 +295,18 @@ symbol:
 + + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + + + + + definition:
 + + + + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar.Qux.Xer” 1'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar.Qux.Xer” 1`] = `
 undefined
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar.Qux.Xer” 2'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar.Qux.Xer” 2`] = `
 SYMBOL Foo.Bar.Qux.Xer {advancement} [Public]
 + description: Entered.
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar.Qux.Xer” 3'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar.Qux.Xer” 3`] = `
 CATEGORY advancement
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -322,22 +322,22 @@ CATEGORY advancement
 + + + + + + members:
 + + + + + + + SYMBOL Foo.Bar.Qux.Xer {advancement} [Public]
 + + + + + + + + description: Entered.
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar.Qux” 1'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar.Qux” 1`] = `
 SYMBOL Foo.Bar.Qux {advancement} [Public]
 + definition:
 + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar.Qux” 2'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar.Qux” 2`] = `
 SYMBOL Foo.Bar.Qux {advancement} [Public]
 + description: Entered.
 + definition:
 + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar.Qux” 3'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar.Qux” 3`] = `
 CATEGORY advancement
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -351,18 +351,18 @@ CATEGORY advancement
 + + + + + + description: Entered.
 + + + + + + definition:
 + + + + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar.Unknown” 1'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar.Unknown” 1`] = `
 undefined
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar.Unknown” 2'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar.Unknown” 2`] = `
 SYMBOL Foo.Bar.Unknown {advancement} [Public]
 + description: Entered.
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar.Unknown” 3'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar.Unknown” 3`] = `
 CATEGORY advancement
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -378,9 +378,9 @@ CATEGORY advancement
 + + + + + ------------
 + + + + + SYMBOL Foo.Bar.Unknown {advancement} [Public]
 + + + + + + description: Entered.
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar” 1'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar” 1`] = `
 SYMBOL Foo.Bar {advancement} [Public]
 + definition:
 + + {"uri":"spyglassmc://test_file"}
@@ -388,9 +388,9 @@ SYMBOL Foo.Bar {advancement} [Public]
 + + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + + definition:
 + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar” 2'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar” 2`] = `
 SYMBOL Foo.Bar {advancement} [Public]
 + description: Entered.
 + definition:
@@ -399,9 +399,9 @@ SYMBOL Foo.Bar {advancement} [Public]
 + + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + + definition:
 + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Bar” 3'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Bar” 3`] = `
 CATEGORY advancement
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -415,21 +415,21 @@ CATEGORY advancement
 + + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + + + + + definition:
 + + + + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Baz.Xer” 1'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Baz.Xer” 1`] = `
 undefined
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Baz.Xer” 2'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Baz.Xer” 2`] = `
 Error: Cannot create the symbol map for “advancement.Foo/Baz/Xer”
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Baz.Xer” 3'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Baz.Xer” 3`] = `
 undefined
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Baz.Xer” 4'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Baz.Xer” 4`] = `
 CATEGORY advancement
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -442,18 +442,18 @@ CATEGORY advancement
 + + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + + + + + definition:
 + + + + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Baz” 1'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Baz” 1`] = `
 undefined
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Baz” 2'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Baz” 2`] = `
 SYMBOL Foo.Baz {advancement} [Public]
 + description: Entered.
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Baz” 3'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Baz” 3`] = `
 CATEGORY advancement
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -469,18 +469,18 @@ CATEGORY advancement
 + + + ------------
 + + + SYMBOL Foo.Baz {advancement} [Public]
 + + + + description: Entered.
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Unknown” 1'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Unknown” 1`] = `
 undefined
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Unknown” 2'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Unknown” 2`] = `
 SYMBOL Foo.Unknown {advancement} [Public]
 + description: Entered.
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo.Unknown” 3'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo.Unknown” 3`] = `
 CATEGORY advancement
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -496,9 +496,9 @@ CATEGORY advancement
 + + + ------------
 + + + SYMBOL Foo.Unknown {advancement} [Public]
 + + + + description: Entered.
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo” 1'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo” 1`] = `
 SYMBOL Foo {advancement} [Public]
 + definition:
 + + {"uri":"spyglassmc://test_file"}
@@ -510,9 +510,9 @@ SYMBOL Foo {advancement} [Public]
 + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + + + + definition:
 + + + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo” 2'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo” 2`] = `
 SYMBOL Foo {advancement} [Public]
 + description: Entered.
 + definition:
@@ -525,9 +525,9 @@ SYMBOL Foo {advancement} [Public]
 + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + + + + definition:
 + + + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Foo” 3'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Foo” 3`] = `
 CATEGORY advancement
 + SYMBOL Foo {advancement} [Public]
 + + description: Entered.
@@ -541,18 +541,18 @@ CATEGORY advancement
 + + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
 + + + + + + definition:
 + + + + + + + {"uri":"spyglassmc://test_file"}
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Unknown” 1'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Unknown” 1`] = `
 undefined
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Unknown” 2'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Unknown” 2`] = `
 SYMBOL Unknown {advancement} [Public]
 + description: Entered.
-`
+`;
 
-exports['SymbolUtil query() Should return correctly for “Unknown” 3'] = `
+exports[`SymbolUtil > query() > Should return correctly for “Unknown” 3`] = `
 CATEGORY advancement
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -568,4 +568,4 @@ CATEGORY advancement
 + ------------
 + SYMBOL Unknown {advancement} [Public]
 + + description: Entered.
-`
+`;

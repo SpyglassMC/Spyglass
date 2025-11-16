@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:dimension Parse "minecraft:overworld" 1'] = {
+exports[`mcfunction argument parser > minecraft:dimension > Parse \"minecraft:overworld\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -12,8 +13,10 @@ exports['mcfunction argument minecraft:dimension Parse "minecraft:overworld" 1']
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:dimension Parse "minecraft:the_nether" 1'] = {
+exports[`mcfunction argument parser > minecraft:dimension > Parse \"minecraft:the_nether\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -27,3 +30,4 @@ exports['mcfunction argument minecraft:dimension Parse "minecraft:the_nether" 1'
   },
   "errors": []
 }
+`;

@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:item_stack > Parse \"apple[!food]\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:item_stack",
     "range": {
@@ -85,8 +86,10 @@ exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in versio
     }
   ]
 }
+`;
 
-exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in version 1.21 1'] = {
+exports[`mcfunction argument parser > minecraft:item_stack > Parse \"apple[!food]\" in version 1.21 1`] = `
+{
   "node": {
     "type": "mcfunction:item_stack",
     "range": {
@@ -164,8 +167,10 @@ exports['mcfunction argument minecraft:item_stack Parse "apple[!food]" in versio
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreakable={},rarity=epic]" in version 1.21 1'] = {
+exports[`mcfunction argument parser > minecraft:item_stack > Parse \"diamond_pickaxe[unbreakable={},rarity=epic]\" in version 1.21 1`] = `
+{
   "node": {
     "type": "mcfunction:item_stack",
     "range": {
@@ -320,8 +325,10 @@ exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreak
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreakable={}]" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:item_stack > Parse \"diamond_pickaxe[unbreakable={}]\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:item_stack",
     "range": {
@@ -407,8 +414,10 @@ exports['mcfunction argument minecraft:item_stack Parse "diamond_pickaxe[unbreak
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_stack Parse "minecraft:stick" 1'] = {
+exports[`mcfunction argument parser > minecraft:item_stack > Parse \"minecraft:stick\" 1`] = `
+{
   "node": {
     "type": "mcfunction:item_stack",
     "range": {
@@ -429,8 +438,10 @@ exports['mcfunction argument minecraft:item_stack Parse "minecraft:stick" 1'] = 
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_stack Parse "stick" 1'] = {
+exports[`mcfunction argument parser > minecraft:item_stack > Parse \"stick\" 1`] = `
+{
   "node": {
     "type": "mcfunction:item_stack",
     "range": {
@@ -450,8 +461,10 @@ exports['mcfunction argument minecraft:item_stack Parse "stick" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_stack Parse "stick" in version 1.20.5 1'] = {
+exports[`mcfunction argument parser > minecraft:item_stack > Parse \"stick\" in version 1.20.5 1`] = `
+{
   "node": {
     "type": "mcfunction:item_stack",
     "range": {
@@ -471,8 +484,10 @@ exports['mcfunction argument minecraft:item_stack Parse "stick" in version 1.20.
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
+exports[`mcfunction argument parser > minecraft:item_stack > Parse \"stick{foo:bar}\" 1`] = `
+{
   "node": {
     "type": "mcfunction:item_stack",
     "range": {
@@ -598,3 +613,4 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
   },
   "errors": []
 }
+`;

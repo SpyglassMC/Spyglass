@@ -1,4 +1,5 @@
-exports['mcfunction argument brigadier:long Parse "-123" 1'] = {
+exports[`mcfunction argument parser > brigadier:long > Parse \"-123\" 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -9,8 +10,10 @@ exports['mcfunction argument brigadier:long Parse "-123" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:long Parse "0" 1'] = {
+exports[`mcfunction argument parser > brigadier:long > Parse \"0\" 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -21,8 +24,10 @@ exports['mcfunction argument brigadier:long Parse "0" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument brigadier:long Parse "123" 1'] = {
+exports[`mcfunction argument parser > brigadier:long > Parse \"123\" 1`] = `
+{
   "node": {
     "type": "long",
     "range": {
@@ -33,3 +38,4 @@ exports['mcfunction argument brigadier:long Parse "123" 1'] = {
   },
   "errors": []
 }
+`;

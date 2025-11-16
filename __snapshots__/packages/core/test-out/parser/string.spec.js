@@ -1,4 +1,5 @@
-exports['string() quoted_string(", ⧵?) Parse ""foo⧵u00a7⧵abar"" 1'] = {
+exports[`string() > quoted_string(\", ⧵?) > Parse '\"foo\\u00a7\\abar\"' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -38,12 +39,14 @@ exports['string() quoted_string(", ⧵?) Parse ""foo⧵u00a7⧵abar"" 1'] = {
         }
       }
     ],
-    "quote": "\""
+    "quote": "\\""
   },
   "errors": []
 }
+`;
 
-exports['string() quoted_string(", ⧵n⧵t) Parse "" 1'] = {
+exports[`string() > quoted_string(\", ⧵n⧵t) > Parse '' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -70,13 +73,51 @@ exports['string() quoted_string(", ⧵n⧵t) Parse "" 1'] = {
         "start": 0,
         "end": 0
       },
-      "message": "Expected “\"”",
+      "message": "Expected “\\"”",
       "severity": 3
     }
   ]
 }
+`;
 
-exports['string() quoted_string(", ⧵n⧵t) Parse ""foo" 1'] = {
+exports[`string() > quoted_string(\", ⧵n⧵t) > Parse ''foo'' 1`] = `
+{
+  "node": {
+    "type": "string",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": "foo",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
+        }
+      }
+    ],
+    "quote": "'"
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Only “\\"” can be used to quote strings here",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`string() > quoted_string(\", ⧵n⧵t) > Parse '\"foo' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -96,7 +137,7 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo" 1'] = {
         }
       }
     ],
-    "quote": "\""
+    "quote": "\\""
   },
   "errors": [
     {
@@ -104,13 +145,15 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo" 1'] = {
         "start": 4,
         "end": 4
       },
-      "message": "Expected “\"”",
+      "message": "Expected “\\"”",
       "severity": 3
     }
   ]
 }
+`;
 
-exports['string() quoted_string(", ⧵n⧵t) Parse ""foo"" 1'] = {
+exports[`string() > quoted_string(\", ⧵n⧵t) > Parse '\"foo\"' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -130,53 +173,21 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo"" 1'] = {
         }
       }
     ],
-    "quote": "\""
+    "quote": "\\""
   },
   "errors": []
 }
+`;
 
-exports['string() quoted_string(", ⧵n⧵t) Parse ""foo↓" 1'] = {
-  "node": {
-    "type": "string",
-    "range": {
-      "start": 0,
-      "end": 5
-    },
-    "value": "foo\n",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 1,
-          "end": 1
-        }
-      }
-    ],
-    "quote": "\""
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 5,
-        "end": 5
-      },
-      "message": "Expected “\"”",
-      "severity": 3
-    }
-  ]
-}
-
-exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵nbar⧵t⧵"⧵⧵qux"" 1'] = {
+exports[`string() > quoted_string(\", ⧵n⧵t) > Parse '\"foo\\nbar\\t\\\"\\\\qux\"' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
       "start": 0,
       "end": 19
     },
-    "value": "foo\nbar\t\"\\qux",
+    "value": "foo\\nbar\\t\\"\\\\qux",
     "valueMap": [
       {
         "inner": {
@@ -229,12 +240,14 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵nbar⧵t⧵"⧵⧵qux
         }
       }
     ],
-    "quote": "\""
+    "quote": "\\""
   },
   "errors": []
 }
+`;
 
-exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵u00a7⧵abar"" 1'] = {
+exports[`string() > quoted_string(\", ⧵n⧵t) > Parse '\"foo\\u00a7\\abar\"' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -274,7 +287,7 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵u00a7⧵abar"" 1'] = 
         }
       }
     ],
-    "quote": "\""
+    "quote": "\\""
   },
   "errors": [
     {
@@ -295,15 +308,17 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵u00a7⧵abar"" 1'] = 
     }
   ]
 }
+`;
 
-exports['string() quoted_string(", ⧵n⧵t) Parse "\'foo\'" 1'] = {
+exports[`string() > quoted_string(\", ⧵n⧵t) > Parse '\"foo↓' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
       "start": 0,
       "end": 5
     },
-    "value": "foo",
+    "value": "foo\\n",
     "valueMap": [
       {
         "inner": {
@@ -316,21 +331,69 @@ exports['string() quoted_string(", ⧵n⧵t) Parse "\'foo\'" 1'] = {
         }
       }
     ],
-    "quote": "'"
+    "quote": "\\""
   },
   "errors": [
     {
       "range": {
-        "start": 0,
-        "end": 0
+        "start": 5,
+        "end": 5
       },
-      "message": "Only “\"” can be used to quote strings here",
+      "message": "Expected “\\"”",
       "severity": 3
     }
   ]
 }
+`;
 
-exports['string() quoted_string(", ⧵u⧵?) Parse ""foo⧵u00a7⧵abar"" 1'] = {
+exports[`string() > quoted_string(\", ⧵u⧵?) > Parse '\"\\uggez\"' 1`] = `
+{
+  "node": {
+    "type": "string",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": "uggez",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
+        }
+      },
+      {
+        "inner": {
+          "start": 0,
+          "end": 1
+        },
+        "outer": {
+          "start": 1,
+          "end": 3
+        }
+      }
+    ],
+    "quote": "\\""
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 3,
+        "end": 7
+      },
+      "message": "Hexadecimal digit expected",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`string() > quoted_string(\", ⧵u⧵?) > Parse '\"foo\\u00a7\\abar\"' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -370,119 +433,21 @@ exports['string() quoted_string(", ⧵u⧵?) Parse ""foo⧵u00a7⧵abar"" 1'] = 
         }
       }
     ],
-    "quote": "\""
+    "quote": "\\""
   },
   "errors": []
 }
+`;
 
-exports['string() quoted_string(", ⧵u⧵?) Parse ""⧵uggez"" 1'] = {
-  "node": {
-    "type": "string",
-    "range": {
-      "start": 0,
-      "end": 8
-    },
-    "value": "uggez",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 1,
-          "end": 1
-        }
-      },
-      {
-        "inner": {
-          "start": 0,
-          "end": 1
-        },
-        "outer": {
-          "start": 1,
-          "end": 3
-        }
-      }
-    ],
-    "quote": "\""
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 3,
-        "end": 7
-      },
-      "message": "Hexadecimal digit expected",
-      "severity": 3
-    }
-  ]
-}
-
-exports['string() quoted_string(quoted_string()) Parse ""foo"" 1'] = {
-  "node": {
-    "type": "string",
-    "range": {
-      "start": 0,
-      "end": 5
-    },
-    "value": "foo",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 1,
-          "end": 1
-        }
-      }
-    ],
-    "quote": "\"",
-    "children": [
-      {
-        "type": "string",
-        "range": {
-          "start": 1,
-          "end": 1
-        },
-        "value": "",
-        "valueMap": [
-          {
-            "inner": {
-              "start": 0,
-              "end": 0
-            },
-            "outer": {
-              "start": 1,
-              "end": 1
-            }
-          }
-        ]
-      }
-    ]
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 1,
-        "end": 1
-      },
-      "message": "Expected “\"”",
-      "severity": 3
-    }
-  ]
-}
-
-exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵⧵bar⧵""" 1'] = {
+exports[`string() > quoted_string(quoted_string()) > Parse '\"\\\"\\u0066oo\\\\\\\\bar\\\"\"' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
       "start": 0,
       "end": 21
     },
-    "value": "\"foo\\\\bar\"",
+    "value": "\\"foo\\\\\\\\bar\\"",
     "valueMap": [
       {
         "inner": {
@@ -545,7 +510,7 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
         }
       }
     ],
-    "quote": "\"",
+    "quote": "\\"",
     "children": [
       {
         "type": "string",
@@ -553,7 +518,7 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
           "start": 1,
           "end": 20
         },
-        "value": "foo\\bar",
+        "value": "foo\\\\bar",
         "valueMap": [
           {
             "inner": {
@@ -586,14 +551,74 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
             }
           }
         ],
-        "quote": "\""
+        "quote": "\\""
       }
     ]
   },
   "errors": []
 }
+`;
 
-exports['string() unquoted_string() Parse "" 1'] = {
+exports[`string() > quoted_string(quoted_string()) > Parse '\"foo\"' 1`] = `
+{
+  "node": {
+    "type": "string",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": "foo",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
+        }
+      }
+    ],
+    "quote": "\\"",
+    "children": [
+      {
+        "type": "string",
+        "range": {
+          "start": 1,
+          "end": 1
+        },
+        "value": "",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 1,
+              "end": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "message": "Expected “\\"”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`string() > unquoted_string() > Parse '$$$' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -625,8 +650,10 @@ exports['string() unquoted_string() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['string() unquoted_string() Parse ""foo"" 1'] = {
+exports[`string() > unquoted_string() > Parse '' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -658,8 +685,10 @@ exports['string() unquoted_string() Parse ""foo"" 1'] = {
     }
   ]
 }
+`;
 
-exports['string() unquoted_string() Parse "$$$" 1'] = {
+exports[`string() > unquoted_string() > Parse '\"foo\"' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -691,8 +720,10 @@ exports['string() unquoted_string() Parse "$$$" 1'] = {
     }
   ]
 }
+`;
 
-exports['string() unquoted_string() Parse "foo" 1'] = {
+exports[`string() > unquoted_string() > Parse 'foo' 1`] = `
+{
   "node": {
     "type": "string",
     "range": {
@@ -715,3 +746,4 @@ exports['string() unquoted_string() Parse "foo" 1'] = {
   },
   "errors": []
 }
+`;

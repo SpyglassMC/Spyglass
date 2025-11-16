@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:vec2 Parse "0 0" 1'] = {
+exports[`mcfunction argument parser > minecraft:vec2 > Parse \"0 0\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -29,8 +30,10 @@ exports['mcfunction argument minecraft:vec2 Parse "0 0" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:vec2 Parse "0.1 -0.5" 1'] = {
+exports[`mcfunction argument parser > minecraft:vec2 > Parse \"0.1 -0.5\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -61,8 +64,10 @@ exports['mcfunction argument minecraft:vec2 Parse "0.1 -0.5" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:vec2 Parse "~ ~" 1'] = {
+exports[`mcfunction argument parser > minecraft:vec2 > Parse \"~ ~\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -93,8 +98,10 @@ exports['mcfunction argument minecraft:vec2 Parse "~ ~" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:vec2 Parse "~1 ~-2" 1'] = {
+exports[`mcfunction argument parser > minecraft:vec2 > Parse \"~1 ~-2\" 1`] = `
+{
   "node": {
     "type": "mcfunction:vector",
     "range": {
@@ -125,3 +132,4 @@ exports['mcfunction argument minecraft:vec2 Parse "~1 ~-2" 1'] = {
   },
   "errors": []
 }
+`;

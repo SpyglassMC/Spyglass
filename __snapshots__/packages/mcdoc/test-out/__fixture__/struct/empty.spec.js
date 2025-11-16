@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ struct/empty 1'] = {
+exports[`mcdoc __fixture__ > struct/empty 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -136,3 +137,4 @@ exports['mcdoc __fixture__ struct/empty 1'] = {
     }
   }
 }
+`;

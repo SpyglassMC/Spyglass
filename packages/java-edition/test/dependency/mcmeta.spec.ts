@@ -45,7 +45,7 @@ describe('mcmeta', () => {
 			{ version: '1.16.5' },
 		]
 		for (const { version, packs } of suites) {
-			it(`Should resolve "${version}"`, async (t) => {
+			it(`Should resolve '${version}'`, async (t) => {
 				const actual = resolveConfiguredVersion(
 					version,
 					Fixtures.Versions,

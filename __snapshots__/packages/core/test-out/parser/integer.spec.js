@@ -1,4 +1,5 @@
-exports['integer() integer() Parse "" 1'] = {
+exports[`integer() > integer() > Parse '' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -18,8 +19,10 @@ exports['integer() integer() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['integer() integer() Parse "+" 1'] = {
+exports[`integer() > integer() > Parse '+' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -39,8 +42,10 @@ exports['integer() integer() Parse "+" 1'] = {
     }
   ]
 }
+`;
 
-exports['integer() integer() Parse "+1" 1'] = {
+exports[`integer() > integer() > Parse '+1' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -51,8 +56,10 @@ exports['integer() integer() Parse "+1" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['integer() integer() Parse "-1" 1'] = {
+exports[`integer() > integer() > Parse '-1' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -63,8 +70,10 @@ exports['integer() integer() Parse "-1" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['integer() integer() Parse "-123" 1'] = {
+exports[`integer() > integer() > Parse '-123' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -75,8 +84,10 @@ exports['integer() integer() Parse "-123" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['integer() integer() Parse "0123" 1'] = {
+exports[`integer() > integer() > Parse '0123' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -96,8 +107,10 @@ exports['integer() integer() Parse "0123" 1'] = {
     }
   ]
 }
+`;
 
-exports['integer() integer() Parse "123" 1'] = {
+exports[`integer() > integer() > Parse '123' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -108,8 +121,10 @@ exports['integer() integer() Parse "123" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['integer() integer() Parse "foo" 1'] = {
+exports[`integer() > integer() > Parse 'foo' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -129,13 +144,17 @@ exports['integer() integer() Parse "foo" 1'] = {
     }
   ]
 }
+`;
 
-exports['integer() integer(failsOnEmpty) integer(failsOnEmpty=true) Parse "" 1'] = {
+exports[`integer() > integer(failsOnEmpty) > integer(failsOnEmpty=true) > Parse '' 1`] = `
+{
   "node": "FAILURE",
   "errors": []
 }
+`;
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "0" 1'] = {
+exports[`integer() > integer(min, max, onOutOfRange) > integer(1, 6, true) > Parse '0' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -155,8 +174,10 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "0"
     }
   ]
 }
+`;
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "3" 1'] = {
+exports[`integer() > integer(min, max, onOutOfRange) > integer(1, 6, true) > Parse '3' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -167,8 +188,10 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "3"
   },
   "errors": []
 }
+`;
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "9" 1'] = {
+exports[`integer() > integer(min, max, onOutOfRange) > integer(1, 6, true) > Parse '9' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -188,8 +211,10 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "9"
     }
   ]
 }
+`;
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) Parse "0" 1'] = {
+exports[`integer() > integer(min, max, onOutOfRange) > integer(1, undefined, false) > Parse '0' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -209,8 +234,10 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) 
     }
   ]
 }
+`;
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) Parse "3" 1'] = {
+exports[`integer() > integer(min, max, onOutOfRange) > integer(1, undefined, false) > Parse '3' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -221,8 +248,10 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) 
   },
   "errors": []
 }
+`;
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) Parse "9" 1'] = {
+exports[`integer() > integer(min, max, onOutOfRange) > integer(1, undefined, false) > Parse '9' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -233,8 +262,10 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) 
   },
   "errors": []
 }
+`;
 
-exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) Parse "0" 1'] = {
+exports[`integer() > integer(min, max, onOutOfRange) > integer(undefined, 6, false) > Parse '0' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -245,8 +276,10 @@ exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) 
   },
   "errors": []
 }
+`;
 
-exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) Parse "3" 1'] = {
+exports[`integer() > integer(min, max, onOutOfRange) > integer(undefined, 6, false) > Parse '3' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -257,8 +290,10 @@ exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) 
   },
   "errors": []
 }
+`;
 
-exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) Parse "9" 1'] = {
+exports[`integer() > integer(min, max, onOutOfRange) > integer(undefined, 6, false) > Parse '9' 1`] = `
+{
   "node": {
     "type": "integer",
     "range": {
@@ -278,3 +313,4 @@ exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) 
     }
   ]
 }
+`;

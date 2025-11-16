@@ -1,4 +1,5 @@
-exports['ColorToken fillGap() Fill for “"/kill @a"” 1'] = [
+exports[`ColorToken > fillGap() > Fill for “\"/kill @a\"” 1`] = `
+[
   {
     "range": {
       "start": 5,
@@ -35,8 +36,10 @@ exports['ColorToken fillGap() Fill for “"/kill @a"” 1'] = [
     "type": "string"
   }
 ]
+`;
 
-exports['ColorToken fillGap() Fill for “"foo:qux"” 1'] = [
+exports[`ColorToken > fillGap() > Fill for “\"foo:qux\"” 1`] = `
+[
   {
     "range": {
       "start": 5,
@@ -59,8 +62,10 @@ exports['ColorToken fillGap() Fill for “"foo:qux"” 1'] = [
     "type": "string"
   }
 ]
+`;
 
-exports['ColorToken fillGap() Fill for “bar” 1'] = [
+exports[`ColorToken > fillGap() > Fill for “bar” 1`] = `
+[
   {
     "range": {
       "start": 5,
@@ -69,8 +74,10 @@ exports['ColorToken fillGap() Fill for “bar” 1'] = [
     "type": "keyword"
   }
 ]
+`;
 
-exports['ColorToken fillGap() Fill for “” 1'] = [
+exports[`ColorToken > fillGap() > Fill for “” 1`] = `
+[
   {
     "range": {
       "start": 0,
@@ -79,3 +86,4 @@ exports['ColorToken fillGap() Fill for “” 1'] = [
     "type": "string"
   }
 ]
+`;

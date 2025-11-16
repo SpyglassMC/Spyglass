@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ type alias/attributed 1'] = {
+exports[`mcdoc __fixture__ > type alias/attributed 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -204,3 +205,4 @@ exports['mcdoc __fixture__ type alias/attributed 1'] = {
     }
   }
 }
+`;

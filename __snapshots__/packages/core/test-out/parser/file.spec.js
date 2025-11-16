@@ -1,4 +1,5 @@
-exports['file() Parse "" 1'] = {
+exports[`file() > Parse '' 1`] = `
+{
   "node": {
     "type": "file",
     "range": {
@@ -20,8 +21,10 @@ exports['file() Parse "" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['file() Parse "{test content}" 1'] = {
+exports[`file() > Parse '{test content}' 1`] = `
+{
   "node": {
     "type": "file",
     "range": {
@@ -43,8 +46,10 @@ exports['file() Parse "{test content}" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['file() Parse "{test content}↓Whoops errors!" 1'] = {
+exports[`file() > Parse '{test content}↓Whoops errors!' 1`] = `
+{
   "node": {
     "type": "file",
     "range": {
@@ -82,8 +87,10 @@ exports['file() Parse "{test content}↓Whoops errors!" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['file() Parse "{test content}↓⮀" 1'] = {
+exports[`file() > Parse '{test content}↓⮀' 1`] = `
+{
   "node": {
     "type": "file",
     "range": {
@@ -105,3 +112,4 @@ exports['file() Parse "{test content}↓⮀" 1'] = {
   },
   "errors": []
 }
+`;

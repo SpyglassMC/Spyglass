@@ -1,4 +1,5 @@
-exports['nbt compound() Parse "" 1'] = {
+exports[`nbt compound() > Parse '' 1`] = `
+{
   "node": {
     "type": "nbt:compound",
     "range": {
@@ -18,8 +19,10 @@ exports['nbt compound() Parse "" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt compound() Parse ""string"" 1'] = {
+exports[`nbt compound() > Parse '\"string\"' 1`] = `
+{
   "node": {
     "type": "nbt:compound",
     "range": {
@@ -39,8 +42,10 @@ exports['nbt compound() Parse ""string"" 1'] = {
     }
   ]
 }
+`;
 
-exports['nbt compound() Parse "{ foo: true }" 1'] = {
+exports[`nbt compound() > Parse '{ foo: true }' 1`] = `
+{
   "node": {
     "type": "nbt:compound",
     "range": {
@@ -125,8 +130,10 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['nbt compound() Parse "{}" 1'] = {
+exports[`nbt compound() > Parse '{}' 1`] = `
+{
   "node": {
     "type": "nbt:compound",
     "range": {
@@ -141,3 +148,4 @@ exports['nbt compound() Parse "{}" 1'] = {
   },
   "errors": []
 }
+`;

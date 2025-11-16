@@ -55,6 +55,7 @@ Or if you prefer the command line interface:
 - `npm run clean` to remove all js output. Use this when there seem to be caching issues with TypeScript's compiler.
 - `npm test` to test all packages.
 - `npm run test:update-snapshots` to run tests and update test snapshots.
+- `npm run test:watch` to run tests in watch mode.
 - `npm run fmt` to format all files.
 - `npm run lint` to check linting errors.
 - `npm run lint:fix` to fix all auto-fixable linting errors.

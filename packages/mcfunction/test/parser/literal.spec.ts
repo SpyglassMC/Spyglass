@@ -11,7 +11,7 @@ describe('mcfunction parser literal()', () => {
 		{ content: 'tellraw @a "World!"' },
 	]
 	for (const { content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, (t) => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = literal(options)
 			t.assert.snapshot(testParser(parser, content))
 		})

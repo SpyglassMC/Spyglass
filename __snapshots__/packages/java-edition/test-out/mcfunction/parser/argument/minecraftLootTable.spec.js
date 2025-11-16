@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:loot_table Parse "minecraft:blocks/crafting_table" 1'] = {
+exports[`mcfunction argument parser > minecraft:loot_table > Parse \"minecraft:blocks/crafting_table\" 1`] = `
+{
   "node": {
     "type": "resource_location",
     "range": {
@@ -13,8 +14,10 @@ exports['mcfunction argument minecraft:loot_table Parse "minecraft:blocks/crafti
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:loot_table Parse "{pools:[]}" 1'] = {
+exports[`mcfunction argument parser > minecraft:loot_table > Parse \"{pools:[]}\" 1`] = `
+{
   "node": {
     "type": "mcfunction:nbt_resource",
     "range": {
@@ -109,3 +112,4 @@ exports['mcfunction argument minecraft:loot_table Parse "{pools:[]}" 1'] = {
   },
   "errors": []
 }
+`;

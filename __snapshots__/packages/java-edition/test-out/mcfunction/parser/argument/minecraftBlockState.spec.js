@@ -1,4 +1,5 @@
-exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
+exports[`mcfunction argument parser > minecraft:block_state > Parse \"foo{bar:baz}\" 1`] = `
+{
   "node": {
     "type": "mcfunction:block",
     "range": {
@@ -125,8 +126,10 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:block_state Parse "minecraft:stone" 1'] = {
+exports[`mcfunction argument parser > minecraft:block_state > Parse \"minecraft:stone\" 1`] = `
+{
   "node": {
     "type": "mcfunction:block",
     "range": {
@@ -148,30 +151,10 @@ exports['mcfunction argument minecraft:block_state Parse "minecraft:stone" 1'] =
   },
   "errors": []
 }
+`;
 
-exports['mcfunction argument minecraft:block_state Parse "stone" 1'] = {
-  "node": {
-    "type": "mcfunction:block",
-    "range": {
-      "start": 0,
-      "end": 5
-    },
-    "id": {
-      "type": "resource_location",
-      "range": {
-        "start": 0,
-        "end": 5
-      },
-      "path": [
-        "stone"
-      ]
-    },
-    "isPredicate": false
-  },
-  "errors": []
-}
-
-exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = {
+exports[`mcfunction argument parser > minecraft:block_state > Parse \"stone[foo=bar]\" 1`] = `
+{
   "node": {
     "type": "mcfunction:block",
     "range": {
@@ -298,3 +281,28 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
   },
   "errors": []
 }
+`;
+
+exports[`mcfunction argument parser > minecraft:block_state > Parse \"stone\" 1`] = `
+{
+  "node": {
+    "type": "mcfunction:block",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "path": [
+        "stone"
+      ]
+    },
+    "isPredicate": false
+  },
+  "errors": []
+}
+`;

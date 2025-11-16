@@ -1,4 +1,5 @@
-exports['mcdoc __fixture__ type parameter/duplicated parameters 1'] = {
+exports[`mcdoc __fixture__ > type parameter/duplicated parameters 1`] = `
+{
   "global": {
     "mcdoc": {
       "::test": {
@@ -349,3 +350,4 @@ exports['mcdoc __fixture__ type parameter/duplicated parameters 1'] = {
     }
   }
 }
+`;
