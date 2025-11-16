@@ -6,7 +6,7 @@ const packages = readPackagesInfo()
 const packageNames = Object.keys(packages).sort()
 
 function getPackagePath(id: string): string {
-	return path.join(__dirname, `../packages/${id}`)
+	return path.join(import.meta.dirname, `../packages/${id}`)
 }
 
 for (const key of packageNames) {
@@ -32,7 +32,7 @@ for (const key of packageNames) {
 }
 
 // Root tsconfig.json
-const rootTsConfigPath = path.join(__dirname, '../packages/tsconfig.json')
+const rootTsConfigPath = path.join(import.meta.dirname, '../packages/tsconfig.json')
 fs.writeFileSync(
 	rootTsConfigPath,
 	JSON.stringify(

@@ -50,7 +50,8 @@ interface Commit {
 
 async function getRootVersion(): Promise<string> {
 	const latestCommitHash =
-		(await execFile('git', ['rev-parse', 'HEAD'], { cwd: path.join(__dirname, '..') })).stdout
+		(await execFile('git', ['rev-parse', 'HEAD'], { cwd: path.join(import.meta.dirname, '..') }))
+			.stdout
 			.trim()
 	const time = new Date()
 	return `${time.getUTCFullYear()}.${time.getUTCMonth() + 1}.${time.getUTCDate()}+${
@@ -62,7 +63,7 @@ async function getPackageCommits(name: string): Promise<Commit[]> {
 	const result = await execFile(
 		'git',
 		['log', '--format=format:%H %s', '--', `packages/${name}`],
-		{ cwd: path.join(__dirname, '..') },
+		{ cwd: path.join(import.meta.dirname, '..') },
 	)
 	return result.stdout.split(/\r?\n/).map(line => {
 		const [hash, ...messageParts] = line.split(' ')
@@ -112,7 +113,7 @@ function setPackageJsons(infos: PackagesInfo, isDryRun: boolean) {
 		if (isDryRun) {
 			console.log(`[Dry run mode] Would have saved packages/${key}/package.json`)
 		} else {
-			const filePath = path.join(__dirname, `../packages/${key}/package.json`)
+			const filePath = path.join(import.meta.dirname, `../packages/${key}/package.json`)
 			const packageJson = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as PackageJson
 			packageJson.version = info.released!.version
 			if (info.dependencies?.length) {
@@ -178,7 +179,7 @@ async function main(): Promise<void> {
 		throw new Error('BOT_EMAIL, BOT_NAME, GITHUB_TOKEN environment variables required.')
 	}
 
-	const RepoRoot = path.join(__dirname, '..')
+	const RepoRoot = path.join(import.meta.dirname, '..')
 	const packagesInfo = readPackagesInfo()
 	const packagesToBump = new Map<string, BumpType>()
 	let maxPackageNameLength = 0
@@ -259,7 +260,11 @@ async function main(): Promise<void> {
 		console.log('Releasing changed packages...')
 		const releaseScript = isDryRun ? 'release:dry' : 'release'
 		for (const key of packagesToBump.keys()) {
-			await shell('npm', ['run', releaseScript], path.join(__dirname, `../packages/${key}`))
+			await shell(
+				'npm',
+				['run', releaseScript],
+				path.join(import.meta.dirname, `../packages/${key}`),
+			)
 			console.log(`Released ${key}`)
 		}
 

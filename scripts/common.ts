@@ -15,11 +15,11 @@ export interface PackageInfo {
 }
 
 export function readPackagesInfo(): PackagesInfo {
-	return JSON.parse(fs.readFileSync(path.join(__dirname, '../.packages.json'), 'utf-8'))
+	return JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '../.packages.json'), 'utf-8'))
 }
 
 export function savePackagesInfo(info: PackagesInfo, isDryRun: boolean): void {
-	const p = path.join(__dirname, '../.packages.json')
+	const p = path.join(import.meta.dirname, '../.packages.json')
 	if (isDryRun) {
 		console.log(`[Dry run mode] Would have saved to '${p}'.`)
 	} else {

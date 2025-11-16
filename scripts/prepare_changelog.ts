@@ -9,7 +9,7 @@ const CHANGELOG_PATH = path.resolve('packages/vscode-extension/CHANGELOG.md')
 const REPO_URL = 'https://github.com/SpyglassMC/Spyglass'
 
 async function main() {
-	const repoRoot = path.join(__dirname, '..')
+	const repoRoot = path.join(import.meta.dirname, '..')
 	const gitLog = await execFile('git', ['log', '--pretty=format:%H %an %s'], { cwd: repoRoot })
 	const commits = gitLog.stdout.split('\n')
 		.map(line => {
