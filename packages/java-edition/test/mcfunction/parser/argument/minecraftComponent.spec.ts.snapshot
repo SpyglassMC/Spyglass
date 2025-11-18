@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:component > Parse \"[\"\"]\" 1`] = `
+exports[`mcfunction argument parser > minecraft:component > Parse '[\"\"]' 1`] = `
 {
   "node": {
     "type": "json:typed",
@@ -77,7 +77,7 @@ exports[`mcfunction argument parser > minecraft:component > Parse \"[\"\"]\" 1`]
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:component > Parse \"\"\"\" 1`] = `
+exports[`mcfunction argument parser > minecraft:component > Parse '\"\"' 1`] = `
 {
   "node": {
     "type": "json:typed",
@@ -117,7 +117,7 @@ exports[`mcfunction argument parser > minecraft:component > Parse \"\"\"\" 1`] =
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:component > Parse \"\"hello world\"\" 1`] = `
+exports[`mcfunction argument parser > minecraft:component > Parse '\"hello world\"' 1`] = `
 {
   "node": {
     "type": "json:typed",
@@ -157,7 +157,7 @@ exports[`mcfunction argument parser > minecraft:component > Parse \"\"hello worl
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:component > Parse \"{\"text\":\"hello world\"}\" 1`] = `
+exports[`mcfunction argument parser > minecraft:component > Parse '{\"text\":\"hello world\"}' 1`] = `
 {
   "node": {
     "type": "json:typed",

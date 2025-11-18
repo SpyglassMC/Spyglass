@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:dimension > Parse \"minecraft:overworld\" 1`] = `
+exports[`mcfunction argument parser > minecraft:dimension > Parse 'minecraft:overworld' 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -15,7 +15,7 @@ exports[`mcfunction argument parser > minecraft:dimension > Parse \"minecraft:ov
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:dimension > Parse \"minecraft:the_nether\" 1`] = `
+exports[`mcfunction argument parser > minecraft:dimension > Parse 'minecraft:the_nether' 1`] = `
 {
   "node": {
     "type": "resource_location",

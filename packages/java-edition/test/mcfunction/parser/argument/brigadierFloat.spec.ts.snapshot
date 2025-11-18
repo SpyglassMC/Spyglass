@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > brigadier:float > Parse \"-.5\" 1`] = `
+exports[`mcfunction argument parser > brigadier:float > Parse '-.5' 1`] = `
 {
   "node": {
     "type": "float",
@@ -12,21 +12,7 @@ exports[`mcfunction argument parser > brigadier:float > Parse \"-.5\" 1`] = `
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:float > Parse \"-1234.56\" 1`] = `
-{
-  "node": {
-    "type": "float",
-    "range": {
-      "start": 0,
-      "end": 8
-    },
-    "value": -1234.56
-  },
-  "errors": []
-}
-`;
-
-exports[`mcfunction argument parser > brigadier:float > Parse \"-1\" 1`] = `
+exports[`mcfunction argument parser > brigadier:float > Parse '-1' 1`] = `
 {
   "node": {
     "type": "float",
@@ -40,7 +26,21 @@ exports[`mcfunction argument parser > brigadier:float > Parse \"-1\" 1`] = `
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:float > Parse \".5\" 1`] = `
+exports[`mcfunction argument parser > brigadier:float > Parse '-1234.56' 1`] = `
+{
+  "node": {
+    "type": "float",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": -1234.56
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction argument parser > brigadier:float > Parse '.5' 1`] = `
 {
   "node": {
     "type": "float",
@@ -54,7 +54,7 @@ exports[`mcfunction argument parser > brigadier:float > Parse \".5\" 1`] = `
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:float > Parse \"0\" 1`] = `
+exports[`mcfunction argument parser > brigadier:float > Parse '0' 1`] = `
 {
   "node": {
     "type": "float",
@@ -68,7 +68,7 @@ exports[`mcfunction argument parser > brigadier:float > Parse \"0\" 1`] = `
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:float > Parse \"1.2\" 1`] = `
+exports[`mcfunction argument parser > brigadier:float > Parse '1.2' 1`] = `
 {
   "node": {
     "type": "float",

@@ -264,7 +264,7 @@ describe('mcdoc parser', async () => {
 			const uri = new URL(`./${directory}/${parserName}.spec.ts`, import.meta.url)
 			describe(describeTitle, () => {
 				for (const content of parserSuites[parserName].content) {
-					const itTitle = `Parse "${showWhitespaceGlyph(content)}"`
+					const itTitle = `Parse '${showWhitespaceGlyph(content)}'`
 					it(itTitle, (t) => {
 						snapshotWithUri(t, {
 							uri,

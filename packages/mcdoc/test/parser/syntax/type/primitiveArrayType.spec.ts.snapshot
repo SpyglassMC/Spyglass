@@ -1,4 +1,4 @@
-exports[`mcdoc parser > primitiveArrayType > Parse \"\" 1`] = `
+exports[`mcdoc parser > primitiveArrayType > Parse '' 1`] = `
 {
   "node": "FAILURE",
   "errors": [
@@ -22,7 +22,7 @@ exports[`mcdoc parser > primitiveArrayType > Parse \"\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > primitiveArrayType > Parse \"byte @ 0..1 [] @ 0..\" 1`] = `
+exports[`mcdoc parser > primitiveArrayType > Parse 'byte @ 0..1 [] @ 0..' 1`] = `
 {
   "node": {
     "type": "mcdoc:type/primitive_array",
@@ -112,7 +112,23 @@ exports[`mcdoc parser > primitiveArrayType > Parse \"byte @ 0..1 [] @ 0..\" 1`] 
 }
 `;
 
-exports[`mcdoc parser > primitiveArrayType > Parse \"byte@0..1[]\" 1`] = `
+exports[`mcdoc parser > primitiveArrayType > Parse 'byte' 1`] = `
+{
+  "node": "FAILURE",
+  "errors": [
+    {
+      "range": {
+        "start": 4,
+        "end": 4
+      },
+      "message": "Expected “[]” but got “”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > primitiveArrayType > Parse 'byte@0..1[]' 1`] = `
 {
   "node": {
     "type": "mcdoc:type/primitive_array",
@@ -177,7 +193,7 @@ exports[`mcdoc parser > primitiveArrayType > Parse \"byte@0..1[]\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > primitiveArrayType > Parse \"byte[]\" 1`] = `
+exports[`mcdoc parser > primitiveArrayType > Parse 'byte[]' 1`] = `
 {
   "node": {
     "type": "mcdoc:type/primitive_array",
@@ -209,23 +225,7 @@ exports[`mcdoc parser > primitiveArrayType > Parse \"byte[]\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > primitiveArrayType > Parse \"byte\" 1`] = `
-{
-  "node": "FAILURE",
-  "errors": [
-    {
-      "range": {
-        "start": 4,
-        "end": 4
-      },
-      "message": "Expected “[]” but got “”",
-      "severity": 3
-    }
-  ]
-}
-`;
-
-exports[`mcdoc parser > primitiveArrayType > Parse \"int[] @ 4\" 1`] = `
+exports[`mcdoc parser > primitiveArrayType > Parse 'int[] @ 4' 1`] = `
 {
   "node": {
     "type": "mcdoc:type/primitive_array",
@@ -274,7 +274,7 @@ exports[`mcdoc parser > primitiveArrayType > Parse \"int[] @ 4\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > primitiveArrayType > Parse \"other[]\" 1`] = `
+exports[`mcdoc parser > primitiveArrayType > Parse 'other[]' 1`] = `
 {
   "node": {
     "type": "mcdoc:type/primitive_array",

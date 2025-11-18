@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:entity_anchor > Parse \"eyes\" 1`] = `
+exports[`mcfunction argument parser > minecraft:entity_anchor > Parse 'eyes' 1`] = `
 {
   "node": {
     "type": "literal",
@@ -12,7 +12,7 @@ exports[`mcfunction argument parser > minecraft:entity_anchor > Parse \"eyes\" 1
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity_anchor > Parse \"feet\" 1`] = `
+exports[`mcfunction argument parser > minecraft:entity_anchor > Parse 'feet' 1`] = `
 {
   "node": {
     "type": "literal",

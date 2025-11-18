@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:game_profile > Parse \"0123\" 1`] = `
+exports[`mcfunction argument parser > minecraft:game_profile > Parse '0123' 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -53,7 +53,7 @@ exports[`mcfunction argument parser > minecraft:game_profile > Parse \"0123\" 1`
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:game_profile > Parse \"@e\" 1`] = `
+exports[`mcfunction argument parser > minecraft:game_profile > Parse '@e' 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -129,7 +129,7 @@ exports[`mcfunction argument parser > minecraft:game_profile > Parse \"@e\" 1`] 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:game_profile > Parse \"Player\" 1`] = `
+exports[`mcfunction argument parser > minecraft:game_profile > Parse 'Player' 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -184,7 +184,7 @@ exports[`mcfunction argument parser > minecraft:game_profile > Parse \"Player\" 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:game_profile > Parse \"dd12be42-52a9-4a91-a8a1-11c01849e498\" 1`] = `
+exports[`mcfunction argument parser > minecraft:game_profile > Parse 'dd12be42-52a9-4a91-a8a1-11c01849e498' 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",

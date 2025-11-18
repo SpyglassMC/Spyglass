@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:dialog > Parse \"minecraft:custom_options\" 1`] = `
+exports[`mcfunction argument parser > minecraft:dialog > Parse 'minecraft:custom_options' 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -15,7 +15,7 @@ exports[`mcfunction argument parser > minecraft:dialog > Parse \"minecraft:custo
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:dialog > Parse \"{type:\"notice\",title:\"Hello\"}\" 1`] = `
+exports[`mcfunction argument parser > minecraft:dialog > Parse '{type:\"notice\",title:\"Hello\"}' 1`] = `
 {
   "node": {
     "type": "mcfunction:nbt_resource",

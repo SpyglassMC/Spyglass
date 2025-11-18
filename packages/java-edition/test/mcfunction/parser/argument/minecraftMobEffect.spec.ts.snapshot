@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:mob_effect > Parse \"effect\" 1`] = `
+exports[`mcfunction argument parser > minecraft:mob_effect > Parse 'effect' 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -14,7 +14,7 @@ exports[`mcfunction argument parser > minecraft:mob_effect > Parse \"effect\" 1`
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:mob_effect > Parse \"spooky\" 1`] = `
+exports[`mcfunction argument parser > minecraft:mob_effect > Parse 'spooky' 1`] = `
 {
   "node": {
     "type": "resource_location",

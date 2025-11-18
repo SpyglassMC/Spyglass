@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:style > Parse \"{ \"color\": \"red\", \"italic\": true }\" 1`] = `
+exports[`mcfunction argument parser > minecraft:style > Parse '{ \"color\": \"red\", \"italic\": true }' 1`] = `
 {
   "node": {
     "type": "json:typed",
@@ -202,7 +202,7 @@ exports[`mcfunction argument parser > minecraft:style > Parse \"{ \"color\": \"r
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:style > Parse \"{\"bold\": true}\" 1`] = `
+exports[`mcfunction argument parser > minecraft:style > Parse '{\"bold\": true}' 1`] = `
 {
   "node": {
     "type": "json:typed",

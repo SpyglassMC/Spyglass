@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"*\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '*' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -19,7 +19,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"*\" with 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"*\" with {\"amount\":\"single\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '*' with {\"amount\":\"single\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -40,7 +40,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"*\" with 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"0123\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '0123' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -61,7 +61,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"0123\" wi
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"0123\" with {\"amount\":\"single\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '0123' with {\"amount\":\"single\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -82,7 +82,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"0123\" wi
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ = 1 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ = 1 , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -315,7 +315,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ = 1 ,
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ scores = { foo = 1.. , } , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ scores = { foo = 1.. , } , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -947,7 +947,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ score
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ scores = { } , scores = { } , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ scores = { } , scores = { } , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -1422,7 +1422,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ score
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ sort = arbitrary , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ sort = arbitrary , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -1758,7 +1758,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ sort 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ tag = foo , tag = ! bar , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ tag = foo , tag = ! bar , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -2368,7 +2368,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ tag =
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ team = ! foo , team = ! bar , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ team = ! foo , team = ! bar , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -3010,7 +3010,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ team 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ team = foo , team = bar , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ team = foo , team = bar , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -3597,7 +3597,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ team 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ type = zombie ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ type = zombie ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -3934,7 +3934,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ type 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ unknown = 1 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ unknown = 1 , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -4167,7 +4167,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ unkno
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x = 0.0 , x = 0.0 , dz = 0.0, dz = 0.0 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ x = 0.0 , x = 0.0 , dz = 0.0, dz = 0.0 , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -4992,7 +4992,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x = 0
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x = 0.0 , y = 0.0 , z = 0.0 , dx = 0.0 , dy = 0.0 , dz = 0.0 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ x = 0.0 , y = 0.0 , z = 0.0 , dx = 0.0 , dy = 0.0 , dz = 0.0 , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -6172,7 +6172,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x = 0
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x_rotation = 179.9..-179.9 ,  x_rotation = 179.9..-179.9 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ x_rotation = 179.9..-179.9 ,  x_rotation = 179.9..-179.9 , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -6847,7 +6847,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x_rot
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x_rotation = 179.9..-179.9 ,  y_rotation = 179.9..-179.9 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@a[ x_rotation = 179.9..-179.9 ,  y_rotation = 179.9..-179.9 , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -7513,7 +7513,94 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@a[ x_rot
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type = ! skeleton , type = ! zombie , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@e' with {\"amount\":\"multiple\"} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:score_holder",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "selector": {
+      "type": "mcfunction:entity_selector",
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "children": [
+        {
+          "type": "literal",
+          "range": {
+            "start": 0,
+            "end": 2
+          },
+          "value": "@e"
+        }
+      ],
+      "variable": "e",
+      "currentEntity": false,
+      "playersOnly": false,
+      "predicates": [
+        "Entity::isAlive"
+      ],
+      "single": false,
+      "typeLimited": false,
+      "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@e' with {\"amount\":\"single\"} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:score_holder",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "selector": {
+      "type": "mcfunction:entity_selector",
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "children": [
+        {
+          "type": "literal",
+          "range": {
+            "start": 0,
+            "end": 2
+          },
+          "value": "@e"
+        }
+      ],
+      "variable": "e",
+      "currentEntity": false,
+      "playersOnly": false,
+      "predicates": [
+        "Entity::isAlive"
+      ],
+      "single": false,
+      "typeLimited": false,
+      "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "message": "The selector contains multiple entities",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@e[ type = ! skeleton , type = ! zombie , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -8190,7 +8277,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type = #tag1 , type = #tag2 , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@e[ type = #tag1 , type = #tag2 , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -8819,7 +8906,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type = player ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@e[ type = player ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -9150,7 +9237,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type = skeleton , type = zombie , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@e[ type = skeleton , type = zombie , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -9772,94 +9859,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e[ type 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e\" with {\"amount\":\"multiple\"} 1`] = `
-{
-  "node": {
-    "type": "mcfunction:score_holder",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "selector": {
-      "type": "mcfunction:entity_selector",
-      "range": {
-        "start": 0,
-        "end": 2
-      },
-      "children": [
-        {
-          "type": "literal",
-          "range": {
-            "start": 0,
-            "end": 2
-          },
-          "value": "@e"
-        }
-      ],
-      "variable": "e",
-      "currentEntity": false,
-      "playersOnly": false,
-      "predicates": [
-        "Entity::isAlive"
-      ],
-      "single": false,
-      "typeLimited": false,
-      "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
-    }
-  },
-  "errors": []
-}
-`;
-
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@e\" with {\"amount\":\"single\"} 1`] = `
-{
-  "node": {
-    "type": "mcfunction:score_holder",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "selector": {
-      "type": "mcfunction:entity_selector",
-      "range": {
-        "start": 0,
-        "end": 2
-      },
-      "children": [
-        {
-          "type": "literal",
-          "range": {
-            "start": 0,
-            "end": 2
-          },
-          "value": "@e"
-        }
-      ],
-      "variable": "e",
-      "currentEntity": false,
-      "playersOnly": false,
-      "predicates": [
-        "Entity::isAlive"
-      ],
-      "single": false,
-      "typeLimited": false,
-      "hover": "**Performance**: 🤢\\n- \`chunkLimited\`: \`false\`\\n- \`dimensionLimited\`: \`false\`\\n- \`playersOnly\`: \`false\`\\n- \`typeLimited\`: \`false\`\\n\\n------\\n**Predicates**:\\n- \`Entity::isAlive\`"
-    }
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 2
-      },
-      "message": "The selector contains multiple entities",
-      "severity": 3
-    }
-  ]
-}
-`;
-
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@s[ sort = arbitrary , sort = unknown , ]\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse '@s[ sort = arbitrary , sort = unknown , ]' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -10502,7 +10502,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"@s[ sort 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"Player\" with {\"amount\":\"multiple\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse 'Player' with {\"amount\":\"multiple\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",
@@ -10523,7 +10523,7 @@ exports[`mcfunction argument parser > minecraft:score_holder > Parse \"Player\" 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:score_holder > Parse \"Player\" with {\"amount\":\"single\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:score_holder > Parse 'Player' with {\"amount\":\"single\"} 1`] = `
 {
   "node": {
     "type": "mcfunction:score_holder",

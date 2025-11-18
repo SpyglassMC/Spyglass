@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:uuid > Parse \"1-1-1-1-1\" 1`] = `
+exports[`mcfunction argument parser > minecraft:uuid > Parse '1-1-1-1-1' 1`] = `
 {
   "node": {
     "type": "mcfunction:uuid",
@@ -15,7 +15,7 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse \"1-1-1-1-1\" 1`] =
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:uuid > Parse \"42\" 1`] = `
+exports[`mcfunction argument parser > minecraft:uuid > Parse '42' 1`] = `
 {
   "node": {
     "type": "mcfunction:uuid",
@@ -41,7 +41,7 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse \"42\" 1`] = `
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:uuid > Parse \"dd12be42-52a9-4a91-a8a1-11c01849e498\" 1`] = `
+exports[`mcfunction argument parser > minecraft:uuid > Parse 'dd12be42-52a9-4a91-a8a1-11c01849e498' 1`] = `
 {
   "node": {
     "type": "mcfunction:uuid",
@@ -58,7 +58,7 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse \"dd12be42-52a9-4a9
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:uuid > Parse \"fffffffffffffff-1-1-1-1\" 1`] = `
+exports[`mcfunction argument parser > minecraft:uuid > Parse 'fffffffffffffff-1-1-1-1' 1`] = `
 {
   "node": {
     "type": "mcfunction:uuid",
@@ -75,7 +75,7 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse \"fffffffffffffff-1
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:uuid > Parse \"ffffffffffffffff-1-1-1-1\" 1`] = `
+exports[`mcfunction argument parser > minecraft:uuid > Parse 'ffffffffffffffff-1-1-1-1' 1`] = `
 {
   "node": {
     "type": "mcfunction:uuid",

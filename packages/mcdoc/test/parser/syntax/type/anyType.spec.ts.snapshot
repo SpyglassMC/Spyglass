@@ -1,4 +1,4 @@
-exports[`mcdoc parser > anyType > Parse \"#[id] any\" 1`] = `
+exports[`mcdoc parser > anyType > Parse '#[id] any' 1`] = `
 {
   "node": {
     "type": "mcdoc:type/any",
@@ -39,7 +39,7 @@ exports[`mcdoc parser > anyType > Parse \"#[id] any\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > anyType > Parse \"\" 1`] = `
+exports[`mcdoc parser > anyType > Parse '' 1`] = `
 {
   "node": "FAILURE",
   "errors": [
@@ -55,7 +55,7 @@ exports[`mcdoc parser > anyType > Parse \"\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > anyType > Parse \"any\" 1`] = `
+exports[`mcdoc parser > anyType > Parse 'any' 1`] = `
 {
   "node": {
     "type": "mcdoc:type/any",
@@ -79,7 +79,7 @@ exports[`mcdoc parser > anyType > Parse \"any\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > anyType > Parse \"other\" 1`] = `
+exports[`mcdoc parser > anyType > Parse 'other' 1`] = `
 {
   "node": "FAILURE",
   "errors": [

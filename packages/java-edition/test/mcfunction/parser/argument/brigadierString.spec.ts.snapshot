@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > brigadier:string > Parse \"\"\"\" with {\"type\":\"phrase\"} 1`] = `
+exports[`mcfunction argument parser > brigadier:string > Parse '\"\"' with {\"type\":\"phrase\"} 1`] = `
 {
   "node": {
     "type": "string",
@@ -25,7 +25,7 @@ exports[`mcfunction argument parser > brigadier:string > Parse \"\"\"\" with {\"
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:string > Parse \"\"and symbols\"\" with {\"type\":\"greedy\"} 1`] = `
+exports[`mcfunction argument parser > brigadier:string > Parse '\"and symbols\"' with {\"type\":\"greedy\"} 1`] = `
 {
   "node": {
     "type": "string",
@@ -51,7 +51,7 @@ exports[`mcfunction argument parser > brigadier:string > Parse \"\"and symbols\"
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:string > Parse \"\"quoted phrase\"\" with {\"type\":\"phrase\"} 1`] = `
+exports[`mcfunction argument parser > brigadier:string > Parse '\"quoted phrase\"' with {\"type\":\"phrase\"} 1`] = `
 {
   "node": {
     "type": "string",
@@ -78,7 +78,7 @@ exports[`mcfunction argument parser > brigadier:string > Parse \"\"quoted phrase
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:string > Parse \"word\" with {\"type\":\"greedy\"} 1`] = `
+exports[`mcfunction argument parser > brigadier:string > Parse 'word' with {\"type\":\"greedy\"} 1`] = `
 {
   "node": {
     "type": "string",
@@ -104,7 +104,7 @@ exports[`mcfunction argument parser > brigadier:string > Parse \"word\" with {\"
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:string > Parse \"word\" with {\"type\":\"phrase\"} 1`] = `
+exports[`mcfunction argument parser > brigadier:string > Parse 'word' with {\"type\":\"phrase\"} 1`] = `
 {
   "node": {
     "type": "string",
@@ -130,7 +130,7 @@ exports[`mcfunction argument parser > brigadier:string > Parse \"word\" with {\"
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:string > Parse \"word\" with {\"type\":\"word\"} 1`] = `
+exports[`mcfunction argument parser > brigadier:string > Parse 'word' with {\"type\":\"word\"} 1`] = `
 {
   "node": {
     "type": "string",
@@ -156,7 +156,7 @@ exports[`mcfunction argument parser > brigadier:string > Parse \"word\" with {\"
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:string > Parse \"word_with_underscores\" with {\"type\":\"word\"} 1`] = `
+exports[`mcfunction argument parser > brigadier:string > Parse 'word_with_underscores' with {\"type\":\"word\"} 1`] = `
 {
   "node": {
     "type": "string",
@@ -182,7 +182,7 @@ exports[`mcfunction argument parser > brigadier:string > Parse \"word_with_under
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:string > Parse \"words with spaces\" with {\"type\":\"greedy\"} 1`] = `
+exports[`mcfunction argument parser > brigadier:string > Parse 'words with spaces' with {\"type\":\"greedy\"} 1`] = `
 {
   "node": {
     "type": "string",

@@ -1,4 +1,4 @@
-exports[`mcdoc parser > dispatchStatement > Parse \"#[since=1.17]↓⮀⮀⮀⮀dispatch minecraft:entity[↓⮀⮀⮀⮀⮀cow,↓⮀⮀⮀⮀⮀sheep,↓⮀⮀⮀⮀] to boolean\" 1`] = `
+exports[`mcdoc parser > dispatchStatement > Parse '#[since=1.17]↓⮀⮀⮀⮀dispatch minecraft:entity[↓⮀⮀⮀⮀⮀cow,↓⮀⮀⮀⮀⮀sheep,↓⮀⮀⮀⮀] to boolean' 1`] = `
 {
   "node": {
     "type": "mcdoc:dispatch_statement",
@@ -127,7 +127,7 @@ exports[`mcdoc parser > dispatchStatement > Parse \"#[since=1.17]↓⮀⮀⮀⮀
 }
 `;
 
-exports[`mcdoc parser > dispatchStatement > Parse \"\" 1`] = `
+exports[`mcdoc parser > dispatchStatement > Parse '' 1`] = `
 {
   "node": "FAILURE",
   "errors": [
@@ -143,7 +143,7 @@ exports[`mcdoc parser > dispatchStatement > Parse \"\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > dispatchStatement > Parse \"dispatch :entity[cow] to boolean\" 1`] = `
+exports[`mcdoc parser > dispatchStatement > Parse 'dispatch :entity[cow] to boolean' 1`] = `
 {
   "node": {
     "type": "mcdoc:dispatch_statement",
@@ -221,7 +221,7 @@ exports[`mcdoc parser > dispatchStatement > Parse \"dispatch :entity[cow] to boo
 }
 `;
 
-exports[`mcdoc parser > dispatchStatement > Parse \"dispatch minecraft:entity[] to any\" 1`] = `
+exports[`mcdoc parser > dispatchStatement > Parse 'dispatch minecraft:entity[] to any' 1`] = `
 {
   "node": {
     "type": "mcdoc:dispatch_statement",
@@ -308,7 +308,7 @@ exports[`mcdoc parser > dispatchStatement > Parse \"dispatch minecraft:entity[] 
 }
 `;
 
-exports[`mcdoc parser > dispatchStatement > Parse \"dispatch\" 1`] = `
+exports[`mcdoc parser > dispatchStatement > Parse 'dispatch' 1`] = `
 {
   "node": {
     "type": "mcdoc:dispatch_statement",

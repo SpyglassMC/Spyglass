@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:message > Parse \"@e\" 1`] = `
+exports[`mcfunction argument parser > minecraft:message > Parse '@e' 1`] = `
 {
   "node": {
     "type": "mcfunction:message",
@@ -39,7 +39,7 @@ exports[`mcfunction argument parser > minecraft:message > Parse \"@e\" 1`] = `
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:message > Parse \"Hello @p :)\" 1`] = `
+exports[`mcfunction argument parser > minecraft:message > Parse 'Hello @p :)' 1`] = `
 {
   "node": {
     "type": "mcfunction:message",
@@ -117,7 +117,7 @@ exports[`mcfunction argument parser > minecraft:message > Parse \"Hello @p :)\" 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:message > Parse \"Hello world!\" 1`] = `
+exports[`mcfunction argument parser > minecraft:message > Parse 'Hello world!' 1`] = `
 {
   "node": {
     "type": "mcfunction:message",
@@ -152,7 +152,7 @@ exports[`mcfunction argument parser > minecraft:message > Parse \"Hello world!\"
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:message > Parse \"foo\" 1`] = `
+exports[`mcfunction argument parser > minecraft:message > Parse 'foo' 1`] = `
 {
   "node": {
     "type": "mcfunction:message",

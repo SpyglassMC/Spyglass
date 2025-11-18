@@ -22,7 +22,7 @@ describe('resourceLocation()', () => {
 	]
 	for (const { content, options } of suites) {
 		it(
-			`Parse "${showWhitespaceGlyph(content)}" with ${options.category}, ${options.allowTag}`,
+			`Parse '${showWhitespaceGlyph(content)}' with ${options.category}, ${options.allowTag}`,
 			(t) => {
 				const parser = resourceLocation(options)
 				t.assert.snapshot(testParser(parser, content))

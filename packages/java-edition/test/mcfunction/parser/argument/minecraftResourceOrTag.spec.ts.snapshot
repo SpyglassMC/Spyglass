@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse \"#minecraft:skeletons\" with {\"registry\":\"bossbar\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse '#minecraft:skeletons' with {\"registry\":\"bossbar\"} 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -16,7 +16,7 @@ exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse \"#minec
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse \"#skeletons\" with {\"registry\":\"bossbar\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse '#skeletons' with {\"registry\":\"bossbar\"} 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -33,7 +33,7 @@ exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse \"#skele
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse \"012\" with {\"registry\":\"bossbar\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse '012' with {\"registry\":\"bossbar\"} 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -49,7 +49,23 @@ exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse \"012\" 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse \"foo:bar\" with {\"registry\":\"bossbar\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse 'foo' with {\"registry\":\"bossbar\"} 1`] = `
+{
+  "node": {
+    "type": "resource_location",
+    "range": {
+      "start": 0,
+      "end": 3
+    },
+    "path": [
+      "foo"
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse 'foo:bar' with {\"registry\":\"bossbar\"} 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -60,22 +76,6 @@ exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse \"foo:ba
     "namespace": "foo",
     "path": [
       "bar"
-    ]
-  },
-  "errors": []
-}
-`;
-
-exports[`mcfunction argument parser > minecraft:resource_or_tag > Parse \"foo\" with {\"registry\":\"bossbar\"} 1`] = `
-{
-  "node": {
-    "type": "resource_location",
-    "range": {
-      "start": 0,
-      "end": 3
-    },
-    "path": [
-      "foo"
     ]
   },
   "errors": []

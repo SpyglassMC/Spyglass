@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:loot_modifier > Parse \"[{function:\"furnace_smelt\"}]\" 1`] = `
+exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{function:\"furnace_smelt\"}]' 1`] = `
 {
   "node": {
     "type": "mcfunction:nbt_resource",
@@ -249,7 +249,7 @@ exports[`mcfunction argument parser > minecraft:loot_modifier > Parse \"[{functi
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:loot_modifier > Parse \"foo:bar\" 1`] = `
+exports[`mcfunction argument parser > minecraft:loot_modifier > Parse 'foo:bar' 1`] = `
 {
   "node": {
     "type": "resource_location",

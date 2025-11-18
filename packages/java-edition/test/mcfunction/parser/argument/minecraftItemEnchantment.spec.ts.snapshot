@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:item_enchantment > Parse \"silk_touch\" 1`] = `
+exports[`mcfunction argument parser > minecraft:item_enchantment > Parse 'silk_touch' 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -14,7 +14,7 @@ exports[`mcfunction argument parser > minecraft:item_enchantment > Parse \"silk_
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:item_enchantment > Parse \"unbreaking\" 1`] = `
+exports[`mcfunction argument parser > minecraft:item_enchantment > Parse 'unbreaking' 1`] = `
 {
   "node": {
     "type": "resource_location",

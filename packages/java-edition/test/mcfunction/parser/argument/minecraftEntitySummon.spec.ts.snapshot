@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:entity_summon > Parse \"cow\" 1`] = `
+exports[`mcfunction argument parser > minecraft:entity_summon > Parse 'cow' 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -14,7 +14,7 @@ exports[`mcfunction argument parser > minecraft:entity_summon > Parse \"cow\" 1`
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity_summon > Parse \"minecraft:pig\" 1`] = `
+exports[`mcfunction argument parser > minecraft:entity_summon > Parse 'minecraft:pig' 1`] = `
 {
   "node": {
     "type": "resource_location",

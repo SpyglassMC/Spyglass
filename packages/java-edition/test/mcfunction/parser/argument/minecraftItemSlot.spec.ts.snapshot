@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:item_slot > Parse \"container.5\" 1`] = `
+exports[`mcfunction argument parser > minecraft:item_slot > Parse 'container.5' 1`] = `
 {
   "node": {
     "type": "literal",
@@ -12,7 +12,7 @@ exports[`mcfunction argument parser > minecraft:item_slot > Parse \"container.5\
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:item_slot > Parse \"contents\" 1`] = `
+exports[`mcfunction argument parser > minecraft:item_slot > Parse 'contents' 1`] = `
 {
   "node": {
     "type": "literal",
@@ -35,7 +35,7 @@ exports[`mcfunction argument parser > minecraft:item_slot > Parse \"contents\" 1
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:item_slot > Parse \"contents\" in version 1.20.5 1`] = `
+exports[`mcfunction argument parser > minecraft:item_slot > Parse 'contents' in version 1.20.5 1`] = `
 {
   "node": {
     "type": "literal",
@@ -49,7 +49,7 @@ exports[`mcfunction argument parser > minecraft:item_slot > Parse \"contents\" i
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:item_slot > Parse \"horse.armor\" in version 1.20.5 1`] = `
+exports[`mcfunction argument parser > minecraft:item_slot > Parse 'horse.armor' in version 1.20.5 1`] = `
 {
   "node": {
     "type": "literal",
@@ -72,7 +72,7 @@ exports[`mcfunction argument parser > minecraft:item_slot > Parse \"horse.armor\
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:item_slot > Parse \"weapon\" 1`] = `
+exports[`mcfunction argument parser > minecraft:item_slot > Parse 'weapon' 1`] = `
 {
   "node": {
     "type": "literal",

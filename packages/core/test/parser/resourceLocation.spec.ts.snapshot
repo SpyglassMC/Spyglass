@@ -1,4 +1,4 @@
-exports[`resourceLocation() > Parse \"#tick\" with function, false 1`] = `
+exports[`resourceLocation() > Parse '#tick' with function, false 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -24,7 +24,7 @@ exports[`resourceLocation() > Parse \"#tick\" with function, false 1`] = `
 }
 `;
 
-exports[`resourceLocation() > Parse \"#tick\" with function, true 1`] = `
+exports[`resourceLocation() > Parse '#tick' with function, true 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -41,77 +41,7 @@ exports[`resourceLocation() > Parse \"#tick\" with function, true 1`] = `
 }
 `;
 
-exports[`resourceLocation() > Parse \":/\" with function, undefined 1`] = `
-{
-  "node": {
-    "type": "resource_location",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "namespace": "",
-    "path": [
-      "",
-      ""
-    ]
-  },
-  "errors": []
-}
-`;
-
-exports[`resourceLocation() > Parse \":\" with function, undefined 1`] = `
-{
-  "node": {
-    "type": "resource_location",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "namespace": "",
-    "path": [
-      ""
-    ]
-  },
-  "errors": []
-}
-`;
-
-exports[`resourceLocation() > Parse \":foo/bar\" with function, undefined 1`] = `
-{
-  "node": {
-    "type": "resource_location",
-    "range": {
-      "start": 0,
-      "end": 8
-    },
-    "namespace": "",
-    "path": [
-      "foo",
-      "bar"
-    ]
-  },
-  "errors": []
-}
-`;
-
-exports[`resourceLocation() > Parse \":foo\" with function, undefined 1`] = `
-{
-  "node": {
-    "type": "resource_location",
-    "range": {
-      "start": 0,
-      "end": 4
-    },
-    "namespace": "",
-    "path": [
-      "foo"
-    ]
-  },
-  "errors": []
-}
-`;
-
-exports[`resourceLocation() > Parse \"\" with function, undefined 1`] = `
+exports[`resourceLocation() > Parse '' with function, undefined 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -133,7 +63,77 @@ exports[`resourceLocation() > Parse \"\" with function, undefined 1`] = `
 }
 `;
 
-exports[`resourceLocation() > Parse \"foo # can you stop before here?\" with function, undefined 1`] = `
+exports[`resourceLocation() > Parse ':' with function, undefined 1`] = `
+{
+  "node": {
+    "type": "resource_location",
+    "range": {
+      "start": 0,
+      "end": 1
+    },
+    "namespace": "",
+    "path": [
+      ""
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`resourceLocation() > Parse ':/' with function, undefined 1`] = `
+{
+  "node": {
+    "type": "resource_location",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "namespace": "",
+    "path": [
+      "",
+      ""
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`resourceLocation() > Parse ':foo' with function, undefined 1`] = `
+{
+  "node": {
+    "type": "resource_location",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "namespace": "",
+    "path": [
+      "foo"
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`resourceLocation() > Parse ':foo/bar' with function, undefined 1`] = `
+{
+  "node": {
+    "type": "resource_location",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "namespace": "",
+    "path": [
+      "foo",
+      "bar"
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`resourceLocation() > Parse 'foo # can you stop before here?' with function, undefined 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -149,7 +149,23 @@ exports[`resourceLocation() > Parse \"foo # can you stop before here?\" with fun
 }
 `;
 
-exports[`resourceLocation() > Parse \"foo/bar\" with function, undefined 1`] = `
+exports[`resourceLocation() > Parse 'foo' with function, undefined 1`] = `
+{
+  "node": {
+    "type": "resource_location",
+    "range": {
+      "start": 0,
+      "end": 3
+    },
+    "path": [
+      "foo"
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`resourceLocation() > Parse 'foo/bar' with function, undefined 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -166,23 +182,7 @@ exports[`resourceLocation() > Parse \"foo/bar\" with function, undefined 1`] = `
 }
 `;
 
-exports[`resourceLocation() > Parse \"foo\" with function, undefined 1`] = `
-{
-  "node": {
-    "type": "resource_location",
-    "range": {
-      "start": 0,
-      "end": 3
-    },
-    "path": [
-      "foo"
-    ]
-  },
-  "errors": []
-}
-`;
-
-exports[`resourceLocation() > Parse \"minecraft:foo/bar\" with function, undefined 1`] = `
+exports[`resourceLocation() > Parse 'minecraft:foo/bar' with function, undefined 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -200,7 +200,7 @@ exports[`resourceLocation() > Parse \"minecraft:foo/bar\" with function, undefin
 }
 `;
 
-exports[`resourceLocation() > Parse \"spg/:foo:qux/H/42\" with function, undefined 1`] = `
+exports[`resourceLocation() > Parse 'spg/:foo:qux/H/42' with function, undefined 1`] = `
 {
   "node": {
     "type": "resource_location",
@@ -228,7 +228,7 @@ exports[`resourceLocation() > Parse \"spg/:foo:qux/H/42\" with function, undefin
 }
 `;
 
-exports[`resourceLocation() > Parse \"spgoding:foo/bar\" with function, undefined 1`] = `
+exports[`resourceLocation() > Parse 'spgoding:foo/bar' with function, undefined 1`] = `
 {
   "node": {
     "type": "resource_location",

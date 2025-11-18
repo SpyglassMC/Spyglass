@@ -230,9 +230,9 @@ describe('mcfunction argument parser', () => {
 				for (const string of content) {
 					const propertiesString = properties ? ` with ${JSON.stringify(properties)}` : ''
 					const versionString = version !== '1.15' ? ` in version ${version}` : ''
-					const itTitle = `Parse "${
+					const itTitle = `Parse '${
 						showWhitespaceGlyph(string)
-					}"${propertiesString}${versionString}`
+					}'${propertiesString}${versionString}`
 					it(itTitle, (t) => {
 						snapshotWithUri(t, {
 							uri: new URL(

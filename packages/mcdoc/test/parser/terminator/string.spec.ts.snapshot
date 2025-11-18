@@ -1,4 +1,4 @@
-exports[`mcdoc parser > string > Parse \"\" 1`] = `
+exports[`mcdoc parser > string > Parse '' 1`] = `
 {
   "node": {
     "type": "string",
@@ -33,7 +33,7 @@ exports[`mcdoc parser > string > Parse \"\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > string > Parse \"\"fo\\Ao\"\" 1`] = `
+exports[`mcdoc parser > string > Parse '\"fo\\Ao\"' 1`] = `
 {
   "node": {
     "type": "string",
@@ -79,7 +79,7 @@ exports[`mcdoc parser > string > Parse \"\"fo\\Ao\"\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > string > Parse \"\"fo\\no\"\" 1`] = `
+exports[`mcdoc parser > string > Parse '\"fo\\no\"' 1`] = `
 {
   "node": {
     "type": "string",
@@ -116,7 +116,7 @@ exports[`mcdoc parser > string > Parse \"\"fo\\no\"\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > string > Parse \"\"foo\" 1`] = `
+exports[`mcdoc parser > string > Parse '\"foo' 1`] = `
 {
   "node": {
     "type": "string",
@@ -152,7 +152,7 @@ exports[`mcdoc parser > string > Parse \"\"foo\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > string > Parse \"\"foo\"\" 1`] = `
+exports[`mcdoc parser > string > Parse '\"foo\"' 1`] = `
 {
   "node": {
     "type": "string",
@@ -179,7 +179,7 @@ exports[`mcdoc parser > string > Parse \"\"foo\"\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > string > Parse \"\"fo↓o\"\" 1`] = `
+exports[`mcdoc parser > string > Parse '\"fo↓o\"' 1`] = `
 {
   "node": {
     "type": "string",
@@ -215,7 +215,7 @@ exports[`mcdoc parser > string > Parse \"\"fo↓o\"\" 1`] = `
 }
 `;
 
-exports[`mcdoc parser > string > Parse \"foo\" 1`] = `
+exports[`mcdoc parser > string > Parse 'foo' 1`] = `
 {
   "node": {
     "type": "string",

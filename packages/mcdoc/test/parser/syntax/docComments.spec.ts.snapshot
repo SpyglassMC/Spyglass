@@ -1,4 +1,4 @@
-exports[`mcdoc parser > docComments > Parse \"/// First line↓⮀⮀⮀⮀/// Second line↓⮀⮀⮀⮀Not comment\" 1`] = `
+exports[`mcdoc parser > docComments > Parse '/// First line↓⮀⮀⮀⮀/// Second line↓⮀⮀⮀⮀Not comment' 1`] = `
 {
   "node": {
     "type": "mcdoc:doc_comments",
