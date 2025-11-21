@@ -54,15 +54,18 @@ Or if you prefer the command line interface:
 - `npm run watch` to watch changes and build all packages.
 - `npm run clean` to remove all js output. Use this when there seem to be caching issues with TypeScript's compiler.
 - `npm test` to test all packages.
+- `npm run test:update-snapshots` to run tests and update test snapshots.
+- `npm run test:watch` to run tests in watch mode.
+- `npm run fmt` to format all files.
 - `npm run lint` to check linting errors.
 - `npm run lint:fix` to fix all auto-fixable linting errors.
 - `npm run commit` to run the [`gitmoji` CLI][gitmoji]. You actually don't have to worry about commit message as long as you're creating PR, as I can always change it.
 
-Please refrain from using `mocha --watch`, as it might interface with and break the snapshot testing.
+You can debug tests with breakpoints by running the `Run Unit Tests` configuration and setting your breakpoints accordingly. If you want to run a specific subset of tests, add `.only` or
+`{ only: true}` after the test block (e.g. `describe.only()`, `it.only()`,
+`it('...', { only: true }, ...)`).
 
-You can debug tests with breakpoints by running the `Run Unit Tests` configuration and setting your breakpoints accordingly. If you want to run a specific subset of tests, add `.only` after the test block (e.g. `describe.only()`, `it.only()`).
-
-Note that the build will fail in CICD if `.only` tests are pushed to prevent mistakenly merging `.only` to `main` (it should only be used for local testing!).
+Note that the lint will fail in CI/CD if `only` tests are pushed to prevent mistakenly merging `only` to `main` (it should only be used for local testing!).
 
 ### Code style
 
@@ -90,3 +93,4 @@ However, as VS Code cannot consume ES modules as extensions ([microsoft/vscode#1
 the `vscode-extension` package defaults to use CommonJS modules, with file extensions `mjs` and `mts` to explicitly override that,
 
 [eslint-extension]: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+[gitmoji]: https://gitmoji.dev

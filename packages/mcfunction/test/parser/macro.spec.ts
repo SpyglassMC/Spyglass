@@ -1,6 +1,5 @@
-import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
+import { describe, it } from 'node:test'
 import { macro } from '../../lib/parser/index.js'
 
 describe('mcfunction parser macro()', () => {
@@ -17,9 +16,9 @@ describe('mcfunction parser macro()', () => {
 		{ content: '$say no macro argument specified' },
 	]
 	for (const { content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = macro()
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })

@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
+import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import * as je from '@spyglassmc/java-edition'
 import node from 'node:url'
 import type { BenchContext } from './index.js'

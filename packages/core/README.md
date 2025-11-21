@@ -12,6 +12,4 @@ This package is the core of the Spyglass Project. It defines the structure of a 
 ## Exports
 
 * `@spyglassmc/core`: Contains all core functionalities.
-* `@spyglassmc/core/lib/browser.js`: Contains browser-specific features.
-* `@spyglassmc/core/lib/nodejs.js`: Contains Node.js-specific features.
-* `@spyglassmc/core/test-out/utils.js`: For internal development use only. Does not exist in the package published to npm.
+* `@spyglassmc/core/test/utils.ts`: For internal development use only. Does not exist in the package published to npm.

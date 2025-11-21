@@ -52,7 +52,7 @@ export namespace LanguageError {
 	}
 }
 
-export const enum ErrorSeverity {
+export enum ErrorSeverity {
 	Hint,
 	Information,
 	Warning,

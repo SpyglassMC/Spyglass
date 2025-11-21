@@ -3,8 +3,9 @@
 	"private": true,
 	"version": "1.0.0",
 	"license": "MIT",
+	"type": "module",
 	"engines": {
-		"node": "^18.18.0 || >=20.0.0"
+		"node": ">=22.14.0"
 	},
 	"scripts": {
 		"ansible:prod": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml",
@@ -21,13 +22,14 @@
 		"fmt:check": "dprint check",
 		"lint": "eslint --cache --max-warnings=0 \"packages/*/{src,test}/**/*.{cts,mts,ts}\"",
 		"lint:fix": "eslint --cache --max-warnings=0 --fix \"packages/*/{src,test}/**/*.{cts,mts,ts}\"",
-		"release": "ts-node scripts/release.ts",
-		"release:dry": "ts-node scripts/release.ts --dry-run",
-		"set-tsconfig-references": "ts-node scripts/set_tsconfig_references",
+		"release": "node scripts/release.ts",
+		"release:dry": "node scripts/release.ts --dry-run",
+		"set-tsconfig-references": "node scripts/set_tsconfig_references",
 		"start-discord-bot": "node packages/discord-bot/lib/index.js",
 		"start-web-api-server": "npm start --workspace=packages/web-api-server",
-		"test": "nyc mocha",
-		"test:local": "nyc mocha --config .mocharc.local.jsonc",
+		"test": "node --import=./packages/core/test/snapshot-setup.ts --test --test-isolation none",
+		"test:update-snapshots": "npm test -- --test-update-snapshots",
+		"test:watch": "npm test -- --watch",
 		"bench": "node packages/benchmarks/lib/index.js"
 	},
 	"wireit": {
@@ -57,39 +59,23 @@
 	},
 	"devDependencies": {
 		"@types/benchmark": "^2.1.2",
-		"@types/mocha": "^10.0.1",
 		"@types/node": "^24.10.1",
-		"@types/snap-shot-core": "^10.2.0",
 		"@types/webpack": "^5.28.1",
-		"@typescript-eslint/eslint-plugin": "^7.9.0",
-		"@typescript-eslint/parser": "^7.9.0",
+		"@typescript-eslint/eslint-plugin": "^8.46.4",
+		"@typescript-eslint/parser": "^8.46.4",
 		"benchmark": "^2.1.4",
 		"circular-dependency-plugin": "^5.2.2",
 		"dprint": "^0.45.1",
-		"eslint": "^8.39.0",
+		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-import-resolver-typescript": "^3.6.1",
 		"eslint-plugin-import": "^2.29.1",
 		"gitmoji-cli": "^8.1.1",
-		"mocha": "^10.2.0",
-		"node-loader": "^2.0.0",
-		"nyc": "^15.1.0",
-		"snap-shot-core": "^10.2.4",
-		"snap-shot-it": "^7.9.10",
-		"source-map-loader": "^4.0.1",
-		"source-map-support": "^0.5.21",
 		"ts-loader": "^9.4.2",
-		"ts-node": "^10.9.1",
 		"typescript": "^5.9.3",
 		"webpack": "^5.95.0",
 		"webpack-cli": "^5.0.2",
 		"wireit": "^0.9.5"
-	},
-	"config": {
-		"snap-shot-it": {
-			"useRelativePath": true,
-			"sortSnapshots": true
-		}
 	},
 	"workspaces": [
 		"packages/**"

@@ -1,11 +1,10 @@
-import { SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
+import { Logger, SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as fs from 'fs'
-import { describe, it } from 'mocha'
+import { describe, it } from 'node:test'
 import * as path from 'path'
-import snapshot from 'snap-shot-it'
 import url from 'url'
-import type { PackInfo, PackMcmeta } from '../../lib/dependency/common.js'
+import type { PackInfo } from '../../lib/dependency/common.js'
 import type { McmetaRegistries, McmetaStates, McmetaVersions } from '../../lib/dependency/mcmeta.js'
 import { Fluids, resolveConfiguredVersion, symbolRegistrar } from '../../lib/dependency/mcmeta.js'
 
@@ -46,20 +45,20 @@ describe('mcmeta', () => {
 			{ version: '1.16.5' },
 		]
 		for (const { version, packs } of suites) {
-			it(`Should resolve "${version}"`, async () => {
+			it(`Should resolve '${version}'`, async (t) => {
 				const actual = resolveConfiguredVersion(
 					version,
 					Fixtures.Versions,
 					packs ?? [],
-					console,
+					Logger.noop(),
 				)
-				snapshot(actual)
+				t.assert.snapshot(actual)
 			})
 		}
 	})
 
 	describe('symbolRegistrar()', () => {
-		it('Should register correctly', () => {
+		it('Should register correctly', (t) => {
 			const registrar = symbolRegistrar({
 				blocks: Fixtures.Blocks,
 				commands: undefined as any,
@@ -68,7 +67,7 @@ describe('mcmeta', () => {
 			}, '1.18.2')
 			const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 			registrar(symbols, {})
-			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
+			t.assert.snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
 	})
 })

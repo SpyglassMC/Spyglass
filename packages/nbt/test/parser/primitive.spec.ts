@@ -1,7 +1,6 @@
-import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
+import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
 import { primitive } from '@spyglassmc/nbt/lib/parser/index.js'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 
 describe('nbt primitive()', () => {
 	const suites: { content: string }[] = [
@@ -20,9 +19,9 @@ describe('nbt primitive()', () => {
 		{ content: '123456b' },
 	]
 	for (const { content } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = primitive
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })

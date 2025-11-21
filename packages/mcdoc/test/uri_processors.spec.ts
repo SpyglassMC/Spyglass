@@ -1,8 +1,7 @@
 import { SymbolFormatter, UriBinderContext } from '@spyglassmc/core'
-import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
+import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import { uriBinder } from '@spyglassmc/mcdoc/lib/uri_processors.js'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 
 describe('mcdoc uriBinder()', () => {
 	const suites: { uris: string[] }[] = [
@@ -44,10 +43,10 @@ describe('mcdoc uriBinder()', () => {
 					uris.map((u) => u.startsWith('file:///root/') ? u.slice('file:///root/'.length) : u),
 				)
 			}`,
-			() => {
+			(t) => {
 				const ctx = UriBinderContext.create(mockProjectData({ roots: ['file:///root/'] }))
 				uriBinder(uris, ctx)
-				snapshot(SymbolFormatter.stringifySymbolTable(ctx.symbols.global))
+				t.assert.snapshot(SymbolFormatter.stringifySymbolTable(ctx.symbols.global))
 			},
 		)
 	}

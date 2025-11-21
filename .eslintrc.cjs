@@ -27,7 +27,6 @@ module.exports = {
 		"**/dist",
 		"**/lib",
 		"**/out",
-		"**/test-out",
 
 		"/scripts",
 	],
@@ -40,12 +39,37 @@ module.exports = {
 		],
 		"@typescript-eslint/prefer-for-of": "warn",
 		"@typescript-eslint/prefer-readonly": "warn",
-		"@typescript-eslint/no-floating-promises": "error",
+		"@typescript-eslint/no-floating-promises": [
+			"error",
+			{
+				"allowForKnownSafeCalls": [
+					// https://github.com/nodejs/node/issues/51292#issuecomment-2241761056
+					{
+						from: "package",
+						package: "node:test",
+						name: ["describe", "it", "only", "skip", "todo"],
+					},
+				],
+			},
+		],
 		"curly": "warn",
 		"eqeqeq": "warn",
 		"import/no-duplicates": "error",
 		"indent": "off",
 		"no-fallthrough": "warn",
+		"no-restricted-properties": [
+			"warn",
+			{
+				"object": "describe",
+				"property": "only",
+				"message": "Use for local testing only. Remember to remove it before merging to main.",
+			},
+			{
+				"object": "it",
+				"property": "only",
+				"message": "Use for local testing only. Remember to remove it before merging to main.",
+			},
+		],
 		"no-restricted-syntax": [
 			"warn",
 			// https://astexplorer.net/
@@ -62,6 +86,10 @@ module.exports = {
 			{
 				"selector": 'ImportDeclaration > Literal[value=/\\bsrc\\b/]',
 				"message": "Import from the `lib` dir instead of the `src` dir."
+			},
+			{
+				"selector": 'CallExpression[callee.name=/describe|it/] > ObjectExpression > Property[key.name="only"][value.raw="true"]',
+				"message": "Use { only: true } for local testing only. Remember to remove it before merging to main."
 			},
 		],
 		"object-shorthand": "warn",

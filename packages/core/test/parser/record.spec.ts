@@ -1,9 +1,9 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import type { StringNode } from '../../lib/index.js'
 import { record, string } from '../../lib/index.js'
 import type { Options } from '../../lib/parser/record.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('record()', () => {
 	const quotedString = string({ quotes: ['"'] })
@@ -55,9 +55,9 @@ describe('record()', () => {
 	for (const { title, options, contents } of suites) {
 		describe(title, () => {
 			for (const content of contents) {
-				it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+				it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 					const parser = record(options)
-					snapshot(testParser(parser, content))
+					t.assert.snapshot(testParser(parser, content))
 				})
 			}
 		})

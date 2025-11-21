@@ -44,7 +44,7 @@ jobs:
 
       - run: npm run build
 
-      - run: npm test -- --forbid-only
+      - run: npm test
 
       - run: tar -cvf build-artifact.tar packages/*/lib/ packages/*/out/ packages/*/dist/
       - uses: actions/upload-artifact@v4

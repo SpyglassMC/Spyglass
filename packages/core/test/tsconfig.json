@@ -1,8 +1,5 @@
 {
-	"extends": "../../tsconfig-base",
-	"compilerOptions": {
-		"outDir": "../test-out"
-	},
+	"extends": "../../tsconfig-type-strip",
 	"references": [
 		{
 			"path": "../src"
