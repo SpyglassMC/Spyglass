@@ -1,6 +1,4 @@
-import assert from 'assert'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import type { AstNode, Parser, ParserContext, Result, Source } from '../../lib/index.js'
 import {
 	any,
@@ -10,7 +8,7 @@ import {
 	Failure,
 	Range,
 } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 interface LiteralNode extends AstNode {
 	type: 'literal'
@@ -67,9 +65,9 @@ describe('any()', () => {
 		},
 	]
 	for (const { content, parsers, parserToString } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}" with "${parserToString}"`, () => {
+		it(`Parse '${showWhitespaceGlyph(content)}' with '${parserToString}'`, (t) => {
 			const parser = any(parsers)
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })
@@ -85,8 +83,8 @@ describe('dumpErrors()', () => {
 		content: 'bar',
 	}]
 	for (const { name, content, parser } of suites) {
-		it(name, () => {
-			snapshot(testParser(parser, content))
+		it(name, (t) => {
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })
@@ -111,9 +109,9 @@ describe('concatOnTrailingBackslash()', () => {
 	}]
 	for (const { parser, suites } of parsers) {
 		for (const { content } of suites) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				const wrappedParser = concatOnTrailingBackslash(parser)
-				snapshot(testParser(wrappedParser, content))
+				t.assert.snapshot(testParser(wrappedParser, content))
 			})
 		}
 	}

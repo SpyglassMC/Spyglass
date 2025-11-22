@@ -1,13 +1,7 @@
 import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from 'base64-arraybuffer'
 import pako from 'pako'
 import { fileUtil } from '../../service/fileUtil.js'
-import type {
-	ExternalEventEmitter,
-	ExternalFileSystem,
-	Externals,
-	FsLocation,
-	FsWatcher,
-} from './index.js'
+import type { ExternalEventEmitter, ExternalFileSystem, Externals, FsLocation } from './index.js'
 
 type Listener = (...args: unknown[]) => unknown
 export class BrowserEventEmitter implements ExternalEventEmitter {
@@ -46,24 +40,6 @@ export class BrowserEventEmitter implements ExternalEventEmitter {
 		listeners.once.add(listener)
 		return this
 	}
-}
-
-class BrowserFsWatcher implements FsWatcher {
-	on(event: string, listener: (...args: any[]) => unknown): this {
-		if (event === 'ready') {
-			listener()
-		}
-		return this
-	}
-
-	once(event: unknown, listener: (...args: any[]) => unknown): this {
-		if (event === 'ready') {
-			listener()
-		}
-		return this
-	}
-
-	async close(): Promise<void> {}
 }
 
 class BrowserFileSystem implements ExternalFileSystem {
@@ -125,9 +101,6 @@ class BrowserFileSystem implements ExternalFileSystem {
 		}
 		delete this.states[location]
 		this.saveStates()
-	}
-	watch(_locations: FsLocation[]): FsWatcher {
-		return new BrowserFsWatcher()
 	}
 	async writeFile(
 		location: FsLocation,

@@ -11,7 +11,8 @@
     "useBraces": "always"
   },
   "includes": [
-    "packages/*/{src,test}/**/*.{ts,cts,mts}"
+    "packages/*/{src,test}/**/*.{ts,cts,mts}",
+    "scripts/*.{ts,cts,mts}"
   ],
   "excludes": [
     "**/node_modules",

@@ -1,13 +1,14 @@
 import picomatch from 'picomatch'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
+import type { ExternalEventEmitter, Externals, IntervalId } from '../common/index.js'
 import {
 	bufferToString,
 	Logger,
 	normalizeUri,
 	SingletonPromise,
 	StateProxy,
+	UriStore,
 } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import { FileNode } from '../node/index.js'
@@ -33,6 +34,7 @@ import { LinterErrorReporter } from './ErrorReporter.js'
 import { ArchiveUriSupporter, FileService, FileUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
+import type { FsWatcher } from './FsWatcher.js'
 import { MetaRegistry } from './MetaRegistry.js'
 import { ProfilerFactory } from './Profiler.js'
 
@@ -72,6 +74,10 @@ export interface ProjectOptions {
 	 */
 	projectRoots: RootUriString[]
 	symbols?: SymbolUtil
+}
+
+export interface ProjectReadyOptions {
+	projectRootsWatcher?: FsWatcher
 }
 
 export interface DocAndNode {
@@ -166,12 +172,12 @@ export class Project implements ExternalEventEmitter {
 	readonly #symbolUpToDateUris = new Set<string>()
 	readonly #eventEmitter: ExternalEventEmitter
 	readonly #initializers: readonly ProjectInitializer[]
-	#initPromise!: Promise<void>
-	#readyPromise!: Promise<void>
-	readonly #watchedFiles = new Set<string>()
-	#watcher!: FsWatcher
-	#watcherReady = false
+	#watcher: FsWatcher | undefined
+	get watchedFiles() {
+		return this.#watcher?.watchedFiles ?? new UriStore()
+	}
 
+	#isInitialized = false
 	#isReady = false
 	get isReady(): boolean {
 		return this.#isReady
@@ -283,7 +289,7 @@ export class Project implements ExternalEventEmitter {
 	 * are not loaded into the memory.
 	 */
 	getTrackedFiles(): string[] {
-		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.#watchedFiles]
+		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.watchedFiles]
 		this.logger.info(
 			`[Project#getTrackedFiles] Listed ${supportedFiles.length} supported files`,
 		)
@@ -330,8 +336,6 @@ export class Project implements ExternalEventEmitter {
 			({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading ${uri}`, error),
 		)
 
-		this.setInitPromise()
-		this.setReadyPromise()
 		this.#cacheSaverIntervalId = setInterval(
 			() => this.cacheService.save(),
 			CacheAutoSaveInterval,
@@ -382,7 +386,12 @@ export class Project implements ExternalEventEmitter {
 		})
 	}
 
-	private setInitPromise(): void {
+	/**
+	 * Load the config file and initialize parsers and processors.
+	 */
+	async init(): Promise<this> {
+		this.#isInitialized = false
+
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
@@ -407,24 +416,37 @@ export class Project implements ExternalEventEmitter {
 			})
 			this.#ctx = ctx
 		}
-		const init = async () => {
-			const __profiler = this.profilers.get('project#init')
 
-			const { symbols } = await this.cacheService.load()
-			this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
-			this.symbols.buildCache()
-			__profiler.task('Load Cache')
+		const __profiler = this.profilers.get('project#init')
 
-			this.config = await this.#configService.load()
-			__profiler.task('Load Config')
+		const { symbols } = await this.cacheService.load()
+		this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
+		this.symbols.buildCache()
+		__profiler.task('Load Cache')
 
-			await callIntializers()
-			__profiler.task('Initialize').finalize()
-		}
-		this.#initPromise = init()
+		this.config = await this.#configService.load()
+		__profiler.task('Load Config')
+
+		await callIntializers()
+		__profiler.task('Initialize').finalize()
+
+		this.#isInitialized = true
+
+		return this
 	}
 
-	private setReadyPromise(): void {
+	/**
+	 * Finish the initial run of parsing, binding, and checking the entire project.
+	 */
+	async ready({ projectRootsWatcher }: ProjectReadyOptions = {}): Promise<this> {
+		if (!this.#isInitialized) {
+			throw new Error('Project.ready() must be called after Project.init() resolves')
+		}
+
+		this.#isReady = false
+
+		this.#watcher = projectRootsWatcher
+
 		const getDependencies = async () => {
 			const dependencies: Dependency[] = []
 			for (const input of this.config.env.dependencies) {
@@ -472,131 +494,112 @@ export class Project implements ExternalEventEmitter {
 		}
 		const listProjectFiles = () =>
 			new Promise<void>((resolve) => {
-				if (this.projectRoots.length === 0) {
-					resolve()
-					return
+				if (!this.#watcher) {
+					return resolve()
 				}
-				this.#watchedFiles.clear()
-				this.#watcherReady = false
-				this.#watcher = this.externals.fs.watch(this.projectRoots, {
-					usePolling: this.config.env.useFilePolling,
-				}).once('ready', () => {
-					this.#watcherReady = true
-					resolve()
-				}).on('add', (uri) => {
-					if (this.shouldExclude(uri)) {
-						return
-					}
-					this.#watchedFiles.add(uri)
-					if (this.#watcherReady) {
+
+				this.#watcher
+					.on('add', (uri) => {
+						if (this.shouldExclude(uri)) {
+							return
+						}
 						this.emit('fileCreated', { uri })
-					}
-				}).on('change', (uri) => {
-					if (this.shouldExclude(uri)) {
-						return
-					}
-					if (this.#watcherReady) {
-						this.emit('fileModified', { uri })
-					}
-				}).on('unlink', (uri) => {
-					if (this.shouldExclude(uri)) {
-						return
-					}
-					this.#watchedFiles.delete(uri)
-					if (this.#watcherReady) {
-						this.emit('fileDeleted', { uri })
-					}
-				}).on('error', (e) => {
-					this.logger.error('[Project] [chokidar]', e)
-				})
-			})
-		const ready = async () => {
-			await this.init()
-
-			const __profiler = this.profilers.get('project#ready')
-
-			await Promise.all([listDependencyFiles(), listProjectFiles()])
-
-			this.#dependencyFiles = new Set([...this.fs.listFiles()]
-				.filter((uri) => !this.shouldExclude(uri)))
-			this.#dependencyRoots = new Set(this.fs.listRoots())
-
-			this.updateRoots()
-			__profiler.task('List URIs')
-
-			for (const [id, { checksum, registrar }] of this.meta.symbolRegistrars) {
-				const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
-				if (cacheChecksum === undefined || checksum !== cacheChecksum) {
-					this.symbols.clear({ contributor: `symbol_registrar/${id}` })
-					this.symbols.contributeAs(`symbol_registrar/${id}`, () => {
-						registrar(this.symbols, { logger: this.logger })
 					})
-					this.emit('symbolRegistrarExecuted', { id, checksum })
+					.on('change', (uri) => {
+						if (this.shouldExclude(uri)) {
+							return
+						}
+						this.emit('fileModified', { uri })
+					})
+					.on('unlink', (uri) => {
+						if (this.shouldExclude(uri)) {
+							return
+						}
+						this.emit('fileDeleted', { uri })
+					})
+					.on('error', (e) => {
+						this.logger.error('[Project#watcher]', e)
+					})
+
+				if (this.#watcher.isReady) {
+					resolve()
 				} else {
-					this.logger.info(`[SymbolRegistrar] Skipped “${id}” thanks to cache ${checksum}`)
+					this.#watcher.on('ready', resolve)
 				}
-			}
-			__profiler.task('Register Symbols')
+			})
 
-			for (const [uri, values] of Object.entries(this.cacheService.errors)) {
-				this.emit('documentErrored', { errors: values, uri })
-			}
-			__profiler.task('Pop Errors')
+		const __profiler = this.profilers.get('project#ready')
 
-			const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
-			for (const uri of removedFiles) {
-				this.emit('fileDeleted', { uri })
-			}
-			__profiler.task('Validate Cache')
+		await Promise.all([listDependencyFiles(), listProjectFiles()])
 
-			if (addedFiles.length > 0) {
-				this.bindUri(addedFiles)
-			}
-			__profiler.task('Bind URIs')
+		this.#dependencyFiles = new Set([...this.fs.listFiles()]
+			.filter((uri) => !this.shouldExclude(uri)))
+		this.#dependencyRoots = new Set(this.fs.listRoots())
 
-			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
-			__profiler.task('Sort URIs')
+		this.updateRoots()
+		__profiler.task('List URIs')
 
-			const fileCountByExtension = new Map<string, number>()
-			for (const file of files) {
-				const ext = fileUtil.extname(file)?.replace(/^\./, '')
-				if (ext) {
-					fileCountByExtension.set(ext, (fileCountByExtension.get(ext) ?? 0) + 1)
-				}
+		for (const [id, { checksum, registrar }] of this.meta.symbolRegistrars) {
+			const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
+			if (cacheChecksum === undefined || checksum !== cacheChecksum) {
+				this.symbols.clear({ contributor: `symbol_registrar/${id}` })
+				this.symbols.contributeAs(`symbol_registrar/${id}`, () => {
+					registrar(this.symbols, { logger: this.logger })
+				})
+				this.emit('symbolRegistrarExecuted', { id, checksum })
+			} else {
+				this.logger.info(`[SymbolRegistrar] Skipped “${id}” thanks to cache ${checksum}`)
 			}
-			this.logger.info(`[Project#ready] == Files to bind ==`)
-			for (const [ext, count] of fileCountByExtension.entries()) {
-				this.logger.info(`[Project#ready] File extension ${ext}: ${count}`)
-			}
-
-			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
-			for (const uri of files) {
-				await this.ensureBindingStarted(uri)
-				__bindProfiler.task(uri)
-			}
-			__bindProfiler.finalize()
-			__profiler.task('Bind Files')
-
-			__profiler.finalize()
-			this.emit('ready', {})
 		}
-		this.#isReady = false
-		this.#readyPromise = ready()
-	}
+		__profiler.task('Register Symbols')
 
-	/**
-	 * Load the config file and initialize parsers and processors.
-	 */
-	async init(): Promise<this> {
-		await this.#initPromise
-		return this
-	}
+		for (const [uri, values] of Object.entries(this.cacheService.errors)) {
+			this.emit('documentErrored', { errors: values, uri })
+		}
+		__profiler.task('Pop Errors')
 
-	/**
-	 * Finish the initial run of parsing, binding, and checking the entire project.
-	 */
-	async ready(): Promise<this> {
-		await this.#readyPromise
+		const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
+		this.logger.info(
+			`[Project#ready] Files added/changed/removed: ${addedFiles.length}/${changedFiles.length}/${removedFiles.length}`,
+		)
+		for (const uri of removedFiles) {
+			this.emit('fileDeleted', { uri })
+		}
+		__profiler.task('Validate Cache')
+
+		if (addedFiles.length > 0) {
+			this.bindUri(addedFiles)
+		}
+		__profiler.task('Bind URIs')
+
+		const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
+		__profiler.task('Sort URIs')
+
+		const fileCountByExtension = new Map<string, number>()
+		for (const file of files) {
+			const ext = fileUtil.extname(file)?.replace(/^\./, '')
+			if (ext) {
+				fileCountByExtension.set(ext, (fileCountByExtension.get(ext) ?? 0) + 1)
+			}
+		}
+		this.logger.info(`[Project#ready] == Files to bind ==`)
+		for (const [ext, count] of fileCountByExtension.entries()) {
+			this.logger.info(`[Project#ready] File extension ${ext}: ${count}`)
+		}
+
+		const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
+		for (const uri of files) {
+			await this.ensureBindingStarted(uri)
+			__bindProfiler.task(uri)
+		}
+		__bindProfiler.finalize()
+		__profiler.task('Bind Files')
+
+		__profiler.finalize()
+		this.emit('ready', {})
+
+		this.#isReady = true
+
 		return this
 	}
 
@@ -605,16 +608,14 @@ export class Project implements ExternalEventEmitter {
 	 */
 	async close(): Promise<void> {
 		clearInterval(this.#cacheSaverIntervalId)
-		await this.#watcher.close()
+		await this.#watcher?.close()
 		await this.cacheService.save()
 	}
 
 	async restart(): Promise<void> {
 		try {
-			await this.#watcher.close()
 			this.#bindingInProgressUris.clear()
 			this.#symbolUpToDateUris.clear()
-			this.setReadyPromise()
 			await this.ready()
 		} catch (e) {
 			this.logger.error('[Project#reset]', e)
@@ -1008,11 +1009,11 @@ export class Project implements ExternalEventEmitter {
 	private shouldRemove(uri: string): boolean {
 		return (!this.#clientManagedUris.has(uri)
 			&& !this.#dependencyFiles?.has(uri)
-			&& !this.#watchedFiles.has(uri))
+			&& !this.watchedFiles.has(uri))
 	}
 
 	private isOnlyWatched(uri: string): boolean {
-		return (this.#watchedFiles.has(uri)
+		return (this.watchedFiles.has(uri)
 			&& !this.#clientManagedUris.has(uri)
 			&& !this.#dependencyFiles?.has(uri))
 	}

@@ -1,12 +1,7 @@
-import {
-	mockProjectData,
-	showWhitespaceGlyph,
-	testParser,
-} from '@spyglassmc/core/test-out/utils.js'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
+import { describe, it } from 'node:test'
 import { entry } from '../../lib/parser/index.js'
-import { tree } from './utils.js'
+import { tree } from './utils.ts'
 
 describe('mcfunction parser entry()', () => {
 	const cases: { content: string }[] = [
@@ -24,12 +19,12 @@ describe('mcfunction parser entry()', () => {
 		{ content: 'say \\\n hi \n # comment start \\\n end \n say hi' },
 	]
 	for (const { content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = entry(tree, () => undefined, {
 				lineContinuation: true,
 				macros: true,
 			})
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 
@@ -40,9 +35,9 @@ describe('mcfunction parser entry()', () => {
 		{ content: 'say trailing \\\n data' },
 	]
 	for (const { content } of casesWithoutBackslashContinuationSupport) {
-		it(`Parse "${showWhitespaceGlyph(content)}" without backslash continuation`, () => {
+		it(`Parse '${showWhitespaceGlyph(content)}' without backslash continuation`, (t) => {
 			const parser = entry(tree, () => undefined)
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 
@@ -51,9 +46,9 @@ describe('mcfunction parser entry()', () => {
 		{ content: '$this is a macro command $(with_args)' },
 	]
 	for (const { content } of casesWithoutMacroSupport) {
-		it(`Parse "${showWhitespaceGlyph(content)}" without macro support`, () => {
+		it(`Parse '${showWhitespaceGlyph(content)}' without macro support`, (t) => {
 			const parser = entry(tree, () => undefined)
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })

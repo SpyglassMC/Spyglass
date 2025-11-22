@@ -1,7 +1,7 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import { boolean } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('boolean()', () => {
 	const cases: { content: string }[] = [
@@ -11,9 +11,9 @@ describe('boolean()', () => {
 		{ content: 'foo' },
 	]
 	for (const { content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = boolean
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })

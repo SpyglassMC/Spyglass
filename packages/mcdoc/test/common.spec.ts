@@ -1,6 +1,6 @@
 import { identifierToSeg, segToIdentifier } from '@spyglassmc/mcdoc/lib/common.js'
-import { strict as assert } from 'assert'
-import { describe, it } from 'mocha'
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 
 describe('mcdoc common.ts', () => {
 	const suites: { identifier: string; segments: string[] }[] = [

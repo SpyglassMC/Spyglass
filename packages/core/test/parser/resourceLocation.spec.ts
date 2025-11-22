@@ -1,8 +1,8 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import type { ResourceLocationOptions } from '../../lib/index.js'
 import { resourceLocation } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('resourceLocation()', () => {
 	const suites: { options: ResourceLocationOptions; content: string }[] = [
@@ -22,10 +22,10 @@ describe('resourceLocation()', () => {
 	]
 	for (const { content, options } of suites) {
 		it(
-			`Parse "${showWhitespaceGlyph(content)}" with ${options.category}, ${options.allowTag}`,
-			() => {
+			`Parse '${showWhitespaceGlyph(content)}' with ${options.category}, ${options.allowTag}`,
+			(t) => {
 				const parser = resourceLocation(options)
-				snapshot(testParser(parser, content))
+				t.assert.snapshot(testParser(parser, content))
 			},
 		)
 	}

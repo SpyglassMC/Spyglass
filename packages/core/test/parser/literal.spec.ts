@@ -1,8 +1,8 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import type { LiteralOptions } from '../../lib/index.js'
 import { literal } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('literal()', () => {
 	const cases: { options: string[] | [LiteralOptions]; content: string }[] = [
@@ -13,9 +13,9 @@ describe('literal()', () => {
 		{ options: [{ pool: ['qux'] }], content: 'wrong' },
 	]
 	for (const { options, content } of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = literal(...(options as any))
-			snapshot(testParser(parser, content))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })

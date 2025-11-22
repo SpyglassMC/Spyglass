@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
+import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { TextDocument } from 'vscode-languageserver-textdocument'
