@@ -1,6 +1,6 @@
-import assert from 'assert'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
+
 import type { Config } from '../../lib/index.js'
 import { ConfigService } from '../../lib/index.js'
 
@@ -25,26 +25,26 @@ describe('ConfigService', () => {
 			assert.notEqual(base.env.dataSource, merged.env.dataSource)
 		})
 
-		it('Should merge empty overrides correctly', async () => {
-			snapshot(ConfigService.merge(base))
-			snapshot(ConfigService.merge(base, {}))
-			snapshot(ConfigService.merge(base, {}, {}))
+		it('Should merge empty overrides correctly', async (t) => {
+			t.assert.snapshot(ConfigService.merge(base))
+			t.assert.snapshot(ConfigService.merge(base, {}))
+			t.assert.snapshot(ConfigService.merge(base, {}, {}))
 		})
 
-		it('Should merge top-level overrides correctly', async () => {
-			snapshot(ConfigService.merge(base, { test: true }))
+		it('Should merge top-level overrides correctly', async (t) => {
+			t.assert.snapshot(ConfigService.merge(base, { test: true }))
 		})
 
-		it('Should merge nested overrides correctly', async () => {
-			snapshot(ConfigService.merge(base, { env: { dataSource: 'TEST' } }))
-			snapshot(ConfigService.merge(base, { env: { feature: {} } }))
-			snapshot(ConfigService.merge(base, { env: { feature: { b: true } } }))
-			snapshot(ConfigService.merge(base, { env: { feature: { b: true, c: 9 } } }))
-			snapshot(ConfigService.merge(base, { env: { dependencies: [] } }))
+		it('Should merge nested overrides correctly', async (t) => {
+			t.assert.snapshot(ConfigService.merge(base, { env: { dataSource: 'TEST' } }))
+			t.assert.snapshot(ConfigService.merge(base, { env: { feature: {} } }))
+			t.assert.snapshot(ConfigService.merge(base, { env: { feature: { b: true } } }))
+			t.assert.snapshot(ConfigService.merge(base, { env: { feature: { b: true, c: 9 } } }))
+			t.assert.snapshot(ConfigService.merge(base, { env: { dependencies: [] } }))
 		})
 
-		it('Should merge multiple overrides correctly', async () => {
-			snapshot(
+		it('Should merge multiple overrides correctly', async (t) => {
+			t.assert.snapshot(
 				ConfigService.merge(
 					base,
 					{ env: { dataSource: 'TEST', foo: 'bar' } },

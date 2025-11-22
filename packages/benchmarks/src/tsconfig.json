@@ -1,6 +1,7 @@
 {
-	"extends": "../../tsconfig-base",
+	"extends": "../../tsconfig-type-strip",
 	"compilerOptions": {
+		"noEmit": false,
 		"outDir": "../lib"
 	}
 }

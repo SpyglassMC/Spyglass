@@ -1,14 +1,13 @@
 import type { SymbolTable } from '@spyglassmc/core'
 import { SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 
 describe('SymbolUtil', () => {
 	const fileUri = 'spyglassmc://test_file'
 	const anotherFileUri = 'spyglassmc://another_test_file'
 	describe('contributeAs', () => {
-		it('Should execute correctly', () => {
+		it('Should execute correctly', (t) => {
 			const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 			symbols.contributeAs('uri_binder', () => {
 				symbols.query(fileUri, 'test', 'Bound').enter({
@@ -16,11 +15,11 @@ describe('SymbolUtil', () => {
 					usage: {},
 				})
 			})
-			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
+			t.assert.snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
 	})
 	describe('clear()', () => {
-		it('Should clear all', () => {
+		it('Should clear all', (t) => {
 			// Set up the symbol table.
 			const global: SymbolTable = {}
 			const symbols = new SymbolUtil(global, NodeJsExternals.event.EventEmitter)
@@ -48,10 +47,10 @@ describe('SymbolUtil', () => {
 			).member('ShouldBeKept5', (memberQuery) => {
 				memberQuery.enter({ usage: { type: 'definition' } })
 			})
-			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
+			t.assert.snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 
 			symbols.clear({ uri: fileUri })
-			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
+			t.assert.snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
 	})
 	describe('lookup()', () => {
@@ -93,16 +92,16 @@ describe('SymbolUtil', () => {
 			['Foo', 'Baz', 'Xer'],
 		]
 		for (const path of paths) {
-			it(`Should return correctly for “${path.join('.')}”`, () => {
+			it(`Should return correctly for “${path.join('.')}”`, (t) => {
 				const actual = symbols.lookup('advancement', path)
 
-				snapshot(SymbolFormatter.stringifyLookupResult(actual))
+				t.assert.snapshot(SymbolFormatter.stringifyLookupResult(actual))
 			})
 		}
-		it('Should return correctly when URI is not specified', () => {
+		it('Should return correctly when URI is not specified', (t) => {
 			const actual = symbols.lookup('advancement', ['Foo'])
 
-			snapshot(SymbolFormatter.stringifyLookupResult(actual))
+			t.assert.snapshot(SymbolFormatter.stringifyLookupResult(actual))
 		})
 	})
 	describe('query()', () => {
@@ -118,7 +117,7 @@ describe('SymbolUtil', () => {
 			['Foo', 'Baz', 'Xer'],
 		]
 		for (const path of paths) {
-			it(`Should return correctly for “${path.join('.')}”`, () => {
+			it(`Should return correctly for “${path.join('.')}”`, (t) => {
 				const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 				symbols.query(fileUri, 'advancement', 'Foo').enter({ usage: { type: 'definition' } })
 					.member(
@@ -132,16 +131,16 @@ describe('SymbolUtil', () => {
 
 				const query = symbols.query(fileUri, 'advancement', ...path)
 
-				snapshot(SymbolFormatter.stringifySymbol(query.symbol))
+				t.assert.snapshot(SymbolFormatter.stringifySymbol(query.symbol))
 
 				try {
 					query.enter({ data: { desc: 'Entered.' } })
 				} catch (e) {
-					snapshot(`${e}`)
+					t.assert.snapshot(`${e}`)
 				}
 
-				snapshot(SymbolFormatter.stringifySymbol(query.symbol))
-				snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
+				t.assert.snapshot(SymbolFormatter.stringifySymbol(query.symbol))
+				t.assert.snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 			})
 		}
 	})

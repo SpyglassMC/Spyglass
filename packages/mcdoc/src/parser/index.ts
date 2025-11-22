@@ -776,7 +776,6 @@ const typeArgBlock: Parser<TypeArgBlockNode> = setType(
 	]),
 )
 
-/* eslint-disable @typescript-eslint/indent */
 type GetTypeNode<T extends string, P extends Parser<AstNode | SyntaxUtil<AstNode>>> =
 	& { type: T }
 	& SyntaxUtil<
@@ -791,7 +790,6 @@ function typeBase<T extends string, P extends Parser<AstNode | SyntaxUtil<AstNod
 	parser: P,
 ): P extends InfallibleParser<AstNode | SyntaxUtil<AstNode>> ? InfallibleParser<GetTypeNode<T, P>>
 	: Parser<GetTypeNode<T, P>>
-/* eslint-enable @typescript-eslint/indent */
 function typeBase<T extends string>(
 	type: T,
 	parser: Parser,

@@ -3,12 +3,12 @@ import {
 	showWhitespaceGlyph,
 	snapshotWithUri,
 	testParser,
-} from '@spyglassmc/core/test-out/utils.js'
+} from '@spyglassmc/core/test/utils.ts'
 import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.js'
 import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
 import * as json from '@spyglassmc/json'
 import * as nbt from '@spyglassmc/nbt'
-import { describe, it } from 'mocha'
+import { describe, it } from 'node:test'
 
 const Suites: Partial<
 	Record<ArgumentTreeNode['parser'], { content: string[]; properties?: any; version?: string }[]>
@@ -230,16 +230,15 @@ describe('mcfunction argument parser', () => {
 				for (const string of content) {
 					const propertiesString = properties ? ` with ${JSON.stringify(properties)}` : ''
 					const versionString = version !== '1.15' ? ` in version ${version}` : ''
-					const itTitle = `Parse "${
+					const itTitle = `Parse '${
 						showWhitespaceGlyph(string)
-					}"${propertiesString}${versionString}`
-					it(itTitle, () => {
-						snapshotWithUri({
-							specName: `mcfunction argument ${parserName} ${itTitle}`,
+					}'${propertiesString}${versionString}`
+					it(itTitle, (t) => {
+						snapshotWithUri(t, {
 							uri: new URL(
 								`./argument/${
 									parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())
-								}.spec.js`,
+								}.spec.ts`,
 								import.meta.url,
 							),
 							value: testParser(argument(treeNode, [])!, string, {

@@ -1,8 +1,8 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import { integer } from '../../lib/index.js'
 import type { Options } from '../../lib/parser/integer.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('integer()', () => {
 	const pattern = /^[+-]?(?:0|[1-9][0-9]*)$/
@@ -20,18 +20,18 @@ describe('integer()', () => {
 			{ content: '0123' },
 		]
 		for (const { content } of cases) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				const parser = integer(option)
-				snapshot(testParser(parser, content))
+				t.assert.snapshot(testParser(parser, content))
 			})
 		}
 	})
 
 	describe('integer(failsOnEmpty)', () => {
 		describe('integer(failsOnEmpty=true)', () => {
-			it('Parse ""', () => {
+			it("Parse ''", (t) => {
 				const parser = integer({ pattern, failsOnEmpty: true })
-				snapshot(testParser(parser, ''))
+				t.assert.snapshot(testParser(parser, ''))
 			})
 		})
 	})
@@ -47,9 +47,9 @@ describe('integer()', () => {
 		for (const option of options) {
 			describe(`integer(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+					it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 						const parser = integer(option as any)
-						snapshot(testParser(parser, content))
+						t.assert.snapshot(testParser(parser, content))
 					})
 				}
 			})
