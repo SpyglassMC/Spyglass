@@ -1,6 +1,5 @@
-import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
+import { describe, it } from 'node:test'
 import { translationValueParser } from '../../../lib/json/parser/index.js'
 
 describe('translationValueParser()', () => {
@@ -18,8 +17,8 @@ describe('translationValueParser()', () => {
 		'hello %s %42$s',
 	]
 	for (const content of cases) {
-		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			snapshot(testParser(translationValueParser, content))
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
+			t.assert.snapshot(testParser(translationValueParser, content))
 		})
 	}
 })

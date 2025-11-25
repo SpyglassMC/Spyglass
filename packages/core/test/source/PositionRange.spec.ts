@@ -1,17 +1,16 @@
-import { strict as assert } from 'assert'
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 import { Position, PositionRange } from '../../lib/index.js'
 
 describe('PositionRange', () => {
 	describe('create()', () => {
-		it('Should create correctly', () => {
-			snapshot(PositionRange.create(1, 2, 3, 4))
-			snapshot(PositionRange.create(Position.create(1, 2), Position.create(3, 4)))
-			snapshot(PositionRange.create({}))
-			snapshot(PositionRange.create({ start: Position.create(1, 2) }))
-			snapshot(PositionRange.create({ end: Position.create(3, 4) }))
-			snapshot(
+		it('Should create correctly', (t) => {
+			t.assert.snapshot(PositionRange.create(1, 2, 3, 4))
+			t.assert.snapshot(PositionRange.create(Position.create(1, 2), Position.create(3, 4)))
+			t.assert.snapshot(PositionRange.create({}))
+			t.assert.snapshot(PositionRange.create({ start: Position.create(1, 2) }))
+			t.assert.snapshot(PositionRange.create({ end: Position.create(3, 4) }))
+			t.assert.snapshot(
 				PositionRange.create({ start: Position.create(1, 2), end: Position.create(3, 4) }),
 			)
 		})
@@ -109,9 +108,9 @@ describe('PositionRange', () => {
 		}
 	})
 	describe('constants', () => {
-		it('Should initialize correctly', () => {
-			snapshot(PositionRange.Beginning)
-			snapshot(PositionRange.Full)
+		it('Should initialize correctly', (t) => {
+			t.assert.snapshot(PositionRange.Beginning)
+			t.assert.snapshot(PositionRange.Full)
 		})
 	})
 })

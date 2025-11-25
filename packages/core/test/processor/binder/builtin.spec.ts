@@ -7,7 +7,7 @@ import type {
 	SyncBinder,
 } from '@spyglassmc/core'
 import { binder } from '@spyglassmc/core'
-import { assertType, typing } from '../../utils.js'
+import { assertType, typing } from '../../utils.ts'
 
 declare const stringAsyncBinder: AsyncBinder<StringNode>
 declare const stringSyncBinder: SyncBinder<StringNode>

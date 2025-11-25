@@ -1,6 +1,6 @@
 import type * as core from '@spyglassmc/core'
-import { showWhitespaceGlyph } from '@spyglassmc/core/test-out/utils.js'
-import snapshot from 'snap-shot-it'
+import { showWhitespaceGlyph } from '@spyglassmc/core/test/utils.ts'
+import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type * as ls from 'vscode-languageserver/node.js'
 import { semanticTokens } from '../../lib/util/toLS.js'
@@ -47,9 +47,9 @@ describe('semanticTokens', () => {
 				hasMultilineTokenSupport ? 'with' : 'without'
 			} multiline token support`
 			const itTitle = `Tokenize "${showWhitespaceGlyph(content)}" ${multilineStr}`
-			it(itTitle, () => {
+			it(itTitle, (t) => {
 				const { data } = semanticTokens(tokens, doc, hasMultilineTokenSupport)
-				snapshot(decodeSemanticTokens(data))
+				t.assert.snapshot(decodeSemanticTokens(data))
 			})
 		}
 	}

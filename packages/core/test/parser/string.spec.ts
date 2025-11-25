@@ -1,8 +1,8 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import type { StringOptions } from '../../lib/index.js'
 import { BrigadierUnquotableCharacterSet, string } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('string()', () => {
 	const suites: { title: string; options: StringOptions; contents: string[] }[] = [{
@@ -41,9 +41,9 @@ describe('string()', () => {
 	for (const { title, options, contents } of suites) {
 		describe(title, () => {
 			for (const content of contents) {
-				it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+				it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 					const parser = string(options)
-					snapshot(testParser(parser, content))
+					t.assert.snapshot(testParser(parser, content))
 				})
 			}
 		})

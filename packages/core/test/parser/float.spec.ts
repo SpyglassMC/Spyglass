@@ -1,8 +1,8 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import { float } from '../../lib/index.js'
 import type { Options } from '../../lib/parser/float.js'
-import { showWhitespaceGlyph, testParser } from '../utils.js'
+import { showWhitespaceGlyph, testParser } from '../utils.ts'
 
 describe('float()', () => {
 	const pattern = /[-+]?(?:[0-9]+\.|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?/i
@@ -17,9 +17,9 @@ describe('float()', () => {
 			{ content: '7e+3' },
 		]
 		for (const { content } of cases) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				const parser = float(option as any)
-				snapshot(testParser(parser, content))
+				t.assert.snapshot(testParser(parser, content))
 			})
 		}
 	})
@@ -37,9 +37,9 @@ describe('float()', () => {
 		for (const option of options) {
 			describe(`float(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+					it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 						const parser = float(option as any)
-						snapshot(testParser(parser, content))
+						t.assert.snapshot(testParser(parser, content))
 					})
 				}
 			})
@@ -50,9 +50,9 @@ describe('float()', () => {
 		const option: Options = { pattern, failsOnEmpty: true }
 		const cases: { content: string }[] = [{ content: '' }, { content: '7e+3' }]
 		for (const { content } of cases) {
-			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				const parser = float(option as any)
-				snapshot(testParser(parser, content))
+				t.assert.snapshot(testParser(parser, content))
 			})
 		}
 	})

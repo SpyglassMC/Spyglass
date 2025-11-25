@@ -1,10 +1,9 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
 import { ErrorReporter, ErrorSeverity, Range, Source } from '../../lib/index.js'
 
 describe('ErrorReporter', () => {
 	describe('report() & dump()', () => {
-		it('Should report and dump errors correctly', () => {
+		it('Should report and dump errors correctly', (t) => {
 			const err = new ErrorReporter()
 			err.report('Error message 1', Range.Beginning)
 			err.report(
@@ -12,15 +11,15 @@ describe('ErrorReporter', () => {
 				{ type: 'ast', range: Range.Beginning },
 				ErrorSeverity.Warning,
 			)
-			snapshot(err.dump())
+			t.assert.snapshot(err.dump())
 			const src = new Source('foobar')
 			src.cursor = 4
 			err.report('Error message 3', src)
-			snapshot(err.dump())
+			t.assert.snapshot(err.dump())
 		})
 	})
 	describe('absorb()', () => {
-		it('Should absorb another reporter', () => {
+		it('Should absorb another reporter', (t) => {
 			const err = new ErrorReporter()
 			err.report('Error message 1', Range.Beginning)
 			err.report('Error message 2', Range.Beginning, ErrorSeverity.Warning)
@@ -28,8 +27,8 @@ describe('ErrorReporter', () => {
 			tmpErr.report('Error message 3', Range.Beginning)
 			tmpErr.report('Error message 4', Range.Beginning, ErrorSeverity.Warning)
 			err.absorb(tmpErr)
-			snapshot(err)
-			snapshot(tmpErr)
+			t.assert.snapshot(err)
+			t.assert.snapshot(tmpErr)
 		})
 	})
 })

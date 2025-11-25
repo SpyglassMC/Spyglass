@@ -1,5 +1,5 @@
-import { describe, it } from 'mocha'
-import snapshot from 'snap-shot-it'
+import { describe, it } from 'node:test'
+
 import { AstNode, Range } from '../../lib/index.js'
 
 const TestNode: AstNode = {
@@ -37,18 +37,18 @@ describe('AstNode', () => {
 		describe('continuous', () => {
 			const suites: number[] = [0, 1, 5, 7, 9, 12]
 			for (const suite of suites) {
-				it(`Should return the node at ${suite}`, () => {
+				it(`Should return the node at ${suite}`, (t) => {
 					const node = AstNode.findDeepestChild({ node: TestNode, needle: suite })
-					snapshot(node ? { node: node.type } : 'undefined')
+					t.assert.snapshot(node ? { node: node.type } : 'undefined')
 				})
 			}
 		})
 		describe('discontinuous', () => {
 			const suites: number[] = [0, 3, 7, 12]
 			for (const suite of suites) {
-				it(`Should return the node at ${suite}`, () => {
+				it(`Should return the node at ${suite}`, (t) => {
 					const node = AstNode.findDeepestChild({ node: DiscontinuousTestNode, needle: suite })
-					snapshot(node ? { node: node.type } : 'undefined')
+					t.assert.snapshot(node ? { node: node.type } : 'undefined')
 				})
 			}
 		})

@@ -1,4 +1,3 @@
-**/coverage
 **/node_modules
 **/.eslintcache
 **/.nyc_output
@@ -6,9 +5,9 @@
 **/*.cpuprofile
 **/*.tsbuildinfo
 
+/.helix/languages.toml
 /.history
 /.vscode/settings.json
-/.mocharc.local.jsonc
 /.idea
 
 /packages/*/lib

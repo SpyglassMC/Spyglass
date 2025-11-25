@@ -27,26 +27,12 @@ import {
 	VanillaConfig,
 } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
-import { fail } from 'assert'
-import type { RootHookObject } from 'mocha'
-import { core as snapshotCore } from 'snap-shot-core'
-import type { URL } from 'url'
-import { fileURLToPath } from 'url'
-import { format } from 'util'
+import { fail } from 'node:assert/strict'
+import type { TestContext } from 'node:test'
+import type { URL } from 'node:url'
+import { fileURLToPath } from 'node:url'
+import { format } from 'node:util'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-
-export const mochaHooks: RootHookObject = {
-	beforeAll(done) {
-		// Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
-		Object.defineProperty(BigInt.prototype, 'toJSON', {
-			get() {
-				return () => String(this)
-			},
-		})
-
-		done()
-	},
-}
 
 export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 	const cacheRoot: RootUriString = data.cacheRoot ?? 'file:///cache/'
@@ -70,10 +56,10 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 }
 
 /**
- * @returns The string with `\t`, `\r`, `\n`, and `\\` replaced with non-special characters.
+ * @returns The string with `\t`, `\r`, and `\n` replaced with non-special characters.
  */
 export function showWhitespaceGlyph(string: string) {
-	return string.replace(/\t/g, '⮀').replace(/\r/g, '←').replace(/\n/g, '↓').replace(/\\/g, '⧵') // We replace normal back slashes with ⧵ (U+29f5) here, due to the snapshots being stupid and not escaping them before exporting.
+	return string.replace(/\t/g, '⮀').replace(/\r/g, '←').replace(/\n/g, '↓')
 }
 
 export function markOffsetInString(string: string, offset: number) {
@@ -109,7 +95,6 @@ function removeExtraProperties(
 	}
 }
 
-/* eslint-disable @typescript-eslint/indent */
 export function testParser(
 	parser: Parser<Returnable>,
 	text: string,
@@ -131,7 +116,6 @@ export function testParser(
 		simplifySymbol?: boolean
 	} = {},
 ): { node: Returnable | 'FAILURE'; errors: readonly LanguageError[] } {
-	/* eslint-enable @typescript-eslint/indent */
 	const src = new Source(text)
 	const ctx = ParserContext.create(mockProjectData(project), {
 		doc: TextDocument.create(uri, languageID, 0, text),
@@ -148,7 +132,7 @@ export function testParser(
 
 /**
  * A helper function for testing types.
- * This function has a signature similar to mocha's `describe` and `it` methods.
+ * This function has a signature similar to the `describe` and `it` methods from node:test.
  * The method passed into this function is never actually executed.
  */
 export function typing(_title: string, _fn: () => void): void {}
@@ -174,16 +158,29 @@ export function assertError(fn: () => void, errorCallback: (e: unknown) => void 
 	}
 }
 
+/**
+ * Stores a snapshot value as if it were created by a test file at the specified `uri`.
+ */
 export function snapshotWithUri(
-	{ specName, uri, value }: { specName: string; uri: URL; value: {} },
+	t: TestContext,
+	{ uri, value }: { uri: URL; value: object },
 ): void {
-	snapshotCore({
-		what: value,
-		file: fileURLToPath(uri),
-		specName,
-		ext: '.spec.js',
-		opts: { sortSnapshots: true, useRelativePath: true },
+	// A little hacky. `t.assert.snapshot()` uses the `filePath` defined on `t` to decide the path
+	// of the current test file:
+	// https://github.com/nodejs/node/blob/1ce22dd4d642c24bc217ec329cca8e92f5e8e8dc/lib/internal/test_runner/snapshot.js#L197
+	// So we can define our own property descripter at key `filePath` to shadow the one inherited
+	// from its `TestContext` prototype before `t.assert.snapshot()` is called to ensure our own
+	// custom test file path is used for the snapshot.
+	Object.defineProperty(t, 'filePath', {
+		get: () => fileURLToPath(uri),
+		enumerable: false,
+		configurable: true,
 	})
+	try {
+		t.assert.snapshot(value)
+	} finally {
+		Reflect.deleteProperty(t, 'filePath')
+	}
 }
 
 export interface SimpleProjectState {
@@ -199,27 +196,33 @@ export class SimpleProject {
 
 	readonly #symbols = new SymbolUtil(this.#global, NodeJsExternals.event.EventEmitter)
 
+	readonly #meta: MetaRegistry
+	readonly #files: readonly { uri: string; content: string }[]
+
 	#hasDumped = false
 
 	get projectData(): ProjectData {
 		return mockProjectData({
 			cacheRoot: 'file:///.cache/',
 			ensureBindingStarted: async (uri) => this.bindSingleFile(uri),
-			meta: this.meta,
+			meta: this.#meta,
 			roots: ['file:///'],
 			symbols: this.#symbols,
 		})
 	}
 
 	constructor(
-		private readonly meta: MetaRegistry,
-		private readonly files: readonly { uri: string; content: string }[],
+		meta: MetaRegistry,
+		files: readonly { uri: string; content: string }[],
 	) {
+		this.#meta = meta
+		this.#files = files
+
 		// Bind URIs
 		const ctx = UriBinderContext.create(this.projectData)
 		ctx.symbols.contributeAs('uri_binder', () => {
 			const uris = files.map((f) => f.uri)
-			for (const binder of this.meta.uriBinders) {
+			for (const binder of this.#meta.uriBinders) {
 				binder(uris, ctx)
 			}
 		})
@@ -230,13 +233,13 @@ export class SimpleProject {
 			throw new Error('dumpState() has been called.')
 		}
 
-		for (const { uri, content } of this.files) {
+		for (const { uri, content } of this.#files) {
 			const src = new Source(content)
 			const languageId = uri.slice(uri.lastIndexOf('.') + 1)
 			const ctx = ParserContext.create(this.projectData, {
 				doc: TextDocument.create(uri, languageId, 0, content),
 			})
-			const parser = this.meta.getParserForLanguageId(languageId)!
+			const parser = this.#meta.getParserForLanguageId(languageId)!
 			const node = file(parser)(src, ctx)
 			this.#nodes[uri] = node
 		}
@@ -247,7 +250,7 @@ export class SimpleProject {
 			throw new Error('dumpState() has been called.')
 		}
 
-		for (const { uri, content } of this.files) {
+		for (const { uri, content } of this.#files) {
 			await this.bindSingleFile(uri, content)
 		}
 	}
@@ -255,7 +258,7 @@ export class SimpleProject {
 	readonly #bindingInProgressUris = new Set<string>()
 	private async bindSingleFile(
 		uri: string,
-		content: string = this.files.find((f) => f.uri === uri)?.content!,
+		content: string = this.#files.find((f) => f.uri === uri)?.content!,
 	): Promise<void> {
 		if (this.#bindingInProgressUris.has(uri)) {
 			return
@@ -264,7 +267,7 @@ export class SimpleProject {
 		this.#bindingInProgressUris.add(uri)
 		const node = this.#nodes[uri]
 		try {
-			const binder = this.meta.getBinder(node.type)
+			const binder = this.#meta.getBinder(node.type)
 			const ctx = BinderContext.create(this.projectData, {
 				doc: TextDocument.create(uri, '', 0, content),
 			})
