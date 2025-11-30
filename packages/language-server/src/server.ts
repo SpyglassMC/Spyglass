@@ -226,7 +226,7 @@ function startDynamicSemanticTokensRegistration() {
 
 	function unregisterDynamicSemanticTokens() {
 		logger.info('[unregisterDynamicSemanticTokens] Unregistering dynamic semantic tokens')
-		dynamicSemanticTokensDiposable?.then(disposable => disposable.dispose())
+		void dynamicSemanticTokensDiposable?.then(disposable => disposable.dispose())
 		dynamicSemanticTokensDiposable = undefined
 	}
 
