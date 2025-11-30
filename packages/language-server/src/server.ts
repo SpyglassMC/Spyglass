@@ -41,6 +41,17 @@ const logger: core.Logger = {
 }
 let service!: core.Service
 
+const semanticTokensRegistrationId = 'SemanticTokensMain'
+function buildSemanticTokensCapability(): ls.SemanticTokensRegistrationOptions {
+	return {
+		documentSelector: toLS.documentSelector(service.project.meta),
+		legend: toLS.semanticTokensLegend(),
+		full: { delta: false },
+		range: true,
+		id: semanticTokensRegistrationId,
+	}
+}
+
 connection.onInitialize(async (params) => {
 	const initializationOptions = params.initializationOptions as
 		| CustomInitializationOptions
@@ -130,12 +141,7 @@ connection.onInitialize(async (params) => {
 			documentSymbolProvider: { label: 'Spyglass' },
 			hoverProvider: {},
 			inlayHintProvider: {},
-			semanticTokensProvider: {
-				documentSelector: toLS.documentSelector(service.project.meta),
-				legend: toLS.semanticTokensLegend(),
-				full: { delta: false },
-				range: true,
-			},
+			semanticTokensProvider: buildSemanticTokensCapability(),
 			signatureHelpProvider: { triggerCharacters: [' '] },
 			textDocumentSync: { change: ls.TextDocumentSyncKind.Incremental, openClose: true },
 			workspaceSymbolProvider: {},
@@ -159,6 +165,9 @@ connection.onInitialized(async () => {
 			{ documentSelector: [{ language: 'mcdoc' }] },
 		)
 	}
+
+	startDynamicSemanticTokensRegistration()
+
 	await service.project.ready()
 	if (capabilities.workspace?.workspaceFolders) {
 		connection.workspace.onDidChangeWorkspaceFolders(async () => {
@@ -167,6 +176,73 @@ connection.onInitialized(async () => {
 		})
 	}
 })
+
+function startDynamicSemanticTokensRegistration() {
+	if (!capabilities.textDocument?.semanticTokens?.dynamicRegistration) {
+		logger.info(
+			"[startDynamicSemanticTokensRegistration] LanguageClient didn't permit dynamic registration for semantic tokens. Semantic Tokens will stay statically registered",
+		)
+		return
+	}
+
+	// Semantic tokens are registered dynamically, such that if they are disabled in the config, the language client
+	// knows that Spyglass won't be providing tokens instead of just receiving an empty tokens list.
+	// This could otherwise cause problems with other language servers if the client decides to override their semantic tokens
+	// with the empty tokens list provided by Spyglass.
+
+	let hasUnregisteredInitialSemanticTokens = false
+
+	// The initially registered capability has to be handled separately, because we don't have a Disposable for it
+	// like with dynamically registered capabilities.
+	function unregisterInitialSemanticTokens() {
+		if (hasUnregisteredInitialSemanticTokens) {
+			return
+		}
+		logger.info('[unregisterInitialSemanticTokens] Unregistering initial semantic tokens')
+		void connection.client.connection.sendRequest(
+			ls.UnregistrationRequest.method,
+			{
+				unregisterations: [{
+					id: semanticTokensRegistrationId,
+					method: ls.SemanticTokensRegistrationType.method,
+				}],
+			},
+		)
+		hasUnregisteredInitialSemanticTokens = true
+	}
+
+	let dynamicSemanticTokensDiposable: Promise<ls.Disposable> | undefined = undefined
+
+	function registerDynamicSemanticTokens() {
+		if (dynamicSemanticTokensDiposable !== undefined) {
+			return
+		}
+		logger.info('[registerDynamicSemanticTokens] Registering dynamic semantic tokens')
+		dynamicSemanticTokensDiposable = connection.client.register(
+			ls.SemanticTokensRegistrationType.type,
+			buildSemanticTokensCapability(),
+		)
+	}
+
+	function unregisterDynamicSemanticTokens() {
+		logger.info('[unregisterDynamicSemanticTokens] Unregistering dynamic semantic tokens')
+		dynamicSemanticTokensDiposable?.then(disposable => disposable.dispose())
+		dynamicSemanticTokensDiposable = undefined
+	}
+
+	if (!service.project.config.env.feature.semanticColoring) {
+		unregisterInitialSemanticTokens()
+	}
+
+	service.project.on('configChanged', config => {
+		if (config.env.feature.semanticColoring) {
+			registerDynamicSemanticTokens()
+		} else {
+			unregisterInitialSemanticTokens()
+			unregisterDynamicSemanticTokens()
+		}
+	})
+}
 
 connection.onDidOpenTextDocument(
 	({ textDocument: { text, uri, version, languageId: languageID } }) => {
