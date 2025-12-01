@@ -40,6 +40,14 @@ exports[`mcdoc __fixture__ > hoisting 1`] = `
                   "kind": "reference",
                   "path": "::test::Bar"
                 }
+              },
+              {
+                "kind": "pair",
+                "key": "",
+                "type": {
+                  "kind": "reference",
+                  "path": "::test::"
+                }
               }
             ]
           }
@@ -110,6 +118,42 @@ exports[`mcdoc __fixture__ > hoisting 1`] = `
                   "end": {
                     "line": 1,
                     "character": 9
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          },
+          "": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 24,
+                  "end": 24
+                },
+                "posRange": {
+                  "start": {
+                    "line": 2,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 2,
+                    "character": 0
+                  }
+                },
+                "fullRange": {
+                  "start": 24,
+                  "end": 24
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 2,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 2,
+                    "character": 0
                   }
                 },
                 "contributor": "binder"
@@ -293,6 +337,56 @@ exports[`mcdoc __fixture__ > hoisting 1`] = `
                         "start": 14,
                         "end": 22
                       }
+                    },
+                    {
+                      "type": "mcdoc:struct/field/pair",
+                      "children": [
+                        {
+                          "type": "mcdoc:identifier",
+                          "range": {
+                            "start": 24,
+                            "end": 24
+                          },
+                          "value": "",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::Foo",
+                              ""
+                            ]
+                          }
+                        },
+                        {
+                          "type": "mcdoc:type/reference",
+                          "children": [
+                            {
+                              "type": "mcdoc:path",
+                              "children": [
+                                {
+                                  "type": "mcdoc:identifier",
+                                  "range": {
+                                    "start": 24,
+                                    "end": 24
+                                  },
+                                  "value": ""
+                                }
+                              ],
+                              "range": {
+                                "start": 24,
+                                "end": 24
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 24,
+                            "end": 24
+                          }
+                        }
+                      ],
+                      "range": {
+                        "start": 24,
+                        "end": 24
+                      }
                     }
                   ],
                   "range": {
@@ -354,8 +448,42 @@ exports[`mcdoc __fixture__ > hoisting 1`] = `
         }
       ],
       "locals": {},
-      "parserErrors": [],
-      "binderErrors": []
+      "parserErrors": [
+        {
+          "range": {
+            "start": 24,
+            "end": 24
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 24,
+            "end": 24
+          },
+          "message": "Expected “:” but got “}”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 24,
+            "end": 24
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        }
+      ],
+      "binderErrors": [
+        {
+          "range": {
+            "start": 24,
+            "end": 24
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
+        }
+      ]
     }
   }
 }

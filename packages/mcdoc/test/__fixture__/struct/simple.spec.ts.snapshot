@@ -64,6 +64,14 @@ exports[`mcdoc __fixture__ > struct/simple 1`] = `
                   ]
                 },
                 "optional": true
+              },
+              {
+                "kind": "pair",
+                "key": "",
+                "type": {
+                  "kind": "reference",
+                  "path": "::test::"
+                }
               }
             ]
           }
@@ -170,6 +178,42 @@ exports[`mcdoc __fixture__ > struct/simple 1`] = `
                   "end": {
                     "line": 3,
                     "character": 19
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          },
+          "": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 64,
+                  "end": 64
+                },
+                "posRange": {
+                  "start": {
+                    "line": 4,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 4,
+                    "character": 0
+                  }
+                },
+                "fullRange": {
+                  "start": 64,
+                  "end": 64
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 4,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 4,
+                    "character": 0
                   }
                 },
                 "contributor": "binder"
@@ -364,6 +408,56 @@ exports[`mcdoc __fixture__ > struct/simple 1`] = `
                         "end": 62
                       },
                       "isOptional": true
+                    },
+                    {
+                      "type": "mcdoc:struct/field/pair",
+                      "children": [
+                        {
+                          "type": "mcdoc:identifier",
+                          "range": {
+                            "start": 64,
+                            "end": 64
+                          },
+                          "value": "",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::Simple",
+                              ""
+                            ]
+                          }
+                        },
+                        {
+                          "type": "mcdoc:type/reference",
+                          "children": [
+                            {
+                              "type": "mcdoc:path",
+                              "children": [
+                                {
+                                  "type": "mcdoc:identifier",
+                                  "range": {
+                                    "start": 64,
+                                    "end": 64
+                                  },
+                                  "value": ""
+                                }
+                              ],
+                              "range": {
+                                "start": 64,
+                                "end": 64
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 64,
+                            "end": 64
+                          }
+                        }
+                      ],
+                      "range": {
+                        "start": 64,
+                        "end": 64
+                      }
                     }
                   ],
                   "range": {
@@ -385,8 +479,42 @@ exports[`mcdoc __fixture__ > struct/simple 1`] = `
         }
       ],
       "locals": {},
-      "parserErrors": [],
-      "binderErrors": []
+      "parserErrors": [
+        {
+          "range": {
+            "start": 64,
+            "end": 64
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 64,
+            "end": 64
+          },
+          "message": "Expected “:” but got “}”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 64,
+            "end": 64
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        }
+      ],
+      "binderErrors": [
+        {
+          "range": {
+            "start": 64,
+            "end": 64
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
+        }
+      ]
     }
   }
 }

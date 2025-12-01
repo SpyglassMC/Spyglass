@@ -52,8 +52,24 @@ exports[`mcdoc __fixture__ > struct/duplicated keys in nested anonymous struct 1
                       "type": {
                         "kind": "string"
                       }
+                    },
+                    {
+                      "kind": "pair",
+                      "key": "",
+                      "type": {
+                        "kind": "reference",
+                        "path": "::test::"
+                      }
                     }
                   ]
+                }
+              },
+              {
+                "kind": "pair",
+                "key": "",
+                "type": {
+                  "kind": "reference",
+                  "path": "::test::"
                 }
               }
             ]
@@ -130,6 +146,42 @@ exports[`mcdoc __fixture__ > struct/duplicated keys in nested anonymous struct 1
                 "contributor": "binder"
               }
             ]
+          },
+          "": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 74,
+                  "end": 74
+                },
+                "posRange": {
+                  "start": {
+                    "line": 5,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 5,
+                    "character": 0
+                  }
+                },
+                "fullRange": {
+                  "start": 74,
+                  "end": 74
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 5,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 5,
+                    "character": 0
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
           }
         }
       },
@@ -150,6 +202,14 @@ exports[`mcdoc __fixture__ > struct/duplicated keys in nested anonymous struct 1
                 "key": "naughty",
                 "type": {
                   "kind": "string"
+                }
+              },
+              {
+                "kind": "pair",
+                "key": "",
+                "type": {
+                  "kind": "reference",
+                  "path": "::test::"
                 }
               }
             ]
@@ -207,6 +267,42 @@ exports[`mcdoc __fixture__ > struct/duplicated keys in nested anonymous struct 1
                   "end": {
                     "line": 2,
                     "character": 18
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          },
+          "": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 71,
+                  "end": 71
+                },
+                "posRange": {
+                  "start": {
+                    "line": 4,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 4,
+                    "character": 1
+                  }
+                },
+                "fullRange": {
+                  "start": 71,
+                  "end": 71
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 4,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 4,
+                    "character": 1
                   }
                 },
                 "contributor": "binder"
@@ -372,6 +468,56 @@ exports[`mcdoc __fixture__ > struct/duplicated keys in nested anonymous struct 1
                                     "start": 53,
                                     "end": 68
                                   }
+                                },
+                                {
+                                  "type": "mcdoc:struct/field/pair",
+                                  "children": [
+                                    {
+                                      "type": "mcdoc:identifier",
+                                      "range": {
+                                        "start": 71,
+                                        "end": 71
+                                      },
+                                      "value": "",
+                                      "symbol": {
+                                        "category": "mcdoc",
+                                        "path": [
+                                          "::test::<anonymous 0>",
+                                          ""
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "type": "mcdoc:type/reference",
+                                      "children": [
+                                        {
+                                          "type": "mcdoc:path",
+                                          "children": [
+                                            {
+                                              "type": "mcdoc:identifier",
+                                              "range": {
+                                                "start": 71,
+                                                "end": 71
+                                              },
+                                              "value": ""
+                                            }
+                                          ],
+                                          "range": {
+                                            "start": 71,
+                                            "end": 71
+                                          }
+                                        }
+                                      ],
+                                      "range": {
+                                        "start": 71,
+                                        "end": 71
+                                      }
+                                    }
+                                  ],
+                                  "range": {
+                                    "start": 71,
+                                    "end": 71
+                                  }
                                 }
                               ],
                               "range": {
@@ -389,6 +535,56 @@ exports[`mcdoc __fixture__ > struct/duplicated keys in nested anonymous struct 1
                       "range": {
                         "start": 15,
                         "end": 72
+                      }
+                    },
+                    {
+                      "type": "mcdoc:struct/field/pair",
+                      "children": [
+                        {
+                          "type": "mcdoc:identifier",
+                          "range": {
+                            "start": 74,
+                            "end": 74
+                          },
+                          "value": "",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::Test",
+                              ""
+                            ]
+                          }
+                        },
+                        {
+                          "type": "mcdoc:type/reference",
+                          "children": [
+                            {
+                              "type": "mcdoc:path",
+                              "children": [
+                                {
+                                  "type": "mcdoc:identifier",
+                                  "range": {
+                                    "start": 74,
+                                    "end": 74
+                                  },
+                                  "value": ""
+                                }
+                              ],
+                              "range": {
+                                "start": 74,
+                                "end": 74
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 74,
+                            "end": 74
+                          }
+                        }
+                      ],
+                      "range": {
+                        "start": 74,
+                        "end": 74
                       }
                     }
                   ],
@@ -411,7 +607,56 @@ exports[`mcdoc __fixture__ > struct/duplicated keys in nested anonymous struct 1
         }
       ],
       "locals": {},
-      "parserErrors": [],
+      "parserErrors": [
+        {
+          "range": {
+            "start": 71,
+            "end": 71
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 71,
+            "end": 71
+          },
+          "message": "Expected “:” but got “}”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 71,
+            "end": 71
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 74,
+            "end": 74
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 74,
+            "end": 74
+          },
+          "message": "Expected “:” but got “}”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 74,
+            "end": 74
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        }
+      ],
       "binderErrors": [
         {
           "range": {
@@ -459,6 +704,22 @@ exports[`mcdoc __fixture__ > struct/duplicated keys in nested anonymous struct 1
               }
             ]
           }
+        },
+        {
+          "range": {
+            "start": 71,
+            "end": 71
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
+        },
+        {
+          "range": {
+            "start": 74,
+            "end": 74
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
         }
       ]
     }

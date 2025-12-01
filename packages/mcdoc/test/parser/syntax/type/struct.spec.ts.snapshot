@@ -575,6 +575,49 @@ exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello 
               "start": 160,
               "end": 185
             }
+          },
+          {
+            "type": "mcdoc:struct/field/pair",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 191,
+                  "end": 191
+                },
+                "value": ""
+              },
+              {
+                "type": "mcdoc:type/reference",
+                "children": [
+                  {
+                    "type": "mcdoc:path",
+                    "children": [
+                      {
+                        "type": "mcdoc:identifier",
+                        "range": {
+                          "start": 191,
+                          "end": 191
+                        },
+                        "value": ""
+                      }
+                    ],
+                    "range": {
+                      "start": 191,
+                      "end": 191
+                    }
+                  }
+                ],
+                "range": {
+                  "start": 191,
+                  "end": 191
+                }
+              }
+            ],
+            "range": {
+              "start": 191,
+              "end": 191
+            }
           }
         ],
         "range": {
@@ -588,7 +631,32 @@ exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello 
       "end": 192
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 191,
+        "end": 191
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 191,
+        "end": 191
+      },
+      "message": "Expected “:” but got “}”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 191,
+        "end": 191
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    }
+  ]
 }
 `;
 
