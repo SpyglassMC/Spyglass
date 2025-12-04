@@ -41,14 +41,12 @@ const logger: core.Logger = {
 }
 let service!: core.Service
 
-const semanticTokensRegistrationId = 'SemanticTokensMain'
 function buildSemanticTokensCapability(): ls.SemanticTokensRegistrationOptions {
 	return {
 		documentSelector: toLS.documentSelector(service.project.meta),
 		legend: toLS.semanticTokensLegend(),
 		full: { delta: false },
 		range: true,
-		id: semanticTokensRegistrationId,
 	}
 }
 
@@ -120,6 +118,14 @@ connection.onInitialize(async (params) => {
 		logger.error('[new Service]', e)
 	}
 
+	let semanticTokensProvider: ls.SemanticTokensRegistrationOptions | undefined = undefined
+	if (!capabilities.textDocument?.semanticTokens?.dynamicRegistration) {
+		logger.info(
+			"[startDynamicSemanticTokensRegistration] LanguageClient didn't permit dynamic registration for semantic tokens. Registering semantic tokens statically instead...",
+		)
+		semanticTokensProvider = buildSemanticTokensCapability()
+	}
+
 	const customCapabilities: CustomServerCapabilities = {
 		dataHackPubify: true,
 		resetProjectCache: true,
@@ -141,7 +147,7 @@ connection.onInitialize(async (params) => {
 			documentSymbolProvider: { label: 'Spyglass' },
 			hoverProvider: {},
 			inlayHintProvider: {},
-			semanticTokensProvider: buildSemanticTokensCapability(),
+			semanticTokensProvider,
 			signatureHelpProvider: { triggerCharacters: [' '] },
 			textDocumentSync: { change: ls.TextDocumentSyncKind.Incremental, openClose: true },
 			workspaceSymbolProvider: {},
@@ -178,37 +184,13 @@ connection.onInitialized(async () => {
 })
 
 function startDynamicSemanticTokensRegistration() {
-	if (!capabilities.textDocument?.semanticTokens?.dynamicRegistration) {
-		logger.info(
-			"[startDynamicSemanticTokensRegistration] LanguageClient didn't permit dynamic registration for semantic tokens. Semantic Tokens will stay statically registered",
-		)
-		return
-	}
-
-	// Semantic tokens are registered dynamically, such that if they are disabled in the config, the language client
+	// If the client permits it, semantic tokens are registered dynamically, such that if they are disabled in the config, the language client
 	// knows that Spyglass won't be providing tokens instead of just receiving an empty tokens list.
 	// This could otherwise cause problems with other language servers if the client decides to override their semantic tokens
 	// with the empty tokens list provided by Spyglass.
 
-	let hasUnregisteredInitialSemanticTokens = false
-
-	// The initially registered capability has to be handled separately, because we don't have a Disposable for it
-	// like with dynamically registered capabilities.
-	function unregisterInitialSemanticTokens() {
-		if (hasUnregisteredInitialSemanticTokens) {
-			return
-		}
-		logger.info('[unregisterInitialSemanticTokens] Unregistering initial semantic tokens')
-		void connection.client.connection.sendRequest(
-			ls.UnregistrationRequest.method,
-			{
-				unregisterations: [{
-					id: semanticTokensRegistrationId,
-					method: ls.SemanticTokensRegistrationType.method,
-				}],
-			},
-		)
-		hasUnregisteredInitialSemanticTokens = true
+	if (!capabilities.textDocument?.semanticTokens?.dynamicRegistration) {
+		return
 	}
 
 	let dynamicSemanticTokensDiposable: Promise<ls.Disposable> | undefined = undefined
@@ -230,15 +212,14 @@ function startDynamicSemanticTokensRegistration() {
 		dynamicSemanticTokensDiposable = undefined
 	}
 
-	if (!service.project.config.env.feature.semanticColoring) {
-		unregisterInitialSemanticTokens()
+	if (service.project.config.env.feature.semanticColoring) {
+		registerDynamicSemanticTokens()
 	}
 
 	service.project.on('configChanged', config => {
 		if (config.env.feature.semanticColoring) {
 			registerDynamicSemanticTokens()
 		} else {
-			unregisterInitialSemanticTokens()
 			unregisterDynamicSemanticTokens()
 		}
 	})
