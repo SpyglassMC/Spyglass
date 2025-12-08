@@ -245,6 +245,7 @@ export class Project implements ExternalEventEmitter {
 	on(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
 	on(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
 	on(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
+	on(event: 'configChanged', callbackFn: (data: Config) => void): this
 	on(event: string, callbackFn: (...args: any[]) => unknown): this {
 		this.#eventEmitter.on(event, callbackFn)
 		return this
@@ -260,6 +261,7 @@ export class Project implements ExternalEventEmitter {
 	once(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
 	once(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
 	once(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
+	once(event: 'configChanged', callbackFn: (data: Config) => void): this
 	once(event: string, callbackFn: (...args: any[]) => unknown): this {
 		this.#eventEmitter.once(event, callbackFn)
 		return this
@@ -272,6 +274,7 @@ export class Project implements ExternalEventEmitter {
 	emit(event: 'ready', data: EmptyEvent): boolean
 	emit(event: 'rootsUpdated', data: RootsEvent): boolean
 	emit(event: 'symbolRegistrarExecuted', data: SymbolRegistrarEvent): boolean
+	emit(event: 'configChanged', data: Config): boolean
 	emit(event: string, ...args: unknown[]): boolean {
 		return this.#eventEmitter.emit(event, ...args)
 	}
@@ -325,6 +328,7 @@ export class Project implements ExternalEventEmitter {
 		this.#configService.on('changed', ({ config }) => {
 			this.config = config
 			this.logger.info('[Project] [Config] Changed')
+			this.emit('configChanged', config)
 		}).on(
 			'error',
 			({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading ${uri}`, error),
