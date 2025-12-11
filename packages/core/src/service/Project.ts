@@ -966,7 +966,8 @@ export class Project implements ExternalEventEmitter {
 	 *                 its file extension.
 	 */
 	public shouldExclude(uri: string, language?: string): boolean {
-		return !this.isSupportedLanguage(uri, language) || this.isUserExcluded(uri)
+		return (!this.isSupportedLanguage(uri, language) && !ConfigService.isConfigFile(uri))
+			|| this.isUserExcluded(uri)
 	}
 
 	private isSupportedLanguage(uri: string, language?: string): boolean {
