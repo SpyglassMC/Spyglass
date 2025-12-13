@@ -129,11 +129,11 @@
 							},
 							"since": {
 								"type": "string",
-								"pattern": "^1\\.\\d+(\\.\\d+)?$"
+								"pattern": "^\\d+\\.\\d+(\\.\\d+)?$"
 							},
 							"until": {
 								"type": "string",
-								"pattern": "^1\\.\\d+(\\.\\d+)$"
+								"pattern": "^\\d+\\.\\d+(\\.\\d+)$"
 							}
 						},
 						"additionalProperties": false,

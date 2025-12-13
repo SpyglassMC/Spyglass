@@ -42,11 +42,11 @@ export interface CustomResourceConfig {
 	/**
 	 * The first minecraft version the dispatched resource is available in.
 	 */
-	since?: `1.${number}`
+	since?: `${bigint}.${bigint}.${bigint}` | `${bigint}.${bigint}`
 	/**
 	 * The first minecraft version the dispatched resource is no longer available in.
 	 */
-	until?: `1.${number}`
+	until?: `${bigint}.${bigint}.${bigint}` | `${bigint}.${bigint}`
 }
 
 export interface EnvConfig {
