@@ -168,6 +168,7 @@ connection.onInitialized(async () => {
 		? new LspFsWatcher({
 			capabilities,
 			connection,
+			externals,
 			locations: projectRoots,
 			logger,
 			predicate: (uri) => !service.project.shouldExclude(uri),

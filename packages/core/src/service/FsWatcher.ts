@@ -5,8 +5,9 @@ import type { UriStore } from '../common/index.js'
  * Changes to directories should not be reported.
  */
 export interface FsWatcher {
-	get isReady(): boolean
 	get watchedFiles(): UriStore
+
+	ready(): Promise<void>
 
 	on(eventName: 'ready', listener: () => unknown): this
 	once(eventName: 'ready', listener: () => unknown): this

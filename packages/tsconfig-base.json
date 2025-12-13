@@ -6,10 +6,13 @@
 		"moduleResolution": "Bundler",
 		"target": "ES2022",
 		"lib": [
-			"ES2023",
+			"ES2024",
+			"ESNext.Array",
+			"ESNext.Collection",
+			"ESNext.Iterator",
 			"DOM"
 		],
-		
+
 		"alwaysStrict": true,
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,

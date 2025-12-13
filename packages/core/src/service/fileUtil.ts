@@ -101,6 +101,10 @@ export namespace fileUtil {
 		return isRootUri(uri) ? uri : (`${uri}/` as const)
 	}
 
+	export function trimEndingSlash(uri: string): string {
+		return isRootUri(uri) ? uri.slice(0, -1) : uri
+	}
+
 	export function join(fromUri: string, toUri: string): string {
 		return (ensureEndingSlash(fromUri) + (toUri.startsWith('/') ? toUri.slice(1) : toUri))
 	}

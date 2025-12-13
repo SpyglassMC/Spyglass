@@ -1,12 +1,12 @@
 import * as core from '@spyglassmc/core'
-import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import EventEmitter from 'events'
 import * as ls from 'vscode-languageserver/node.js'
 
 export interface LspFsWatcherOptions {
 	capabilities: ls.ClientCapabilities
 	connection: ls.Connection
-	locations: core.FsLocation[]
+	externals: core.Externals
+	locations: readonly core.FsLocation[]
 	logger: core.Logger
 	predicate: (uri: string) => boolean
 }
@@ -17,22 +17,26 @@ export interface LspFsWatcherOptions {
  */
 export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 	#ready = false
+	readonly #connection: ls.Connection
+	readonly #externals: core.Externals
+	readonly #locations: readonly core.FsLocation[]
 	readonly #logger: core.Logger
 	readonly #predicate: (uri: string) => boolean
-	readonly #readyPromise: Promise<void>
 	readonly #watchedFiles = new core.UriStore()
 	#lspDisposables: ls.Disposable[] = []
 
-	get isReady() {
-		return this.#ready
-	}
 	get watchedFiles() {
 		return this.#watchedFiles
 	}
 
-	constructor({ capabilities, connection, locations, logger, predicate }: LspFsWatcherOptions) {
+	constructor(
+		{ capabilities, connection, externals, locations, logger, predicate }: LspFsWatcherOptions,
+	) {
 		super()
 
+		this.#connection = connection
+		this.#externals = externals
+		this.#locations = locations
 		this.#logger = logger
 		this.#predicate = predicate
 
@@ -41,14 +45,16 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 				'LspFsWatcher requires dynamic registration capability for didChangeWatchedFiles notifications',
 			)
 		}
-
-		this.#readyPromise = this.#initialize(connection, locations)
 	}
 
-	async #initialize(connection: ls.Connection, locations: core.FsLocation[]) {
+	async ready() {
 		try {
 			this.#lspDisposables = [
-				await connection.client.register(
+				this.#connection.onDidChangeWatchedFiles((params) => {
+					this.#logger.info('[LspFsWatcher] raw LSP changes', JSON.stringify(params))
+					return this.#onLspDidChangeWatchedFiles(params)
+				}),
+				await this.#connection.client.register(
 					ls.DidChangeWatchedFilesNotification.type,
 					{
 						// "**/*" is needed to watch changes to folders as well.
@@ -56,14 +62,10 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 						watchers: [{ globPattern: '**/*' }],
 					},
 				),
-				connection.onDidChangeWatchedFiles((params) => {
-					this.#logger.info('[LspFsWatcher] raw LSP changes', JSON.stringify(params))
-					void this.#onLspDidChangeWatchedFiles(params)
-				}),
 			]
 
-			for (const location of locations) {
-				for (const uri of await core.fileUtil.getAllFiles(NodeJsExternals, location)) {
+			for (const location of this.#locations) {
+				for (const uri of await core.fileUtil.getAllFiles(this.#externals, location)) {
 					if (this.#predicate(uri)) {
 						this.#watchedFiles.add(uri)
 					}
@@ -86,7 +88,7 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 
 	async #onLspDidChangeWatchedFiles({ changes }: ls.DidChangeWatchedFilesParams) {
 		if (!this.#ready) {
-			await this.#readyPromise
+			throw new Error('Callback #onLspDidChangeWatchedFiles executed before ready')
 		}
 
 		for (const { type, uri } of changes) {
@@ -111,10 +113,10 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 	}
 
 	async #handleAdd(uri: string) {
-		const stat = await NodeJsExternals.fs.stat(uri)
+		const stat = await this.#externals.fs.stat(uri)
 		if (stat.isDirectory()) {
 			// Find all files under the added URI and send 'add' events for them.
-			for (const fileUri of await core.fileUtil.getAllFiles(NodeJsExternals, uri)) {
+			for (const fileUri of await core.fileUtil.getAllFiles(this.#externals, uri)) {
 				if (!this.#watchedFiles.has(fileUri) && this.#predicate(fileUri)) {
 					this.#watchedFiles.add(fileUri)
 					this.emit('add', fileUri)
@@ -129,7 +131,8 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 	}
 
 	#handleChange(uri: string) {
-		if (!this.#predicate(uri)) {
+		if (!this.#predicate(uri) || this.#watchedFiles.has(core.fileUtil.ensureEndingSlash(uri))) {
+			// Skip non-predicate matching URIs and directory URIs.
 			return
 		}
 
@@ -142,11 +145,13 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 	}
 
 	#handleDelete(uri: string) {
-		if (this.#watchedFiles.has(uri)) {
+		if (this.#watchedFiles.has(core.fileUtil.trimEndingSlash(uri))) {
+			// Is a file URI. Delete it directly.
 			this.#watchedFiles.delete(uri)
 			this.emit('unlink', uri)
 		} else {
-			// Find all files under the deleted URI and send 'unlink' events for them as well.
+			// Is a directory URI.
+			// Find all files under the deleted URI and send 'unlink' events for them.
 			const dirUri = core.fileUtil.ensureEndingSlash(uri)
 			// getSubFiles() returns an iterator that would return nothing after dirUri
 			// is deleted from #watchedFiles, therefore we need to collect the results of
@@ -167,9 +172,9 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 	 */
 	async #reconcile(uri: string) {
 		try {
-			const stat = await NodeJsExternals.fs.stat(uri)
+			const stat = await this.#externals.fs.stat(uri)
 		} catch (e) {
-			if (NodeJsExternals.error.isKind(e, 'ENOENT')) {
+			if (this.#externals.error.isKind(e, 'ENOENT')) {
 				//
 			} else {
 				throw e

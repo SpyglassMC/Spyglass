@@ -42,6 +42,7 @@ export class BrowserEventEmitter implements ExternalEventEmitter {
 	}
 }
 
+// TODO: Use Origin Private File System (OPFS) instead
 class BrowserFileSystem implements ExternalFileSystem {
 	private static readonly LocalStorageKey = 'spyglassmc-browser-fs'
 	private states: Record<string, { type: 'file'; content: string } | { type: 'directory' }>
@@ -81,6 +82,9 @@ class BrowserFileSystem implements ExternalFileSystem {
 			throw new Error(`EISDIR: ${location}`)
 		}
 		return new Uint8Array(arrayBufferFromBase64(entry.content))
+	}
+	async rm(_location: FsLocation, _options?: { recursive?: boolean }): Promise<void> {
+		throw new Error('Not implemented')
 	}
 	async showFile(_path: FsLocation): Promise<void> {
 		throw new Error('showFile not supported on browser')

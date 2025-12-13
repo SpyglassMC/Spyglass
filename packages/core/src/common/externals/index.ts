@@ -64,6 +64,7 @@ export interface ExternalFileSystem {
 		{ name: string; isDirectory(): boolean; isFile(): boolean; isSymbolicLink(): boolean }[]
 	>
 	readFile(location: FsLocation): Promise<Uint8Array<ArrayBuffer>>
+	rm(location: FsLocation, options?: { recursive?: boolean }): Promise<void>
 	/**
 	 * Show the file/directory in the platform-specific explorer program.
 	 *
@@ -71,6 +72,9 @@ export interface ExternalFileSystem {
 	 */
 	showFile(path: FsLocation): Promise<void>
 	stat(location: FsLocation): Promise<{ isDirectory(): boolean; isFile(): boolean }>
+	/**
+	 * @deprecated Use `rm` instead
+	 */
 	unlink(location: FsLocation): Promise<void>
 	/**
 	 * @param options `mode` - File mode bit mask (e.g. `0o775`).

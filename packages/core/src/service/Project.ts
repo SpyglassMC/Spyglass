@@ -492,41 +492,36 @@ export class Project implements ExternalEventEmitter {
 			this.fs.register('file:', fileUriSupporter, true)
 			this.fs.register(ArchiveUriSupporter.Protocol, archiveUriSupporter, true)
 		}
-		const listProjectFiles = () =>
-			new Promise<void>((resolve) => {
-				if (!this.#watcher) {
-					return resolve()
-				}
+		const listProjectFiles = async () => {
+			if (!this.#watcher) {
+				return
+			}
 
-				this.#watcher
-					.on('add', (uri) => {
-						if (this.shouldExclude(uri)) {
-							return
-						}
-						this.emit('fileCreated', { uri })
-					})
-					.on('change', (uri) => {
-						if (this.shouldExclude(uri)) {
-							return
-						}
-						this.emit('fileModified', { uri })
-					})
-					.on('unlink', (uri) => {
-						if (this.shouldExclude(uri)) {
-							return
-						}
-						this.emit('fileDeleted', { uri })
-					})
-					.on('error', (e) => {
-						this.logger.error('[Project#watcher]', e)
-					})
+			this.#watcher
+				.on('add', (uri) => {
+					if (this.shouldExclude(uri)) {
+						return
+					}
+					this.emit('fileCreated', { uri })
+				})
+				.on('change', (uri) => {
+					if (this.shouldExclude(uri)) {
+						return
+					}
+					this.emit('fileModified', { uri })
+				})
+				.on('unlink', (uri) => {
+					if (this.shouldExclude(uri)) {
+						return
+					}
+					this.emit('fileDeleted', { uri })
+				})
+				.on('error', (e) => {
+					this.logger.error('[Project#watcher]', e)
+				})
 
-				if (this.#watcher.isReady) {
-					resolve()
-				} else {
-					this.#watcher.on('ready', resolve)
-				}
-			})
+			await this.#watcher.ready()
+		}
 
 		const __profiler = this.profilers.get('project#ready')
 

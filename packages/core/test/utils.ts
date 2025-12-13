@@ -1,5 +1,6 @@
 import type {
 	ColorToken,
+	Externals,
 	FileNode,
 	LanguageError,
 	Parser,
@@ -26,8 +27,10 @@ import {
 	UriBinderContext,
 	VanillaConfig,
 } from '@spyglassmc/core'
-import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
+import { getNodeJsExternals, NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
+import type { FsPromisesApi } from 'memfs/lib/node/types/FsPromisesApi.js'
 import { fail } from 'node:assert/strict'
+import type fsp from 'node:fs/promises'
 import type { TestContext } from 'node:test'
 import type { URL } from 'node:url'
 import { fileURLToPath } from 'node:url'
@@ -316,4 +319,12 @@ export class SimpleProject {
 			...(keys.includes('nodes') && { nodes: this.#nodes }),
 		}
 	}
+}
+
+export function mockExternals(
+	{ nodeFsp }: { nodeFsp: FsPromisesApi },
+): Externals {
+	return getNodeJsExternals({
+		nodeFsp: nodeFsp as unknown as typeof fsp,
+	})
 }
