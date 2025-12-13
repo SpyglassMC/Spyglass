@@ -34,7 +34,7 @@ import { LinterErrorReporter } from './ErrorReporter.js'
 import { ArchiveUriSupporter, FileService, FileUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
-import type { FsWatcher } from './FsWatcher.js'
+import type { FileWatcher } from './FileWatcher.js'
 import { MetaRegistry } from './MetaRegistry.js'
 import { ProfilerFactory } from './Profiler.js'
 
@@ -77,7 +77,7 @@ export interface ProjectOptions {
 }
 
 export interface ProjectReadyOptions {
-	projectRootsWatcher?: FsWatcher
+	projectRootsWatcher?: FileWatcher
 }
 
 export interface DocAndNode {
@@ -172,7 +172,7 @@ export class Project implements ExternalEventEmitter {
 	readonly #symbolUpToDateUris = new Set<string>()
 	readonly #eventEmitter: ExternalEventEmitter
 	readonly #initializers: readonly ProjectInitializer[]
-	#watcher: FsWatcher | undefined
+	#watcher: FileWatcher | undefined
 	get watchedFiles() {
 		return this.#watcher?.watchedFiles ?? new UriStore()
 	}

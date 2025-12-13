@@ -2,7 +2,7 @@ import * as core from '@spyglassmc/core'
 import EventEmitter from 'events'
 import * as ls from 'vscode-languageserver/node.js'
 
-export interface LspFsWatcherOptions {
+export interface LspFileWatcherOptions {
 	capabilities: ls.ClientCapabilities
 	connection: ls.Connection
 	externals: core.Externals
@@ -12,10 +12,10 @@ export interface LspFsWatcherOptions {
 }
 
 /**
- * A file system watcher based on Language Server Protocol's `workspace/didChangeWatchedFiles`
+ * A file watcher based on Language Server Protocol's `workspace/didChangeWatchedFiles`
  * notification.
  */
-export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
+export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 	#ready = false
 	readonly #connection: ls.Connection
 	readonly #externals: core.Externals
@@ -30,7 +30,7 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 	}
 
 	constructor(
-		{ capabilities, connection, externals, locations, logger, predicate }: LspFsWatcherOptions,
+		{ capabilities, connection, externals, locations, logger, predicate }: LspFileWatcherOptions,
 	) {
 		super()
 
@@ -42,7 +42,7 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 
 		if (!capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration) {
 			throw new Error(
-				'LspFsWatcher requires dynamic registration capability for didChangeWatchedFiles notifications',
+				'LspFileWatcher requires dynamic registration capability for didChangeWatchedFiles notifications',
 			)
 		}
 	}
@@ -51,7 +51,7 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 		try {
 			this.#lspDisposables = [
 				this.#connection.onDidChangeWatchedFiles((params) => {
-					this.#logger.info('[LspFsWatcher] raw LSP changes', JSON.stringify(params))
+					this.#logger.info('[LspFileWatcher] raw LSP changes', JSON.stringify(params))
 					return this.#onLspDidChangeWatchedFiles(params)
 				}),
 				await this.#connection.client.register(
@@ -107,7 +107,7 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 					}
 				}
 			} catch (e) {
-				this.#logger.error('[LspFsWatcher#handler]', e)
+				this.#logger.error('[LspFileWatcher#handler]', e)
 			}
 		}
 	}
@@ -137,7 +137,7 @@ export class LspFsWatcher extends EventEmitter implements core.FsWatcher {
 		}
 
 		if (!this.#watchedFiles.has(uri)) {
-			this.#logger.warn(`[LspFsWatcher#handler] unknown changed file ${uri}`)
+			this.#logger.warn(`[LspFileWatcher#handler] unknown changed file ${uri}`)
 			this.#watchedFiles.add(uri)
 		}
 

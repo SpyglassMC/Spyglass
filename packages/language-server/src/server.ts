@@ -14,7 +14,7 @@ import type {
 	MyLspDataHackPubifyRequestParams,
 } from './util/index.js'
 import { toCore, toLS } from './util/index.js'
-import { LspFsWatcher } from './util/LspFsWatcher.js'
+import { LspFileWatcher } from './util/LspFileWatcher.js'
 
 export * from './util/types.js'
 
@@ -177,9 +177,9 @@ connection.onInitialized(async () => {
 
 	startDynamicSemanticTokensRegistration()
 
-	// Initializes LspFsWatcher only when client supports didChangeWatchedFiles notifications.
-	const fsWatcher = capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration
-		? new LspFsWatcher({
+	// Initializes LspFileWatcher only when client supports didChangeWatchedFiles notifications.
+	const fileWatcher = capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration
+		? new LspFileWatcher({
 			capabilities,
 			connection,
 			externals,
@@ -187,15 +187,15 @@ connection.onInitialized(async () => {
 			logger,
 			predicate: (uri) => !service.project.shouldExclude(uri),
 		})
-			.on('ready', () => logger.info('[FsWatcher] ready'))
-			.on('add', (uri) => logger.info('[FsWatcher] added', uri))
-			.on('change', (uri) => logger.info('[FsWatcher] changed', uri))
-			.on('unlink', (uri) => logger.info('[FsWatcher] unlinked', uri))
-			.on('error', (e) => logger.error('[FsWatcher]', e))
+			.on('ready', () => logger.info('[FileWatcher] ready'))
+			.on('add', (uri) => logger.info('[FileWatcher] added', uri))
+			.on('change', (uri) => logger.info('[FileWatcher] changed', uri))
+			.on('unlink', (uri) => logger.info('[FileWatcher] unlinked', uri))
+			.on('error', (e) => logger.error('[FileWatcher]', e))
 		: undefined
 
 	await service.project.ready({
-		projectRootsWatcher: fsWatcher,
+		projectRootsWatcher: fileWatcher,
 	})
 
 	if (capabilities.workspace?.workspaceFolders) {

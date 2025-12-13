@@ -1,13 +1,10 @@
-/* eslint-disable no-restricted-syntax -- null is used by memfs to represent empty directories */
-
 import * as core from '@spyglassmc/core'
 import { mockExternals } from '@spyglassmc/core/test/utils.ts'
 import { memfs } from 'memfs'
-import type { FsPromisesApi } from 'memfs/lib/node/types/FsPromisesApi.js'
 import assert, { fail } from 'node:assert/strict'
 import { afterEach, beforeEach, describe, it, mock } from 'node:test'
 import * as ls from 'vscode-languageserver/node.js'
-import { LspFsWatcher } from '../../lib/util/LspFsWatcher.js'
+import { LspFileWatcher } from '../../lib/util/LspFileWatcher.js'
 
 const AlwaysTrue = () => true
 const SupportedCapabilities: ls.ClientCapabilities = {
@@ -61,7 +58,7 @@ class MockLspConnection {
 	}
 }
 
-describe('LspFsWatcher', () => {
+describe('LspFileWatcher', () => {
 	const locations = ['file:///root/']
 	const logger = core.Logger.noop()
 
@@ -69,7 +66,7 @@ describe('LspFsWatcher', () => {
 		const connection = new MockLspConnection() as ls.Connection & MockLspConnection
 		try {
 			const { fs: { promises: nodeFsp } } = memfs({}, '/')
-			new LspFsWatcher({
+			new LspFileWatcher({
 				capabilities: UnsupportedCapabilities,
 				connection,
 				externals: mockExternals({ nodeFsp }),
@@ -90,7 +87,7 @@ describe('LspFsWatcher', () => {
 	describe('LSP file change event tests', () => {
 		let connection: ls.Connection & MockLspConnection
 		let externals: core.Externals
-		let watcher: LspFsWatcher
+		let watcher: LspFileWatcher
 		const addListener = mock.fn()
 		const changeListener = mock.fn()
 		const unlinkListener = mock.fn()
@@ -98,9 +95,9 @@ describe('LspFsWatcher', () => {
 		beforeEach(() => {
 			connection = new MockLspConnection() as ls.Connection & MockLspConnection
 			externals = mockExternals({
-				nodeFsp: memfs({ root: null }, '/').fs.promises,
+				nodeFsp: memfs({ root: {} }, '/').fs.promises,
 			})
-			watcher = new LspFsWatcher({
+			watcher = new LspFileWatcher({
 				capabilities: SupportedCapabilities,
 				connection,
 				externals,
