@@ -505,7 +505,7 @@ export class ConfigService implements ExternalEventEmitter {
 		return ConfigService.merge(this.defaultConfig, ...overrides)
 	}
 
-	private static isConfigFile(this: void, uri: string): boolean {
+	public static isConfigFile(this: void, uri: string): boolean {
 		return ConfigService.ConfigFileNames.some((n) => uri.endsWith(`/${n}`))
 	}
 
