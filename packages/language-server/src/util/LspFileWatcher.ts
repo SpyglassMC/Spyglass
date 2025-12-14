@@ -2,13 +2,15 @@ import * as core from '@spyglassmc/core'
 import EventEmitter from 'events'
 import * as ls from 'vscode-languageserver/node.js'
 
+type Predicate = (uri: string) => boolean
+
 export interface LspFileWatcherOptions {
 	capabilities: ls.ClientCapabilities
 	connection: ls.Connection
 	externals: core.Externals
 	locations: readonly core.FsLocation[]
 	logger: core.Logger
-	predicate: (uri: string) => boolean
+	predicate: Predicate
 }
 
 /**
@@ -21,9 +23,9 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 	readonly #externals: core.Externals
 	readonly #locations: readonly core.FsLocation[]
 	readonly #logger: core.Logger
-	readonly #predicate: (uri: string) => boolean
 	readonly #watchedFiles = new core.UriStore()
 	#lspDisposables: ls.Disposable[] = []
+	#predicate: Predicate
 
 	get watchedFiles() {
 		return this.#watchedFiles
@@ -86,6 +88,13 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 		this.#lspDisposables = []
 	}
 
+	async updatePredicate(predicate: Predicate) {
+		this.#predicate = predicate
+		for (const location of this.#locations) {
+			await this.reconcile(location)
+		}
+	}
+
 	async #onLspDidChangeWatchedFiles({ changes }: ls.DidChangeWatchedFilesParams) {
 		if (!this.#ready) {
 			throw new Error('Callback #onLspDidChangeWatchedFiles executed before ready')
@@ -95,64 +104,71 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 			try {
 				switch (type) {
 					case ls.FileChangeType.Created: {
-						await this.#handleAdd(uri)
+						await this.#handleAdd(core.fileUtil.trimEndingSlash(uri))
 						break
 					}
 					case ls.FileChangeType.Changed:
-						this.#handleChange(uri)
+						await this.#handleChange(core.fileUtil.trimEndingSlash(uri))
 						break
 					case ls.FileChangeType.Deleted: {
-						this.#handleDelete(uri)
+						this.#handleDelete(core.fileUtil.trimEndingSlash(uri))
 						break
 					}
 				}
 			} catch (e) {
-				this.#logger.error('[LspFileWatcher#handler]', e)
+				this.#logger.error('[LspFileWatcher] handle error', e)
 			}
 		}
 	}
 
 	async #handleAdd(uri: string) {
-		const stat = await this.#externals.fs.stat(uri)
+		let stat: core.ExternalStats
+		try {
+			stat = await this.#externals.fs.stat(uri)
+		} catch (e) {
+			if (!this.#externals.error.isKind(e, 'ENOENT')) {
+				throw e
+			}
+			// LSP gave us a non-existent URI. Reconcile its parent directory just to be safe.
+			this.#logger.warn(
+				`[LspFileWatcher] non-existent URI ${uri}; will reconcile parent directory`,
+			)
+			return this.#reconcileParentOf(uri)
+		}
+
 		if (stat.isDirectory()) {
 			// Find all files under the added URI and send 'add' events for them.
 			for (const fileUri of await core.fileUtil.getAllFiles(this.#externals, uri)) {
-				if (!this.#watchedFiles.has(fileUri) && this.#predicate(fileUri)) {
-					this.#watchedFiles.add(fileUri)
-					this.emit('add', fileUri)
-				}
+				this.#addIfNeeded(fileUri)
 			}
 		} else if (stat.isFile()) {
-			if (!this.#watchedFiles.has(uri) && this.#predicate(uri)) {
-				this.#watchedFiles.add(uri)
-				this.emit('add', uri)
-			}
+			this.#addIfNeeded(uri)
 		}
 	}
 
-	#handleChange(uri: string) {
+	async #handleChange(uri: string) {
 		if (!this.#predicate(uri) || this.#watchedFiles.has(core.fileUtil.ensureEndingSlash(uri))) {
 			// Skip non-predicate matching URIs and directory URIs.
 			return
 		}
 
 		if (!this.#watchedFiles.has(uri)) {
-			this.#logger.warn(`[LspFileWatcher#handler] unknown changed file ${uri}`)
-			this.#watchedFiles.add(uri)
+			this.#logger.warn(`[LspFileWatcher] unknown changed URI ${uri}; handling as add instead`)
+			return this.#handleAdd(uri)
 		}
 
 		this.emit('change', uri)
 	}
 
 	#handleDelete(uri: string) {
-		if (this.#watchedFiles.has(core.fileUtil.trimEndingSlash(uri))) {
+		const dirUri = core.fileUtil.ensureEndingSlash(uri)
+		if (this.#watchedFiles.has(uri)) {
 			// Is a file URI. Delete it directly.
 			this.#watchedFiles.delete(uri)
 			this.emit('unlink', uri)
-		} else {
+		} else if (this.#watchedFiles.has(dirUri)) {
 			// Is a directory URI.
 			// Find all files under the deleted URI and send 'unlink' events for them.
-			const dirUri = core.fileUtil.ensureEndingSlash(uri)
 			// getSubFiles() returns an iterator that would return nothing after dirUri
 			// is deleted from #watchedFiles, therefore we need to collect the results of
 			// the iterator before it is deleted.
@@ -165,20 +181,82 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 	}
 
 	/**
-	 * Reconcile the internal URI store with the actual directories and files on the disk.
-	 * @param uri URI that should be checked. If it's a file URI, ensure the file exists in the
-	 * internal URI store; if it's a directory URI, ensure all contents of it exists and no extra
-	 * content is recorded; if the URI does not exist, reconcile its parent URI instead.
+	 * Add the file URI to the internal store and emit the `add` event if the file hasn't been
+	 * excluded by predicate and doesn't already exist in the store.
 	 */
-	async #reconcile(uri: string) {
+	#addIfNeeded(uri: string) {
+		if (!this.#watchedFiles.has(uri) && this.#predicate(uri)) {
+			this.#watchedFiles.add(uri)
+			this.emit('add', uri)
+		}
+	}
+
+	/**
+	 * Reconcile the internal URI store with the actual directories and files on the disk.
+	 * @param uri URI that should be reconciled. If it's a file URI, ensure the file exists in the
+	 * internal URI store; if it's a directory URI, ensure all contents of it exists and no extra
+	 * content is recorded; if the URI does not exist, reconcile its parent URI up until the watched
+	 * `locations`.
+	 */
+	async reconcile(uri: core.FsLocation): Promise<void> {
+		return this.#reconcile(uri.toString())
+	}
+
+	async #reconcile(uri: string, stat?: core.ExternalStats): Promise<void> {
+		uri = core.fileUtil.trimEndingSlash(uri)
 		try {
-			const stat = await this.#externals.fs.stat(uri)
+			stat ??= await this.#externals.fs.stat(uri)
+			if (stat.isDirectory()) {
+				// For directory, reconcile all its entries recursively.
+				const dirUri = core.fileUtil.ensureEndingSlash(uri)
+				const diskEntries = await this.#externals.fs.readdir(dirUri)
+				const diskEntryNames = new Set<string>()
+				for (const diskEntry of diskEntries) {
+					diskEntryNames.add(diskEntry.name)
+					await this.#reconcile(core.fileUtil.join(dirUri, diskEntry.name), diskEntry)
+				}
+				// Remove extra entries of this directory, if any, from the internal URI store.
+				const storeEntryNames = this.#watchedFiles.getChildrenNames(dirUri)
+				for (const storeEntryName of storeEntryNames) {
+					if (!diskEntryNames.has(storeEntryName)) {
+						this.#handleDelete(core.fileUtil.join(dirUri, storeEntryName))
+					}
+				}
+			} else if (stat.isFile()) {
+				// For file, ensure it exists in the internal store.
+				this.#addIfNeeded(uri)
+			}
 		} catch (e) {
-			if (this.#externals.error.isKind(e, 'ENOENT')) {
-				//
-			} else {
+			if (!this.#externals.error.isKind(e, 'ENOENT')) {
 				throw e
 			}
+			// The URI does not exist. Remove it from internal store.
+			this.#logger.warn(
+				`[LspFileWatcher] non-existent URI during reconcilation ${uri}; will reconcile with further parent directory`,
+			)
+			this.#handleDelete(uri)
+			// It is weird that reconcile() was called on a non-existent URI. We will go up a
+			// directory and reconcile there as well just to fix anything that might be wrong.
+			return this.#reconcileParentOf(uri)
 		}
+	}
+
+	async #reconcileParentOf(uri: string): Promise<void> {
+		const parentUri = core.fileUtil.getParentOfUri(uri).toString()
+		// We only reconcile the parent if it is different from the current URI (to avoid an infinite
+		// loop) and if it is under the watched locations of the file watcher.
+		if (
+			!(
+				parentUri !== uri
+				&& this.#locations.some(
+					(loc) => core.fileUtil.isSubUriOf(parentUri, loc.toString()),
+				)
+			)
+		) {
+			this.#logger.warn(`[LspFileWatcher] reconcilation stopped after ${uri} at ${parentUri}`)
+			return
+		}
+
+		return this.reconcile(parentUri)
 	}
 }

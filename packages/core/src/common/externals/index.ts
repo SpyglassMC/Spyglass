@@ -60,9 +60,7 @@ export interface ExternalFileSystem {
 	mkdir(location: FsLocation, options?: { mode?: number; recursive?: boolean }): Promise<void>
 	readdir(
 		location: FsLocation,
-	): Promise<
-		{ name: string; isDirectory(): boolean; isFile(): boolean; isSymbolicLink(): boolean }[]
-	>
+	): Promise<ExternalDirEntry[]>
 	readFile(location: FsLocation): Promise<Uint8Array<ArrayBuffer>>
 	rm(location: FsLocation, options?: { recursive?: boolean }): Promise<void>
 	/**
@@ -71,7 +69,7 @@ export interface ExternalFileSystem {
 	 * Should not be called with unsanitized user-input path due to the possibility of arbitrary code execution.
 	 */
 	showFile(path: FsLocation): Promise<void>
-	stat(location: FsLocation): Promise<{ isDirectory(): boolean; isFile(): boolean }>
+	stat(location: FsLocation): Promise<ExternalStats>
 	/**
 	 * @deprecated Use `rm` instead
 	 */
@@ -84,6 +82,16 @@ export interface ExternalFileSystem {
 		data: string | Uint8Array<ArrayBuffer>,
 		options?: { mode: number },
 	): Promise<void>
+}
+
+export interface ExternalStats {
+	isDirectory(): boolean
+	isFile(): boolean
+	isSymbolicLink(): boolean
+}
+
+interface ExternalDirEntry extends ExternalStats {
+	name: string
 }
 
 /**

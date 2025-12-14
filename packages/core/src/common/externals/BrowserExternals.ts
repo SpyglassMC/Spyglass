@@ -1,7 +1,13 @@
 import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from 'base64-arraybuffer'
 import pako from 'pako'
 import { fileUtil } from '../../service/fileUtil.js'
-import type { ExternalEventEmitter, ExternalFileSystem, Externals, FsLocation } from './index.js'
+import type {
+	ExternalEventEmitter,
+	ExternalFileSystem,
+	Externals,
+	ExternalStats,
+	FsLocation,
+} from './index.js'
 
 type Listener = (...args: unknown[]) => unknown
 export class BrowserEventEmitter implements ExternalEventEmitter {
@@ -89,13 +95,17 @@ class BrowserFileSystem implements ExternalFileSystem {
 	async showFile(_path: FsLocation): Promise<void> {
 		throw new Error('showFile not supported on browser')
 	}
-	async stat(location: FsLocation): Promise<{ isDirectory(): boolean; isFile(): boolean }> {
+	async stat(location: FsLocation): Promise<ExternalStats> {
 		location = location.toString()
 		const entry = this.states[location]
 		if (!entry) {
 			throw new Error(`ENOENT: ${location}`)
 		}
-		return { isDirectory: () => entry.type === 'directory', isFile: () => entry.type === 'file' }
+		return {
+			isDirectory: () => entry.type === 'directory',
+			isFile: () => entry.type === 'file',
+			isSymbolicLink: () => false,
+		}
 	}
 	async unlink(location: FsLocation): Promise<void> {
 		location = location.toString()

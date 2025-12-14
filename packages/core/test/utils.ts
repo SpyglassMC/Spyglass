@@ -321,6 +321,9 @@ export class SimpleProject {
 	}
 }
 
+/**
+ * - `nodeFsp`: use `memfs()` to create a Node.js `fs/promises` compatible API for testing.
+ */
 export function mockExternals(
 	{ nodeFsp }: { nodeFsp: FsPromisesApi },
 ): Externals {

@@ -76,8 +76,30 @@ export class UriStore {
 	}
 
 	/**
+	 * Returns names of all direct children of the URI.
+	 * An empty result is generated if the directory URI does not exist.
+	 */
+	*getChildrenNames(uri: RootUriString): Generator<string> {
+		const [parts, _isDir] = this.#dissectUri(uri)
+
+		let node: DirectoryNode | FileNode | undefined = this.#trie
+		for (const part of parts) {
+			if (!(node instanceof Map)) {
+				return
+			}
+			node = node.get(part)
+		}
+
+		if (!(node instanceof Map)) {
+			return
+		}
+
+		yield* node.keys()
+	}
+
+	/**
 	 * Returns URIs of all files under a directory and its subdirectories.
-	 * An empty array is returned if the directory URI does not exist.
+	 * An empty result is generated if the directory URI does not exist.
 	 */
 	*getSubFiles(uri: RootUriString): Generator<string> {
 		const [parts, _isDir] = this.#dissectUri(uri)
