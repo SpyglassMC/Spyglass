@@ -146,6 +146,20 @@ pre > code {
 	white-space: pre;
 }
 
+// Keyboard <kbd> style fix
+.keyseq {
+	color: unset;
+}
+
+kbd {
+	color: var(--linkcoloralternate);
+	background-color: var(--sidebarbackground) !important;
+	box-shadow: unset;
+	border: 1px solid #44434d;
+	padding: .1em .2em;
+	font-size: .9375em;
+}
+
 // Table font size fix
 td, th {
 	font-size: 1rem !important;

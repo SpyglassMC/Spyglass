@@ -1,0 +1,79 @@
+:page-layout: default
+:page-title: Runbook
+:page-parent: Home
+
+:experimental:
+:toc:
+
+[#get-log]
+== Get Extension Log on VS Code/VSCodium
+
+Extension log can be helpful for troubleshooting if the extension is not behaving as expected.
+To get the extension log:
+
+. Open the Command Palette (default keybind is kbd:[Ctrl+Shift+P] on Linux/Windows,
+  kbd:[Cmd+Shift+P] on macOS).
+. Type or paste in `workbench.action.showOutputChannels` and press kbd:[Enter].
+. Type or paste in `Spyglass Language Server` and press kbd:[Enter].
+. The log output panel should now be open.
+  You can select all and copy the log to share it with others.
+
+CAUTION: The log may contain file paths that include your username or other personal information.
+If you prefer not to share this information,
+please review the log and redact any sensitive details before sharing it with others.
+
+[#reset-cache]
+== Reset Extension Cache on VS Code/VSCodium
+
+The extension uses cache to accelerate various operations. Occasionally the cache may get outdated
+or corrupted and cause issues. To do a quick cache reset:
+
+. Open the Command Palette (default keybind is kbd:[Ctrl+Shift+P] on Linux/Windows,
+  kbd:[Cmd+Shift+P] on macOS).
+. Type or paste in `spyglassmc.resetProjectCache` and press kbd:[Enter].
+. Restart the editor.
+
+If that did not work, you may also try a full cache reset:
+
+. Open the Command Palette (default keybind is kbd:[Ctrl+Shift+P] on Linux/Windows,
+  kbd:[Cmd+Shift+P] on macOS).
+. Type or paste in `spyglassmc.showCacheRoot` and press kbd:[Enter].
+. The extension's cache folder should now be shown in your OS's file explorer.
+  You may see folders named `downloader`, `http`, `symbols`, and/or `virtual-uris` in it.
+  The default location of the cache folder is:
+** Linux: `$XDG_CACHE_HOME/spyglassmc-nodejs` or `~/.cache/spyglassmc-nodejs`
+** macOS: `~/Library/Caches/spyglassmc-nodejs`
+** Windows: `%LOCALAPPDATA%\spyglassmc-nodejs\Cache`
+   (e.g. `C:\Users\<USER>\AppData\Local\spyglassmc-nodejs\Cache`)
+. Close the editor.
+** This step is important as otherwise the extension may write bad data from memory to disk right
+   after you've deleted them.
+. Delete all contents inside the cache folder.
+. Restart the editor.
+
+[#custom-commands]
+== Support Modded Commands
+
+. Create a `spyglass.json` config file in the root of your workspace.
++
+[source,json]
+----
+{
+  "env": {
+    "mcmetaSummaryOverrides": {
+      "commands": {
+        "path": "./commands.json",
+        "replace": false
+      }
+    }
+  }
+}
+----
+. Create a `commands.json` file to define the structure of the custom commands.
+  You can either generate this file with a mod like https://modrinth.com/mod/command_extractor[Command Extractor],
+  or write the file manually.
+  Here is the https://github.com/misode/mcmeta/blob/summary/commands/data.json[vanilla command tree]
+  for reference.
+. Spyglass should be smart enough to ignore any modded arguments it cannot understand.
+  You may https://github.com/SpyglassMC/Spyglass/issues/new[create an issue] if you'd like certain
+  modded arguments to be supported.
