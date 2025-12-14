@@ -32,7 +32,7 @@ export function getLatestSnapshot(versions: McmetaVersions): VersionInfo{
 
 		const matches = version.id.match(DevelopmentVersionPattern)
 		if (matches !== null){
-			return toVersionInfo(version, matches[0] as ReleaseVersion)
+			return toVersionInfo(version, matches[1] as ReleaseVersion)
 		}
 	}
 	throw new Error('no next release version found')
