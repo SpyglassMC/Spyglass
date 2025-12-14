@@ -23,9 +23,9 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 	readonly #externals: core.Externals
 	readonly #locations: readonly core.FsLocation[]
 	readonly #logger: core.Logger
+	readonly #predicate: Predicate
 	readonly #watchedFiles = new core.UriStore()
 	#lspDisposables: ls.Disposable[] = []
-	#predicate: Predicate
 
 	get watchedFiles() {
 		return this.#watchedFiles
@@ -86,13 +86,6 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 			disposable.dispose()
 		}
 		this.#lspDisposables = []
-	}
-
-	async updatePredicate(predicate: Predicate) {
-		this.#predicate = predicate
-		for (const location of this.#locations) {
-			await this.reconcile(location)
-		}
 	}
 
 	async #onLspDidChangeWatchedFiles({ changes }: ls.DidChangeWatchedFilesParams) {
@@ -192,6 +185,17 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 	}
 
 	/**
+	 * Delete the file URI from the internal store and emit the `unlink` event if the file has been
+	 * excluded by predicate but exist in the store.
+	 */
+	#deleteIfExcluded(uri: string) {
+		if (this.#watchedFiles.has(uri) && !this.#predicate(uri)) {
+			this.#watchedFiles.delete(uri)
+			this.emit('unlink', uri)
+		}
+	}
+
+	/**
 	 * Reconcile the internal URI store with the actual directories and files on the disk.
 	 * @param uri URI that should be reconciled. If it's a file URI, ensure the file exists in the
 	 * internal URI store; if it's a directory URI, ensure all contents of it exists and no extra
@@ -223,8 +227,10 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 					}
 				}
 			} else if (stat.isFile()) {
-				// For file, ensure it exists in the internal store.
+				// For file, ensure it exists in the internal store if it belongs there.
 				this.#addIfNeeded(uri)
+				// And delete it if it should be excluded.
+				this.#deleteIfExcluded(uri)
 			}
 		} catch (e) {
 			if (!this.#externals.error.isKind(e, 'ENOENT')) {

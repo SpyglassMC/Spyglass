@@ -194,6 +194,24 @@ connection.onInitialized(async () => {
 			.on('error', (e) => logger.error('[FileWatcher]', e))
 		: undefined
 
+	if (fileWatcher) {
+		// Listen for config changes and reconcile the internal state of the file watcher if
+		// `env.exclude` has changed.
+		service.project.on('configChanged', async ({ oldConfig, newConfig }) => {
+			const oldExclude = new Set(oldConfig.env.exclude)
+			const newExclude = new Set(newConfig.env.exclude)
+			if (oldExclude.size === newExclude.size && oldExclude.isSubsetOf(newExclude)) {
+				// `env.exclude` has not changed. Skip.
+				return
+			}
+
+			logger.info('[FileWatcher] env.exclude config has changed. Reconciling...')
+			for (const root of projectRoots) {
+				await fileWatcher.reconcile(root)
+			}
+		})
+	}
+
 	await service.project.ready({
 		projectRootsWatcher: fileWatcher,
 	})
@@ -239,8 +257,12 @@ function startDynamicSemanticTokensRegistration() {
 		registerDynamicSemanticTokens()
 	}
 
-	service.project.on('configChanged', config => {
-		if (config.env.feature.semanticColoring) {
+	service.project.on('configChanged', ({ oldConfig, newConfig }) => {
+		if (oldConfig.env.feature.semanticColoring === newConfig.env.feature.semanticColoring) {
+			return
+		}
+
+		if (newConfig.env.feature.semanticColoring) {
 			registerDynamicSemanticTokens()
 		} else {
 			unregisterDynamicSemanticTokens()

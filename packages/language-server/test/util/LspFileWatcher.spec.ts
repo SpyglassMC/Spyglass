@@ -715,5 +715,72 @@ describe('LspFileWatcher', () => {
 			assert.equal(unlinkListener.mock.callCount(), 1)
 			assert.deepEqual(unlinkListener.mock.calls[0].arguments, ['file:///root/a2/b/c/file.txt'])
 		})
+
+		it('Should reconcile correctly if the predicate changes', async () => {
+			// A test where the `predicate` changes while the LspFileWatcher is active and a
+			// reconcile() is triggered manually. LspFileWatcher should update its internal states
+			// to reflect the latest predicate conditions.
+			// This covers the code path used by `server.ts` to run reconcile() on config change.
+			// E2E test is out-of-scope at the moment so this is the best we have.
+
+			const addListener = mock.fn()
+			const changeListener = mock.fn()
+			const unlinkListener = mock.fn()
+			let shouldPredicateExclude = false
+			const connection = new MockLspConnection() as ls.Connection & MockLspConnection
+			const externals = mockExternals({
+				nodeFsp: memfs(
+					{
+						root: {
+							normal: {
+								'file.txt': '',
+							},
+							excluded: {
+								'sad.txt': '',
+							},
+						},
+					},
+					'/',
+				).fs.promises,
+			})
+			const watcher = new LspFileWatcher({
+				capabilities: SupportedCapabilities,
+				connection,
+				externals,
+				locations,
+				logger,
+				predicate: (uri) => shouldPredicateExclude ? !uri.includes('excluded') : true,
+			})
+				.on('add', addListener)
+				.on('change', changeListener)
+				.on('unlink', unlinkListener)
+				.on('error', fail)
+
+			await watcher.ready()
+
+			// Change predicate to start excluding 'excluded' files.
+			shouldPredicateExclude = true
+			await watcher.reconcile('file:///root/')
+
+			// Assert the excluded file has been removed from the internal store.
+			assert.equal(addListener.mock.callCount(), 0)
+			assert.equal(changeListener.mock.callCount(), 0)
+			assert.equal(unlinkListener.mock.callCount(), 1)
+			assert.deepEqual(unlinkListener.mock.calls[0].arguments, ['file:///root/excluded/sad.txt'])
+
+			addListener.mock.resetCalls()
+			changeListener.mock.resetCalls()
+			unlinkListener.mock.resetCalls()
+
+			// Change predicate back to exclude no files.
+			shouldPredicateExclude = false
+			await watcher.reconcile('file:///root/')
+
+			// Assert the excluded file has been added back to the internal store.
+			assert.equal(addListener.mock.callCount(), 1)
+			assert.deepEqual(addListener.mock.calls[0].arguments, ['file:///root/excluded/sad.txt'])
+			assert.equal(changeListener.mock.callCount(), 0)
+			assert.equal(unlinkListener.mock.callCount(), 0)
+		})
 	})
 })
