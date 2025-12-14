@@ -31,7 +31,7 @@ export function getLatestSnapshot(versions: McmetaVersions): VersionInfo{
 		}
 
 		const matches = version.id.match(DevelopmentVersionPattern)
-		if (matches !== null){
+		if (matches){
 			return toVersionInfo(version, matches[1] as ReleaseVersion)
 		}
 	}
@@ -49,7 +49,7 @@ export function resolveConfiguredVersion(
 ): VersionInfo {
 
 	// Gets the release version id for any version, only used when specifically selecting release in config
-	function getReleaseVersion(version: McmetaVersion): ReleaseVersion | null {
+	function getReleaseVersion(version: McmetaVersion): ReleaseVersion | undefined {
 		// Is release, so return own id
 		if (version.type === 'release') {
 			return version.id as ReleaseVersion
@@ -57,7 +57,7 @@ export function resolveConfiguredVersion(
 
 		// Development versions with release version in name
 		const matches = version.id.match(DevelopmentVersionPattern)
-		if (matches !== null){
+		if (matches){
 			return matches[0] as ReleaseVersion
 		}
 
@@ -70,7 +70,7 @@ export function resolveConfiguredVersion(
 		}
 
 		// No release version found. This should only happen in exceptional circumstances, such as april fools or experimental versions.
-		return null
+		return undefined
 	}
 
 	if (versions.length === 0) {
@@ -161,7 +161,7 @@ export function resolveConfiguredVersion(
 		return latestRelease
 	}
 	const configReleaseVersion = getReleaseVersion(configVersion)
-	if (configReleaseVersion === null){
+	if (configReleaseVersion === undefined){
 		logger.info(
 			`[resolveConfiguredVersion] Could not determine release version of config "${inputVersion}", selecting newest release ${latestRelease.id}`,
 		)
