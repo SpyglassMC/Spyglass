@@ -8,14 +8,14 @@ const DevelopmentVersionPattern = /^([1-9][0-9]*\.[1-9][0-9]*(?:\.[1-9][0-9]*)?)
 
 function toVersionInfo(
 	version: McmetaVersion,
-	release?: ReleaseVersion
+	release?: ReleaseVersion,
 ): VersionInfo {
 	return {
 		id: version.id,
 		name: version.name,
 		release: release ?? version.id as ReleaseVersion,
 		data_pack_version: version.data_pack_version,
-		resource_pack_version: version.resource_pack_version
+		resource_pack_version: version.resource_pack_version,
 	}
 }
 
@@ -24,14 +24,14 @@ function toVersionInfo(
  * @param versions List of all versions in mcmeta
  * @returns latest development release
  */
-export function getLatestSnapshot(versions: McmetaVersions): VersionInfo{
-	for (const version of versions){
-		if (version.type === 'release'){
+export function getLatestSnapshot(versions: McmetaVersions): VersionInfo {
+	for (const version of versions) {
+		if (version.type === 'release') {
 			return toVersionInfo(version)
 		}
 
 		const matches = version.id.match(DevelopmentVersionPattern)
-		if (matches){
+		if (matches) {
 			return toVersionInfo(version, matches[1] as ReleaseVersion)
 		}
 	}
@@ -47,7 +47,6 @@ export function resolveConfiguredVersion(
 	packs: PackInfo[],
 	logger: core.Logger,
 ): VersionInfo {
-
 	// Gets the release version id for any version, only used when specifically selecting release in config
 	function getReleaseVersion(version: McmetaVersion): ReleaseVersion | undefined {
 		// Is release, so return own id
@@ -57,7 +56,7 @@ export function resolveConfiguredVersion(
 
 		// Development versions with release version in name
 		const matches = version.id.match(DevelopmentVersionPattern)
-		if (matches){
+		if (matches) {
 			return matches[0] as ReleaseVersion
 		}
 
@@ -87,7 +86,7 @@ export function resolveConfiguredVersion(
 
 	versions = versions.sort((a, b) => b.data_version - a.data_version)
 	const latestReleaseMcmeta = versions.find((v) => v.type === 'release')
-	if (latestReleaseMcmeta === undefined){
+	if (latestReleaseMcmeta === undefined) {
 		throw new Error('mcmeta version list does not contain any releases')
 	}
 	const latestRelease = toVersionInfo(latestReleaseMcmeta)
@@ -154,14 +153,14 @@ export function resolveConfiguredVersion(
 	const configVersion = versions.find((v) =>
 		inputVersion === v.id.toLowerCase() || inputVersion === v.name.toLowerCase()
 	)
-	if (configVersion === undefined){
+	if (configVersion === undefined) {
 		logger.info(
 			`[resolveConfiguredVersion] Could not find config version "${inputVersion}", selecting newest release ${latestRelease.id}`,
 		)
 		return latestRelease
 	}
 	const configReleaseVersion = getReleaseVersion(configVersion)
-	if (configReleaseVersion === undefined){
+	if (configReleaseVersion === undefined) {
 		logger.info(
 			`[resolveConfiguredVersion] Could not determine release version of config "${inputVersion}", selecting newest release ${latestRelease.id}`,
 		)
