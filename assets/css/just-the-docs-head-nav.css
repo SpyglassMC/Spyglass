@@ -1,0 +1,3 @@
+.site-nav ul li a {
+  background-image: linear-gradient(-90deg, rgb(30.65, 30.65, 30.65) 0%, rgba(30.65, 30.65, 30.65, 0.8) 80%, rgba(30.65, 30.65, 30.65, 0) 100%);
+}
