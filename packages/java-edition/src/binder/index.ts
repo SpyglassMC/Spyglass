@@ -405,11 +405,11 @@ export function registerUriBuilders(meta: MetaRegistry) {
 }
 
 /**
- * Returns true for JSON file URIs that belong to any known resource category. No version check is
+ * Returns true for file URIs that belong to any known resource category. No version check is
  * performed as we would like to provide errors even for files in the wrong folder or files for the
  * wrong version.
  */
-export const jsonUriPredicate: UriPredicate = (uri, ctx) => {
+export const jeFileUriPredicate: UriPredicate = (uri, ctx) => {
 	const rels = [...getRels(uri, ctx.roots)]
 	return rels.some((rel) => getCandidateResourcesForRel(rel).length > 0)
 }
