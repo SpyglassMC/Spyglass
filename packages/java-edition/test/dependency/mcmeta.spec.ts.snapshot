@@ -2,7 +2,9 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve '1.16.5' 1`] = `
 {
   "id": "1.16.5",
   "name": "1.16.5",
-  "release": "1.16.5"
+  "release": "1.16.5",
+  "data_pack_version": 6,
+  "resource_pack_version": 6
 }
 `;
 
@@ -10,7 +12,9 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve '20w06a' 1`] = `
 {
   "id": "20w06a",
   "name": "Snapshot 20w06a",
-  "release": "1.16"
+  "release": "1.16",
+  "data_pack_version": 5,
+  "resource_pack_version": 5
 }
 `;
 
@@ -18,7 +22,19 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve '22w03a' 1`] = `
 {
   "id": "22w03a",
   "name": "22w03a",
-  "release": "1.18.2"
+  "release": "1.18.2",
+  "data_pack_version": 8,
+  "resource_pack_version": 8
+}
+`;
+
+exports[`mcmeta > resolveConfiguredVersion() > Should resolve '26.1-snapshot-1' 1`] = `
+{
+  "id": "26.1-snapshot-1",
+  "name": "26.1 Snapshot 1",
+  "release": "26.1-snapshot-1",
+  "data_pack_version": 95,
+  "resource_pack_version": 76
 }
 `;
 
@@ -26,31 +42,39 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve 'Auto' 1`] = `
 {
   "id": "1.16.5",
   "name": "1.16.5",
-  "release": "1.16.5"
+  "release": "1.16.5",
+  "data_pack_version": 6,
+  "resource_pack_version": 6
 }
 `;
 
 exports[`mcmeta > resolveConfiguredVersion() > Should resolve 'Latest Release' 1`] = `
 {
-  "id": "1.18.1",
-  "name": "1.18.1",
-  "release": "1.18.1"
+  "id": "1.21.11",
+  "name": "1.21.11",
+  "release": "1.21.11",
+  "data_pack_version": 94,
+  "resource_pack_version": 75
 }
 `;
 
 exports[`mcmeta > resolveConfiguredVersion() > Should resolve 'Latest Snapshot' 1`] = `
 {
-  "id": "22w03a",
-  "name": "22w03a",
-  "release": "1.18.2"
+  "id": "26.1-snapshot-1",
+  "name": "26.1 Snapshot 1",
+  "release": "26.1",
+  "data_pack_version": 95,
+  "resource_pack_version": 76
 }
 `;
 
 exports[`mcmeta > resolveConfiguredVersion() > Should resolve 'unknown' 1`] = `
 {
-  "id": "22w03a",
-  "name": "22w03a",
-  "release": "1.18.2"
+  "id": "26.1-snapshot-1",
+  "name": "26.1 Snapshot 1",
+  "release": "26.1",
+  "data_pack_version": 95,
+  "resource_pack_version": 76
 }
 `;
 

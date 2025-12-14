@@ -124,13 +124,13 @@ export function resolveConfiguredVersion(
 				logger.info(
 					`[resolveConfiguredVersion] Detected data pack format ${maxData.format} in ${maxData.packRoot}, selecting version ${version.id}`,
 				)
-				return nextReleaseVersionInfo
+				return toVersionInfo(version)
 			}
 			if (maxAssets && maxAssets.format === version.resource_pack_version) {
 				logger.info(
 					`[resolveConfiguredVersion] Detected resource pack format ${maxAssets.format} in ${maxAssets.packRoot}, selecting version ${version.id}`,
 				)
-				return nextReleaseVersionInfo
+				return toVersionInfo(version)
 			}
 			nextReleaseVersionInfo = toVersionInfo(version)
 		}
@@ -155,9 +155,9 @@ export function resolveConfiguredVersion(
 	)
 	if (configVersion === undefined) {
 		logger.info(
-			`[resolveConfiguredVersion] Could not find config version "${inputVersion}", selecting newest release ${latestRelease.id}`,
+			`[resolveConfiguredVersion] Could not find config version "${inputVersion}", selecting version ${latestSnaphot.id}`,
 		)
-		return latestRelease
+		return latestSnaphot
 	}
 	const configReleaseVersion = getReleaseVersion(configVersion)
 	if (configReleaseVersion === undefined) {

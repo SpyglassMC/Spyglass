@@ -43,6 +43,7 @@ describe('mcmeta', () => {
 			{ version: '20w06a' },
 			{ version: '22w03a' },
 			{ version: '1.16.5' },
+			{ version: '26.1-snapshot-1' },
 		]
 		for (const { version, packs } of suites) {
 			it(`Should resolve '${version}'`, async (t) => {
