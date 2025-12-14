@@ -4,7 +4,7 @@ import type { PackInfo, VersionInfo } from './common.js'
 import { ReleaseVersion } from './common.js'
 
 // Matches development versions with the release version in its name
-const DevelopmentVersionPattern = /^([1-9][0-9]*\.[1-9][0-9]*(?:\.[1-9][0-9]*)?)-.*$/
+const DevelopmentVersionPattern = /^(\d\d\.\d(?:\.\d?\d)?)\-\w+\-\d+$/
 
 function toVersionInfo(
 	version: McmetaVersion,
@@ -57,7 +57,7 @@ export function resolveConfiguredVersion(
 		// Development versions with release version in name
 		const matches = version.id.match(DevelopmentVersionPattern)
 		if (matches) {
-			return matches[0] as ReleaseVersion
+			return matches[1] as ReleaseVersion
 		}
 
 		// Old snapshots without release version in name
@@ -162,9 +162,9 @@ export function resolveConfiguredVersion(
 	const configReleaseVersion = getReleaseVersion(configVersion)
 	if (configReleaseVersion === undefined) {
 		logger.info(
-			`[resolveConfiguredVersion] Could not determine release version of config "${inputVersion}", selecting newest release ${latestRelease.id}`,
+			`[resolveConfiguredVersion] Could not determine release version of config "${inputVersion}", selecting version ${latestSnaphot.id}`,
 		)
-		return latestRelease
+		return latestSnaphot
 	}
 	logger.info(
 		`[resolveConfiguredVersion] Using config "${inputVersion}", selecting version ${configVersion?.id}`,

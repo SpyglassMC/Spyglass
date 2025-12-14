@@ -32,7 +32,7 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve '26.1-snapshot-1' 
 {
   "id": "26.1-snapshot-1",
   "name": "26.1 Snapshot 1",
-  "release": "26.1-snapshot-1",
+  "release": "26.1",
   "data_pack_version": 95,
   "resource_pack_version": 76
 }
