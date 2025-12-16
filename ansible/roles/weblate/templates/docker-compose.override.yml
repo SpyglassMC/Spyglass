@@ -7,6 +7,9 @@ services:
       WEBLATE_ADMIN_EMAIL: '{{ weblate_admin_email }}'
       WEBLATE_ADMIN_NAME: '{{ weblate_admin_name }}'
 
+      # Contact form
+      WEBLATE_CONTACT_FORM: disabled
+
       # Email
       WEBLATE_EMAIL_HOST: '{{ weblate_email_host }}'
       WEBLATE_EMAIL_PORT: '{{ weblate_email_port }}'
