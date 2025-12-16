@@ -223,11 +223,20 @@ exports[`mcdoc parser > useStatement > Parse 'use foo::bar as qux// Trailing com
           "end": 19
         },
         "value": "qux"
+      },
+      {
+        "type": "comment",
+        "range": {
+          "start": 19,
+          "end": 39
+        },
+        "comment": " Trailing comment.",
+        "prefix": "//"
       }
     ],
     "range": {
       "start": 0,
-      "end": 19
+      "end": 39
     }
   },
   "errors": []

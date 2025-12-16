@@ -309,112 +309,69 @@ exports[`mcdoc parser > attribute > Parse '#[bitfield=enum (int) {↓⮀⮀⮀�
                     "type": "mcdoc:typed_number",
                     "children": [
                       {
-                        "type": "integer",
+                        "type": "float",
                         "range": {
-                          "start": 35,
-                          "end": 36
+                          "start": 34,
+                          "end": 34
                         },
-                        "value": 1
+                        "value": 0
                       }
                     ],
                     "range": {
-                      "start": 35,
-                      "end": 36
+                      "start": 34,
+                      "end": 34
                     }
                   }
                 ],
                 "range": {
                   "start": 29,
-                  "end": 36
-                }
-              },
-              {
-                "type": "mcdoc:enum/field",
-                "children": [
-                  {
-                    "type": "mcdoc:identifier",
-                    "range": {
-                      "start": 43,
-                      "end": 46
-                    },
-                    "value": "Bar"
-                  },
-                  {
-                    "type": "mcdoc:typed_number",
-                    "children": [
-                      {
-                        "type": "integer",
-                        "range": {
-                          "start": 49,
-                          "end": 50
-                        },
-                        "value": 2
-                      }
-                    ],
-                    "range": {
-                      "start": 49,
-                      "end": 50
-                    }
-                  }
-                ],
-                "range": {
-                  "start": 43,
-                  "end": 50
-                }
-              },
-              {
-                "type": "mcdoc:enum/field",
-                "children": [
-                  {
-                    "type": "mcdoc:identifier",
-                    "range": {
-                      "start": 57,
-                      "end": 60
-                    },
-                    "value": "Qux"
-                  },
-                  {
-                    "type": "mcdoc:typed_number",
-                    "children": [
-                      {
-                        "type": "integer",
-                        "range": {
-                          "start": 63,
-                          "end": 64
-                        },
-                        "value": 3
-                      }
-                    ],
-                    "range": {
-                      "start": 63,
-                      "end": 64
-                    }
-                  }
-                ],
-                "range": {
-                  "start": 57,
-                  "end": 64
+                  "end": 34
                 }
               }
             ],
             "range": {
               "start": 22,
-              "end": 71
+              "end": 35
             }
           }
         ],
         "range": {
           "start": 11,
-          "end": 71
+          "end": 35
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 72
+      "end": 35
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 34,
+        "end": 34
+      },
+      "message": "Expected a float",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 35,
+        "end": 35
+      },
+      "message": "Expected “}” but got “1”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 35,
+        "end": 35
+      },
+      "message": "Expected “]” but got “1”",
+      "severity": 3
+    }
+  ]
 }
 `;
 
