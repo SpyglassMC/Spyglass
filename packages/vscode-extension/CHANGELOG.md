@@ -1,3 +1,12 @@
+# v4.6.0 (2025-12-16)
+
+### ✨ New Features
+- [`ad85406`](https://github.com/SpyglassMC/Spyglass/commit/ad85406bddf04b81ea1f13672da563e5c0f9006d) Supports the new `year.drop.patch` version format ([#1918](https://github.com/SpyglassMC/Spyglass/pull/1918))
+
+### 🐛 Bug Fixes
+- [`867d295`](https://github.com/SpyglassMC/Spyglass/commit/867d29583a5fe5b0ee2b5be82c9a1c1eed1fbe22) Fixes a bug with calculating archive hashes
+- [`001aded`](https://github.com/SpyglassMC/Spyglass/commit/001aded620cf0dc8ffc4caac1bea2985baf8ceb4) Added trade registries and stopwatch command patch ([#1925](https://github.com/SpyglassMC/Spyglass/pull/1925))
+
 # v4.5.12 (2025-04-15)
 
 ### ✨ New Features
