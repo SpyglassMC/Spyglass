@@ -217,6 +217,7 @@ export const DataMiscCategories = Object.freeze(
 		'jigsaw_block_name',
 		'random_sequence',
 		'storage',
+		'stopwatch',
 	] as const,
 )
 export type DataMiscCategory = (typeof DataMiscCategories)[number]
