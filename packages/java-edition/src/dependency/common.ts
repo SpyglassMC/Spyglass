@@ -1,6 +1,7 @@
 import type * as core from '@spyglassmc/core'
 
-export type ReleaseVersion = `1.${number}`
+export type ReleaseVersion = `${bigint}.${bigint}.${bigint}` | `${bigint}.${bigint}`
+
 export namespace ReleaseVersion {
 	/**
 	 * @returns
@@ -9,8 +10,12 @@ export namespace ReleaseVersion {
 	 * * `1` if `a` is newer than `b`.
 	 */
 	export function cmp(a: ReleaseVersion, b: ReleaseVersion): number {
-		const [minorA, patchA = 0] = a.slice(2).split('.')
-		const [minorB, patchB = 0] = b.slice(2).split('.')
+		const [majorA, minorA, patchA = 0] = a.split('.')
+		const [majorB, minorB, patchB = 0] = b.split('.')
+
+		if (majorA !== majorB) {
+			return Math.sign(Number(majorA) - Number(majorB))
+		}
 		if (minorA !== minorB) {
 			return Math.sign(Number(minorA) - Number(minorB))
 		}
@@ -34,6 +39,8 @@ export interface VersionInfo {
 	release: ReleaseVersion
 	id: string
 	name: string
+	data_pack_version: number
+	resource_pack_version: number
 }
 
 export namespace PackMcmeta {

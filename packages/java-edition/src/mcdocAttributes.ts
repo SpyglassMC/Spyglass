@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import { NEXT_RELEASE_VERSION, ReleaseVersion } from './dependency/index.js'
+import { getLatestSnapshot, ReleaseVersion } from './dependency/index.js'
 import type { McmetaCommands, McmetaVersions, PackInfo } from './dependency/index.js'
 
 const validator = mcdoc.runtime.attribute.validator
@@ -79,9 +79,11 @@ export function registerPackFormatAttribute(
 ) {
 	const dataFormats = new Map<number, string[]>()
 	const assetsFormats = new Map<number, string[]>()
-	if (versions[0]?.type !== 'release') {
-		dataFormats.set(versions[0].data_pack_version, [NEXT_RELEASE_VERSION])
-		assetsFormats.set(versions[0].resource_pack_version, [NEXT_RELEASE_VERSION])
+
+	const latestSnapshot = getLatestSnapshot(versions)
+	if (latestSnapshot.release !== latestSnapshot.id) {
+		dataFormats.set(latestSnapshot.data_pack_version, [latestSnapshot.release])
+		assetsFormats.set(latestSnapshot.resource_pack_version, [latestSnapshot.release])
 	}
 	for (const version of versions) {
 		if (version.type === 'release') {

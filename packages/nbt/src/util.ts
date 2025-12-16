@@ -12,8 +12,11 @@ export function newSyntax(ctx: ParserContext) {
 	if (!release) {
 		return true
 	}
-	const [minorA, patchA = 0] = release.slice(2).split('.')
-	const [minorB, patchB = 0] = '1.21.5'.slice(2).split('.')
+	const [majorA, minorA, patchA = 0] = release.split('.')
+	const [majorB, minorB, patchB = 0] = '1.21.5'.split('.')
+	if (majorA !== majorB) {
+		return Number(majorA) >= Number(majorB)
+	}
 	if (minorA !== minorB) {
 		return Number(minorA) >= Number(minorB)
 	}
