@@ -95,7 +95,7 @@ export class CacheService {
 					this.checksums.roots[root] = await this.project.fs.hash(root)
 				} catch (e) {
 					if (!this.project.externals.error.isKind(e, 'EISDIR')) {
-						this.project.logger.error(`[CacheService#hash-root] ${root}`)
+						this.project.logger.error(`[CacheService#hash-root] ${root}`, e)
 					}
 				}
 			}
