@@ -4,8 +4,8 @@
 			"locales"
 		],
 		"released": {
-			"commit": "349a2220c4d76286277af0ced96f8193be7b853c",
-			"version": "0.4.41"
+			"commit": "001aded620cf0dc8ffc4caac1bea2985baf8ceb4",
+			"version": "0.4.42"
 		}
 	},
 	"discord-bot": {
@@ -17,7 +17,7 @@
 		],
 		"released": {
 			"commit": "9fe3c6e06655352c42ef953e39b1590fcac9baae",
-			"version": "0.3.55"
+			"version": "0.3.56"
 		}
 	},
 	"java-edition": {
@@ -30,8 +30,8 @@
 			"nbt"
 		],
 		"released": {
-			"commit": "fd1c75c0f4716cd541e90d94ac73a13dd4d9e35b",
-			"version": "0.3.53"
+			"commit": "001aded620cf0dc8ffc4caac1bea2985baf8ceb4",
+			"version": "0.3.54"
 		}
 	},
 	"json": {
@@ -42,7 +42,7 @@
 		],
 		"released": {
 			"commit": "fd1c75c0f4716cd541e90d94ac73a13dd4d9e35b",
-			"version": "0.3.45"
+			"version": "0.3.46"
 		}
 	},
 	"language-server": {
@@ -54,7 +54,7 @@
 		],
 		"released": {
 			"commit": "50c62e4a7fb030a7e267aea70739475e3db3c66a",
-			"version": "0.4.53"
+			"version": "0.4.54"
 		}
 	},
 	"locales": {
@@ -70,7 +70,7 @@
 		],
 		"released": {
 			"commit": "fd1c75c0f4716cd541e90d94ac73a13dd4d9e35b",
-			"version": "0.3.45"
+			"version": "0.3.46"
 		}
 	},
 	"mcdoc-cli": {
@@ -80,7 +80,7 @@
 		],
 		"released": {
 			"commit": "fd1c75c0f4716cd541e90d94ac73a13dd4d9e35b",
-			"version": "0.1.46"
+			"version": "0.1.47"
 		}
 	},
 	"mcfunction": {
@@ -90,7 +90,7 @@
 		],
 		"released": {
 			"commit": "fd1c75c0f4716cd541e90d94ac73a13dd4d9e35b",
-			"version": "0.2.44"
+			"version": "0.2.45"
 		}
 	},
 	"nbt": {
@@ -100,8 +100,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "fd1c75c0f4716cd541e90d94ac73a13dd4d9e35b",
-			"version": "0.3.47"
+			"commit": "ad85406bddf04b81ea1f13672da563e5c0f9006d",
+			"version": "0.3.48"
 		}
 	},
 	"playground": {
@@ -113,7 +113,7 @@
 		],
 		"released": {
 			"commit": "10b6a34f43f193d15bd258a36a65f0d3e6d74598",
-			"version": "0.2.53"
+			"version": "0.2.54"
 		}
 	},
 	"vscode-extension": {
@@ -121,8 +121,8 @@
 			"language-server"
 		],
 		"released": {
-			"commit": "23365b579be05a4874abca4fc15d49c7c6c3e5dd",
-			"version": "4.5.26"
+			"commit": "f633a099f25a88286d2d0d8a6ce04493d421e362",
+			"version": "4.6.0"
 		}
 	},
 	"web-api-server": {
