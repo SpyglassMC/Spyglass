@@ -674,6 +674,51 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					},
 				},
 			},
+			...(ReleaseVersion.cmp(release, '1.21.11') >= 0
+				? {
+					stopwatch: {
+						children: {
+							create: {
+								children: {
+									id: {
+										properties: {
+											category: 'stopwatch',
+											usageType: 'definition',
+										},
+									},
+								},
+							},
+							query: {
+								children: {
+									id: {
+										properties: {
+											category: 'stopwatch',
+										},
+									},
+								},
+							},
+							remove: {
+								children: {
+									id: {
+										properties: {
+											category: 'stopwatch',
+										},
+									},
+								},
+							},
+							restart: {
+								children: {
+									id: {
+										properties: {
+											category: 'stopwatch',
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				: {}),
 			summon: {
 				children: {
 					entity: {
@@ -1057,6 +1102,15 @@ const ExecuteCondition: PartialTreeNode = Object.freeze({
 				predicate: {
 					properties: {
 						category: 'predicate',
+					},
+				},
+			},
+		},
+		stopwatch: {
+			children: {
+				id: {
+					properties: {
+						category: 'stopwatch',
 					},
 				},
 			},
