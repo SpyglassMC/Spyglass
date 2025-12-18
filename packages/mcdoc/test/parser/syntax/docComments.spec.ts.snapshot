@@ -1,4 +1,38 @@
-exports[`mcdoc parser > docComments > Parse '/// First line↓⮀⮀⮀⮀/// Second line↓⮀⮀⮀⮀Not comment' 1`] = `
+exports[`mcdoc parser > docComments > Parse '/// First line←↓/// Second line←↓Not comment←↓' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:doc_comments",
+    "children": [
+      {
+        "type": "comment",
+        "range": {
+          "start": 0,
+          "end": 16
+        },
+        "comment": " First line\\r\\n",
+        "prefix": "///"
+      },
+      {
+        "type": "comment",
+        "range": {
+          "start": 16,
+          "end": 33
+        },
+        "comment": " Second line\\r\\n",
+        "prefix": "///"
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 33
+    }
+  },
+  "errors": [],
+  "docCommentsText": "First line\\r\\n\\nSecond line\\r\\n"
+}
+`;
+
+exports[`mcdoc parser > docComments > Parse '/// First line↓/// Second line↓Not comment↓' 1`] = `
 {
   "node": {
     "type": "mcdoc:doc_comments",
@@ -15,8 +49,8 @@ exports[`mcdoc parser > docComments > Parse '/// First line↓⮀⮀⮀⮀/// Se
       {
         "type": "comment",
         "range": {
-          "start": 19,
-          "end": 35
+          "start": 15,
+          "end": 31
         },
         "comment": " Second line\\n",
         "prefix": "///"
@@ -24,9 +58,96 @@ exports[`mcdoc parser > docComments > Parse '/// First line↓⮀⮀⮀⮀/// Se
     ],
     "range": {
       "start": 0,
-      "end": 39
+      "end": 31
     }
   },
-  "errors": []
+  "errors": [],
+  "docCommentsText": "First line\\n\\nSecond line\\n"
+}
+`;
+
+exports[`mcdoc parser > docComments > Parse '/// First paragraph←↓///←↓/// Second paragraph←↓Not comment←↓' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:doc_comments",
+    "children": [
+      {
+        "type": "comment",
+        "range": {
+          "start": 0,
+          "end": 21
+        },
+        "comment": " First paragraph\\r\\n",
+        "prefix": "///"
+      },
+      {
+        "type": "comment",
+        "range": {
+          "start": 21,
+          "end": 26
+        },
+        "comment": "\\r\\n",
+        "prefix": "///"
+      },
+      {
+        "type": "comment",
+        "range": {
+          "start": 26,
+          "end": 48
+        },
+        "comment": " Second paragraph\\r\\n",
+        "prefix": "///"
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 48
+    }
+  },
+  "errors": [],
+  "docCommentsText": " First paragraph\\r\\n\\n\\r\\n\\n Second paragraph\\r\\n"
+}
+`;
+
+exports[`mcdoc parser > docComments > Parse '/// First paragraph↓///↓/// Second paragraph↓Not comment↓' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:doc_comments",
+    "children": [
+      {
+        "type": "comment",
+        "range": {
+          "start": 0,
+          "end": 20
+        },
+        "comment": " First paragraph\\n",
+        "prefix": "///"
+      },
+      {
+        "type": "comment",
+        "range": {
+          "start": 20,
+          "end": 24
+        },
+        "comment": "\\n",
+        "prefix": "///"
+      },
+      {
+        "type": "comment",
+        "range": {
+          "start": 24,
+          "end": 45
+        },
+        "comment": " Second paragraph\\n",
+        "prefix": "///"
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 45
+    }
+  },
+  "errors": [],
+  "docCommentsText": " First paragraph\\n\\n\\n\\n Second paragraph\\n"
 }
 `;
