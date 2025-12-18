@@ -586,16 +586,17 @@ export namespace DocCommentsNode {
 
 		let comments = node.children.map((doc) => doc.comment)
 
+		// Note that each comment includes the ending newline character.
 		// If every comment contains a leading space or is empty, stripe the leading spaces off.
 		// e.g. /// This is an example doc comment.
 		//      ///
 		//      /// Another line.
-		// should be converted to "This is an example doc comment.\n\nAnother line."
-		if (comments.every((s) => s.length === 0 || s.startsWith(' '))) {
-			comments = comments.map((s) => s.slice(1))
+		// should be converted to "This is an example doc comment.\n\nAnother line.\n"
+		if (comments.every((s) => !s.trim() || s.startsWith(' '))) {
+			comments = comments.map((s) => s.replace(/^ /, ''))
 		}
 
-		return comments.join('\n')
+		return comments.join('')
 	}
 	export function is(node: AstNode | undefined): node is DocCommentsNode {
 		return (node as DocCommentsNode | undefined)?.type === 'mcdoc:doc_comments'
