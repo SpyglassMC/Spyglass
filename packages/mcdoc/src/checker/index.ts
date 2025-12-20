@@ -34,7 +34,7 @@ const reference: SyncChecker<ReferenceTypeNode> = (node, ctx) => {
 		typeParams = symbol.typeDef.typeParams
 	}
 
-	if (typeParams.length != typeArgs.length) {
+	if (typeParams.length !== typeArgs.length) {
 		ctx.err.report(
 			localize(
 				'mcdoc.checker.reference.unexpected-number-of-type-arguments',
