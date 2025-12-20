@@ -664,7 +664,7 @@ function* resolvePathByStep(
 	}
 }
 
-function resolvePath(
+export function resolvePath(
 	path: PathNode,
 	ctx: McdocBinderContext,
 	options: { reportErrors?: boolean } = {},
@@ -676,7 +676,7 @@ function identifierToUri(module: string, ctx: McdocBinderContext): string | unde
 	return ctx.symbols.global.mcdoc?.[module]?.definition?.[0]?.uri
 }
 
-function uriToIdentifier(uri: string, ctx: CheckerContext): string | undefined {
+export function uriToIdentifier(uri: string, ctx: CheckerContext): string | undefined {
 	return Object.values(ctx.symbols.global.mcdoc ?? {}).find((symbol) => {
 		return (symbol.subcategory === 'module' && symbol.definition?.some((loc) => loc.uri === uri))
 	})?.identifier
