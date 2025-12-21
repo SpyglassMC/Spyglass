@@ -350,7 +350,8 @@ exports[`mcdoc __fixture__ > type parameter/circular twofold identities 1`] = `
                       "range": {
                         "start": 19,
                         "end": 24
-                      }
+                      },
+                      "canonical": "::test::Test2"
                     },
                     {
                       "type": "mcdoc:type_arg_block",
@@ -379,7 +380,8 @@ exports[`mcdoc __fixture__ > type parameter/circular twofold identities 1`] = `
                               "range": {
                                 "start": 25,
                                 "end": 26
-                              }
+                              },
+                              "canonical": "::test::T"
                             }
                           ],
                           "range": {
@@ -411,7 +413,8 @@ exports[`mcdoc __fixture__ > type parameter/circular twofold identities 1`] = `
                               "range": {
                                 "start": 28,
                                 "end": 29
-                              }
+                              },
+                              "canonical": "::test::U"
                             }
                           ],
                           "range": {
@@ -700,7 +703,8 @@ exports[`mcdoc __fixture__ > type parameter/circular twofold identities 1`] = `
                       "range": {
                         "start": 50,
                         "end": 55
-                      }
+                      },
+                      "canonical": "::test::Test1"
                     },
                     {
                       "type": "mcdoc:type_arg_block",
@@ -729,7 +733,8 @@ exports[`mcdoc __fixture__ > type parameter/circular twofold identities 1`] = `
                               "range": {
                                 "start": 56,
                                 "end": 57
-                              }
+                              },
+                              "canonical": "::test::T"
                             }
                           ],
                           "range": {
@@ -761,7 +766,8 @@ exports[`mcdoc __fixture__ > type parameter/circular twofold identities 1`] = `
                               "range": {
                                 "start": 59,
                                 "end": 60
-                              }
+                              },
+                              "canonical": "::test::U"
                             }
                           ],
                           "range": {

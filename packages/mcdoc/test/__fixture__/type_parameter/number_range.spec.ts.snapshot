@@ -426,7 +426,8 @@ exports[`mcdoc __fixture__ > type parameter/number range 1`] = `
                           "range": {
                             "start": 28,
                             "end": 29
-                          }
+                          },
+                          "canonical": "::test::T"
                         }
                       ],
                       "range": {
@@ -461,7 +462,8 @@ exports[`mcdoc __fixture__ > type parameter/number range 1`] = `
                               "range": {
                                 "start": 34,
                                 "end": 35
-                              }
+                              },
+                              "canonical": "::test::T"
                             }
                           ],
                           "range": {
@@ -555,7 +557,8 @@ exports[`mcdoc __fixture__ > type parameter/number range 1`] = `
                                       "range": {
                                         "start": 70,
                                         "end": 71
-                                      }
+                                      },
+                                      "canonical": "::test::T"
                                     }
                                   ],
                                   "range": {
@@ -611,7 +614,8 @@ exports[`mcdoc __fixture__ > type parameter/number range 1`] = `
                                       "range": {
                                         "start": 90,
                                         "end": 91
-                                      }
+                                      },
+                                      "canonical": "::test::T"
                                     }
                                   ],
                                   "range": {
@@ -879,7 +883,8 @@ exports[`mcdoc __fixture__ > type parameter/number range 1`] = `
                       "range": {
                         "start": 120,
                         "end": 134
-                      }
+                      },
+                      "canonical": "::test::InclusiveRange"
                     },
                     {
                       "type": "mcdoc:type_arg_block",

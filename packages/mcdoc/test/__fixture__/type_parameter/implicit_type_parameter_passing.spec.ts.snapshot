@@ -466,7 +466,8 @@ exports[`mcdoc __fixture__ > type parameter/implicit type parameter passing 1`] 
                                   "range": {
                                     "start": 32,
                                     "end": 33
-                                  }
+                                  },
+                                  "canonical": "::test::T"
                                 }
                               ],
                               "range": {
@@ -629,7 +630,8 @@ exports[`mcdoc __fixture__ > type parameter/implicit type parameter passing 1`] 
                       "range": {
                         "start": 49,
                         "end": 54
-                      }
+                      },
+                      "canonical": "::test::Test1"
                     }
                   ],
                   "range": {
@@ -693,7 +695,8 @@ exports[`mcdoc __fixture__ > type parameter/implicit type parameter passing 1`] 
                       "range": {
                         "start": 70,
                         "end": 75
-                      }
+                      },
+                      "canonical": "::test::Test2"
                     },
                     {
                       "type": "mcdoc:type_arg_block",

@@ -286,7 +286,8 @@ exports[`mcdoc __fixture__ > type parameter/duplicates name in module scope 1`] 
                       "range": {
                         "start": 28,
                         "end": 29
-                      }
+                      },
+                      "canonical": "::test::T"
                     }
                   ],
                   "range": {

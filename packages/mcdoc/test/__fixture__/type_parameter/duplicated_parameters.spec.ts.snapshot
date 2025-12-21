@@ -194,7 +194,8 @@ exports[`mcdoc __fixture__ > type parameter/duplicated parameters 1`] = `
                       "range": {
                         "start": 18,
                         "end": 19
-                      }
+                      },
+                      "canonical": "::test::T"
                     }
                   ],
                   "range": {

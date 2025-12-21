@@ -365,7 +365,8 @@ exports[`mcdoc __fixture__ > use statement/reference alias 1`] = `
                     "start": 6,
                     "end": 18
                   },
-                  "isAbsolute": true
+                  "isAbsolute": true,
+                  "canonical": "::module::Used"
                 }
               ],
               "range": {
@@ -423,7 +424,8 @@ exports[`mcdoc __fixture__ > use statement/reference alias 1`] = `
                       "range": {
                         "start": 37,
                         "end": 41
-                      }
+                      },
+                      "canonical": "::module::Used"
                     }
                   ],
                   "range": {
