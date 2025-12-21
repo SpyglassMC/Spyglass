@@ -379,7 +379,7 @@ exports[`mcdoc parser > numericType > Parse 'long @ 10000000000000001' 1`] = `
               "start": 7,
               "end": 24
             },
-            "value": "10000000000000001"
+            "value": 10000000000000001
           }
         ],
         "range": {

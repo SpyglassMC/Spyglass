@@ -392,7 +392,7 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
             "kind": "literal",
             "value": {
               "kind": "long",
-              "value": "42"
+              "value": 42
             }
           }
         },
@@ -578,7 +578,7 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
             "kind": "long_array",
             "valueRange": {
               "kind": 0,
-              "min": "1"
+              "min": 1
             }
           }
         },
@@ -1503,7 +1503,7 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
                             "start": 249,
                             "end": 251
                           },
-                          "value": "42"
+                          "value": 42
                         },
                         {
                           "type": "mcdoc:literal",
@@ -1786,7 +1786,7 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
                             "start": 380,
                             "end": 381
                           },
-                          "value": "1"
+                          "value": 1
                         },
                         {
                           "type": "mcdoc:literal",

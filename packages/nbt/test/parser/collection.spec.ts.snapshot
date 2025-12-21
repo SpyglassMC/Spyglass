@@ -745,7 +745,7 @@ exports[`nbt longArray() > Parse '[L; 0L, 1L]' 1`] = `
               "start": 4,
               "end": 6
             },
-            "value": "0"
+            "value": 0
           }
         ],
         "value": {
@@ -754,7 +754,7 @@ exports[`nbt longArray() > Parse '[L; 0L, 1L]' 1`] = `
             "start": 4,
             "end": 6
           },
-          "value": "0"
+          "value": 0
         },
         "sep": {
           "start": 6,
@@ -774,7 +774,7 @@ exports[`nbt longArray() > Parse '[L; 0L, 1L]' 1`] = `
               "start": 8,
               "end": 10
             },
-            "value": "1"
+            "value": 1
           }
         ],
         "value": {
@@ -783,7 +783,7 @@ exports[`nbt longArray() > Parse '[L; 0L, 1L]' 1`] = `
             "start": 8,
             "end": 10
           },
-          "value": "1"
+          "value": 1
         }
       }
     ]
@@ -814,7 +814,7 @@ exports[`nbt longArray() > Parse '[L; 0L, 2, \"string\"]' 1`] = `
               "start": 4,
               "end": 6
             },
-            "value": "0"
+            "value": 0
           }
         ],
         "value": {
@@ -823,7 +823,7 @@ exports[`nbt longArray() > Parse '[L; 0L, 2, \"string\"]' 1`] = `
             "start": 4,
             "end": 6
           },
-          "value": "0"
+          "value": 0
         },
         "sep": {
           "start": 6,
