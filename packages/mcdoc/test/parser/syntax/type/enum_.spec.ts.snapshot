@@ -63,7 +63,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum () Foo' 1`] = `
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "float",
+                    "type": "integer",
                     "range": {
                       "start": 11,
                       "end": 11
@@ -132,7 +132,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum () Foo' 1`] = `
         "start": 11,
         "end": 11
       },
-      "message": "Expected a float",
+      "message": "Expected an integer",
       "severity": 3
     },
     {
@@ -469,7 +469,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum (int) Foo' 1`] = `
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "float",
+                    "type": "integer",
                     "range": {
                       "start": 14,
                       "end": 14
@@ -530,7 +530,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum (int) Foo' 1`] = `
         "start": 14,
         "end": 14
       },
-      "message": "Expected a float",
+      "message": "Expected an integer",
       "severity": 3
     },
     {
@@ -586,7 +586,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum (int) {' 1`] = `
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "float",
+                    "type": "integer",
                     "range": {
                       "start": 12,
                       "end": 12
@@ -639,7 +639,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum (int) {' 1`] = `
         "start": 12,
         "end": 12
       },
-      "message": "Expected a float",
+      "message": "Expected an integer",
       "severity": 3
     },
     {
@@ -736,7 +736,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum Foo' 1`] = `
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "float",
+                    "type": "integer",
                     "range": {
                       "start": 8,
                       "end": 8
@@ -821,7 +821,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum Foo' 1`] = `
         "start": 8,
         "end": 8
       },
-      "message": "Expected a float",
+      "message": "Expected an integer",
       "severity": 3
     },
     {
@@ -877,7 +877,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum' 1`] = `
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "float",
+                    "type": "integer",
                     "range": {
                       "start": 4,
                       "end": 4
@@ -962,7 +962,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum' 1`] = `
         "start": 4,
         "end": 4
       },
-      "message": "Expected a float",
+      "message": "Expected an integer",
       "severity": 3
     },
     {
