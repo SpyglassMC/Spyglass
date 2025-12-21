@@ -1,4 +1,4 @@
-import { inject } from './injections.js'
+import { applyPatches } from './patches.js'
 
 export * from './Dev.js'
 export * from './externals/index.js'
@@ -9,4 +9,4 @@ export * from './StateProxy.js'
 export * from './TwoWayMap.js'
 export * from './util.js'
 
-inject()
+applyPatches()
