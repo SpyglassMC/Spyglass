@@ -434,6 +434,7 @@ async function bindDispatcherType(
 }
 
 async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> {
+	let stringPath: string | undefined = undefined
 	for (
 		const { identifiers, node: identNode, indexRight } of resolvePathByStep(node, ctx, {
 			reportErrors: true,
@@ -443,9 +444,10 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 			continue
 		}
 
+		stringPath = pathArrayToString(identifiers)
 		if (indexRight === 1) {
 			// The second last identifier in a path points to a file module.
-			const referencedModuleFile = pathArrayToString(identifiers)
+			const referencedModuleFile = stringPath
 			const referencedModuleUri = identifierToUri(referencedModuleFile, ctx)
 			if (!referencedModuleUri) {
 				ctx.err.report(
@@ -459,7 +461,7 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 			await ctx.ensureBindingStarted(referencedModuleUri)
 		}
 
-		ctx.symbols.query({ doc: ctx.doc, node: identNode }, 'mcdoc', pathArrayToString(identifiers))
+		ctx.symbols.query({ doc: ctx.doc, node: identNode }, 'mcdoc', stringPath)
 			.ifDeclared((_, query) =>
 				query.enter({
 					usage: {
@@ -483,6 +485,8 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 				}
 			})
 	}
+
+	node.canonical = stringPath
 }
 
 function bindEnum(node: EnumNode, ctx: McdocBinderContext): void {
@@ -579,7 +583,7 @@ async function bindUseStatement(node: UseStatementNode, ctx: McdocBinderContext)
 		return
 	}
 
-	return bindPath(path, ctx)
+	await bindPath(path, ctx)
 }
 
 export function registerMcdocBinders(meta: MetaRegistry) {
@@ -664,7 +668,7 @@ function* resolvePathByStep(
 	}
 }
 
-export function resolvePath(
+function resolvePath(
 	path: PathNode,
 	ctx: McdocBinderContext,
 	options: { reportErrors?: boolean } = {},
@@ -676,7 +680,7 @@ function identifierToUri(module: string, ctx: McdocBinderContext): string | unde
 	return ctx.symbols.global.mcdoc?.[module]?.definition?.[0]?.uri
 }
 
-export function uriToIdentifier(uri: string, ctx: CheckerContext): string | undefined {
+function uriToIdentifier(uri: string, ctx: CheckerContext): string | undefined {
 	return Object.values(ctx.symbols.global.mcdoc ?? {}).find((symbol) => {
 		return (symbol.subcategory === 'module' && symbol.definition?.some((loc) => loc.uri === uri))
 	})?.identifier

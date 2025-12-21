@@ -728,6 +728,7 @@ export interface PathNode extends AstNode {
 	type: 'mcdoc:path'
 	children: (LiteralNode | IdentifierNode)[]
 	isAbsolute?: boolean
+	canonical?: string
 }
 export namespace PathNode {
 	export function destruct(
@@ -736,12 +737,14 @@ export namespace PathNode {
 		children: (LiteralNode | IdentifierNode)[]
 		isAbsolute?: boolean
 		lastIdentifier?: IdentifierNode
+		canonical?: string
 	} {
 		const lastChild = atArray(node?.children, -1)
 		return {
 			children: node?.children ?? [],
 			isAbsolute: node?.isAbsolute,
 			lastIdentifier: IdentifierNode.is(lastChild) ? lastChild : undefined,
+			canonical: node?.canonical,
 		}
 	}
 	export function is(node: AstNode | undefined): node is PathNode {

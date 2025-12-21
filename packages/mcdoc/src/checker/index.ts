@@ -1,11 +1,15 @@
 import type { MetaRegistry, SyncChecker } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import * as binder from '../binder/index.js'
+import { TypeDefSymbolData } from '../binder/index.js'
 import type { TypeNode } from '../node/index.js'
 import { ReferenceTypeNode, TypeArgBlockNode, TypeBaseNode } from '../node/index.js'
 
 const reference: SyncChecker<ReferenceTypeNode> = (node, ctx) => {
 	const { path } = ReferenceTypeNode.destruct(node)
+	if (!path.canonical) {
+		return
+	}
+
 	const { appendixes } = TypeBaseNode.destruct(node)
 	const typeArgBlock = appendixes.find(TypeArgBlockNode.is)
 	let typeArgs: TypeNode[] = []
@@ -14,16 +18,8 @@ const reference: SyncChecker<ReferenceTypeNode> = (node, ctx) => {
 		typeArgs = args
 	}
 
-	const moduleIdentifier = binder.uriToIdentifier(ctx.doc.uri, ctx)
-	if (!moduleIdentifier) {
-		return
-	}
-
-	const pathList = binder.resolvePath(path, { ...ctx, moduleIdentifier }) ?? []
-	const absolutePath = '::' + pathList.join('::')
-
-	const symbol = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', absolutePath)
-		.getData(binder.TypeDefSymbolData.is)
+	const symbol = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', path.canonical)
+		.getData(TypeDefSymbolData.is)
 
 	if (!symbol) {
 		return
@@ -38,7 +34,7 @@ const reference: SyncChecker<ReferenceTypeNode> = (node, ctx) => {
 		ctx.err.report(
 			localize(
 				'mcdoc.checker.reference.unexpected-number-of-type-arguments',
-				absolutePath,
+				path.canonical,
 				typeParams.length,
 				typeArgs.length,
 			),
