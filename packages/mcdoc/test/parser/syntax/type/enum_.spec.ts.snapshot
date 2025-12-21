@@ -147,7 +147,464 @@ exports[`mcdoc parser > enum_ > Parse 'enum () Foo' 1`] = `
 }
 `;
 
-exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀⮀/// Boo doc↓⮀⮀⮀⮀⮀/// Another line↓⮀⮀⮀⮀⮀Boo = 4.2d,↓⮀⮀⮀⮀⮀/// Qux doc↓⮀⮀⮀⮀⮀Qux = 12e3,↓⮀⮀⮀⮀}' 1`] = `
+exports[`mcdoc parser > enum_ > Parse 'enum (byte) Foo {↓⮀⮀⮀⮀⮀Bar = 1,↓⮀⮀⮀⮀⮀Baz = 4b,↓⮀⮀⮀⮀⮀Boo = 5B,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 10
+        },
+        "value": "byte",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 12,
+          "end": 15
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 23,
+                  "end": 26
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 29,
+                      "end": 30
+                    },
+                    "value": 1
+                  }
+                ],
+                "range": {
+                  "start": 29,
+                  "end": 30
+                }
+              }
+            ],
+            "range": {
+              "start": 23,
+              "end": 30
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 37,
+                  "end": 40
+                },
+                "value": "Baz"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 43,
+                      "end": 44
+                    },
+                    "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 44,
+                      "end": 45
+                    },
+                    "value": "b",
+                    "colorTokenType": "keyword"
+                  }
+                ],
+                "range": {
+                  "start": 43,
+                  "end": 45
+                }
+              }
+            ],
+            "range": {
+              "start": 37,
+              "end": 45
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 52,
+                  "end": 55
+                },
+                "value": "Boo"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 58,
+                      "end": 59
+                    },
+                    "value": 5
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 59,
+                      "end": 60
+                    },
+                    "value": "B",
+                    "colorTokenType": "keyword"
+                  }
+                ],
+                "range": {
+                  "start": 58,
+                  "end": 60
+                }
+              }
+            ],
+            "range": {
+              "start": 52,
+              "end": 60
+            }
+          }
+        ],
+        "range": {
+          "start": 16,
+          "end": 67
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 67
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (byte) Foo {↓⮀⮀⮀⮀⮀Bar = 1.2,,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 10
+        },
+        "value": "byte",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 12,
+          "end": 15
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 23,
+                  "end": 26
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 29,
+                      "end": 30
+                    },
+                    "value": 1
+                  }
+                ],
+                "range": {
+                  "start": 29,
+                  "end": 30
+                }
+              }
+            ],
+            "range": {
+              "start": 23,
+              "end": 30
+            }
+          }
+        ],
+        "range": {
+          "start": 16,
+          "end": 30
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 30
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 30,
+        "end": 30
+      },
+      "message": "Expected “}” but got “.”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (byte) Foo {↓⮀⮀⮀⮀⮀Bar = 4s,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 10
+        },
+        "value": "byte",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 12,
+          "end": 15
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 23,
+                  "end": 26
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 29,
+                      "end": 30
+                    },
+                    "value": 4
+                  }
+                ],
+                "range": {
+                  "start": 29,
+                  "end": 30
+                }
+              }
+            ],
+            "range": {
+              "start": 23,
+              "end": 30
+            }
+          }
+        ],
+        "range": {
+          "start": 16,
+          "end": 30
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 30
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 30,
+        "end": 30
+      },
+      "message": "Expected “}” but got “s”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (byte) Foo {↓⮀⮀⮀⮀⮀Bar = \"Hello\",↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 10
+        },
+        "value": "byte",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 12,
+          "end": 15
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 23,
+                  "end": 26
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 29,
+                      "end": 29
+                    },
+                    "value": 0
+                  }
+                ],
+                "range": {
+                  "start": 29,
+                  "end": 29
+                }
+              }
+            ],
+            "range": {
+              "start": 23,
+              "end": 29
+            }
+          }
+        ],
+        "range": {
+          "start": 16,
+          "end": 29
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 29
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 29,
+        "end": 29
+      },
+      "message": "Expected an integer",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 29,
+        "end": 29
+      },
+      "message": "Expected “}” but got “\\"”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀⮀/// Boo doc↓⮀⮀⮀⮀⮀/// Another line↓⮀⮀⮀⮀⮀Boo = 4.2d,↓⮀⮀⮀⮀⮀Weee = 5D,↓⮀⮀⮀⮀⮀/// Qux doc↓⮀⮀⮀⮀⮀Qux = 12e3,↓⮀⮀⮀⮀⮀Baz = 1,↓⮀⮀⮀⮀}' 1`] = `
 {
   "node": {
     "type": "mcdoc:enum",
@@ -307,28 +764,71 @@ exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀/// 
             "type": "mcdoc:enum/field",
             "children": [
               {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 114,
+                  "end": 118
+                },
+                "value": "Weee"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 121,
+                      "end": 122
+                    },
+                    "value": 5
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 122,
+                      "end": 123
+                    },
+                    "value": "D",
+                    "colorTokenType": "keyword"
+                  }
+                ],
+                "range": {
+                  "start": 121,
+                  "end": 123
+                }
+              }
+            ],
+            "range": {
+              "start": 114,
+              "end": 123
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
                 "type": "mcdoc:doc_comments",
                 "children": [
                   {
                     "type": "comment",
                     "range": {
-                      "start": 114,
-                      "end": 126
+                      "start": 130,
+                      "end": 142
                     },
                     "comment": " Qux doc\\n",
                     "prefix": "///"
                   }
                 ],
                 "range": {
-                  "start": 114,
-                  "end": 131
+                  "start": 130,
+                  "end": 147
                 }
               },
               {
                 "type": "mcdoc:identifier",
                 "range": {
-                  "start": 131,
-                  "end": 134
+                  "start": 147,
+                  "end": 150
                 },
                 "value": "Qux"
               },
@@ -338,36 +838,789 @@ exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀/// 
                   {
                     "type": "float",
                     "range": {
-                      "start": 137,
-                      "end": 141
+                      "start": 153,
+                      "end": 157
                     },
                     "value": 12000
                   }
                 ],
                 "range": {
-                  "start": 137,
-                  "end": 141
+                  "start": 153,
+                  "end": 157
                 }
               }
             ],
             "range": {
-              "start": 114,
-              "end": 141
+              "start": 130,
+              "end": 157
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 164,
+                  "end": 167
+                },
+                "value": "Baz"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 170,
+                      "end": 171
+                    },
+                    "value": 1
+                  }
+                ],
+                "range": {
+                  "start": 170,
+                  "end": 171
+                }
+              }
+            ],
+            "range": {
+              "start": 164,
+              "end": 171
             }
           }
         ],
         "range": {
           "start": 18,
-          "end": 148
+          "end": 178
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 148
+      "end": 178
     }
   },
   "errors": []
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀Bar = 4f,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 12
+        },
+        "value": "double",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 14,
+          "end": 17
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 25,
+                  "end": 28
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 31,
+                      "end": 32
+                    },
+                    "value": 4
+                  }
+                ],
+                "range": {
+                  "start": 31,
+                  "end": 32
+                }
+              }
+            ],
+            "range": {
+              "start": 25,
+              "end": 32
+            }
+          }
+        ],
+        "range": {
+          "start": 18,
+          "end": 32
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 32
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 32,
+        "end": 32
+      },
+      "message": "Expected “}” but got “f”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀Bar = \"Hello\",↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 12
+        },
+        "value": "double",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 14,
+          "end": 17
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 25,
+                  "end": 28
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 31,
+                      "end": 31
+                    },
+                    "value": 0
+                  }
+                ],
+                "range": {
+                  "start": 31,
+                  "end": 31
+                }
+              }
+            ],
+            "range": {
+              "start": 25,
+              "end": 31
+            }
+          }
+        ],
+        "range": {
+          "start": 18,
+          "end": 31
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 31
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 31,
+        "end": 31
+      },
+      "message": "Expected a float",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 31,
+        "end": 31
+      },
+      "message": "Expected “}” but got “\\"”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (float) Foo {↓⮀⮀⮀⮀⮀Bar = 1,↓⮀⮀⮀⮀⮀Baz = 4f,↓⮀⮀⮀⮀⮀Boo = 1.2,↓⮀⮀⮀⮀⮀Wee = 5F,↓⮀⮀⮀⮀⮀Qux = 12e3,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 11
+        },
+        "value": "float",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 13,
+          "end": 16
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 24,
+                  "end": 27
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 30,
+                      "end": 31
+                    },
+                    "value": 1
+                  }
+                ],
+                "range": {
+                  "start": 30,
+                  "end": 31
+                }
+              }
+            ],
+            "range": {
+              "start": 24,
+              "end": 31
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 38,
+                  "end": 41
+                },
+                "value": "Baz"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 44,
+                      "end": 45
+                    },
+                    "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 45,
+                      "end": 46
+                    },
+                    "value": "f",
+                    "colorTokenType": "keyword"
+                  }
+                ],
+                "range": {
+                  "start": 44,
+                  "end": 46
+                }
+              }
+            ],
+            "range": {
+              "start": 38,
+              "end": 46
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 53,
+                  "end": 56
+                },
+                "value": "Boo"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 59,
+                      "end": 62
+                    },
+                    "value": 1.2
+                  }
+                ],
+                "range": {
+                  "start": 59,
+                  "end": 62
+                }
+              }
+            ],
+            "range": {
+              "start": 53,
+              "end": 62
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 69,
+                  "end": 72
+                },
+                "value": "Wee"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 75,
+                      "end": 76
+                    },
+                    "value": 5
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 76,
+                      "end": 77
+                    },
+                    "value": "F",
+                    "colorTokenType": "keyword"
+                  }
+                ],
+                "range": {
+                  "start": 75,
+                  "end": 77
+                }
+              }
+            ],
+            "range": {
+              "start": 69,
+              "end": 77
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 84,
+                  "end": 87
+                },
+                "value": "Qux"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 90,
+                      "end": 94
+                    },
+                    "value": 12000
+                  }
+                ],
+                "range": {
+                  "start": 90,
+                  "end": 94
+                }
+              }
+            ],
+            "range": {
+              "start": 84,
+              "end": 94
+            }
+          }
+        ],
+        "range": {
+          "start": 17,
+          "end": 101
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 101
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (float) Foo {↓⮀⮀⮀⮀⮀Bar = 4.2d,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 11
+        },
+        "value": "float",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 13,
+          "end": 16
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 24,
+                  "end": 27
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 30,
+                      "end": 33
+                    },
+                    "value": 4.2
+                  }
+                ],
+                "range": {
+                  "start": 30,
+                  "end": 33
+                }
+              }
+            ],
+            "range": {
+              "start": 24,
+              "end": 33
+            }
+          }
+        ],
+        "range": {
+          "start": 17,
+          "end": 33
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 33
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 33,
+        "end": 33
+      },
+      "message": "Expected “}” but got “d”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (float) Foo {↓⮀⮀⮀⮀⮀Bar = 4l,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 11
+        },
+        "value": "float",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 13,
+          "end": 16
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 24,
+                  "end": 27
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 30,
+                      "end": 31
+                    },
+                    "value": 4
+                  }
+                ],
+                "range": {
+                  "start": 30,
+                  "end": 31
+                }
+              }
+            ],
+            "range": {
+              "start": 24,
+              "end": 31
+            }
+          }
+        ],
+        "range": {
+          "start": 17,
+          "end": 31
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 31
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 31,
+        "end": 31
+      },
+      "message": "Expected “}” but got “l”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (float) Foo {↓⮀⮀⮀⮀⮀Bar = \"Hello\",↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 11
+        },
+        "value": "float",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 13,
+          "end": 16
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 24,
+                  "end": 27
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 30,
+                      "end": 30
+                    },
+                    "value": 0
+                  }
+                ],
+                "range": {
+                  "start": 30,
+                  "end": 30
+                }
+              }
+            ],
+            "range": {
+              "start": 24,
+              "end": 30
+            }
+          }
+        ],
+        "range": {
+          "start": 17,
+          "end": 30
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 30
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 30,
+        "end": 30
+      },
+      "message": "Expected a float",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 30,
+        "end": 30
+      },
+      "message": "Expected “}” but got “\\"”",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -417,6 +1670,470 @@ exports[`mcdoc parser > enum_ > Parse 'enum (int) Foo {}' 1`] = `
     }
   },
   "errors": []
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (int) Foo {↓⮀⮀⮀⮀⮀Bar = 1,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 9
+        },
+        "value": "int",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 11,
+          "end": 14
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 22,
+                  "end": 25
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 28,
+                      "end": 29
+                    },
+                    "value": 1
+                  }
+                ],
+                "range": {
+                  "start": 28,
+                  "end": 29
+                }
+              }
+            ],
+            "range": {
+              "start": 22,
+              "end": 29
+            }
+          }
+        ],
+        "range": {
+          "start": 15,
+          "end": 36
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 36
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (int) Foo {↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 9
+        },
+        "value": "int",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 11,
+          "end": 14
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 22,
+                  "end": 25
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 28,
+                      "end": 29
+                    },
+                    "value": 1
+                  }
+                ],
+                "range": {
+                  "start": 28,
+                  "end": 29
+                }
+              }
+            ],
+            "range": {
+              "start": 22,
+              "end": 29
+            }
+          }
+        ],
+        "range": {
+          "start": 15,
+          "end": 29
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 29
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 29,
+        "end": 29
+      },
+      "message": "Expected “}” but got “.”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (int) Foo {↓⮀⮀⮀⮀⮀Bar = 4L,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 9
+        },
+        "value": "int",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 11,
+          "end": 14
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 22,
+                  "end": 25
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 28,
+                      "end": 29
+                    },
+                    "value": 4
+                  }
+                ],
+                "range": {
+                  "start": 28,
+                  "end": 29
+                }
+              }
+            ],
+            "range": {
+              "start": 22,
+              "end": 29
+            }
+          }
+        ],
+        "range": {
+          "start": 15,
+          "end": 29
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 29
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 29,
+        "end": 29
+      },
+      "message": "Expected “}” but got “L”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (int) Foo {↓⮀⮀⮀⮀⮀Bar = 4b,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 9
+        },
+        "value": "int",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 11,
+          "end": 14
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 22,
+                  "end": 25
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 28,
+                      "end": 29
+                    },
+                    "value": 4
+                  }
+                ],
+                "range": {
+                  "start": 28,
+                  "end": 29
+                }
+              }
+            ],
+            "range": {
+              "start": 22,
+              "end": 29
+            }
+          }
+        ],
+        "range": {
+          "start": 15,
+          "end": 29
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 29
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 29,
+        "end": 29
+      },
+      "message": "Expected “}” but got “b”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (int) Foo {↓⮀⮀⮀⮀⮀Bar = \"Hello\",↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 9
+        },
+        "value": "int",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 11,
+          "end": 14
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 22,
+                  "end": 25
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 28,
+                      "end": 28
+                    },
+                    "value": 0
+                  }
+                ],
+                "range": {
+                  "start": 28,
+                  "end": 28
+                }
+              }
+            ],
+            "range": {
+              "start": 22,
+              "end": 28
+            }
+          }
+        ],
+        "range": {
+          "start": 15,
+          "end": 28
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 28
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 28,
+        "end": 28
+      },
+      "message": "Expected an integer",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 28,
+        "end": 28
+      },
+      "message": "Expected “}” but got “\\"”",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -689,6 +2406,1112 @@ exports[`mcdoc parser > enum_ > Parse 'enum (int) {}' 1`] = `
     "range": {
       "start": 0,
       "end": 13
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = 1,↓⮀⮀⮀⮀⮀Baz = 4l,↓⮀⮀⮀⮀⮀Boo = 5L,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 10
+        },
+        "value": "long",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 12,
+          "end": 15
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 23,
+                  "end": 26
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 29,
+                      "end": 30
+                    },
+                    "value": 1
+                  }
+                ],
+                "range": {
+                  "start": 29,
+                  "end": 30
+                }
+              }
+            ],
+            "range": {
+              "start": 23,
+              "end": 30
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 37,
+                  "end": 40
+                },
+                "value": "Baz"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 43,
+                      "end": 44
+                    },
+                    "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 44,
+                      "end": 45
+                    },
+                    "value": "l",
+                    "colorTokenType": "keyword"
+                  }
+                ],
+                "range": {
+                  "start": 43,
+                  "end": 45
+                }
+              }
+            ],
+            "range": {
+              "start": 37,
+              "end": 45
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 52,
+                  "end": 55
+                },
+                "value": "Boo"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 58,
+                      "end": 59
+                    },
+                    "value": 5
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 59,
+                      "end": 60
+                    },
+                    "value": "L",
+                    "colorTokenType": "keyword"
+                  }
+                ],
+                "range": {
+                  "start": 58,
+                  "end": 60
+                }
+              }
+            ],
+            "range": {
+              "start": 52,
+              "end": 60
+            }
+          }
+        ],
+        "range": {
+          "start": 16,
+          "end": 67
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 67
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 10
+        },
+        "value": "long",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 12,
+          "end": 15
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 23,
+                  "end": 26
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 29,
+                      "end": 30
+                    },
+                    "value": 1
+                  }
+                ],
+                "range": {
+                  "start": 29,
+                  "end": 30
+                }
+              }
+            ],
+            "range": {
+              "start": 23,
+              "end": 30
+            }
+          }
+        ],
+        "range": {
+          "start": 16,
+          "end": 30
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 30
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 30,
+        "end": 30
+      },
+      "message": "Expected “}” but got “.”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = 4s,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 10
+        },
+        "value": "long",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 12,
+          "end": 15
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 23,
+                  "end": 26
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 29,
+                      "end": 30
+                    },
+                    "value": 4
+                  }
+                ],
+                "range": {
+                  "start": 29,
+                  "end": 30
+                }
+              }
+            ],
+            "range": {
+              "start": 23,
+              "end": 30
+            }
+          }
+        ],
+        "range": {
+          "start": 16,
+          "end": 30
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 30
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 30,
+        "end": 30
+      },
+      "message": "Expected “}” but got “s”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = \"Hello\",↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 10
+        },
+        "value": "long",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 12,
+          "end": 15
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 23,
+                  "end": 26
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 29,
+                      "end": 29
+                    },
+                    "value": 0
+                  }
+                ],
+                "range": {
+                  "start": 29,
+                  "end": 29
+                }
+              }
+            ],
+            "range": {
+              "start": 23,
+              "end": 29
+            }
+          }
+        ],
+        "range": {
+          "start": 16,
+          "end": 29
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 29
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 29,
+        "end": 29
+      },
+      "message": "Expected an integer",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 29,
+        "end": 29
+      },
+      "message": "Expected “}” but got “\\"”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (short) Foo {↓⮀⮀⮀⮀⮀Bar = 1,↓⮀⮀⮀⮀⮀Baz = 4s,↓⮀⮀⮀⮀⮀Boo = 5S,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 11
+        },
+        "value": "short",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 13,
+          "end": 16
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 24,
+                  "end": 27
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 30,
+                      "end": 31
+                    },
+                    "value": 1
+                  }
+                ],
+                "range": {
+                  "start": 30,
+                  "end": 31
+                }
+              }
+            ],
+            "range": {
+              "start": 24,
+              "end": 31
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 38,
+                  "end": 41
+                },
+                "value": "Baz"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 44,
+                      "end": 45
+                    },
+                    "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 45,
+                      "end": 46
+                    },
+                    "value": "s",
+                    "colorTokenType": "keyword"
+                  }
+                ],
+                "range": {
+                  "start": 44,
+                  "end": 46
+                }
+              }
+            ],
+            "range": {
+              "start": 38,
+              "end": 46
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 53,
+                  "end": 56
+                },
+                "value": "Boo"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 59,
+                      "end": 60
+                    },
+                    "value": 5
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 60,
+                      "end": 61
+                    },
+                    "value": "S",
+                    "colorTokenType": "keyword"
+                  }
+                ],
+                "range": {
+                  "start": 59,
+                  "end": 61
+                }
+              }
+            ],
+            "range": {
+              "start": 53,
+              "end": 61
+            }
+          }
+        ],
+        "range": {
+          "start": 17,
+          "end": 68
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 68
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (short) Foo {↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 11
+        },
+        "value": "short",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 13,
+          "end": 16
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 24,
+                  "end": 27
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 30,
+                      "end": 31
+                    },
+                    "value": 1
+                  }
+                ],
+                "range": {
+                  "start": 30,
+                  "end": 31
+                }
+              }
+            ],
+            "range": {
+              "start": 24,
+              "end": 31
+            }
+          }
+        ],
+        "range": {
+          "start": 17,
+          "end": 31
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 31
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 31,
+        "end": 31
+      },
+      "message": "Expected “}” but got “.”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (short) Foo {↓⮀⮀⮀⮀⮀Bar = 4l,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 11
+        },
+        "value": "short",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 13,
+          "end": 16
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 24,
+                  "end": 27
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 30,
+                      "end": 31
+                    },
+                    "value": 4
+                  }
+                ],
+                "range": {
+                  "start": 30,
+                  "end": 31
+                }
+              }
+            ],
+            "range": {
+              "start": 24,
+              "end": 31
+            }
+          }
+        ],
+        "range": {
+          "start": 17,
+          "end": 31
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 31
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 31,
+        "end": 31
+      },
+      "message": "Expected “}” but got “l”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (short) Foo {↓⮀⮀⮀⮀⮀Bar = \"Hello\",↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 11
+        },
+        "value": "short",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 13,
+          "end": 16
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 24,
+                  "end": 27
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 30,
+                      "end": 30
+                    },
+                    "value": 0
+                  }
+                ],
+                "range": {
+                  "start": 30,
+                  "end": 30
+                }
+              }
+            ],
+            "range": {
+              "start": 24,
+              "end": 30
+            }
+          }
+        ],
+        "range": {
+          "start": 17,
+          "end": 30
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 30
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 30,
+        "end": 30
+      },
+      "message": "Expected an integer",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 30,
+        "end": 30
+      },
+      "message": "Expected “}” but got “\\"”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (string) Foo {↓⮀⮀⮀⮀⮀Bar = 4,↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 12
+        },
+        "value": "string",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 14,
+          "end": 17
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 25,
+                  "end": 28
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "string",
+                "range": {
+                  "start": 31,
+                  "end": 31
+                },
+                "value": "",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 31,
+                      "end": 31
+                    }
+                  }
+                ]
+              }
+            ],
+            "range": {
+              "start": 25,
+              "end": 31
+            }
+          }
+        ],
+        "range": {
+          "start": 18,
+          "end": 31
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 31
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 31,
+        "end": 31
+      },
+      "message": "Expected “\\"”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 31,
+        "end": 31
+      },
+      "message": "Expected “}” but got “4”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc parser > enum_ > Parse 'enum (string) Foo {↓⮀⮀⮀⮀⮀Bar = \"Hello\",↓⮀⮀⮀⮀}' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:enum",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": "enum",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 6,
+          "end": 12
+        },
+        "value": "string",
+        "colorTokenType": "type"
+      },
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 14,
+          "end": 17
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "mcdoc:enum/block",
+        "children": [
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 25,
+                  "end": 28
+                },
+                "value": "Bar"
+              },
+              {
+                "type": "string",
+                "range": {
+                  "start": 31,
+                  "end": 38
+                },
+                "value": "Hello",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 32,
+                      "end": 32
+                    }
+                  }
+                ],
+                "quote": "\\""
+              }
+            ],
+            "range": {
+              "start": 25,
+              "end": 38
+            }
+          }
+        ],
+        "range": {
+          "start": 18,
+          "end": 45
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 45
     }
   },
   "errors": []
