@@ -650,7 +650,7 @@ const enumValue = (kind: EnumKind): InfallibleParser<EnumValueNode> => {
 			break
 		case 'double':
 			numberParser = float
-			suffix = ['b', 'B']
+			suffix = ['d', 'D']
 			break
 	}
 	return setType(
@@ -721,8 +721,15 @@ const enumTypeSelect = <T extends AstNode>(
 			parser: inner('double'),
 		},
 		{
-			// fails with error message indicating the allowed values
-			parser: enumType,
+			parser: any([
+				inner('byte'),
+				inner('short'),
+				inner('int'),
+				inner('long'),
+				inner('string'),
+				inner('float'),
+				inner('double'),
+			]),
 		},
 	])
 
@@ -734,7 +741,7 @@ export const enum_: Parser<EnumNode> = setType(
 		punctuation('('),
 		enumTypeSelect((kind: EnumKind) =>
 			syntax([
-				literal(kind, { colorTokenType: 'type' }),
+				enumType,
 				punctuation(')'),
 				optional(failOnError(identifier)),
 				enumBlock(kind),
@@ -806,7 +813,7 @@ const enumInjection: InfallibleParser<EnumInjectionNode> = setType(
 		punctuation('('),
 		enumTypeSelect((kind: EnumKind) =>
 			syntax([
-				literal(kind, { colorTokenType: 'type' }),
+				enumType,
 				punctuation(')'),
 				path,
 				enumBlock(kind),
