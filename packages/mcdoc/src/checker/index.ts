@@ -1,8 +1,8 @@
 import type { MetaRegistry, SyncChecker } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import * as binder from '../binder/index.js'
-import type { TypeNode } from '../node'
-import { ReferenceTypeNode, TypeArgBlockNode, TypeBaseNode } from '../node'
+import type { TypeNode } from '../node/index.js'
+import { ReferenceTypeNode, TypeArgBlockNode, TypeBaseNode } from '../node/index.js'
 
 const reference: SyncChecker<ReferenceTypeNode> = (node, ctx) => {
 	const { path } = ReferenceTypeNode.destruct(node)
