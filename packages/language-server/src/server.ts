@@ -44,13 +44,18 @@ let service!: core.Service
 function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensRegistrationOptions {
 	// Always register everything for static registration, so all changes to the config can be
 	// processed by the request handlers instead
-	const semanticTokensConfig = isDynamic
-		? service.project.config.env.feature.semanticColoring
-		: true
+	const semanticTokensConfig = service.project.config.env.feature.semanticColoring
+	let disabledLanguages: string[] = []
+	if (
+		isDynamic && typeof semanticTokensConfig === 'object'
+		&& Array.isArray(semanticTokensConfig.disabledLanguages)
+	) {
+		disabledLanguages = semanticTokensConfig.disabledLanguages
+	}
 	return {
 		documentSelector: toLS.documentSelector(
 			service.project.meta,
-			typeof semanticTokensConfig === 'object' ? semanticTokensConfig.disabledLanguages : [],
+			disabledLanguages,
 		),
 		legend: toLS.semanticTokensLegend(),
 		full: { delta: false },
@@ -479,7 +484,8 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	}
 	if (
 		typeof semanticTokensConfig === 'object'
-		&& semanticTokensConfig.disabledLanguages?.includes(docAndNode.doc.languageId)
+		&& Array.isArray(semanticTokensConfig.disabledLanguages)
+		&& semanticTokensConfig.disabledLanguages.includes(docAndNode.doc.languageId)
 	) {
 		return { data: [] }
 	}
@@ -499,7 +505,8 @@ connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, rang
 	}
 	if (
 		typeof semanticTokensConfig === 'object'
-		&& semanticTokensConfig.disabledLanguages?.includes(docAndNode.doc.languageId)
+		&& Array.isArray(semanticTokensConfig.disabledLanguages)
+		&& semanticTokensConfig.disabledLanguages.includes(docAndNode.doc.languageId)
 	) {
 		return { data: [] }
 	}
