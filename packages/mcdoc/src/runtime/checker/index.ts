@@ -1233,18 +1233,9 @@ function simplifyEnum<T>(
 	typeDef: EnumType,
 	context: SimplifyContext<T>,
 ): SimplifyResult<SimplifiedEnum> {
-	const filteredValues = typeDef.values.filter(value => {
-		let keep = true
-		handleAttributes(value.attributes, context.ctx, (handler, config) => {
-			if (!keep || !handler.filterElement) {
-				return
-			}
-			if (!handler.filterElement(config, context.ctx)) {
-				keep = false
-			}
-		})
-		return keep
-	})
+	const filteredValues = typeDef.values.filter(value =>
+		shouldKeepAccordingToAttributeFilters(value.attributes, context.ctx)
+	)
 	return { typeDef: { ...typeDef, enumKind: typeDef.enumKind ?? 'int', values: filteredValues } }
 }
 
