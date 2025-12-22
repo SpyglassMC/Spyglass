@@ -424,7 +424,14 @@ connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {
 
 connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.config.env.feature.semanticColoring) {
+	const semanticTokensConfig = service.project.config.env.feature.semanticColoring
+	if (!docAndNode || !semanticTokensConfig) {
+		return { data: [] }
+	}
+	if (
+		typeof semanticTokensConfig === 'object'
+		&& semanticTokensConfig.disabledLanguages.includes(docAndNode.doc.languageId)
+	) {
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
@@ -437,7 +444,14 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 })
 connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.config.env.feature.semanticColoring) {
+	const semanticTokensConfig = service.project.config.env.feature.semanticColoring
+	if (!docAndNode || !semanticTokensConfig) {
+		return { data: [] }
+	}
+	if (
+		typeof semanticTokensConfig === 'object'
+		&& semanticTokensConfig.disabledLanguages.includes(docAndNode.doc.languageId)
+	) {
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
