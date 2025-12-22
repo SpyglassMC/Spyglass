@@ -41,9 +41,17 @@ const logger: core.Logger = {
 }
 let service!: core.Service
 
-function buildSemanticTokensCapability(): ls.SemanticTokensRegistrationOptions {
+function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensRegistrationOptions {
+	// Always register everything for static registration, so all changes to the config can be
+	// processed by the request handlers instead
+	const semanticTokensConfig = isDynamic
+		? service.project.config.env.feature.semanticColoring
+		: true
 	return {
-		documentSelector: toLS.documentSelector(service.project.meta),
+		documentSelector: toLS.documentSelector(
+			service.project.meta,
+			typeof semanticTokensConfig === 'object' ? semanticTokensConfig.disabledLanguages : [],
+		),
 		legend: toLS.semanticTokensLegend(),
 		full: { delta: false },
 		range: true,
@@ -123,7 +131,7 @@ connection.onInitialize(async (params) => {
 		logger.info(
 			"[startDynamicSemanticTokensRegistration] LanguageClient didn't permit dynamic registration for semantic tokens. Registering semantic tokens statically instead...",
 		)
-		semanticTokensProvider = buildSemanticTokensCapability()
+		semanticTokensProvider = buildSemanticTokensCapability(false)
 	}
 
 	const customCapabilities: CustomServerCapabilities = {
@@ -202,7 +210,7 @@ function startDynamicSemanticTokensRegistration() {
 		logger.info('[registerDynamicSemanticTokens] Registering dynamic semantic tokens')
 		dynamicSemanticTokensDiposable = connection.client.register(
 			ls.SemanticTokensRegistrationType.type,
-			buildSemanticTokensCapability(),
+			buildSemanticTokensCapability(true),
 		)
 	}
 
