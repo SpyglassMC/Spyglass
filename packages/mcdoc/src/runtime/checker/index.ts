@@ -1131,13 +1131,7 @@ function simplifyStruct<T>(
 		}
 	}
 	for (const field of typeDef.fields) {
-		let keep = true
-		handleAttributes(field.attributes, context.ctx, (handler, config) => {
-			if (keep && handler.filterElement?.(config, context.ctx) === false) {
-				keep = false
-			}
-		})
-		if (!keep) {
+		if (!shouldKeepAccordingToAttributeFilters(field.attributes, context.ctx)) {
 			continue
 		}
 		if (field.kind === 'pair') {
