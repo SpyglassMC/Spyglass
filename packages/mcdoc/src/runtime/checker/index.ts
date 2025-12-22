@@ -1052,6 +1052,7 @@ function resolveIndices<T>(
 		}
 	}
 
+	values = filterMembersByAttributes(values, context.ctx)
 	if (values.length === 1) {
 		return { typeDef: values[0], dynamicData }
 	}
@@ -1064,19 +1065,7 @@ function simplifyUnion<T>(
 ): SimplifyResult<SimplifiedMcdocType> {
 	let dynamicData = false
 
-	let validMembers = typeDef.members
-		.filter(member => {
-			let keep = true
-			handleAttributes(member.attributes, context.ctx, (handler, config) => {
-				if (!keep || !handler.filterElement) {
-					return
-				}
-				if (!handler.filterElement(config, context.ctx)) {
-					keep = false
-				}
-			})
-			return keep
-		})
+	let validMembers = filterMembersByAttributes(typeDef.members, context.ctx)
 
 	const filterCanonical = context.ctx.requireCanonical
 		&& validMembers.some(m => m.attributes?.some(a => a.name === 'canonical'))
@@ -1107,6 +1096,25 @@ function simplifyUnion<T>(
 		return { typeDef: members[0], dynamicData }
 	}
 	return { typeDef: { kind: 'union', members }, dynamicData }
+}
+
+function filterMembersByAttributes<T, TMembers extends McdocType>(
+	members: TMembers[],
+	ctx: McdocCheckerContext<T>,
+) {
+	return members
+		.filter(member => {
+			let keep = true
+			handleAttributes(member.attributes, ctx, (handler, config) => {
+				if (!keep || !handler.filterElement) {
+					return
+				}
+				if (!handler.filterElement(config, ctx)) {
+					keep = false
+				}
+			})
+			return keep
+		})
 }
 
 function simplifyStruct<T>(
