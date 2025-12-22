@@ -225,24 +225,45 @@ function startDynamicSemanticTokensRegistration() {
 		registerDynamicSemanticTokens()
 	}
 
-	service.project.on('configChanged', config => {
-		const newSemanticTokensConfig = config.env.feature.semanticColoring
+	function didConfigChange(
+		newSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
+	): boolean {
 		if (currentSemanticTokensConfig === newSemanticTokensConfig) {
-			// Nothing changed
-			return
+			return false
 		}
 		if (
-			typeof currentSemanticTokensConfig === 'object'
-			&& typeof newSemanticTokensConfig === 'object'
+			typeof currentSemanticTokensConfig !== 'object'
+			|| typeof newSemanticTokensConfig !== 'object'
+		) {
+			return true
+		}
+		if (
+			!currentSemanticTokensConfig.disabledLanguages
+			&& !newSemanticTokensConfig.disabledLanguages
+		) {
+			return false
+		}
+		if (
+			Array.isArray(currentSemanticTokensConfig.disabledLanguages)
+			&& Array.isArray(newSemanticTokensConfig.disabledLanguages)
 			&& currentSemanticTokensConfig.disabledLanguages.length
 				=== newSemanticTokensConfig.disabledLanguages.length
 			&& currentSemanticTokensConfig.disabledLanguages.every((language, index) =>
-				language === newSemanticTokensConfig.disabledLanguages[index]
+				language === newSemanticTokensConfig.disabledLanguages!![index]
 			)
 		) {
-			// Nothing changed
+			return false
+		}
+		return true
+	}
+
+	service.project.on('configChanged', config => {
+		const newSemanticTokensConfig = config.env.feature.semanticColoring
+
+		if (!didConfigChange(newSemanticTokensConfig)) {
 			return
 		}
+
 		if (currentSemanticTokensConfig) {
 			unregisterDynamicSemanticTokens()
 		}
@@ -458,7 +479,7 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	}
 	if (
 		typeof semanticTokensConfig === 'object'
-		&& semanticTokensConfig.disabledLanguages.includes(docAndNode.doc.languageId)
+		&& semanticTokensConfig.disabledLanguages?.includes(docAndNode.doc.languageId)
 	) {
 		return { data: [] }
 	}
@@ -478,7 +499,7 @@ connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, rang
 	}
 	if (
 		typeof semanticTokensConfig === 'object'
-		&& semanticTokensConfig.disabledLanguages.includes(docAndNode.doc.languageId)
+		&& semanticTokensConfig.disabledLanguages?.includes(docAndNode.doc.languageId)
 	) {
 		return { data: [] }
 	}
