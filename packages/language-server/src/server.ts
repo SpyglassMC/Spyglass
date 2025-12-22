@@ -220,16 +220,36 @@ function startDynamicSemanticTokensRegistration() {
 		dynamicSemanticTokensDiposable = undefined
 	}
 
-	if (service.project.config.env.feature.semanticColoring) {
+	let currentSemanticTokensConfig = service.project.config.env.feature.semanticColoring
+	if (currentSemanticTokensConfig) {
 		registerDynamicSemanticTokens()
 	}
 
 	service.project.on('configChanged', config => {
-		if (config.env.feature.semanticColoring) {
-			registerDynamicSemanticTokens()
-		} else {
+		const newSemanticTokensConfig = config.env.feature.semanticColoring
+		if (currentSemanticTokensConfig === newSemanticTokensConfig) {
+			// Nothing changed
+			return
+		}
+		if (
+			typeof currentSemanticTokensConfig === 'object'
+			&& typeof newSemanticTokensConfig === 'object'
+			&& currentSemanticTokensConfig.disabledLanguages.length
+				=== newSemanticTokensConfig.disabledLanguages.length
+			&& currentSemanticTokensConfig.disabledLanguages.every((language, index) =>
+				language === newSemanticTokensConfig.disabledLanguages[index]
+			)
+		) {
+			// Nothing changed
+			return
+		}
+		if (currentSemanticTokensConfig) {
 			unregisterDynamicSemanticTokens()
 		}
+		if (newSemanticTokensConfig) {
+			registerDynamicSemanticTokens()
+		}
+		currentSemanticTokensConfig = newSemanticTokensConfig
 	})
 }
 
