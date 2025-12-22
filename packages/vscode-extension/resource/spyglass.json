@@ -161,7 +161,21 @@
 							},
 							"additionalProperties": false
 						},
-						"semanticColoring": { "type": "boolean" },
+						"semanticColoring": {
+							"anyOf": [
+								{
+									"type": "object",
+									"properties": {
+										"disabledLanguages": {
+											"type": "array",
+											"items": { "type": "string" }
+										}
+									},
+									"additionalProperties": false
+								},
+								{ "type": "boolean"}
+							]
+						},
 						"selectionRanges": { "type": "boolean" },
 						"signatures": { "type": "boolean" }
 					},

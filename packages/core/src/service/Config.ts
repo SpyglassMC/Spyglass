@@ -88,7 +88,7 @@ export interface EnvConfig {
 		formatting: boolean
 		hover: boolean
 		inlayHint: boolean | { enabledNodes: string[] }
-		semanticColoring: boolean
+		semanticColoring: boolean | { disabledLanguages: string[] }
 		selectionRanges: boolean // Request is not implemented
 		signatures: boolean
 	}
