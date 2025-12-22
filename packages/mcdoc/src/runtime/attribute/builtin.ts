@@ -2,7 +2,7 @@ import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import type { SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
-import { handleAttributes, registerAttribute, validator } from './index.js'
+import { registerAttribute, shouldKeepAccordingToAttributeFilters, validator } from './index.js'
 
 interface IdConfig {
 	registry?: string
@@ -112,17 +112,7 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 					if (!TypeDefSymbolData.is(v.data)) {
 						return false
 					}
-					let keep = true
-					// Filter dispatcher keys with values that should be removed according to attributes
-					handleAttributes(v.data.typeDef.attributes, ctx, (handler, config) => {
-						if (!keep || !handler.filterElement) {
-							return
-						}
-						if (!handler.filterElement(config, ctx)) {
-							keep = false
-						}
-					})
-					return keep
+					return shouldKeepAccordingToAttributeFilters(v.data.typeDef.attributes, ctx)
 				})
 				.map(([k, _]) => k)
 			return core.LiteralNode.mock(ctx.offset, { pool: keys })
