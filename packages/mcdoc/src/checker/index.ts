@@ -11,10 +11,9 @@ const reference: SyncChecker<ReferenceTypeNode> = (node, ctx) => {
 	}
 
 	const { appendixes } = TypeBaseNode.destruct(node)
-	const typeArgBlock = appendixes.find(TypeArgBlockNode.is)
 	let typeArgs: TypeNode[] = []
-	if (typeArgBlock !== undefined) {
-		const { args } = TypeArgBlockNode.destruct(typeArgBlock)
+	if (TypeArgBlockNode.is(appendixes[0])) {
+		const { args } = TypeArgBlockNode.destruct(appendixes[0])
 		typeArgs = args
 	}
 
