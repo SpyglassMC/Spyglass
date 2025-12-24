@@ -225,35 +225,35 @@ function startDynamicSemanticTokensRegistration() {
 		dynamicSemanticTokensDiposable = undefined
 	}
 
-	let currentSemanticTokensConfig = service.project.config.env.feature.semanticColoring
-	if (currentSemanticTokensConfig) {
+	if (service.project.config.env.feature.semanticColoring) {
 		registerDynamicSemanticTokens()
 	}
 
 	function didConfigChange(
+		oldSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
 		newSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
 	): boolean {
-		if (currentSemanticTokensConfig === newSemanticTokensConfig) {
+		if (oldSemanticTokensConfig === newSemanticTokensConfig) {
 			return false
 		}
 		if (
-			typeof currentSemanticTokensConfig !== 'object'
+			typeof oldSemanticTokensConfig !== 'object'
 			|| typeof newSemanticTokensConfig !== 'object'
 		) {
 			return true
 		}
 		if (
-			!currentSemanticTokensConfig.disabledLanguages
+			!oldSemanticTokensConfig.disabledLanguages
 			&& !newSemanticTokensConfig.disabledLanguages
 		) {
 			return false
 		}
 		if (
-			Array.isArray(currentSemanticTokensConfig.disabledLanguages)
+			Array.isArray(oldSemanticTokensConfig.disabledLanguages)
 			&& Array.isArray(newSemanticTokensConfig.disabledLanguages)
-			&& currentSemanticTokensConfig.disabledLanguages.length
+			&& oldSemanticTokensConfig.disabledLanguages.length
 				=== newSemanticTokensConfig.disabledLanguages.length
-			&& currentSemanticTokensConfig.disabledLanguages.every((language, index) =>
+			&& oldSemanticTokensConfig.disabledLanguages.every((language, index) =>
 				language === newSemanticTokensConfig.disabledLanguages!![index]
 			)
 		) {
@@ -262,20 +262,20 @@ function startDynamicSemanticTokensRegistration() {
 		return true
 	}
 
-	service.project.on('configChanged', config => {
-		const newSemanticTokensConfig = config.env.feature.semanticColoring
+	service.project.on('configChanged', ({ oldConfig, newConfig }) => {
+		const oldSemanticTokensConfig = oldConfig.env.feature.semanticColoring
+		const newSemanticTokensConfig = newConfig.env.feature.semanticColoring
 
-		if (!didConfigChange(newSemanticTokensConfig)) {
+		if (!didConfigChange(oldSemanticTokensConfig, newSemanticTokensConfig)) {
 			return
 		}
 
-		if (currentSemanticTokensConfig) {
+		if (oldSemanticTokensConfig) {
 			unregisterDynamicSemanticTokens()
 		}
 		if (newSemanticTokensConfig) {
 			registerDynamicSemanticTokens()
 		}
-		currentSemanticTokensConfig = newSemanticTokensConfig
 	})
 }
 
