@@ -434,7 +434,6 @@ async function bindDispatcherType(
 }
 
 async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> {
-	let stringPath: string | undefined = undefined
 	for (
 		const { identifiers, node: identNode, indexRight } of resolvePathByStep(node, ctx, {
 			reportErrors: true,
@@ -444,10 +443,9 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 			continue
 		}
 
-		stringPath = pathArrayToString(identifiers)
 		if (indexRight === 1) {
 			// The second last identifier in a path points to a file module.
-			const referencedModuleFile = stringPath
+			const referencedModuleFile = pathArrayToString(identifiers)
 			const referencedModuleUri = identifierToUri(referencedModuleFile, ctx)
 			if (!referencedModuleUri) {
 				ctx.err.report(
@@ -461,7 +459,7 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 			await ctx.ensureBindingStarted(referencedModuleUri)
 		}
 
-		ctx.symbols.query({ doc: ctx.doc, node: identNode }, 'mcdoc', stringPath)
+		ctx.symbols.query({ doc: ctx.doc, node: identNode }, 'mcdoc', pathArrayToString(identifiers))
 			.ifDeclared((_, query) =>
 				query.enter({
 					usage: {
@@ -485,8 +483,6 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 				}
 			})
 	}
-
-	node.canonical = stringPath
 }
 
 function bindEnum(node: EnumNode, ctx: McdocBinderContext): void {

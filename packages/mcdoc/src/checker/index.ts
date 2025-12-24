@@ -2,11 +2,16 @@ import type { MetaRegistry, SyncChecker } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../binder/index.js'
 import type { TypeNode } from '../node/index.js'
-import { ReferenceTypeNode, TypeArgBlockNode, TypeBaseNode } from '../node/index.js'
+import { PathNode, ReferenceTypeNode, TypeArgBlockNode, TypeBaseNode } from '../node/index.js'
 
 const reference: SyncChecker<ReferenceTypeNode> = (node, ctx) => {
 	const { path } = ReferenceTypeNode.destruct(node)
-	if (!path.canonical) {
+	const { children } = PathNode.destruct(path)
+	const symbol = children.findLast((c) =>
+		c.symbol && c.symbol.category === 'mcdoc' && c.symbol.subcategory !== 'module'
+	)?.symbol
+
+	if (!TypeDefSymbolData.is(symbol?.data)) {
 		return
 	}
 
@@ -17,23 +22,16 @@ const reference: SyncChecker<ReferenceTypeNode> = (node, ctx) => {
 		typeArgs = args
 	}
 
-	const symbol = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', path.canonical)
-		.getData(TypeDefSymbolData.is)
-
-	if (!symbol) {
-		return
-	}
-
 	let typeParams = []
-	if (symbol.typeDef.kind === 'template') {
-		typeParams = symbol.typeDef.typeParams
+	if (symbol.data.typeDef.kind === 'template') {
+		typeParams = symbol.data.typeDef.typeParams
 	}
 
 	if (typeParams.length !== typeArgs.length) {
 		ctx.err.report(
 			localize(
 				'mcdoc.checker.reference.unexpected-number-of-type-arguments',
-				path.canonical,
+				symbol.identifier,
 				typeParams.length,
 				typeArgs.length,
 			),
