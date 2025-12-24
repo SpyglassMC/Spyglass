@@ -95,7 +95,7 @@ export function documentHighlight(
 
 export function documentSelector(
 	meta: core.MetaRegistry,
-	disabledLanguages?: string[],
+	{ disabledLanguages }: { disabledLanguages?: string[] } = {},
 ): ls.DocumentSelector {
 	const ans: ls.DocumentSelector = meta.getLanguages().filter((id) =>
 		disabledLanguages === undefined || !disabledLanguages.includes(id)
