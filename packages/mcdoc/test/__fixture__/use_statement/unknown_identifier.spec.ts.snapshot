@@ -177,8 +177,7 @@ exports[`mcdoc __fixture__ > use statement/unknown identifier 1`] = `
                   "range": {
                     "start": 4,
                     "end": 22
-                  },
-                  "canonical": "::module::Foo"
+                  }
                 }
               ],
               "range": {

@@ -527,8 +527,7 @@ exports[`mcdoc __fixture__ > type parameter/dispatcher 1`] = `
                                   "range": {
                                     "start": 55,
                                     "end": 56
-                                  },
-                                  "canonical": "::test::T"
+                                  }
                                 }
                               ],
                               "range": {

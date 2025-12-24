@@ -308,8 +308,7 @@ exports[`mcdoc __fixture__ > use statement/double reference alias 1`] = `
                     "start": 22,
                     "end": 33
                   },
-                  "isAbsolute": true,
-                  "canonical": "::test::Used0"
+                  "isAbsolute": true
                 },
                 {
                   "type": "mcdoc:literal",
@@ -387,8 +386,7 @@ exports[`mcdoc __fixture__ > use statement/double reference alias 1`] = `
                     "start": 49,
                     "end": 60
                   },
-                  "isAbsolute": true,
-                  "canonical": "::test::Used0"
+                  "isAbsolute": true
                 },
                 {
                   "type": "mcdoc:literal",

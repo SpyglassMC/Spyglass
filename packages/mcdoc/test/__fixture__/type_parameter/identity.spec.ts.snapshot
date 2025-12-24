@@ -174,8 +174,7 @@ exports[`mcdoc __fixture__ > type parameter/identity 1`] = `
                       "range": {
                         "start": 15,
                         "end": 16
-                      },
-                      "canonical": "::test::T"
+                      }
                     }
                   ],
                   "range": {

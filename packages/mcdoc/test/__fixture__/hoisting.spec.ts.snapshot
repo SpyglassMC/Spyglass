@@ -280,8 +280,7 @@ exports[`mcdoc __fixture__ > hoisting 1`] = `
                               "range": {
                                 "start": 19,
                                 "end": 22
-                              },
-                              "canonical": "::test::Bar"
+                              }
                             }
                           ],
                           "range": {

@@ -337,8 +337,7 @@ exports[`mcdoc __fixture__ > use statement/use before file loaded 1`] = `
                     "start": 6,
                     "end": 17
                   },
-                  "isAbsolute": true,
-                  "canonical": "::later::Used"
+                  "isAbsolute": true
                 }
               ],
               "range": {
@@ -409,8 +408,7 @@ exports[`mcdoc __fixture__ > use statement/use before file loaded 1`] = `
                               "range": {
                                 "start": 32,
                                 "end": 36
-                              },
-                              "canonical": "::later::Used"
+                              }
                             }
                           ],
                           "range": {

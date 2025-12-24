@@ -579,7 +579,7 @@ async function bindUseStatement(node: UseStatementNode, ctx: McdocBinderContext)
 		return
 	}
 
-	await bindPath(path, ctx)
+	return bindPath(path, ctx)
 }
 
 export function registerMcdocBinders(meta: MetaRegistry) {
