@@ -206,6 +206,14 @@ export function typeDefinition<T>(
 		const validRootDefinitions = simplifiedRoot.kind === 'union'
 			? simplifiedRoot.members
 			: [simplifiedRoot]
+
+		if (
+			validRootDefinitions.length === 0
+			&& (typeDef.kind !== 'union' || typeDef.members.length > 0)
+		) {
+			validRootDefinitions.push({ kind: 'any' })
+		}
+
 		value.definitionsByParent = [{
 			parents: [],
 			keyDefinition: undefined,
