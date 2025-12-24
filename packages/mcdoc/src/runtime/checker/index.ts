@@ -1081,7 +1081,7 @@ function simplifyUnion<T>(
 	const filterCanonical = context.ctx.requireCanonical
 		&& validMembers.some(m => m.attributes?.some(a => a.name === 'canonical'))
 	if (filterCanonical) {
-		validMembers = typeDef.members.filter(member =>
+		validMembers = validMembers.filter(member =>
 			member.attributes?.some(a => a.name === 'canonical')
 		)
 	}
