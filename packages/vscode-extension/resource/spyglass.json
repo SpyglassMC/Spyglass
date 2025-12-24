@@ -173,7 +173,7 @@
 									},
 									"additionalProperties": false
 								},
-								{ "type": "boolean"}
+								{ "type": "boolean" }
 							]
 						},
 						"selectionRanges": { "type": "boolean" },
