@@ -55,7 +55,7 @@ function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensReg
 	return {
 		documentSelector: toLS.documentSelector(
 			service.project.meta,
-			disabledLanguages,
+			{ disabledLanguages },
 		),
 		legend: toLS.semanticTokensLegend(),
 		full: { delta: false },
