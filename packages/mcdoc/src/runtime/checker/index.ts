@@ -25,7 +25,7 @@ import type {
 	UnionType,
 } from '../../type/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
-import { handleAttributes } from '../attribute/index.js'
+import { handleAttributes, shouldKeepAccordingToAttributeFilters } from '../attribute/index.js'
 import type { NodeEquivalenceChecker, RuntimeNode, RuntimePair, RuntimeUnion } from './context.js'
 import { McdocCheckerContext } from './context.js'
 import type { ErrorCondensingDefinition, McdocRuntimeError } from './error.js'
@@ -906,6 +906,10 @@ function resolveIndices<T>(
 	let dynamicData = false
 	let values: SimplifiedMcdocTypeNoUnion[] = []
 	function pushValue(key: string, data: TypeDefSymbolData) {
+		if (!shouldKeepAccordingToAttributeFilters(data.typeDef.attributes, context.ctx)) {
+			return
+		}
+
 		if (context.ctx.config.env.enableMcdocCaching && data.simplifiedTypeDef) {
 			if (data.simplifiedTypeDef.kind === 'union') {
 				values.push(...data.simplifiedTypeDef.members)
@@ -1064,19 +1068,9 @@ function simplifyUnion<T>(
 ): SimplifyResult<SimplifiedMcdocType> {
 	let dynamicData = false
 
-	let validMembers = typeDef.members
-		.filter(member => {
-			let keep = true
-			handleAttributes(member.attributes, context.ctx, (handler, config) => {
-				if (!keep || !handler.filterElement) {
-					return
-				}
-				if (!handler.filterElement(config, context.ctx)) {
-					keep = false
-				}
-			})
-			return keep
-		})
+	let validMembers = typeDef.members.filter(member =>
+		shouldKeepAccordingToAttributeFilters(member.attributes, context.ctx)
+	)
 
 	const filterCanonical = context.ctx.requireCanonical
 		&& validMembers.some(m => m.attributes?.some(a => a.name === 'canonical'))
@@ -1137,13 +1131,7 @@ function simplifyStruct<T>(
 		}
 	}
 	for (const field of typeDef.fields) {
-		let keep = true
-		handleAttributes(field.attributes, context.ctx, (handler, config) => {
-			if (keep && handler.filterElement?.(config, context.ctx) === false) {
-				keep = false
-			}
-		})
-		if (!keep) {
+		if (!shouldKeepAccordingToAttributeFilters(field.attributes, context.ctx)) {
 			continue
 		}
 		if (field.kind === 'pair') {
@@ -1245,18 +1233,9 @@ function simplifyEnum<T>(
 	typeDef: EnumType,
 	context: SimplifyContext<T>,
 ): SimplifyResult<SimplifiedEnum> {
-	const filteredValues = typeDef.values.filter(value => {
-		let keep = true
-		handleAttributes(value.attributes, context.ctx, (handler, config) => {
-			if (!keep || !handler.filterElement) {
-				return
-			}
-			if (!handler.filterElement(config, context.ctx)) {
-				keep = false
-			}
-		})
-		return keep
-	})
+	const filteredValues = typeDef.values.filter(value =>
+		shouldKeepAccordingToAttributeFilters(value.attributes, context.ctx)
+	)
 	return { typeDef: { ...typeDef, enumKind: typeDef.enumKind ?? 'int', values: filteredValues } }
 }
 
