@@ -28,7 +28,7 @@ exports[`mcdoc parser > docComments > Parse '/// First line←↓/// Second line
     }
   },
   "errors": [],
-  "docCommentsText": "First line\\r\\nSecond line\\r\\n"
+  "docCommentsText": "First line\\r\\nSecond line"
 }
 `;
 
@@ -62,7 +62,7 @@ exports[`mcdoc parser > docComments > Parse '/// First line↓/// Second line↓
     }
   },
   "errors": [],
-  "docCommentsText": "First line\\nSecond line\\n"
+  "docCommentsText": "First line\\nSecond line"
 }
 `;
 
@@ -105,7 +105,7 @@ exports[`mcdoc parser > docComments > Parse '/// First paragraph←↓///←↓/
     }
   },
   "errors": [],
-  "docCommentsText": "First paragraph\\r\\n\\r\\nSecond paragraph\\r\\n"
+  "docCommentsText": "First paragraph\\r\\n\\r\\nSecond paragraph"
 }
 `;
 
@@ -148,6 +148,6 @@ exports[`mcdoc parser > docComments > Parse '/// First paragraph↓///↓/// Sec
     }
   },
   "errors": [],
-  "docCommentsText": "First paragraph\\n\\nSecond paragraph\\n"
+  "docCommentsText": "First paragraph\\n\\nSecond paragraph"
 }
 `;

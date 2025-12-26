@@ -578,6 +578,18 @@ export interface DocCommentsNode extends AstNode {
 export namespace DocCommentsNode {
 	/**
 	 * @returns The text content of this doc comment block.
+	 *
+	 * If every line contains a leading space or is empty, stripe the leading spaces off.
+	 * Trailing whitespace characters at the end are removed.
+	 *
+	 * e.g., given
+	 * ```
+	 * /// This is an example doc comment.
+	 * ///
+	 * /// Another line.
+	 * ```
+	 *
+	 * "This is an example doc comment.\n\nAnother line." is returned.
 	 */
 	export function asText(node: DocCommentsNode | undefined): string | undefined {
 		if (!node) {
@@ -586,17 +598,12 @@ export namespace DocCommentsNode {
 
 		let comments = node.children.map((doc) => doc.comment)
 
-		// Note that each comment includes the ending newline character.
-		// If every comment contains a leading space or is empty, stripe the leading spaces off.
-		// e.g. /// This is an example doc comment.
-		//      ///
-		//      /// Another line.
-		// should be converted to "This is an example doc comment.\n\nAnother line.\n"
+		// Note that each comment node includes the ending newline character.
 		if (comments.every((s) => !s.trim() || s.startsWith(' '))) {
 			comments = comments.map((s) => s.replace(/^ /, ''))
 		}
 
-		return comments.join('')
+		return comments.join('').trimEnd()
 	}
 	export function is(node: AstNode | undefined): node is DocCommentsNode {
 		return (node as DocCommentsNode | undefined)?.type === 'mcdoc:doc_comments'
