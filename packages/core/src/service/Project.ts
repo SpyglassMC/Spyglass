@@ -375,7 +375,7 @@ export class Project implements ExternalEventEmitter {
 			// Recheck client managed files after the READY process, as they may have incomplete results and are user-facing.
 			const promises: Promise<unknown>[] = []
 			for (const { doc, node } of this.#clientManagedDocAndNodes.values()) {
-				promises.push(this.check(doc, node))
+				promises.push(this.bind(doc, node).then(() => this.check(doc, node)))
 			}
 			Promise.all(promises).catch(e =>
 				this.logger.error(
