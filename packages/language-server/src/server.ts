@@ -41,9 +41,22 @@ const logger: core.Logger = {
 }
 let service!: core.Service
 
-function buildSemanticTokensCapability(): ls.SemanticTokensRegistrationOptions {
+function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensRegistrationOptions {
+	// Always register everything for static registration, so all changes to the config can be
+	// processed by the request handlers instead
+	const semanticTokensConfig = service.project.config.env.feature.semanticColoring
+	let disabledLanguages: string[] = []
+	if (
+		isDynamic && typeof semanticTokensConfig === 'object'
+		&& Array.isArray(semanticTokensConfig.disabledLanguages)
+	) {
+		disabledLanguages = semanticTokensConfig.disabledLanguages
+	}
 	return {
-		documentSelector: toLS.documentSelector(service.project.meta),
+		documentSelector: toLS.documentSelector(
+			service.project.meta,
+			{ disabledLanguages },
+		),
 		legend: toLS.semanticTokensLegend(),
 		full: { delta: false },
 		range: true,
@@ -123,7 +136,7 @@ connection.onInitialize(async (params) => {
 		logger.info(
 			"[startDynamicSemanticTokensRegistration] LanguageClient didn't permit dynamic registration for semantic tokens. Registering semantic tokens statically instead...",
 		)
-		semanticTokensProvider = buildSemanticTokensCapability()
+		semanticTokensProvider = buildSemanticTokensCapability(false)
 	}
 
 	const customCapabilities: CustomServerCapabilities = {
@@ -202,7 +215,7 @@ function startDynamicSemanticTokensRegistration() {
 		logger.info('[registerDynamicSemanticTokens] Registering dynamic semantic tokens')
 		dynamicSemanticTokensDiposable = connection.client.register(
 			ls.SemanticTokensRegistrationType.type,
-			buildSemanticTokensCapability(),
+			buildSemanticTokensCapability(true),
 		)
 	}
 
@@ -216,11 +229,52 @@ function startDynamicSemanticTokensRegistration() {
 		registerDynamicSemanticTokens()
 	}
 
-	service.project.on('configChanged', config => {
-		if (config.env.feature.semanticColoring) {
-			registerDynamicSemanticTokens()
-		} else {
+	function didConfigChange(
+		oldSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
+		newSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
+	): boolean {
+		if (oldSemanticTokensConfig === newSemanticTokensConfig) {
+			return false
+		}
+		if (
+			typeof oldSemanticTokensConfig !== 'object'
+			|| typeof newSemanticTokensConfig !== 'object'
+		) {
+			return true
+		}
+		if (
+			!oldSemanticTokensConfig.disabledLanguages
+			&& !newSemanticTokensConfig.disabledLanguages
+		) {
+			return false
+		}
+		if (
+			Array.isArray(oldSemanticTokensConfig.disabledLanguages)
+			&& Array.isArray(newSemanticTokensConfig.disabledLanguages)
+			&& oldSemanticTokensConfig.disabledLanguages.length
+				=== newSemanticTokensConfig.disabledLanguages.length
+			&& oldSemanticTokensConfig.disabledLanguages.every((language, index) =>
+				language === newSemanticTokensConfig.disabledLanguages!![index]
+			)
+		) {
+			return false
+		}
+		return true
+	}
+
+	service.project.on('configChanged', ({ oldConfig, newConfig }) => {
+		const oldSemanticTokensConfig = oldConfig.env.feature.semanticColoring
+		const newSemanticTokensConfig = newConfig.env.feature.semanticColoring
+
+		if (!didConfigChange(oldSemanticTokensConfig, newSemanticTokensConfig)) {
+			return
+		}
+
+		if (oldSemanticTokensConfig) {
 			unregisterDynamicSemanticTokens()
+		}
+		if (newSemanticTokensConfig) {
+			registerDynamicSemanticTokens()
 		}
 	})
 }
@@ -424,7 +478,15 @@ connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {
 
 connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.config.env.feature.semanticColoring) {
+	const semanticTokensConfig = service.project.config.env.feature.semanticColoring
+	if (!docAndNode || !semanticTokensConfig) {
+		return { data: [] }
+	}
+	if (
+		typeof semanticTokensConfig === 'object'
+		&& Array.isArray(semanticTokensConfig.disabledLanguages)
+		&& semanticTokensConfig.disabledLanguages.includes(docAndNode.doc.languageId)
+	) {
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
@@ -437,7 +499,15 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 })
 connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.config.env.feature.semanticColoring) {
+	const semanticTokensConfig = service.project.config.env.feature.semanticColoring
+	if (!docAndNode || !semanticTokensConfig) {
+		return { data: [] }
+	}
+	if (
+		typeof semanticTokensConfig === 'object'
+		&& Array.isArray(semanticTokensConfig.disabledLanguages)
+		&& semanticTokensConfig.disabledLanguages.includes(docAndNode.doc.languageId)
+	) {
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
