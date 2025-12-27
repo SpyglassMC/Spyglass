@@ -35,6 +35,8 @@ import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
 import { MetaRegistry } from './MetaRegistry.js'
 import { ProfilerFactory } from './Profiler.js'
+import type { UserPreferences } from './UserPreferences.js'
+import { UserPreferencesService } from './UserPreferences.js'
 
 const CacheAutoSaveInterval = 600_000 // 10 Minutes.
 
@@ -88,6 +90,10 @@ interface DocumentErrorEvent {
 export interface ConfigChangeEvent {
 	oldConfig: Config
 	newConfig: Config
+}
+export interface PreferencesChangeEvent {
+	oldPreferences: UserPreferences
+	newPreferences: UserPreferences
 }
 interface FileEvent {
 	uri: string
@@ -163,6 +169,7 @@ export class Project implements ExternalEventEmitter {
 	readonly #bindingInProgressUris = new Set<string>()
 	readonly #cacheSaverIntervalId: IntervalId
 	readonly cacheService: CacheService
+	readonly userPreferencesService: UserPreferencesService
 	/** URI of files that are currently managed by the language client. */
 	readonly #clientManagedUris = new Set<string>()
 	readonly #clientManagedDocAndNodes = new Map<string, DocAndNode>()
@@ -182,6 +189,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	config!: Config
+	userPreferences!: UserPreferences
 	readonly externals: Externals
 	readonly fs: FileService
 	readonly isDebugging: boolean
@@ -250,6 +258,7 @@ export class Project implements ExternalEventEmitter {
 	on(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
 	on(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
 	on(event: 'configChanged', callbackFn: (data: ConfigChangeEvent) => void): this
+	on(event: 'preferencesChanged', callbackFn: (data: PreferencesChangeEvent) => void): this
 	on(event: string, callbackFn: (...args: any[]) => unknown): this {
 		this.#eventEmitter.on(event, callbackFn)
 		return this
@@ -266,6 +275,7 @@ export class Project implements ExternalEventEmitter {
 	once(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
 	once(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
 	once(event: 'configChanged', callbackFn: (data: ConfigChangeEvent) => void): this
+	once(event: 'preferencesChanged', callbackFn: (data: PreferencesChangeEvent) => void): this
 	once(event: string, callbackFn: (...args: any[]) => unknown): this {
 		this.#eventEmitter.once(event, callbackFn)
 		return this
@@ -279,6 +289,7 @@ export class Project implements ExternalEventEmitter {
 	emit(event: 'rootsUpdated', data: RootsEvent): boolean
 	emit(event: 'symbolRegistrarExecuted', data: SymbolRegistrarEvent): boolean
 	emit(event: 'configChanged', data: ConfigChangeEvent): boolean
+	emit(event: 'preferencesChanged', data: PreferencesChangeEvent): boolean
 	emit(event: string, ...args: unknown[]): boolean {
 		return this.#eventEmitter.emit(event, ...args)
 	}
@@ -321,6 +332,7 @@ export class Project implements ExternalEventEmitter {
 		this.projectRoots = projectRoots
 
 		this.cacheService = new CacheService(cacheRoot, this)
+		this.userPreferencesService = new UserPreferencesService(this)
 		this.#configService = new ConfigService(this, defaultConfig)
 		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
 
@@ -337,6 +349,16 @@ export class Project implements ExternalEventEmitter {
 		}).on(
 			'error',
 			({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading ${uri}`, error),
+		)
+		this.userPreferencesService.on('changed', ({ preferences }) => {
+			const oldPreferences = this.userPreferences
+			this.userPreferences = preferences
+			this.logger.info('[Project] [UserPreferences] Changed')
+			this.emit('preferencesChanged', { oldPreferences, newPreferences: preferences })
+		}).on(
+			'error',
+			({ error }) =>
+				this.logger.error(`[Project] [UserPreferences] Failed reading preferences`, error),
 		)
 
 		this.setInitPromise()
@@ -425,6 +447,7 @@ export class Project implements ExternalEventEmitter {
 			__profiler.task('Load Cache')
 
 			this.config = await this.#configService.load()
+			this.userPreferences = this.userPreferencesService.load()
 			__profiler.task('Load Config')
 
 			await callIntializers()
