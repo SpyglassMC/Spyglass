@@ -216,8 +216,8 @@ function startDynamicSemanticTokensRegistration() {
 		registerDynamicSemanticTokens()
 	}
 
-	service.project.on('configChanged', config => {
-		if (config.env.feature.semanticColoring) {
+	service.project.on('configChanged', ({ newConfig }) => {
+		if (newConfig.env.feature.semanticColoring) {
 			registerDynamicSemanticTokens()
 		} else {
 			unregisterDynamicSemanticTokens()
