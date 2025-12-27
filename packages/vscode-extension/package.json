@@ -314,7 +314,7 @@
             "mcfunction:coordinate",
             "mcfunction:vector",
             "mcfunction:command_child/unknown"
-				  ]
+          ]
         },
         "spyglassmc.feature.semanticColoring": {
           "type": "boolean",
