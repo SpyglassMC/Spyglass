@@ -2,8 +2,9 @@ import rfdc from 'rfdc'
 import type { ExternalEventEmitter } from '../common/index.js'
 import { Arrayable, bufferToString, merge, TypePredicates } from '../common/index.js'
 import { ErrorSeverity } from '../source/index.js'
-import { DataFileCategories, FileCategories, RegistryCategories } from '../symbol/index.js'
+import { DataFileCategories, RegistryCategories } from '../symbol/index.js'
 import type { Project } from './Project.js'
+import { EnvPreferences, FeaturePreferences } from './UserPreferences.js'
 /* eslint-disable no-restricted-syntax */
 
 export interface Config {
@@ -51,12 +52,7 @@ export interface CustomResourceConfig {
 
 export interface EnvConfig {
 	/**
-	 * Where to download data like `mcmeta` or `vanilla-mcdoc` from (case-insensitive).
-	 *
-	 * * `GitHub`: Recommended, unless you have trouble connecting to `raw.githubusercontent.com`.
-	 * * `fastly`
-	 * * `jsDelivr`
-	 * * A custom URL, with placeholder variables: `${user}`, `${repo}`, `${tag}`, and `${path}`.
+	 * @deprecated Use {@link EnvPreferences.dataSource} instead
 	 */
 	dataSource: string
 	/**
@@ -78,6 +74,9 @@ export interface EnvConfig {
 	customResources: {
 		[path: string]: CustomResourceConfig
 	}
+	/**
+	 * @deprecated Use {@link FeaturePreferences} instead
+	 */
 	feature: {
 		codeActions: boolean
 		colors: boolean
@@ -102,7 +101,7 @@ export interface EnvConfig {
 	 */
 	gameVersion: string
 	/**
-	 * Locale language for error messages and other texts provided by Spyglass.
+	 * @deprecated Use {@link EnvPreferences.language} instead
 	 */
 	language: string
 	/**
@@ -116,19 +115,11 @@ export interface EnvConfig {
 	permissionLevel: 1 | 2 | 3 | 4
 	plugins: string[]
 	/**
-	 * Whether to enable caching of mcdoc simplified types.
-	 *
-	 * May become corrupt after changing game versions, so this is currently disabled by default.
+	 * @deprecated Use {@link EnvPreferences.enableMcdocCaching} instead
 	 */
 	enableMcdocCaching: boolean
 	/**
-	 * Makes the file-watcher use polling to watch for file changes.
-	 * Comes at a performance cost for very large datapacks.
-	 *
-	 * On Windows, enabling this can fix file-lock issues when Spyglass is running.
-	 * See: https://github.com/SpyglassMC/Spyglass/issues/1414
-	 *
-	 * **You should only consider enabling this for Windows machines.**
+	 * @deprecated Use {@link EnvPreferences.useFilePolling} instead
 	 */
 	useFilePolling: boolean
 }
