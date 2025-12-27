@@ -240,6 +240,26 @@
           "markdownDescription": "%spyglassmc.env.gameVersion%",
           "default": "Auto"
         },
+        "spyglassmc.env.dataSource": {
+          "type": "string",
+          "markdownDescription": "%spyglassmc.env.dataSource%",
+          "default": "GitHub"
+        },
+        "spyglassmc.env.language": {
+          "type": "string",
+          "markdownDescription": "%spyglassmc.env.language%",
+          "default": "Default"
+        },
+        "spyglassmc.env.enableMcdocCaching": {
+          "type": "boolean",
+          "markdownDescription": "%spyglassmc.env.enableMcdocCaching%",
+          "default": false
+        },
+        "spyglassmc.env.useFilePolling": {
+          "type": "boolean",
+          "markdownDescription": "%spyglassmc.env.useFilePolling%",
+          "default": false
+        },
         "spyglassmc.trace.server": {
           "type": "string",
           "enum": [
@@ -249,6 +269,60 @@
           ],
           "markdownDescription": "%spyglassmc.trace.server%",
           "default": "off"
+        },
+        "spyglassmc.feature.codeActions": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.feature.colors": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.feature.completions": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.feature.documentHighlighting": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.feature.documentLinks": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.feature.foldingRanges": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.feature.formatting": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.feature.hover": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.feature.inlayHintEnabledNodes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [
+            "boolean",
+            "double",
+            "float",
+            "integer",
+            "long",
+            "mcfunction:coordinate",
+            "mcfunction:vector",
+            "mcfunction:command_child/unknown"
+				  ]
+        },
+        "spyglassmc.feature.semanticColoring": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.feature.signatures": {
+          "type": "boolean",
+          "default": true
         }
       }
     },

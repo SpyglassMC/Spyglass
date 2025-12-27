@@ -171,6 +171,12 @@ connection.onInitialized(async () => {
 			{ documentSelector: [{ language: 'mcdoc' }] },
 		)
 	}
+	if (capabilities.workspace?.didChangeConfiguration?.dynamicRegistration) {
+		void connection.client.register(
+			ls.DidChangeConfigurationNotification.type,
+			{ section: ['spyglassmc'] },
+		)
+	}
 
 	startDynamicSemanticTokensRegistration()
 
@@ -216,8 +222,8 @@ function startDynamicSemanticTokensRegistration() {
 		registerDynamicSemanticTokens()
 	}
 
-	service.project.on('configChanged', config => {
-		if (config.env.feature.semanticColoring) {
+	service.project.on('configChanged', ({ newConfig }) => {
+		if (newConfig.env.feature.semanticColoring) {
 			registerDynamicSemanticTokens()
 		} else {
 			unregisterDynamicSemanticTokens()
@@ -482,6 +488,10 @@ connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
 		text += '\n'
 	}
 	return [toLS.textEdit(node.range, text, doc)]
+})
+
+connection.onDidChangeConfiguration(async ({ settings }) => {
+	await service.project.userPreferencesService.onEditorConfigurationUpdate(settings)
 })
 
 connection.onShutdown(async (): Promise<void> => {
