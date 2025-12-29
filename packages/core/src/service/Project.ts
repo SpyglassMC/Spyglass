@@ -111,6 +111,7 @@ export type ProjectData = Pick<
 	Project,
 	| 'cacheRoot'
 	| 'config'
+	| 'userPreferences'
 	| 'ensureBindingStarted'
 	| 'externals'
 	| 'fs'
@@ -511,7 +512,7 @@ export class Project implements ExternalEventEmitter {
 				this.#watchedFiles.clear()
 				this.#watcherReady = false
 				this.#watcher = this.externals.fs.watch(this.projectRoots, {
-					usePolling: this.config.env.useFilePolling,
+					usePolling: this.userPreferences.env.useFilePolling,
 				}).once('ready', () => {
 					this.#watcherReady = true
 					resolve()

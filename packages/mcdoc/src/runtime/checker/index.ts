@@ -826,7 +826,7 @@ function simplifyReference<T>(
 		context.ctx.logger.warn(`Tried to access unknown reference ${typeDef.path}`)
 		return { typeDef: { kind: 'union', members: [] } }
 	}
-	if (context.ctx.config.env.enableMcdocCaching && data.simplifiedTypeDef) {
+	if (context.ctx.userPreferences.env.enableMcdocCaching && data.simplifiedTypeDef) {
 		return { typeDef: data.simplifiedTypeDef }
 	}
 	const simplifiedResult = simplify(data.typeDef, context)
@@ -836,7 +836,7 @@ function simplifyReference<T>(
 			attributes: [...typeDef.attributes, ...simplifiedResult.typeDef.attributes ?? []],
 		}
 	}
-	if (context.ctx.config.env.enableMcdocCaching && !simplifiedResult.dynamicData) {
+	if (context.ctx.userPreferences.env.enableMcdocCaching && !simplifiedResult.dynamicData) {
 		symbol.amend({
 			data: {
 				data: {
@@ -910,7 +910,7 @@ function resolveIndices<T>(
 			return
 		}
 
-		if (context.ctx.config.env.enableMcdocCaching && data.simplifiedTypeDef) {
+		if (context.ctx.userPreferences.env.enableMcdocCaching && data.simplifiedTypeDef) {
 			if (data.simplifiedTypeDef.kind === 'union') {
 				values.push(...data.simplifiedTypeDef.members)
 			} else {
@@ -920,7 +920,7 @@ function resolveIndices<T>(
 			const simplifiedResult = simplify(data.typeDef, context)
 			if (simplifiedResult.dynamicData) {
 				dynamicData = true
-			} else if (context.ctx.config.env.enableMcdocCaching && symbolQuery) {
+			} else if (context.ctx.userPreferences.env.enableMcdocCaching && symbolQuery) {
 				symbolQuery.member(
 					key,
 					s =>
