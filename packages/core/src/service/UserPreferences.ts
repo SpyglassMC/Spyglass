@@ -95,6 +95,11 @@ export const DefaultPreferences: UserPreferences = {
 	},
 }
 
+type PartialUserPreferences = {
+	env: Partial<EnvPreferences>
+	feature: Partial<FeaturePreferences>
+}
+
 type PreferencesEvent = { preferences: UserPreferences }
 type ErrorEvent = { error: unknown }
 
@@ -145,31 +150,57 @@ export class UserPreferencesService implements ExternalEventEmitter {
 		)
 	}
 
-	private buildPreferencesFromDeprecatedConfig(config: Config): {
-		env: Partial<EnvPreferences>
-		feature: Partial<FeaturePreferences>
-	} {
-		return {
-			env: {
-				dataSource: config.env.dataSource,
-				language: config.env.language,
-				enableMcdocCaching: config.env.enableMcdocCaching,
-				useFilePolling: config.env.useFilePolling,
-			},
-			feature: {
-				codeActions: config.env.feature?.codeActions,
-				colors: config.env.feature?.colors,
-				completions: config.env.feature?.completions,
-				documentHighlighting: config.env.feature?.documentHighlighting,
-				documentLinks: config.env.feature?.documentLinks,
-				foldingRanges: config.env.feature?.foldingRanges,
-				formatting: config.env.feature?.formatting,
-				hover: config.env.feature?.hover,
-				inlayHint: config.env.feature?.inlayHint,
-				selectionRanges: config.env.feature?.selectionRanges,
-				semanticColoring: config.env.feature?.semanticColoring,
-				signatures: config.env.feature?.signatures,
-			},
+	private buildPreferencesFromDeprecatedConfig(config: Config): PartialUserPreferences {
+		const preferences: PartialUserPreferences = { env: {}, feature: {} }
+		if (config.env.dataSource !== undefined) {
+			preferences.env.dataSource = config.env.dataSource
 		}
+		if (config.env.language !== undefined) {
+			preferences.env.language = config.env.language
+		}
+		if (config.env.enableMcdocCaching !== undefined) {
+			preferences.env.enableMcdocCaching = config.env.enableMcdocCaching
+		}
+		if (config.env.useFilePolling !== undefined) {
+			preferences.env.useFilePolling = config.env.useFilePolling
+		}
+
+		if (config.env.feature?.codeActions !== undefined) {
+			preferences.feature.codeActions = config.env.feature.codeActions
+		}
+		if (config.env.feature?.colors !== undefined) {
+			preferences.feature.colors = config.env.feature.colors
+		}
+		if (config.env.feature?.completions !== undefined) {
+			preferences.feature.completions = config.env.feature.completions
+		}
+		if (config.env.feature?.documentHighlighting !== undefined) {
+			preferences.feature.documentHighlighting = config.env.feature.documentHighlighting
+		}
+		if (config.env.feature?.documentLinks !== undefined) {
+			preferences.feature.documentLinks = config.env.feature.documentLinks
+		}
+		if (config.env.feature?.foldingRanges !== undefined) {
+			preferences.feature.foldingRanges = config.env.feature.foldingRanges
+		}
+		if (config.env.feature?.formatting !== undefined) {
+			preferences.feature.formatting = config.env.feature.formatting
+		}
+		if (config.env.feature?.hover !== undefined) {
+			preferences.feature.hover = config.env.feature.hover
+		}
+		if (config.env.feature?.inlayHint !== undefined) {
+			preferences.feature.inlayHint = config.env.feature.inlayHint
+		}
+		if (config.env.feature?.semanticColoring !== undefined) {
+			preferences.feature.semanticColoring = config.env.feature.semanticColoring
+		}
+		if (config.env.feature?.selectionRanges !== undefined) {
+			preferences.feature.selectionRanges = config.env.feature.selectionRanges
+		}
+		if (config.env.feature?.signatures !== undefined) {
+			preferences.feature.signatures = config.env.feature.signatures
+		}
+		return preferences
 	}
 }
