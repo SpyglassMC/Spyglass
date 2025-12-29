@@ -302,7 +302,7 @@
           "type": "boolean",
           "default": true
         },
-        "spyglassmc.feature.inlayHintEnabledNodes": {
+        "spyglassmc.feature.inlayHint.enabledNodes": {
           "type": "array",
           "items": { "type": "string" },
           "default": [
