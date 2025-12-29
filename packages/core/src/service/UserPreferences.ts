@@ -145,8 +145,10 @@ export class UserPreferencesService implements ExternalEventEmitter {
 		)
 	}
 
-	private buildPreferencesFromDeprecatedConfig(config: Config): UserPreferences {
-		// TODO: Make config properties optional and remove defaults
+	private buildPreferencesFromDeprecatedConfig(config: Config): {
+		env: Partial<EnvPreferences>
+		feature: Partial<FeaturePreferences>
+	} {
 		return {
 			env: {
 				dataSource: config.env.dataSource,
@@ -155,18 +157,18 @@ export class UserPreferencesService implements ExternalEventEmitter {
 				useFilePolling: config.env.useFilePolling,
 			},
 			feature: {
-				codeActions: config.env.feature.codeActions,
-				colors: config.env.feature.colors,
-				completions: config.env.feature.completions,
-				documentHighlighting: config.env.feature.documentHighlighting,
-				documentLinks: config.env.feature.documentLinks,
-				foldingRanges: config.env.feature.foldingRanges,
-				formatting: config.env.feature.formatting,
-				hover: config.env.feature.hover,
-				inlayHint: config.env.feature.inlayHint,
-				selectionRanges: config.env.feature.selectionRanges,
-				semanticColoring: config.env.feature.semanticColoring,
-				signatures: config.env.feature.signatures,
+				codeActions: config.env.feature?.codeActions,
+				colors: config.env.feature?.colors,
+				completions: config.env.feature?.completions,
+				documentHighlighting: config.env.feature?.documentHighlighting,
+				documentLinks: config.env.feature?.documentLinks,
+				foldingRanges: config.env.feature?.foldingRanges,
+				formatting: config.env.feature?.formatting,
+				hover: config.env.feature?.hover,
+				inlayHint: config.env.feature?.inlayHint,
+				selectionRanges: config.env.feature?.selectionRanges,
+				semanticColoring: config.env.feature?.semanticColoring,
+				signatures: config.env.feature?.signatures,
 			},
 		}
 	}
