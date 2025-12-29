@@ -1,6 +1,7 @@
 export interface CustomInitializationOptions {
 	inDevelopmentMode?: boolean
 	gameVersion?: string
+	userPreferences?: { env: any; feature: any }
 }
 
 export interface CustomServerCapabilities {

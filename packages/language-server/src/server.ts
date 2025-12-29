@@ -90,6 +90,7 @@ connection.onInitialize(async (params) => {
 				defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
 					env: { gameVersion: initializationOptions?.gameVersion },
 				}),
+				defaultUserPreferences: initializationOptions?.userPreferences,
 				cacheRoot,
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],

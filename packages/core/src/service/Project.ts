@@ -63,6 +63,7 @@ export type ProjectInitializer = SyncProjectInitializer | AsyncProjectInitialize
 export interface ProjectOptions {
 	cacheRoot: RootUriString
 	defaultConfig?: Config
+	defaultUserPreferences?: UserPreferences
 	externals: Externals
 	fs?: FileService
 	initializers?: readonly ProjectInitializer[]
@@ -313,6 +314,7 @@ export class Project implements ExternalEventEmitter {
 		{
 			cacheRoot,
 			defaultConfig,
+			defaultUserPreferences,
 			externals,
 			fs = FileService.create(externals, cacheRoot),
 			initializers = [],
@@ -333,7 +335,7 @@ export class Project implements ExternalEventEmitter {
 		this.projectRoots = projectRoots
 
 		this.cacheService = new CacheService(cacheRoot, this)
-		this.userPreferencesService = new UserPreferencesService(this)
+		this.userPreferencesService = new UserPreferencesService(this, defaultUserPreferences)
 		this.#configService = new ConfigService(this, defaultConfig)
 		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
 

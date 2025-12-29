@@ -48,10 +48,15 @@ export async function activate(context: vsc.ExtensionContext) {
 	]
 
 	const gameVersion = vsc.workspace.getConfiguration('spyglassmc.env').get('gameVersion')
+	const userPreferences = {
+		env: vsc.workspace.getConfiguration('spyglassmc').get('env'),
+		feature: vsc.workspace.getConfiguration('spyglassmc').get('feature'),
+	}
 
 	const initializationOptions: server.CustomInitializationOptions = {
 		inDevelopmentMode: context.extensionMode === vsc.ExtensionMode.Development,
 		gameVersion: typeof gameVersion === 'string' ? gameVersion : undefined,
+		userPreferences,
 	}
 
 	// Options to control the language client
