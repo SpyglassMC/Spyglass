@@ -95,9 +95,78 @@ export const DefaultPreferences: UserPreferences = {
 	},
 }
 
-type PartialUserPreferences = {
+export type PartialUserPreferences = {
 	env: Partial<EnvPreferences>
 	feature: Partial<FeaturePreferences>
+}
+
+export namespace PartialUserPreferences {
+	export function buildPreferencesFromConfigurationSafe(
+		spyglassmcConfiguration: any,
+	): PartialUserPreferences {
+		const result: PartialUserPreferences = { env: {}, feature: {} }
+		if (!spyglassmcConfiguration || typeof spyglassmcConfiguration !== 'object') {
+			return result
+		}
+		if (spyglassmcConfiguration.env && typeof spyglassmcConfiguration.env === 'object') {
+			if (typeof spyglassmcConfiguration.env.dataSource === 'string') {
+				result.env.dataSource = spyglassmcConfiguration.env.dataSource
+			}
+			if (typeof spyglassmcConfiguration.env.language === 'string') {
+				result.env.language = spyglassmcConfiguration.env.language
+			}
+			if (typeof spyglassmcConfiguration.env.enableMcdocCaching === 'boolean') {
+				result.env.enableMcdocCaching = spyglassmcConfiguration.env.enableMcdocCaching
+			}
+			if (typeof spyglassmcConfiguration.env.useFilePolling === 'boolean') {
+				result.env.useFilePolling = spyglassmcConfiguration.env.useFilePolling
+			}
+		}
+		if (spyglassmcConfiguration.feature && typeof spyglassmcConfiguration.feature === 'object') {
+			if (typeof spyglassmcConfiguration.feature.codeActions === 'boolean') {
+				result.feature.codeActions = spyglassmcConfiguration.feature.codeActions
+			}
+			if (typeof spyglassmcConfiguration.feature.colors === 'boolean') {
+				result.feature.colors = spyglassmcConfiguration.feature.colors
+			}
+			if (typeof spyglassmcConfiguration.feature.completions === 'boolean') {
+				result.feature.completions = spyglassmcConfiguration.feature.completions
+			}
+			if (typeof spyglassmcConfiguration.feature.documentHighlighting === 'boolean') {
+				result.feature.documentHighlighting =
+					spyglassmcConfiguration.feature.documentHighlighting
+			}
+			if (typeof spyglassmcConfiguration.feature.documentLinks === 'boolean') {
+				result.feature.documentLinks = spyglassmcConfiguration.feature.documentLinks
+			}
+			if (typeof spyglassmcConfiguration.feature.foldingRanges === 'boolean') {
+				result.feature.foldingRanges = spyglassmcConfiguration.feature.foldingRanges
+			}
+			if (typeof spyglassmcConfiguration.feature.formatting === 'boolean') {
+				result.feature.formatting = spyglassmcConfiguration.feature.formatting
+			}
+			if (typeof spyglassmcConfiguration.feature.hover === 'boolean') {
+				result.feature.hover = spyglassmcConfiguration.feature.hover
+			}
+			if (
+				spyglassmcConfiguration.feature.inlayHint
+				&& typeof spyglassmcConfiguration.feature.inlayHint === 'object'
+				&& Array.isArray(spyglassmcConfiguration.feature.inlayHint.enabledNodes)
+			) {
+				result.feature.inlayHint = spyglassmcConfiguration.feature.inlayHint
+			}
+			if (typeof spyglassmcConfiguration.feature.semanticColoring === 'boolean') {
+				result.feature.semanticColoring = spyglassmcConfiguration.feature.semanticColoring
+			}
+			if (typeof spyglassmcConfiguration.feature.selectionRanges === 'boolean') {
+				result.feature.selectionRanges = spyglassmcConfiguration.feature.selectionRanges
+			}
+			if (typeof spyglassmcConfiguration.feature.signatures === 'boolean') {
+				result.feature.signatures = spyglassmcConfiguration.feature.signatures
+			}
+		}
+		return result
+	}
 }
 
 type PreferencesEvent = { preferences: UserPreferences }
@@ -105,7 +174,7 @@ type ErrorEvent = { error: unknown }
 
 export class UserPreferencesService implements ExternalEventEmitter {
 	readonly #eventEmitter: ExternalEventEmitter
-	private currentEditorConfiguration: UserPreferences
+	private currentEditorConfiguration: PartialUserPreferences
 
 	constructor(private readonly project: Project, private readonly defaults = DefaultPreferences) {
 		this.#eventEmitter = new project.externals.event.EventEmitter()
@@ -137,8 +206,8 @@ export class UserPreferencesService implements ExternalEventEmitter {
 		return this.#eventEmitter.emit(event, ...args)
 	}
 
-	async onEditorConfigurationUpdate(editorConfiguration: any) {
-		this.currentEditorConfiguration = editorConfiguration.spyglassmc // TODO: Check that editorConfiguration is valid (emit error)
+	async onEditorConfigurationUpdate(userPreferences: PartialUserPreferences) {
+		this.currentEditorConfiguration = userPreferences
 		this.emit('changed', { preferences: this.load() })
 	}
 

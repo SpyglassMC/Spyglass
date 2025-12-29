@@ -1,7 +1,9 @@
+import type { PartialUserPreferences } from '@spyglassmc/core'
+
 export interface CustomInitializationOptions {
 	inDevelopmentMode?: boolean
 	gameVersion?: string
-	userPreferences?: { env: any; feature: any }
+	userPreferences?: PartialUserPreferences
 }
 
 export interface CustomServerCapabilities {

@@ -90,7 +90,10 @@ connection.onInitialize(async (params) => {
 				defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
 					env: { gameVersion: initializationOptions?.gameVersion },
 				}),
-				defaultUserPreferences: initializationOptions?.userPreferences,
+				defaultUserPreferences: core.merge(
+					core.DefaultPreferences,
+					initializationOptions?.userPreferences ?? {},
+				),
 				cacheRoot,
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
@@ -178,6 +181,9 @@ connection.onInitialized(async () => {
 			{ section: ['spyglassmc'] },
 		)
 	}
+
+	// In case the initializationOptions were incomplete (for example because the client doesn't support them)
+	await updateEditorConfiguration()
 
 	startDynamicSemanticTokensRegistration()
 
@@ -491,9 +497,12 @@ connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
 	return [toLS.textEdit(node.range, text, doc)]
 })
 
-connection.onDidChangeConfiguration(async ({ settings }) => {
-	await service.project.userPreferencesService.onEditorConfigurationUpdate(settings)
-})
+connection.onDidChangeConfiguration(updateEditorConfiguration)
+async function updateEditorConfiguration() {
+	const settings = await connection.workspace.getConfiguration({ section: 'spyglassmc' })
+	const preferences = core.PartialUserPreferences.buildPreferencesFromConfigurationSafe(settings)
+	await service.project.userPreferencesService.onEditorConfigurationUpdate(preferences)
+}
 
 connection.onShutdown(async (): Promise<void> => {
 	await service.project.close()
