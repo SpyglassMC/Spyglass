@@ -153,7 +153,10 @@ export namespace PartialUserPreferences {
 				&& typeof spyglassmcConfiguration.feature.inlayHint === 'object'
 				&& Array.isArray(spyglassmcConfiguration.feature.inlayHint.enabledNodes)
 			) {
-				result.feature.inlayHint = spyglassmcConfiguration.feature.inlayHint
+				result.feature.inlayHint = {
+					enabledNodes: spyglassmcConfiguration.feature.inlayHint.enabledNodes
+						.filter((element: any) => typeof element === 'string'),
+				}
 			}
 			if (typeof spyglassmcConfiguration.feature.semanticColoring === 'boolean') {
 				result.feature.semanticColoring = spyglassmcConfiguration.feature.semanticColoring

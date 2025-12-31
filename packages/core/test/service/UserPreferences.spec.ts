@@ -22,7 +22,7 @@ describe('PartialUserPreferences', () => {
 			}
 			delete expected.env.enableMcdocCaching
 			delete expected.feature.hover
-			delete expected.feature.inlayHint
+			expected.feature.inlayHint = { enabledNodes: ['my_node'] }
 			assert.deepEqual(
 				PartialUserPreferences.buildPreferencesFromConfigurationSafe(merge(DefaultPreferences, {
 					env: {
@@ -31,7 +31,10 @@ describe('PartialUserPreferences', () => {
 					feature: {
 						hover: "Guess we're doing strings now",
 						inlayHint: {
-							enabledNodes: 42,
+							enabledNodes: [
+								'my_node',
+								42,
+							],
 						},
 					},
 				})),
