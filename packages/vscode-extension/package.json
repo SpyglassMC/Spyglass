@@ -316,9 +316,10 @@
             "mcfunction:command_child/unknown"
           ]
         },
-        "spyglassmc.feature.semanticColoring": {
-          "type": "boolean",
-          "default": true
+        "spyglassmc.feature.semanticColoring.disabledLanguages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [ ]
         },
         "spyglassmc.feature.signatures": {
           "type": "boolean",

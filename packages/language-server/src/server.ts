@@ -41,9 +41,22 @@ const logger: core.Logger = {
 }
 let service!: core.Service
 
-function buildSemanticTokensCapability(): ls.SemanticTokensRegistrationOptions {
+function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensRegistrationOptions {
+	// Always register everything for static registration, so all changes to the config can be
+	// processed by the request handlers instead
+	const semanticTokensConfig = service.project.userPreferences.feature.semanticColoring
+	let disabledLanguages: string[] = []
+	if (
+		isDynamic && typeof semanticTokensConfig === 'object'
+		&& Array.isArray(semanticTokensConfig.disabledLanguages)
+	) {
+		disabledLanguages = semanticTokensConfig.disabledLanguages
+	}
 	return {
-		documentSelector: toLS.documentSelector(service.project.meta),
+		documentSelector: toLS.documentSelector(
+			service.project.meta,
+			{ disabledLanguages },
+		),
 		legend: toLS.semanticTokensLegend(),
 		full: { delta: false },
 		range: true,
@@ -127,7 +140,7 @@ connection.onInitialize(async (params) => {
 		logger.info(
 			"[startDynamicSemanticTokensRegistration] LanguageClient didn't permit dynamic registration for semantic tokens. Registering semantic tokens statically instead...",
 		)
-		semanticTokensProvider = buildSemanticTokensCapability()
+		semanticTokensProvider = buildSemanticTokensCapability(false)
 	}
 
 	const customCapabilities: CustomServerCapabilities = {
@@ -215,7 +228,7 @@ function startDynamicSemanticTokensRegistration() {
 		logger.info('[registerDynamicSemanticTokens] Registering dynamic semantic tokens')
 		dynamicSemanticTokensDiposable = connection.client.register(
 			ls.SemanticTokensRegistrationType.type,
-			buildSemanticTokensCapability(),
+			buildSemanticTokensCapability(true),
 		)
 	}
 
@@ -229,11 +242,52 @@ function startDynamicSemanticTokensRegistration() {
 		registerDynamicSemanticTokens()
 	}
 
-	service.project.on('preferencesChanged', ({ newPreferences }) => {
-		if (newPreferences.feature.semanticColoring) {
-			registerDynamicSemanticTokens()
-		} else {
+	function didConfigChange(
+		oldSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
+		newSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
+	): boolean {
+		if (oldSemanticTokensConfig === newSemanticTokensConfig) {
+			return false
+		}
+		if (
+			typeof oldSemanticTokensConfig !== 'object'
+			|| typeof newSemanticTokensConfig !== 'object'
+		) {
+			return true
+		}
+		if (
+			!oldSemanticTokensConfig.disabledLanguages
+			&& !newSemanticTokensConfig.disabledLanguages
+		) {
+			return false
+		}
+		if (
+			Array.isArray(oldSemanticTokensConfig.disabledLanguages)
+			&& Array.isArray(newSemanticTokensConfig.disabledLanguages)
+			&& oldSemanticTokensConfig.disabledLanguages.length
+				=== newSemanticTokensConfig.disabledLanguages.length
+			&& oldSemanticTokensConfig.disabledLanguages.every((language, index) =>
+				language === newSemanticTokensConfig.disabledLanguages!![index]
+			)
+		) {
+			return false
+		}
+		return true
+	}
+
+	service.project.on('preferencesChanged', ({ oldPreferences, newPreferences }) => {
+		const oldSemanticTokensConfig = oldPreferences.feature.semanticColoring
+		const newSemanticTokensConfig = newPreferences.feature.semanticColoring
+
+		if (!didConfigChange(oldSemanticTokensConfig, newSemanticTokensConfig)) {
+			return
+		}
+
+		if (oldSemanticTokensConfig) {
 			unregisterDynamicSemanticTokens()
+		}
+		if (newSemanticTokensConfig) {
+			registerDynamicSemanticTokens()
 		}
 	})
 }

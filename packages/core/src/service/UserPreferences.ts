@@ -54,7 +54,7 @@ export interface FeaturePreferences {
 	formatting: boolean
 	hover: boolean
 	inlayHint: boolean | { enabledNodes: string[] }
-	semanticColoring: boolean
+	semanticColoring: boolean | { disabledLanguages?: string[] }
 	selectionRanges: boolean // Request is not implemented
 	signatures: boolean
 }
@@ -89,7 +89,9 @@ export const DefaultPreferences: UserPreferences = {
 				'mcfunction:command_child/unknown',
 			],
 		},
-		semanticColoring: true,
+		semanticColoring: {
+			disabledLanguages: [],
+		},
 		selectionRanges: true,
 		signatures: true,
 	},
@@ -160,6 +162,16 @@ export namespace PartialUserPreferences {
 			}
 			if (typeof spyglassmcConfiguration.feature.semanticColoring === 'boolean') {
 				result.feature.semanticColoring = spyglassmcConfiguration.feature.semanticColoring
+			}
+			if (
+				spyglassmcConfiguration.feature.semanticColoring
+				&& typeof spyglassmcConfiguration.feature.semanticColoring === 'object'
+				&& Array.isArray(spyglassmcConfiguration.feature.semanticColoring.disabledLanguages)
+			) {
+				result.feature.semanticColoring = {
+					disabledLanguages: spyglassmcConfiguration.feature.semanticColoring.disabledLanguages
+						.filter((element: any) => typeof element === 'string'),
+				}
 			}
 			if (typeof spyglassmcConfiguration.feature.selectionRanges === 'boolean') {
 				result.feature.selectionRanges = spyglassmcConfiguration.feature.selectionRanges
