@@ -1,7 +1,6 @@
 /* istanbul ignore file */
 
-// @ts-expect-error
-import Fallback from './locales/en.js'
+import Fallback from './locales/en.json' with { type: 'json' }
 
 type Locale = Record<string, string>
 
@@ -80,7 +79,7 @@ function _resolveLocalePlaceholders(
 }
 
 async function _setupLanguage(code: string, dry = false) {
-	const locale = await import(`./locales/${code}.js`)
+	const locale = await import(`./locales/${code}.json`, { with: { type: 'json' } })
 	if (!dry) {
 		Locales[code] = locale
 		language = code
