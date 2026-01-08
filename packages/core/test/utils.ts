@@ -11,6 +11,7 @@ import type {
 import {
 	AstNode,
 	BinderContext,
+	DefaultPreferences,
 	Failure,
 	file,
 	FileService,
@@ -41,6 +42,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 	return {
 		cacheRoot,
 		config: data.config ?? VanillaConfig,
+		userPreferences: data.userPreferences ?? DefaultPreferences,
 		ctx: data.ctx ?? {},
 		ensureBindingStarted: data.ensureBindingStarted!,
 		externals,

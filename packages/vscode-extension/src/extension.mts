@@ -3,6 +3,7 @@
  * https://github.com/microsoft/vscode-extension-samples/blob/master/lsp-sample/client/src/extension.ts
  * ------------------------------------------------------------------------------------------*/
 
+import { PartialUserPreferences } from '@spyglassmc/core'
 import type * as server from '@spyglassmc/language-server'
 import { localize } from '@spyglassmc/locales'
 import path from 'path'
@@ -48,10 +49,15 @@ export async function activate(context: vsc.ExtensionContext) {
 	]
 
 	const gameVersion = vsc.workspace.getConfiguration('spyglassmc.env').get('gameVersion')
+	const userPreferences = PartialUserPreferences.buildPreferencesFromConfigurationSafe({
+		env: vsc.workspace.getConfiguration('spyglassmc').get('env'),
+		feature: vsc.workspace.getConfiguration('spyglassmc').get('feature'),
+	})
 
 	const initializationOptions: server.CustomInitializationOptions = {
 		inDevelopmentMode: context.extensionMode === vsc.ExtensionMode.Development,
 		gameVersion: typeof gameVersion === 'string' ? gameVersion : undefined,
+		userPreferences,
 	}
 
 	// Options to control the language client

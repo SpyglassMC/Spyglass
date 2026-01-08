@@ -11,7 +11,7 @@ export const inlayHintProvider: core.InlayHintProvider<core.FileNode<mcf.Mcfunct
 	const ans: core.InlayHint[] = []
 	core.traversePreOrder(node, (_) => true, mcf.CommandChildNode.is, (n) => {
 		const node = n as mcf.CommandChildNode
-		const config = ctx.config.env.feature.inlayHint
+		const config = ctx.userPreferences.feature.inlayHint
 		if (
 			config === true
 			|| (typeof config === 'object' && config.enabledNodes.includes(node.children[0].type))
