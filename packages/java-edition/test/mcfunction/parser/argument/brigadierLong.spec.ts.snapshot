@@ -6,7 +6,7 @@ exports[`mcfunction argument parser > brigadier:long > Parse '-123' 1`] = `
       "start": 0,
       "end": 4
     },
-    "value": "-123"
+    "value": -123
   },
   "errors": []
 }
@@ -20,7 +20,7 @@ exports[`mcfunction argument parser > brigadier:long > Parse '0' 1`] = `
       "start": 0,
       "end": 1
     },
-    "value": "0"
+    "value": 0
   },
   "errors": []
 }
@@ -34,7 +34,7 @@ exports[`mcfunction argument parser > brigadier:long > Parse '123' 1`] = `
       "start": 0,
       "end": 3
     },
-    "value": "123"
+    "value": 123
   },
   "errors": []
 }
