@@ -40,6 +40,14 @@ exports[`mcdoc __fixture__ > type parameter/dispatcher 1`] = `
                   "kind": "reference",
                   "path": "::test::T"
                 }
+              },
+              {
+                "kind": "pair",
+                "key": "",
+                "type": {
+                  "kind": "reference",
+                  "path": "::test::"
+                }
               }
             ]
           }
@@ -96,6 +104,42 @@ exports[`mcdoc __fixture__ > type parameter/dispatcher 1`] = `
                   "end": {
                     "line": 1,
                     "character": 9
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          },
+          "": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 58,
+                  "end": 58
+                },
+                "posRange": {
+                  "start": {
+                    "line": 2,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 2,
+                    "character": 0
+                  }
+                },
+                "fullRange": {
+                  "start": 58,
+                  "end": 58
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 2,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 2,
+                    "character": 0
                   }
                 },
                 "contributor": "binder"
@@ -274,6 +318,14 @@ exports[`mcdoc __fixture__ > type parameter/dispatcher 1`] = `
                       "type": {
                         "kind": "reference",
                         "path": "::test::T"
+                      }
+                    },
+                    {
+                      "kind": "pair",
+                      "key": "",
+                      "type": {
+                        "kind": "reference",
+                        "path": "::test::"
                       }
                     }
                   ]
@@ -540,6 +592,56 @@ exports[`mcdoc __fixture__ > type parameter/dispatcher 1`] = `
                             "start": 48,
                             "end": 56
                           }
+                        },
+                        {
+                          "type": "mcdoc:struct/field/pair",
+                          "children": [
+                            {
+                              "type": "mcdoc:identifier",
+                              "range": {
+                                "start": 58,
+                                "end": 58
+                              },
+                              "value": "",
+                              "symbol": {
+                                "category": "mcdoc",
+                                "path": [
+                                  "::test::<anonymous 0>",
+                                  ""
+                                ]
+                              }
+                            },
+                            {
+                              "type": "mcdoc:type/reference",
+                              "children": [
+                                {
+                                  "type": "mcdoc:path",
+                                  "children": [
+                                    {
+                                      "type": "mcdoc:identifier",
+                                      "range": {
+                                        "start": 58,
+                                        "end": 58
+                                      },
+                                      "value": ""
+                                    }
+                                  ],
+                                  "range": {
+                                    "start": 58,
+                                    "end": 58
+                                  }
+                                }
+                              ],
+                              "range": {
+                                "start": 58,
+                                "end": 58
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 58,
+                            "end": 58
+                          }
                         }
                       ],
                       "range": {
@@ -771,8 +873,42 @@ exports[`mcdoc __fixture__ > type parameter/dispatcher 1`] = `
         }
       ],
       "locals": {},
-      "parserErrors": [],
-      "binderErrors": []
+      "parserErrors": [
+        {
+          "range": {
+            "start": 58,
+            "end": 58
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 58,
+            "end": 58
+          },
+          "message": "Expected “:” but got “}”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 58,
+            "end": 58
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        }
+      ],
+      "binderErrors": [
+        {
+          "range": {
+            "start": 58,
+            "end": 58
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
+        }
+      ]
     }
   }
 }

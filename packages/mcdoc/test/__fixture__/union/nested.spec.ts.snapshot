@@ -62,6 +62,10 @@ exports[`mcdoc __fixture__ > union/nested 1`] = `
                     ]
                   }
                 ]
+              },
+              {
+                "kind": "reference",
+                "path": "::test::"
               }
             ]
           }
@@ -260,6 +264,32 @@ exports[`mcdoc __fixture__ > union/nested 1`] = `
                         "start": 26,
                         "end": 61
                       }
+                    },
+                    {
+                      "type": "mcdoc:type/reference",
+                      "children": [
+                        {
+                          "type": "mcdoc:path",
+                          "children": [
+                            {
+                              "type": "mcdoc:identifier",
+                              "range": {
+                                "start": 63,
+                                "end": 63
+                              },
+                              "value": ""
+                            }
+                          ],
+                          "range": {
+                            "start": 63,
+                            "end": 63
+                          }
+                        }
+                      ],
+                      "range": {
+                        "start": 63,
+                        "end": 63
+                      }
                     }
                   ],
                   "range": {
@@ -281,8 +311,26 @@ exports[`mcdoc __fixture__ > union/nested 1`] = `
         }
       ],
       "locals": {},
-      "parserErrors": [],
-      "binderErrors": []
+      "parserErrors": [
+        {
+          "range": {
+            "start": 63,
+            "end": 63
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        }
+      ],
+      "binderErrors": [
+        {
+          "range": {
+            "start": 63,
+            "end": 63
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
+        }
+      ]
     }
   }
 }
