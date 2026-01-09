@@ -54,7 +54,7 @@ export interface EnvConfig {
 	/**
 	 * @deprecated Use {@link EnvPreferences.dataSource} instead
 	 */
-	dataSource?: string
+	dataSource: string
 	/**
 	 * A list of data packs the current project depends on. Each value in this array can be either an absolute file path
 	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@vanilla-mcdoc`.
@@ -77,19 +77,19 @@ export interface EnvConfig {
 	/**
 	 * @deprecated Use {@link FeaturePreferences} instead
 	 */
-	feature?: {
-		codeActions?: boolean
-		colors?: boolean
-		completions?: boolean
-		documentHighlighting?: boolean
-		documentLinks?: boolean // Request is not implemented
-		foldingRanges?: boolean // Request is not implemented
-		formatting?: boolean
-		hover?: boolean
-		inlayHint?: boolean | { enabledNodes: string[] }
-		semanticColoring?: boolean
-		selectionRanges?: boolean // Request is not implemented
-		signatures?: boolean
+	feature: {
+		codeActions: boolean
+		colors: boolean
+		completions: boolean
+		documentHighlighting: boolean
+		documentLinks: boolean // Request is not implemented
+		foldingRanges: boolean // Request is not implemented
+		formatting: boolean
+		hover: boolean
+		inlayHint: boolean | { enabledNodes: string[] }
+		semanticColoring: boolean
+		selectionRanges: boolean // Request is not implemented
+		signatures: boolean
 	}
 	/**
 	 * This field is case-insensitive.
@@ -103,7 +103,7 @@ export interface EnvConfig {
 	/**
 	 * @deprecated Use {@link EnvPreferences.language} instead
 	 */
-	language?: string
+	language: string
 	/**
 	 * Use custom files as mcmeta summaries.
 	 *
@@ -117,11 +117,11 @@ export interface EnvConfig {
 	/**
 	 * @deprecated Use {@link EnvPreferences.enableMcdocCaching} instead
 	 */
-	enableMcdocCaching?: boolean
+	enableMcdocCaching: boolean
 	/**
 	 * @deprecated Use {@link EnvPreferences.useFilePolling} instead
 	 */
-	useFilePolling?: boolean
+	useFilePolling: boolean
 }
 
 export type LinterSeverity = 'hint' | 'information' | 'warning' | 'error'
@@ -325,6 +325,7 @@ export namespace SymbolLinterConfig {
  */
 export const VanillaConfig: Config = {
 	env: {
+		dataSource: 'GitHub',
 		dependencies: ['@vanilla-datapack', '@vanilla-resourcepack', '@vanilla-mcdoc'],
 		exclude: [
 			'.*/**',
@@ -332,10 +333,38 @@ export const VanillaConfig: Config = {
 			'**/__pycache__/**',
 		],
 		customResources: {},
+		feature: {
+			codeActions: true,
+			colors: true,
+			completions: true,
+			documentHighlighting: true,
+			documentLinks: true,
+			foldingRanges: true,
+			formatting: true,
+			hover: true,
+			inlayHint: {
+				enabledNodes: [
+					'boolean',
+					'double',
+					'float',
+					'integer',
+					'long',
+					'mcfunction:coordinate',
+					'mcfunction:vector',
+					'mcfunction:command_child/unknown',
+				],
+			},
+			semanticColoring: true,
+			selectionRanges: true,
+			signatures: true,
+		},
 		gameVersion: 'Auto',
+		language: 'Default',
 		permissionLevel: 2,
 		plugins: [],
 		mcmetaSummaryOverrides: {},
+		enableMcdocCaching: false,
+		useFilePolling: false,
 	},
 	format: {
 		blockStateBracketSpacing: { inside: 0 },
