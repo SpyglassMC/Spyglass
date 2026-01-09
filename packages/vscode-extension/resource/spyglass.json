@@ -1,5 +1,5 @@
 {
-	"$schema": "https://json-schema.org/draft/2020-12/schema#",
+	"$schema": "http://json-schema.org/draft-07/schema#",
 	"type": "object",
 	"title": "Spyglass Config",
 	"description": "https://spyglassmc.com/user/config",
@@ -97,9 +97,7 @@
 			"properties": {
 				"dataSource": {
 					"type": "string",
-					"examples": ["GitHub", "fastly", "jsDelivr"],
-					"deprecated": true,
-					"description": "User preferences should be configured through the editor settings instead of here"
+					"examples": ["GitHub", "fastly", "jsDelivr"]
 				},
 				"dependencies": {
 					"type": "array",
@@ -167,9 +165,7 @@
 						"selectionRanges": { "type": "boolean" },
 						"signatures": { "type": "boolean" }
 					},
-					"additionalProperties": false,
-					"deprecated": true,
-					"description": "User preferences should be configured through the editor settings instead of here"
+					"additionalProperties": false
 				},
 				"gameVersion": {
 					"type": "string",
@@ -177,9 +173,7 @@
 				},
 				"language": {
 					"type": "string",
-					"examples": ["Default"],
-					"deprecated": true,
-					"description": "User preferences should be configured through the editor settings instead of here"
+					"examples": ["Default"]
 				},
 				"permissionLevel": {
 					"type": "integer",
@@ -211,14 +205,10 @@
 					"additionalProperties": false
 				},
 				"enableMcdocCaching": {
-					"type": "boolean",
-					"deprecated": true,
-					"description": "User preferences should be configured through the editor settings instead of here"
+					"type": "boolean"
 				},
 				"useFilePolling": {
-					"type": "boolean",
-					"deprecated": true,
-					"description": "User preferences should be configured through the editor settings instead of here"
+					"type": "boolean"
 				}
 			},
 			"additionalProperties": false
