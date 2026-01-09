@@ -527,7 +527,7 @@ export namespace PartialConfig {
 				}
 				if (typeof spyglassmcConfiguration.env.feature.semanticColoring === 'boolean') {
 					result.env.feature.semanticColoring =
-						spyglassmcConfiguration.emv.feature.semanticColoring
+						spyglassmcConfiguration.env.feature.semanticColoring
 				}
 				if (
 					spyglassmcConfiguration.env.feature.semanticColoring
