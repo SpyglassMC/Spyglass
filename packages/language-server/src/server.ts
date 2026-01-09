@@ -44,7 +44,7 @@ let service!: core.Service
 function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensRegistrationOptions {
 	// Always register everything for static registration, so all changes to the config can be
 	// processed by the request handlers instead
-	const semanticTokensConfig = service.project.userPreferences.feature.semanticColoring
+	const semanticTokensConfig = service.project.config.env.feature.semanticColoring
 	let disabledLanguages: string[] = []
 	if (
 		isDynamic && typeof semanticTokensConfig === 'object'
@@ -100,12 +100,9 @@ connection.onInitialize(async (params) => {
 				'project#ready#bind',
 			]),
 			project: {
-				defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
-					env: { gameVersion: initializationOptions?.gameVersion },
-				}),
-				defaultUserPreferences: core.merge(
-					core.DefaultPreferences,
-					initializationOptions?.userPreferences ?? {},
+				defaultConfig: core.ConfigService.merge(
+					core.VanillaConfig,
+					initializationOptions?.defaultConfig ?? {},
 				),
 				cacheRoot,
 				externals,
@@ -238,7 +235,7 @@ function startDynamicSemanticTokensRegistration() {
 		dynamicSemanticTokensDiposable = undefined
 	}
 
-	if (service.project.userPreferences.feature.semanticColoring) {
+	if (service.project.config.env.feature.semanticColoring) {
 		registerDynamicSemanticTokens()
 	}
 
@@ -275,9 +272,9 @@ function startDynamicSemanticTokensRegistration() {
 		return true
 	}
 
-	service.project.on('preferencesChanged', ({ oldPreferences, newPreferences }) => {
-		const oldSemanticTokensConfig = oldPreferences.feature.semanticColoring
-		const newSemanticTokensConfig = newPreferences.feature.semanticColoring
+	service.project.on('configChanged', ({ oldConfig, newConfig }) => {
+		const oldSemanticTokensConfig = oldConfig.env.feature.semanticColoring
+		const newSemanticTokensConfig = newConfig.env.feature.semanticColoring
 
 		if (!didConfigChange(oldSemanticTokensConfig, newSemanticTokensConfig)) {
 			return
@@ -308,7 +305,7 @@ connection.workspace.onDidRenameFiles(({}) => {})
 
 connection.onCodeAction(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.userPreferences.feature.codeActions) {
+	if (!docAndNode || !service.project.config.env.feature.codeActions) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -332,7 +329,7 @@ connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) =
 })
 connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.userPreferences.feature.colors) {
+	if (!docAndNode || !service.project.config.env.feature.colors) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -342,7 +339,7 @@ connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 
 connection.onCompletion(async ({ textDocument: { uri }, position, context }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.userPreferences.feature.completions) {
+	if (!docAndNode || !service.project.config.env.feature.completions) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -433,7 +430,7 @@ connection.onTypeDefinition(async ({ textDocument: { uri }, position }) => {
 
 connection.onDocumentHighlight(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.userPreferences.feature.documentHighlighting) {
+	if (!docAndNode || !service.project.config.env.feature.documentHighlighting) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -463,7 +460,7 @@ connection.onDocumentSymbol(async ({ textDocument: { uri } }) => {
 
 connection.onHover(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.userPreferences.feature.hover) {
+	if (!docAndNode || !service.project.config.env.feature.hover) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -491,7 +488,7 @@ connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {
 
 connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.userPreferences.feature.semanticColoring) {
+	if (!docAndNode || !service.project.config.env.feature.semanticColoring) {
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
@@ -504,7 +501,7 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 })
 connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.userPreferences.feature.semanticColoring) {
+	if (!docAndNode || !service.project.config.env.feature.semanticColoring) {
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
@@ -518,7 +515,7 @@ connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, rang
 
 connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.userPreferences.feature.signatures) {
+	if (!docAndNode || !service.project.config.env.feature.signatures) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -536,7 +533,7 @@ connection.onWorkspaceSymbol(({ query }) => {
 
 connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode || !service.project.userPreferences.feature.formatting) {
+	if (!docAndNode || !service.project.config.env.feature.formatting) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
@@ -554,8 +551,8 @@ connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
 connection.onDidChangeConfiguration(updateEditorConfiguration)
 async function updateEditorConfiguration() {
 	const settings = await connection.workspace.getConfiguration({ section: 'spyglassmc' })
-	const preferences = core.PartialUserPreferences.buildPreferencesFromConfigurationSafe(settings)
-	await service.project.userPreferencesService.onEditorConfigurationUpdate(preferences)
+	const config = core.PartialConfig.buildConfigFromEditorSettingsSafe(settings)
+	await service.project.onEditorConfigurationUpdate(config)
 }
 
 connection.onShutdown(async (): Promise<void> => {

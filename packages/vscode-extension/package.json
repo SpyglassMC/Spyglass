@@ -270,39 +270,39 @@
           "markdownDescription": "%spyglassmc.trace.server%",
           "default": "off"
         },
-        "spyglassmc.feature.codeActions": {
+        "spyglassmc.env.feature.codeActions": {
           "type": "boolean",
           "default": true
         },
-        "spyglassmc.feature.colors": {
+        "spyglassmc.env.feature.colors": {
           "type": "boolean",
           "default": true
         },
-        "spyglassmc.feature.completions": {
+        "spyglassmc.env.feature.completions": {
           "type": "boolean",
           "default": true
         },
-        "spyglassmc.feature.documentHighlighting": {
+        "spyglassmc.env.feature.documentHighlighting": {
           "type": "boolean",
           "default": true
         },
-        "spyglassmc.feature.documentLinks": {
+        "spyglassmc.env.feature.documentLinks": {
           "type": "boolean",
           "default": true
         },
-        "spyglassmc.feature.foldingRanges": {
+        "spyglassmc.env.feature.foldingRanges": {
           "type": "boolean",
           "default": true
         },
-        "spyglassmc.feature.formatting": {
+        "spyglassmc.env.feature.formatting": {
           "type": "boolean",
           "default": true
         },
-        "spyglassmc.feature.hover": {
+        "spyglassmc.env.feature.hover": {
           "type": "boolean",
           "default": true
         },
-        "spyglassmc.feature.inlayHint.enabledNodes": {
+        "spyglassmc.env.feature.inlayHint.enabledNodes": {
           "type": "array",
           "items": { "type": "string" },
           "default": [
@@ -316,12 +316,12 @@
             "mcfunction:command_child/unknown"
           ]
         },
-        "spyglassmc.feature.semanticColoring.disabledLanguages": {
+        "spyglassmc.env.feature.semanticColoring.disabledLanguages": {
           "type": "array",
           "items": { "type": "string" },
           "default": [ ]
         },
-        "spyglassmc.feature.signatures": {
+        "spyglassmc.env.feature.signatures": {
           "type": "boolean",
           "default": true
         }

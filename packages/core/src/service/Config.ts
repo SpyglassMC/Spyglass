@@ -1,5 +1,5 @@
 import rfdc from 'rfdc'
-import type { ExternalEventEmitter } from '../common/index.js'
+import type { DeepPartial, ExternalEventEmitter } from '../common/index.js'
 import { Arrayable, bufferToString, merge, TypePredicates } from '../common/index.js'
 import { ErrorSeverity } from '../source/index.js'
 import { DataFileCategories, FileCategories, RegistryCategories } from '../symbol/index.js'
@@ -88,7 +88,7 @@ export interface EnvConfig {
 		formatting: boolean
 		hover: boolean
 		inlayHint: boolean | { enabledNodes: string[] }
-		semanticColoring: boolean
+		semanticColoring: boolean | { disabledLanguages?: string[] }
 		selectionRanges: boolean // Request is not implemented
 		signatures: boolean
 	}
@@ -453,6 +453,108 @@ export const VanillaConfig: Config = {
 	},
 }
 
+export type PartialConfig = DeepPartial<Config>
+
+export namespace PartialConfig {
+	/**
+	 * Filters a config for valid editor settings
+	 * @param spyglassmcConfiguration An unchecked config, should have the same layout as {@link PartialConfig}
+	 * @returns The config, only keeping editor settings that have valid values
+	 */
+	export function buildConfigFromEditorSettingsSafe(
+		spyglassmcConfiguration: any,
+	): PartialConfig {
+		const result: PartialConfig = {}
+		if (!spyglassmcConfiguration || typeof spyglassmcConfiguration !== 'object') {
+			return result
+		}
+		if (spyglassmcConfiguration.env && typeof spyglassmcConfiguration.env === 'object') {
+			result.env = {}
+			if (typeof spyglassmcConfiguration.env.gameVersion === 'string') {
+				result.env.gameVersion = spyglassmcConfiguration.env.gameVersion
+			}
+			if (typeof spyglassmcConfiguration.env.dataSource === 'string') {
+				result.env.dataSource = spyglassmcConfiguration.env.dataSource
+			}
+			if (typeof spyglassmcConfiguration.env.language === 'string') {
+				result.env.language = spyglassmcConfiguration.env.language
+			}
+			if (typeof spyglassmcConfiguration.env.enableMcdocCaching === 'boolean') {
+				result.env.enableMcdocCaching = spyglassmcConfiguration.env.enableMcdocCaching
+			}
+			if (typeof spyglassmcConfiguration.env.useFilePolling === 'boolean') {
+				result.env.useFilePolling = spyglassmcConfiguration.env.useFilePolling
+			}
+			if (
+				spyglassmcConfiguration.env.feature
+				&& typeof spyglassmcConfiguration.env.feature === 'object'
+			) {
+				result.env.feature = {}
+				if (typeof spyglassmcConfiguration.env.feature.codeActions === 'boolean') {
+					result.env.feature.codeActions = spyglassmcConfiguration.env.feature.codeActions
+				}
+				if (typeof spyglassmcConfiguration.env.feature.colors === 'boolean') {
+					result.env.feature.colors = spyglassmcConfiguration.env.feature.colors
+				}
+				if (typeof spyglassmcConfiguration.env.feature.completions === 'boolean') {
+					result.env.feature.completions = spyglassmcConfiguration.env.feature.completions
+				}
+				if (typeof spyglassmcConfiguration.env.feature.documentHighlighting === 'boolean') {
+					result.env.feature.documentHighlighting =
+						spyglassmcConfiguration.env.feature.documentHighlighting
+				}
+				if (typeof spyglassmcConfiguration.env.feature.documentLinks === 'boolean') {
+					result.env.feature.documentLinks = spyglassmcConfiguration.env.feature.documentLinks
+				}
+				if (typeof spyglassmcConfiguration.env.feature.foldingRanges === 'boolean') {
+					result.env.feature.foldingRanges = spyglassmcConfiguration.env.feature.foldingRanges
+				}
+				if (typeof spyglassmcConfiguration.env.feature.formatting === 'boolean') {
+					result.env.feature.formatting = spyglassmcConfiguration.env.feature.formatting
+				}
+				if (typeof spyglassmcConfiguration.env.feature.hover === 'boolean') {
+					result.env.feature.hover = spyglassmcConfiguration.env.feature.hover
+				}
+				if (
+					spyglassmcConfiguration.env.feature.inlayHint
+					&& typeof spyglassmcConfiguration.env.feature.inlayHint === 'object'
+					&& Array.isArray(spyglassmcConfiguration.env.feature.inlayHint.enabledNodes)
+				) {
+					result.env.feature.inlayHint = {
+						enabledNodes: spyglassmcConfiguration.env.feature.inlayHint.enabledNodes
+							.filter((element: any) => typeof element === 'string'),
+					}
+				}
+				if (typeof spyglassmcConfiguration.env.feature.semanticColoring === 'boolean') {
+					result.env.feature.semanticColoring =
+						spyglassmcConfiguration.emv.feature.semanticColoring
+				}
+				if (
+					spyglassmcConfiguration.env.feature.semanticColoring
+					&& typeof spyglassmcConfiguration.env.feature.semanticColoring === 'object'
+					&& Array.isArray(
+						spyglassmcConfiguration.env.feature.semanticColoring.disabledLanguages,
+					)
+				) {
+					result.env.feature.semanticColoring = {
+						disabledLanguages: spyglassmcConfiguration.env.feature.semanticColoring
+							.disabledLanguages
+							.filter((element: any) => typeof element === 'string'),
+					}
+				}
+				if (typeof spyglassmcConfiguration.env.feature.selectionRanges === 'boolean') {
+					result.env.feature.selectionRanges =
+						spyglassmcConfiguration.env.feature.selectionRanges
+				}
+				if (typeof spyglassmcConfiguration.env.feature.signatures === 'boolean') {
+					result.env.feature.signatures = spyglassmcConfiguration.env.feature.signatures
+				}
+			}
+		}
+		return result
+	}
+}
+
 type ConfigEvent = { config: Config }
 type ErrorEvent = { error: unknown; uri: string }
 
@@ -462,6 +564,7 @@ export class ConfigService implements ExternalEventEmitter {
 	)
 
 	readonly #eventEmitter: ExternalEventEmitter
+	private currentEditorConfiguration: PartialConfig = {}
 
 	constructor(private readonly project: Project, private readonly defaultConfig = VanillaConfig) {
 		this.#eventEmitter = new project.externals.event.EventEmitter()
@@ -495,6 +598,11 @@ export class ConfigService implements ExternalEventEmitter {
 		return this.#eventEmitter.emit(event, ...args)
 	}
 
+	async onEditorConfigurationUpdate(editorConfiguration: PartialConfig) {
+		this.currentEditorConfiguration = editorConfiguration
+		this.emit('changed', { config: await this.load() })
+	}
+
 	async load(): Promise<Config> {
 		const overrides = []
 		for (const projectRoot of this.project.projectRoots) {
@@ -513,7 +621,7 @@ export class ConfigService implements ExternalEventEmitter {
 				break
 			}
 		}
-		return ConfigService.merge(this.defaultConfig, ...overrides)
+		return ConfigService.merge(this.defaultConfig, this.currentEditorConfiguration, ...overrides)
 	}
 
 	public static isConfigFile(this: void, uri: string): boolean {

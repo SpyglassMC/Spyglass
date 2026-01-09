@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 
 import type { Config } from '../../lib/index.js'
-import { ConfigService } from '../../lib/index.js'
+import { ConfigService, merge, PartialConfig } from '../../lib/index.js'
 
 describe('ConfigService', () => {
 	describe('merge()', () => {
@@ -50,6 +50,67 @@ describe('ConfigService', () => {
 					{ env: { dataSource: 'TEST', foo: 'bar' } },
 					{ env: { foo: 'qux', erm: 3 } },
 				),
+			)
+		})
+	})
+})
+
+describe('PartialConfig', () => {
+	function getExampleSettings(): PartialConfig {
+		return {
+			env: {
+				dataSource: 'GitHub',
+				feature: {
+					codeActions: true,
+					colors: true,
+					completions: true,
+					documentHighlighting: true,
+					documentLinks: true,
+					foldingRanges: true,
+					formatting: true,
+					hover: true,
+					inlayHint: {
+						enabledNodes: ['boolean', 'double'],
+					},
+					semanticColoring: true,
+					selectionRanges: true,
+					signatures: true,
+				},
+				language: 'Default',
+				enableMcdocCaching: false,
+				useFilePolling: false,
+			},
+		}
+	}
+
+	describe('buildConfigFromEditorSettingsSafe()', () => {
+		it('Should keep valid configurations the same', async () => {
+			assert.deepEqual(
+				PartialConfig.buildConfigFromEditorSettingsSafe(getExampleSettings()),
+				getExampleSettings(),
+			)
+		})
+		it('Should filter out invalid configurations', async () => {
+			const expected: PartialConfig = getExampleSettings()
+			delete expected.env!!.enableMcdocCaching
+			delete expected.env!!.feature!!.hover
+			expected.env!!.feature!!.inlayHint = { enabledNodes: ['my_node'] }
+			assert.deepEqual(
+				PartialConfig.buildConfigFromEditorSettingsSafe(merge(getExampleSettings(), {
+					env: {
+						enableMcdocCaching: "A string? In the 'enableMcdocCahing' setting?",
+					},
+					feature: {
+						hover: "Guess we're doing strings now",
+						inlayHint: {
+							enabledNodes: [
+								'my_node',
+								42,
+							],
+						},
+					},
+				})),
+				expected,
 			)
 		})
 	})

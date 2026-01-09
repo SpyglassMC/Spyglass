@@ -14,7 +14,6 @@ import type { LinterErrorReporter } from './index.js'
 import type { MetaRegistry } from './MetaRegistry.js'
 import type { ProfilerFactory } from './Profiler.js'
 import type { ProjectData } from './Project.js'
-import type { UserPreferences } from './UserPreferences.js'
 
 export interface ContextBase {
 	fs: FileService
@@ -61,7 +60,6 @@ export namespace ParserContext {
 
 export interface ProcessorContext extends ContextBase {
 	config: Config
-	userPreferences: UserPreferences
 	doc: TextDocument
 	src: ReadonlySource
 	symbols: SymbolUtil
@@ -75,7 +73,6 @@ export namespace ProcessorContext {
 		return {
 			...ContextBase.create(project),
 			config: project.config,
-			userPreferences: project.userPreferences,
 			doc: opts.doc,
 			src: opts.src ?? new ReadonlySource(opts.doc.getText()),
 			symbols: project.symbols,
