@@ -99,14 +99,14 @@ describe('PartialConfig', () => {
 				PartialConfig.buildConfigFromEditorSettingsSafe(merge(getExampleSettings(), {
 					env: {
 						enableMcdocCaching: "A string? In the 'enableMcdocCahing' setting?",
-					},
-					feature: {
-						hover: "Guess we're doing strings now",
-						inlayHint: {
-							enabledNodes: [
-								'my_node',
-								42,
-							],
+						feature: {
+							hover: "Guess we're doing strings now",
+							inlayHint: {
+								enabledNodes: [
+									'my_node',
+									42,
+								],
+							},
 						},
 					},
 				})),
