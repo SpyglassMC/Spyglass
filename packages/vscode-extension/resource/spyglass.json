@@ -95,10 +95,6 @@
 		"env": {
 			"type": "object",
 			"properties": {
-				"dataSource": {
-					"type": "string",
-					"examples": ["GitHub", "fastly", "jsDelivr"]
-				},
 				"dependencies": {
 					"type": "array",
 					"items": {
@@ -186,10 +182,6 @@
 				"gameVersion": {
 					"type": "string",
 					"examples": ["Auto", "Latest release", "Latest snapshot"]
-				},
-				"language": {
-					"type": "string",
-					"examples": ["Default"]
 				},
 				"permissionLevel": {
 					"type": "integer",
