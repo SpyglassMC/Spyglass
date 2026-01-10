@@ -14,23 +14,23 @@
 					"type": "boolean"
 				}
 			},
-			"required": ["path"]
+			"required": [ "path" ]
 		},
 		"NameLint": {
 			"anyOf": [
 				{
-					"type": ["string", "null"]
+					"type": [ "string", "null" ]
 				},
 				{
 					"type": "array",
 					"minItems": 2,
 					"maxItems": 2,
-					"default": ["error", "VALUE"]
+					"default": [ "error", "VALUE" ]
 				}
 			]
 		},
 		"Patterns": {
-			"type": ["string", "array"],
+			"type": [ "string", "array" ],
 			"items": {
 				"type": "string",
 				"format": "regex"
@@ -39,13 +39,13 @@
 		"Action": {
 			"title": "Action",
 			"type": "object",
-			"oneOf": [{ "required": ["declare"] }, { "required": ["report"] }],
+			"oneOf": [ { "required": [ "declare" ] }, { "required": [ "report" ] } ],
 			"properties": {
 				"declare": {
-					"enum": ["block", "file", "public"]
+					"enum": [ "block", "file", "public" ]
 				},
 				"report": {
-					"enum": ["inherit", "hint", "information", "warning", "error"]
+					"enum": [ "inherit", "hint", "information", "warning", "error" ]
 				}
 			},
 			"additionalProperties": false
@@ -55,7 +55,7 @@
 			"type": "object",
 			"properties": {
 				"if": {
-					"type": ["object", "array"],
+					"type": [ "object", "array" ],
 					"properties": {
 						"category": {
 							"$ref": "#/definitions/Patterns"
@@ -97,7 +97,7 @@
 			"properties": {
 				"dataSource": {
 					"type": "string",
-					"examples": ["GitHub", "fastly", "jsDelivr"]
+					"examples": [ "GitHub", "fastly", "jsDelivr" ]
 				},
 				"dependencies": {
 					"type": "array",
@@ -122,10 +122,10 @@
 							"ext": {
 								"type": "string",
 								"pattern": "^\\.",
-								"examples": [".json"]
+								"examples": [ ".json" ]
 							},
 							"pack": {
-								"enum": ["data", "assets"]
+								"enum": [ "data", "assets" ]
 							},
 							"since": {
 								"type": "string",
@@ -137,7 +137,7 @@
 							}
 						},
 						"additionalProperties": false,
-						"required": ["category"]
+						"required": [ "category" ]
 					}
 				},
 				"feature": {
@@ -169,11 +169,11 @@
 				},
 				"gameVersion": {
 					"type": "string",
-					"examples": ["Auto", "Latest release", "Latest snapshot"]
+					"examples": [ "Auto", "Latest release", "Latest snapshot" ]
 				},
 				"language": {
 					"type": "string",
-					"examples": ["Default"]
+					"examples": [ "Default" ]
 				},
 				"permissionLevel": {
 					"type": "integer",
@@ -205,9 +205,6 @@
 					"additionalProperties": false
 				},
 				"enableMcdocCaching": {
-					"type": "boolean"
-				},
-				"useFilePolling": {
 					"type": "boolean"
 				}
 			},
