@@ -16,32 +16,17 @@ export function registerMcdocAttributes(
 ) {
 	mcdoc.runtime.registerAttribute(meta, 'since', validator.string, {
 		filterElement: (config, ctx) => {
-			if (!config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
-				return true
-			}
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
 		},
 	})
 	mcdoc.runtime.registerAttribute(meta, 'until', validator.string, {
 		filterElement: (config, ctx) => {
-			if (!config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
-				return true
-			}
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
 		},
 	})
 	mcdoc.runtime.registerAttribute(meta, 'deprecated', validator.optional(validator.string), {
 		mapField: (config, field, ctx) => {
-			if (config === undefined) {
-				return { ...field, deprecated: true }
-			}
-			if (!config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "deprecated": ${config}`)
-				return field
-			}
-			if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
+			if (!config || ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
 				return { ...field, deprecated: true }
 			}
 			return field
