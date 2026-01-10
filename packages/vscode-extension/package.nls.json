@@ -6,8 +6,6 @@
     "spyglassmc.description": "Heavy language features for Minecraft: Java Edition data pack files",
     "spyglassmc.displayName": "Datapack Helper Plus by Spyglass",
     "spyglassmc.env.gameVersion": "The Minecraft version to use. When set to auto, the version is inferred from the `pack.mcmeta`. Other versions can be specified in a `spyglass.json` config file. Need to restart Spyglass to apply changes.",
-    "spyglassmc.env.dataSource": "Where to download data like `mcmeta` or `vanilla-mcdoc` from (case-insensitive). \n - `GitHub`: Recommended, unless you have trouble connecting to `raw.githubusercontent.com`.\n - `fastly`\n - `jsDelivr`\n - A custom URL, with placeholder variables: `${user}`, `${repo}`, `${tag}`, and `${path}`.",
-    "spyglassmc.env.language": "Locale language for error messages and other texts provided by Spyglass.",
     "spyglassmc.env.enableMcdocCaching": "Whether to enable caching of mcdoc simplified types.\n\n May become corrupt after changing game versions, so this is currently disabled by default.",
     "spyglassmc.env.useFilePolling": "Makes the file-watcher use polling to watch for file changes. Comes at a performance cost for very large datapacks.\n\n On Windows, enabling this can fix file-lock issues when Spyglass is running. See: https://github.com/SpyglassMC/Spyglass/issues/1414. Need to restart Spyglass to apply changes.\n\n **You should only consider enabling this for Windows machines.**",
     "spyglassmc.trace.server": "Traces the communication between VS Code and the Spyglass Language Server."

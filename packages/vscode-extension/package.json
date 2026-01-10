@@ -240,16 +240,6 @@
           "markdownDescription": "%spyglassmc.env.gameVersion%",
           "default": "Auto"
         },
-        "spyglassmc.env.dataSource": {
-          "type": "string",
-          "markdownDescription": "%spyglassmc.env.dataSource%",
-          "default": "GitHub"
-        },
-        "spyglassmc.env.language": {
-          "type": "string",
-          "markdownDescription": "%spyglassmc.env.language%",
-          "default": "Default"
-        },
         "spyglassmc.env.enableMcdocCaching": {
           "type": "boolean",
           "markdownDescription": "%spyglassmc.env.enableMcdocCaching%",

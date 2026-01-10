@@ -51,15 +51,6 @@ export interface CustomResourceConfig {
 
 export interface EnvConfig {
 	/**
-	 * Where to download data like `mcmeta` or `vanilla-mcdoc` from (case-insensitive).
-	 *
-	 * * `GitHub`: Recommended, unless you have trouble connecting to `raw.githubusercontent.com`.
-	 * * `fastly`
-	 * * `jsDelivr`
-	 * * A custom URL, with placeholder variables: `${user}`, `${repo}`, `${tag}`, and `${path}`.
-	 */
-	dataSource: string
-	/**
 	 * A list of data packs the current project depends on. Each value in this array can be either an absolute file path
 	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@vanilla-mcdoc`.
 	 */
@@ -101,10 +92,6 @@ export interface EnvConfig {
 	 * - A version identifier or name found in [mcmeta's version data](https://github.com/misode/mcmeta/blob/summary/versions/data.json) that is older than `1.15` (inclusive).
 	 */
 	gameVersion: string
-	/**
-	 * Locale language for error messages and other texts provided by Spyglass.
-	 */
-	language: string
 	/**
 	 * Use custom files as mcmeta summaries.
 	 *
@@ -334,7 +321,6 @@ export namespace SymbolLinterConfig {
  */
 export const VanillaConfig: Config = {
 	env: {
-		dataSource: 'GitHub',
 		dependencies: ['@vanilla-datapack', '@vanilla-resourcepack', '@vanilla-mcdoc'],
 		exclude: [
 			'.*/**',
@@ -368,7 +354,6 @@ export const VanillaConfig: Config = {
 			signatures: true,
 		},
 		gameVersion: 'Auto',
-		language: 'Default',
 		permissionLevel: 2,
 		plugins: [],
 		mcmetaSummaryOverrides: {},
@@ -472,12 +457,6 @@ export namespace PartialConfig {
 			result.env = {}
 			if (typeof spyglassmcConfiguration.env.gameVersion === 'string') {
 				result.env.gameVersion = spyglassmcConfiguration.env.gameVersion
-			}
-			if (typeof spyglassmcConfiguration.env.dataSource === 'string') {
-				result.env.dataSource = spyglassmcConfiguration.env.dataSource
-			}
-			if (typeof spyglassmcConfiguration.env.language === 'string') {
-				result.env.language = spyglassmcConfiguration.env.language
 			}
 			if (typeof spyglassmcConfiguration.env.enableMcdocCaching === 'boolean') {
 				result.env.enableMcdocCaching = spyglassmcConfiguration.env.enableMcdocCaching

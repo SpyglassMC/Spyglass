@@ -21,8 +21,8 @@ describe('ConfigService', () => {
 
 		it('Should create a clone of the base object', async () => {
 			const merged = ConfigService.merge(base)
-			merged.env.dataSource = 'new string'
-			assert.notEqual(base.env.dataSource, merged.env.dataSource)
+			merged.env.gameVersion = 'new string'
+			assert.notEqual(base.env.gameVersion, merged.env.gameVersion)
 		})
 
 		it('Should merge empty overrides correctly', async (t) => {
@@ -59,7 +59,6 @@ describe('PartialConfig', () => {
 	function getExampleSettings(): PartialConfig {
 		return {
 			env: {
-				dataSource: 'GitHub',
 				feature: {
 					codeActions: true,
 					colors: true,
@@ -76,7 +75,6 @@ describe('PartialConfig', () => {
 					selectionRanges: true,
 					signatures: true,
 				},
-				language: 'Default',
 				enableMcdocCaching: false,
 				useFilePolling: false,
 			},
