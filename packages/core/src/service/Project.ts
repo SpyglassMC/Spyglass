@@ -181,6 +181,8 @@ export class Project implements ExternalEventEmitter {
 		return this.#watcher?.watchedFiles ?? new UriStore()
 	}
 
+	#initPromise: Promise<this> | undefined
+	#readyPromise: Promise<this> | undefined
 	#isInitialized = false
 	#isReady = false
 	get isReady(): boolean {
@@ -399,6 +401,10 @@ export class Project implements ExternalEventEmitter {
 	 * Load the config file and initialize parsers and processors.
 	 */
 	async init(): Promise<this> {
+		return (this.#initPromise ??= this.#init())
+	}
+
+	async #init(): Promise<this> {
 		this.#isInitialized = false
 
 		const callIntializers = async () => {
@@ -447,7 +453,11 @@ export class Project implements ExternalEventEmitter {
 	/**
 	 * Finish the initial run of parsing, binding, and checking the entire project.
 	 */
-	async ready({ projectRootsWatcher }: ProjectReadyOptions = {}): Promise<this> {
+	async ready(options: ProjectReadyOptions = {}): Promise<this> {
+		return (this.#readyPromise ??= this.#ready(options))
+	}
+
+	async #ready({ projectRootsWatcher }: ProjectReadyOptions = {}): Promise<this> {
 		if (!this.#isInitialized) {
 			throw new Error('Project.ready() must be called after Project.init() resolves')
 		}
@@ -620,6 +630,7 @@ export class Project implements ExternalEventEmitter {
 		try {
 			this.#bindingInProgressUris.clear()
 			this.#symbolUpToDateUris.clear()
+			this.#readyPromise = undefined
 			await this.ready()
 		} catch (e) {
 			this.logger.error('[Project#reset]', e)
