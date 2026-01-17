@@ -60,7 +60,7 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 					ls.DidChangeWatchedFilesNotification.type,
 					{
 						// "**/*" is needed to watch changes to folders as well.
-						// https://github.com/microsoft/vscode/issues/60813
+						// https://github.com/microsoft/vscode/issues/60813#issuecomment-1145821690
 						watchers: [{ globPattern: '**/*' }],
 					},
 				),
