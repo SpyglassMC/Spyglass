@@ -1,7 +1,7 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Quote, StringNode, StringOptions } from '../node/index.js'
-import { EscapeChar, EscapeTable } from '../node/index.js'
+import { EscapeChar, EscapeTable, UnicodeEscapeChar, UnicodeEscapeLength } from '../node/index.js'
 import type { InfallibleParser } from '../parser/index.js'
 import type { ParserContext } from '../service/index.js'
 import type { IndexMap } from '../source/index.js'
@@ -40,10 +40,11 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							outer: Range.create(cStart, src),
 						})
 						ans.value += EscapeTable.get(c2)
-					} else if (options.escapable.unicode && c2 === 'u') {
-						const hex = src.peek(4)
-						if (/^[0-9a-f]{4}$/i.test(hex)) {
-							src.skip(4)
+					} else if (options.escapable.unicode && UnicodeEscapeChar.is(c2)) {
+						const sequenceLength = UnicodeEscapeLength.get(c2) || 4
+						const hex = src.peek(sequenceLength)
+						if (new RegExp(`^[0-9a-f]{${sequenceLength}}$`, 'i').test(hex)) {
+							src.skip(sequenceLength)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(cStart, src),
@@ -52,7 +53,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						} else {
 							ctx.err.report(
 								localize('parser.string.illegal-unicode-escape'),
-								Range.create(src, src.getCharRange(3).end),
+								Range.create(src, src.getCharRange(sequenceLength  - 1).end),
 							)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
