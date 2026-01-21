@@ -34,7 +34,7 @@ export namespace UnicodeEscapeChar {
 	}
 }
 
-export const UnicodeEscapeLength = new Map<UnicodeEscapeChar, number>([
+export const UnicodeEscapeLengths = new Map<UnicodeEscapeChar, number>([
 	['x', 2],
 	['u', 4],
 	['U', 8],
