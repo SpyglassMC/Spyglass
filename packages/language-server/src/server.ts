@@ -41,9 +41,22 @@ const logger: core.Logger = {
 }
 let service!: core.Service
 
-function buildSemanticTokensCapability(): ls.SemanticTokensRegistrationOptions {
+function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensRegistrationOptions {
+	// Always register everything for static registration, so all changes to the config can be
+	// processed by the request handlers instead
+	const semanticTokensConfig = service.project.config.env.feature.semanticColoring
+	let disabledLanguages: string[] = []
+	if (
+		isDynamic && typeof semanticTokensConfig === 'object'
+		&& Array.isArray(semanticTokensConfig.disabledLanguages)
+	) {
+		disabledLanguages = semanticTokensConfig.disabledLanguages
+	}
 	return {
-		documentSelector: toLS.documentSelector(service.project.meta),
+		documentSelector: toLS.documentSelector(
+			service.project.meta,
+			{ disabledLanguages },
+		),
 		legend: toLS.semanticTokensLegend(),
 		full: { delta: false },
 		range: true,
@@ -87,9 +100,10 @@ connection.onInitialize(async (params) => {
 				'project#ready#bind',
 			]),
 			project: {
-				defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
-					env: { gameVersion: initializationOptions?.gameVersion },
-				}),
+				defaultConfig: core.ConfigService.merge(
+					core.VanillaConfig,
+					initializationOptions?.defaultConfig ?? {},
+				),
 				cacheRoot,
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
@@ -123,7 +137,7 @@ connection.onInitialize(async (params) => {
 		logger.info(
 			"[startDynamicSemanticTokensRegistration] LanguageClient didn't permit dynamic registration for semantic tokens. Registering semantic tokens statically instead...",
 		)
-		semanticTokensProvider = buildSemanticTokensCapability()
+		semanticTokensProvider = buildSemanticTokensCapability(false)
 	}
 
 	const customCapabilities: CustomServerCapabilities = {
@@ -171,6 +185,15 @@ connection.onInitialized(async () => {
 			{ documentSelector: [{ language: 'mcdoc' }] },
 		)
 	}
+	if (capabilities.workspace?.didChangeConfiguration?.dynamicRegistration) {
+		void connection.client.register(
+			ls.DidChangeConfigurationNotification.type,
+			{ section: ['spyglassmc'] },
+		)
+	}
+
+	// In case the initializationOptions were incomplete (for example because the client doesn't support them)
+	await updateEditorConfiguration()
 
 	startDynamicSemanticTokensRegistration()
 
@@ -202,7 +225,7 @@ function startDynamicSemanticTokensRegistration() {
 		logger.info('[registerDynamicSemanticTokens] Registering dynamic semantic tokens')
 		dynamicSemanticTokensDiposable = connection.client.register(
 			ls.SemanticTokensRegistrationType.type,
-			buildSemanticTokensCapability(),
+			buildSemanticTokensCapability(true),
 		)
 	}
 
@@ -216,11 +239,52 @@ function startDynamicSemanticTokensRegistration() {
 		registerDynamicSemanticTokens()
 	}
 
-	service.project.on('configChanged', config => {
-		if (config.env.feature.semanticColoring) {
-			registerDynamicSemanticTokens()
-		} else {
+	function didConfigChange(
+		oldSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
+		newSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
+	): boolean {
+		if (oldSemanticTokensConfig === newSemanticTokensConfig) {
+			return false
+		}
+		if (
+			typeof oldSemanticTokensConfig !== 'object'
+			|| typeof newSemanticTokensConfig !== 'object'
+		) {
+			return true
+		}
+		if (
+			!oldSemanticTokensConfig.disabledLanguages
+			&& !newSemanticTokensConfig.disabledLanguages
+		) {
+			return false
+		}
+		if (
+			Array.isArray(oldSemanticTokensConfig.disabledLanguages)
+			&& Array.isArray(newSemanticTokensConfig.disabledLanguages)
+			&& oldSemanticTokensConfig.disabledLanguages.length
+				=== newSemanticTokensConfig.disabledLanguages.length
+			&& oldSemanticTokensConfig.disabledLanguages.every((language, index) =>
+				language === newSemanticTokensConfig.disabledLanguages!![index]
+			)
+		) {
+			return false
+		}
+		return true
+	}
+
+	service.project.on('configChanged', ({ oldConfig, newConfig }) => {
+		const oldSemanticTokensConfig = oldConfig.env.feature.semanticColoring
+		const newSemanticTokensConfig = newConfig.env.feature.semanticColoring
+
+		if (!didConfigChange(oldSemanticTokensConfig, newSemanticTokensConfig)) {
+			return
+		}
+
+		if (oldSemanticTokensConfig) {
 			unregisterDynamicSemanticTokens()
+		}
+		if (newSemanticTokensConfig) {
+			registerDynamicSemanticTokens()
 		}
 	})
 }
@@ -483,6 +547,13 @@ connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
 	}
 	return [toLS.textEdit(node.range, text, doc)]
 })
+
+connection.onDidChangeConfiguration(updateEditorConfiguration)
+async function updateEditorConfiguration() {
+	const settings = await connection.workspace.getConfiguration({ section: 'spyglassmc' })
+	const config = core.PartialConfig.buildConfigFromEditorSettingsSafe(settings)
+	await service.project.onEditorConfigurationUpdate(config)
+}
 
 connection.onShutdown(async (): Promise<void> => {
 	await service.project.close()

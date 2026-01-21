@@ -93,8 +93,13 @@ export function documentHighlight(
 	}))
 }
 
-export function documentSelector(meta: core.MetaRegistry): ls.DocumentSelector {
-	const ans: ls.DocumentSelector = meta.getLanguages().map((id) => ({ language: id }))
+export function documentSelector(
+	meta: core.MetaRegistry,
+	{ disabledLanguages }: { disabledLanguages?: string[] } = {},
+): ls.DocumentSelector {
+	const ans: ls.DocumentSelector = meta.getLanguages().filter((id) =>
+		disabledLanguages === undefined || !disabledLanguages.includes(id)
+	).map((id) => ({ language: id }))
 	return ans
 }
 
