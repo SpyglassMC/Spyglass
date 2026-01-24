@@ -6,7 +6,10 @@
 		"moduleResolution": "node16",
 		"target": "ES2022",
 		"lib": [
-			"ES2023",
+			"ES2024",
+			"ESNext.Array",
+			"ESNext.Collection",
+			"ESNext.Iterator",
 			"DOM"
 		],
 

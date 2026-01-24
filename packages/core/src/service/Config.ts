@@ -108,16 +108,6 @@ export interface EnvConfig {
 	 * May become corrupt after changing game versions, so this is currently disabled by default.
 	 */
 	enableMcdocCaching: boolean
-	/**
-	 * Makes the file-watcher use polling to watch for file changes.
-	 * Comes at a performance cost for very large datapacks.
-	 *
-	 * On Windows, enabling this can fix file-lock issues when Spyglass is running.
-	 * See: https://github.com/SpyglassMC/Spyglass/issues/1414
-	 *
-	 * **You should only consider enabling this for Windows machines.**
-	 */
-	useFilePolling: boolean
 }
 
 export type LinterSeverity = 'hint' | 'information' | 'warning' | 'error'
@@ -358,7 +348,6 @@ export const VanillaConfig: Config = {
 		plugins: [],
 		mcmetaSummaryOverrides: {},
 		enableMcdocCaching: false,
-		useFilePolling: false,
 	},
 	format: {
 		blockStateBracketSpacing: { inside: 0 },
@@ -460,9 +449,6 @@ export namespace PartialConfig {
 			}
 			if (typeof spyglassmcConfiguration.env.enableMcdocCaching === 'boolean') {
 				result.env.enableMcdocCaching = spyglassmcConfiguration.env.enableMcdocCaching
-			}
-			if (typeof spyglassmcConfiguration.env.useFilePolling === 'boolean') {
-				result.env.useFilePolling = spyglassmcConfiguration.env.useFilePolling
 			}
 			if (
 				spyglassmcConfiguration.env.feature
