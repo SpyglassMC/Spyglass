@@ -117,6 +117,32 @@ exports[`mcdoc parser > unionType > Parse '(boolean | string | )' 1`] = `
           "start": 11,
           "end": 18
         }
+      },
+      {
+        "type": "mcdoc:type/reference",
+        "children": [
+          {
+            "type": "mcdoc:path",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 20,
+                  "end": 20
+                },
+                "value": ""
+              }
+            ],
+            "range": {
+              "start": 20,
+              "end": 20
+            }
+          }
+        ],
+        "range": {
+          "start": 20,
+          "end": 20
+        }
       }
     ],
     "range": {
@@ -124,7 +150,16 @@ exports[`mcdoc parser > unionType > Parse '(boolean | string | )' 1`] = `
       "end": 21
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 20,
+        "end": 20
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -397,6 +432,32 @@ exports[`mcdoc parser > unionType > Parse '(↓⮀⮀⮀⮀⮀#[until=1.16]↓�
           "start": 48,
           "end": 85
         }
+      },
+      {
+        "type": "mcdoc:type/reference",
+        "children": [
+          {
+            "type": "mcdoc:path",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 91,
+                  "end": 91
+                },
+                "value": ""
+              }
+            ],
+            "range": {
+              "start": 91,
+              "end": 91
+            }
+          }
+        ],
+        "range": {
+          "start": 91,
+          "end": 91
+        }
       }
     ],
     "range": {
@@ -404,7 +465,16 @@ exports[`mcdoc parser > unionType > Parse '(↓⮀⮀⮀⮀⮀#[until=1.16]↓�
       "end": 92
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 91,
+        "end": 91
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -560,6 +630,49 @@ exports[`mcdoc parser > unionType > Parse '(↓⮀⮀⮀⮀⮀int |↓⮀⮀⮀�
                   "start": 67,
                   "end": 75
                 }
+              },
+              {
+                "type": "mcdoc:struct/field/pair",
+                "children": [
+                  {
+                    "type": "mcdoc:identifier",
+                    "range": {
+                      "start": 82,
+                      "end": 82
+                    },
+                    "value": ""
+                  },
+                  {
+                    "type": "mcdoc:type/reference",
+                    "children": [
+                      {
+                        "type": "mcdoc:path",
+                        "children": [
+                          {
+                            "type": "mcdoc:identifier",
+                            "range": {
+                              "start": 82,
+                              "end": 82
+                            },
+                            "value": ""
+                          }
+                        ],
+                        "range": {
+                          "start": 82,
+                          "end": 82
+                        }
+                      }
+                    ],
+                    "range": {
+                      "start": 82,
+                      "end": 82
+                    }
+                  }
+                ],
+                "range": {
+                  "start": 82,
+                  "end": 82
+                }
               }
             ],
             "range": {
@@ -572,6 +685,32 @@ exports[`mcdoc parser > unionType > Parse '(↓⮀⮀⮀⮀⮀int |↓⮀⮀⮀�
           "start": 36,
           "end": 84
         }
+      },
+      {
+        "type": "mcdoc:type/reference",
+        "children": [
+          {
+            "type": "mcdoc:path",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 90,
+                  "end": 90
+                },
+                "value": ""
+              }
+            ],
+            "range": {
+              "start": 90,
+              "end": 90
+            }
+          }
+        ],
+        "range": {
+          "start": 90,
+          "end": 90
+        }
       }
     ],
     "range": {
@@ -579,6 +718,39 @@ exports[`mcdoc parser > unionType > Parse '(↓⮀⮀⮀⮀⮀int |↓⮀⮀⮀�
       "end": 91
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 82,
+        "end": 82
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 82,
+        "end": 82
+      },
+      "message": "Expected “:” but got “}”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 82,
+        "end": 82
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 90,
+        "end": 90
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    }
+  ]
 }
 `;
