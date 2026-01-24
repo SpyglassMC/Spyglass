@@ -48,9 +48,6 @@
 		"build:packages": {
 			"$comment": "This script is used as a dependency by ./packages/playground:build and ./packages/vscode-extension:build",
 			"command": "tsc -b packages",
-			"dependencies": [
-				"./packages/locales:build"
-			],
 			"files": [
 				"packages/*/src/**/*.*",
 				"packages/*/test/**/*.*"
