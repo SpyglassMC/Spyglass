@@ -247,14 +247,18 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	private constructor(
 		private readonly externals: Externals,
 		private readonly logger: Logger,
+		private readonly archiveHashes: Map<string, string>,
 		private readonly entries: Map<string, Map<string, DecompressedFile>>,
 	) {}
 
 	async hash(uri: string): Promise<string> {
 		const { archiveName, pathInArchive } = ArchiveUriSupporter.decodeUri(new Uri(uri))
 		if (!pathInArchive) {
-			// Hash the archive itself.
-			return hashFile(this.externals, archiveName)
+			// Return hash of the archive itself.
+			if (!this.archiveHashes.has(archiveName)) {
+				throw new Error(`No archiveHashes entry for ${archiveName}`)
+			}
+			return this.archiveHashes.get(archiveName)!
 		} else {
 			// Hash the corresponding file.
 			return this.externals.crypto.getSha1(this.getDataInArchive(archiveName, pathInArchive))
@@ -337,6 +341,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		externals: Externals,
 		logger: Logger,
 	): Promise<ArchiveUriSupporter> {
+		const archiveHashes = new Map<string, string>()
 		const entries = new Map<string, Map<string, DecompressedFile>>()
 
 		for (const dependency of dependencies) {
@@ -351,23 +356,26 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 				if (entries.has(archiveName)) {
 					throw new Error(`A different archive with ${archiveName} already exists`)
 				}
+				const bytes = dependency.type === 'tarball-file'
+					? await externals.fs.readFile(dependency.uri)
+					: dependency.data
 				const files = await externals.archive.decompressBall(
-					dependency.type === 'tarball-file'
-						? await externals.fs.readFile(dependency.uri)
-						: dependency.data,
+					bytes,
 					{ stripLevel: dependency.stripLevel ?? 0 },
 				)
 				/// Debug message for #1609
 				logger.info(
 					`[ArchiveUriSupporter#create] Extracted ${files.length} files from ${archiveName}`,
 				)
+				const hash = await externals.crypto.getSha1(bytes)
+				archiveHashes.set(archiveName, hash)
 				entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
 			} catch (e) {
 				logger.error(`[ArchiveUriSupporter#create] Bad dependency ${archiveName}`, e)
 			}
 		}
 
-		return new ArchiveUriSupporter(externals, logger, entries)
+		return new ArchiveUriSupporter(externals, logger, archiveHashes, entries)
 	}
 }
 

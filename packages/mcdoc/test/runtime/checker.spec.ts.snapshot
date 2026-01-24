@@ -1,3 +1,30 @@
+exports[`mcdoc runtime checker > typeDefinition “( string | #[\"test:filter\"] int)” > with value 1 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 1,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 1
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "string"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “( string | #[\"test:filter\"] int)” > with value \"hello\" 1`] = `
+[]
+`;
+
 exports[`mcdoc runtime checker > typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” > with value {\"one\":91} 1`] = `
 [
   {
@@ -660,6 +687,42 @@ exports[`mcdoc runtime checker > typeDefinition “[struct { foo: double, bar?: 
 ]
 `;
 
+exports[`mcdoc runtime checker > typeDefinition “dispatch minecraft:item[elytra] to struct { Damage: double }; #[\"test:filter\"] dispatch minecraft:item[filtered] to struct { Test: string }; struct { id: string, tag?: minecraft:item[[id]] }” > with value {\"id\":\"elytra\",\"tag\":{}} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "Damage"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “dispatch minecraft:item[elytra] to struct { Damage: double }; #[\"test:filter\"] dispatch minecraft:item[filtered] to struct { Test: string }; struct { id: string, tag?: minecraft:item[[id]] }” > with value {\"id\":\"filtered\",\"tag\":{\"A\":\"abc\"}} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": {
+        "A": "abc"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "expected": []
+  }
+]
+`;
+
 exports[`mcdoc runtime checker > typeDefinition “dispatch minecraft:item[elytra] to struct { Damage: double }; struct { id: string, tag?: minecraft:item[[id]] }” > with value {\"id\":\"diamond\"} 1`] = `
 []
 `;
@@ -1024,6 +1087,46 @@ exports[`mcdoc runtime checker > typeDefinition “struct { foo: double, bar: st
       {
         "kind": "double"
       }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “struct { foo: string, #[\"test:filter\"] bar: [double] }” > with value {\"foo\":\"hello\",\"bar\":[2]} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "bar",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    }
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “struct { foo: string, #[\"test:filter\"] bar: [double] }” > with value {\"foo\":\"hello\"} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “struct { foo: string, #[\"test:filter\"] bar: [double] }” > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "foo"
     ]
   }
 ]

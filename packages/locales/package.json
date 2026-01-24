@@ -7,20 +7,8 @@
   "types": "./lib/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "build": "wireit",
     "release": "npm publish",
     "release:dry": "npm publish --tag latest --dry-run"
-  },
-  "wireit": {
-    "build": {
-      "command": "node ./build.js",
-      "files": [
-        "src/locales/*.json"
-      ],
-      "output": [
-        "lib/locales/*.js"
-      ]
-    }
   },
   "publishConfig": {
     "access": "public"

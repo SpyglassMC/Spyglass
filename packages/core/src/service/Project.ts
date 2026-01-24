@@ -18,7 +18,7 @@ import type { PosRangeLanguageError } from '../source/index.js'
 import { LanguageError, Range, Source } from '../source/index.js'
 import { SymbolUtil } from '../symbol/index.js'
 import { CacheService } from './CacheService.js'
-import type { Config } from './Config.js'
+import type { Config, PartialConfig } from './Config.js'
 import { ConfigService, LinterConfigValue } from './Config.js'
 import {
 	BinderContext,
@@ -91,7 +91,7 @@ interface DocumentErrorEvent {
 	uri: string
 	version?: number
 }
-interface ConfigChangeEvent {
+export interface ConfigChangeEvent {
 	oldConfig: Config
 	newConfig: Config
 }
@@ -386,7 +386,7 @@ export class Project implements ExternalEventEmitter {
 			// Recheck client managed files after the READY process, as they may have incomplete results and are user-facing.
 			const promises: Promise<unknown>[] = []
 			for (const { doc, node } of this.#clientManagedDocAndNodes.values()) {
-				promises.push(this.check(doc, node))
+				promises.push(this.bind(doc, node).then(() => this.check(doc, node)))
 			}
 			Promise.all(promises).catch(e =>
 				this.logger.error(
@@ -1032,5 +1032,9 @@ export class Project implements ExternalEventEmitter {
 		return (this.watchedFiles.has(uri)
 			&& !this.#clientManagedUris.has(uri)
 			&& !this.#dependencyFiles?.has(uri))
+	}
+
+	public async onEditorConfigurationUpdate(editorConfiguration: PartialConfig) {
+		await this.#configService.onEditorConfigurationUpdate(editorConfiguration)
 	}
 }

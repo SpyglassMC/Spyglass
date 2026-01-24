@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import { NEXT_RELEASE_VERSION, ReleaseVersion } from './dependency/index.js'
+import { getLatestSnapshot, ReleaseVersion } from './dependency/index.js'
 import type { McmetaCommands, McmetaVersions, PackInfo } from './dependency/index.js'
 
 const validator = mcdoc.runtime.attribute.validator
@@ -16,32 +16,17 @@ export function registerMcdocAttributes(
 ) {
 	mcdoc.runtime.registerAttribute(meta, 'since', validator.string, {
 		filterElement: (config, ctx) => {
-			if (!config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
-				return true
-			}
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
 		},
 	})
 	mcdoc.runtime.registerAttribute(meta, 'until', validator.string, {
 		filterElement: (config, ctx) => {
-			if (!config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
-				return true
-			}
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
 		},
 	})
 	mcdoc.runtime.registerAttribute(meta, 'deprecated', validator.optional(validator.string), {
 		mapField: (config, field, ctx) => {
-			if (config === undefined) {
-				return { ...field, deprecated: true }
-			}
-			if (!config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "deprecated": ${config}`)
-				return field
-			}
-			if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
+			if (!config || ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
 				return { ...field, deprecated: true }
 			}
 			return field
@@ -79,9 +64,11 @@ export function registerPackFormatAttribute(
 ) {
 	const dataFormats = new Map<number, string[]>()
 	const assetsFormats = new Map<number, string[]>()
-	if (versions[0]?.type !== 'release') {
-		dataFormats.set(versions[0].data_pack_version, [NEXT_RELEASE_VERSION])
-		assetsFormats.set(versions[0].resource_pack_version, [NEXT_RELEASE_VERSION])
+
+	const latestSnapshot = getLatestSnapshot(versions)
+	if (latestSnapshot.release !== latestSnapshot.id) {
+		dataFormats.set(latestSnapshot.data_pack_version, [latestSnapshot.release])
+		assetsFormats.set(latestSnapshot.resource_pack_version, [latestSnapshot.release])
 	}
 	for (const version of versions) {
 		if (version.type === 'release') {

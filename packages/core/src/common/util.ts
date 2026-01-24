@@ -27,6 +27,8 @@ function isBuiltInURLGood() {
  */
 export type IntervalId = any
 
+export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T
+
 /**
  * @param getKey A function that takes the actual arguments being passed into the decorated method, and returns anything.
  * The result of this function will be used as the key to identify the `Promise`. By default the first element in the argument

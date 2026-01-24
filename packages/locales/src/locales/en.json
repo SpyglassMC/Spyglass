@@ -87,6 +87,7 @@
   "mcdoc.checker.entry.empty-mod-seg": "You cannot put “mod.mcdoc” under a root directly",
   "mcdoc.checker.inject-clause.unmatched-injection": "Cannot inject %0% with %1%",
   "mcdoc.checker.type-not-assignable": "Type %0% is not assignable to type %1%",
+  "mcdoc.checker.reference.unexpected-number-of-type-arguments": "Type %0% requires %1% type arguments, but received %2%",
   "mcdoc.node.compound-definition": "a compound definition",
   "mcdoc.node.enum-definition": "an enum definition",
   "mcdoc.node.identifier": "an identifier",

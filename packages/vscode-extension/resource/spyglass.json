@@ -95,10 +95,6 @@
 		"env": {
 			"type": "object",
 			"properties": {
-				"dataSource": {
-					"type": "string",
-					"examples": [ "GitHub", "fastly", "jsDelivr" ]
-				},
 				"dependencies": {
 					"type": "array",
 					"items": {
@@ -129,11 +125,11 @@
 							},
 							"since": {
 								"type": "string",
-								"pattern": "^1\\.\\d+(\\.\\d+)?$"
+								"pattern": "^\\d+\\.\\d+(\\.\\d+)?$"
 							},
 							"until": {
 								"type": "string",
-								"pattern": "^1\\.\\d+(\\.\\d+)$"
+								"pattern": "^\\d+\\.\\d+(\\.\\d+)$"
 							}
 						},
 						"additionalProperties": false,
@@ -161,7 +157,23 @@
 							},
 							"additionalProperties": false
 						},
-						"semanticColoring": { "type": "boolean" },
+						"semanticColoring": {
+							"anyOf": [
+								{
+									"type": "object",
+									"properties": {
+										"disabledLanguages": {
+											"type": "array",
+											"items": { "type": "string" }
+										}
+									},
+									"additionalProperties": false
+								},
+								{
+									"type": "boolean"
+								}
+							]
+						},
 						"selectionRanges": { "type": "boolean" },
 						"signatures": { "type": "boolean" }
 					},
@@ -170,10 +182,6 @@
 				"gameVersion": {
 					"type": "string",
 					"examples": [ "Auto", "Latest release", "Latest snapshot" ]
-				},
-				"language": {
-					"type": "string",
-					"examples": [ "Default" ]
 				},
 				"permissionLevel": {
 					"type": "integer",

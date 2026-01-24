@@ -84,3 +84,19 @@ export function handleAttributes(
 		fn(handler.attribute, config)
 	}
 }
+
+export function shouldKeepAccordingToAttributeFilters(
+	attributes: core.DeepReadonly<Attribute[]> | undefined,
+	ctx: core.ContextBase,
+) {
+	let keep = true
+	handleAttributes(attributes, ctx, (handler, config) => {
+		if (!keep || !handler.filterElement) {
+			return
+		}
+		if (!handler.filterElement(config, ctx)) {
+			keep = false
+		}
+	})
+	return keep
+}

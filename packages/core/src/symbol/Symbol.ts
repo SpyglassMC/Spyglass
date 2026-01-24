@@ -154,9 +154,11 @@ export const NormalFileCategories = Object.freeze(
 		'test_environment',
 		'test_instance',
 		'timeline',
+		'trade_set',
 		'trial_spawner',
 		'trim_material',
 		'trim_pattern',
+		'villager_trade',
 		'wolf_sound_variant',
 		'wolf_variant',
 		'zombie_nautilus_variant',
@@ -215,6 +217,7 @@ export const DataMiscCategories = Object.freeze(
 		'jigsaw_block_name',
 		'random_sequence',
 		'storage',
+		'stopwatch',
 	] as const,
 )
 export type DataMiscCategory = (typeof DataMiscCategories)[number]

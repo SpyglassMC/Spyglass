@@ -1,7 +1,6 @@
 {
 	"extends": "../../tsconfig-base",
 	"compilerOptions": {
-		"module": "ES2022",
 		"outDir": "../lib"
 	}
 }
