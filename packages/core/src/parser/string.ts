@@ -8,7 +8,7 @@ import type { IndexMap } from '../source/index.js'
 import { Range, Source } from '../source/index.js'
 import type { Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
-import unicodeLookupJson from './unicode-lookup-table.json'
+import unicodeLookupJson from './unicode-lookup-table.json' with { type: 'json' }
 
 const UnicodeLookupTable = new Map<string, number>(Object.entries(unicodeLookupJson))
 
@@ -43,7 +43,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							outer: Range.create(cStart, src),
 						})
 						ans.value += EscapeTable.get(c2)
-					} else if (options.escapable.unicode && (c2 === 'u' || (options.escapable.extendedUnicode && UnicodeEscapeChar.is(c2)))) {
+					} else if (
+						options.escapable.unicode
+						&& (c2 === 'u' || (options.escapable.extendedUnicode && UnicodeEscapeChar.is(c2)))
+					) {
 						const sequenceLength = UnicodeEscapeLengths.get(c2) || 4
 						const hex = src.peek(sequenceLength)
 						if (new RegExp(`^[0-9a-f]{${sequenceLength}}$`, 'i').test(hex)) {
@@ -89,7 +92,9 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								outer: Range.create(cStart, src),
 							})
 							ans.value += c2
-						} else if (/^[-a-zA-Z0-9 ]+$/.test(name) && UnicodeLookupTable.has(name.toLowerCase())) {
+						} else if (
+							/^[-a-zA-Z0-9 ]+$/.test(name) && UnicodeLookupTable.has(name.toLowerCase())
+						) {
 							src.skip(name.length + 1)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
