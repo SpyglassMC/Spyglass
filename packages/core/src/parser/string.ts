@@ -8,6 +8,9 @@ import type { IndexMap } from '../source/index.js'
 import { Range, Source } from '../source/index.js'
 import type { Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
+import unicodeLookupJson from './unicode-lookup-table.json'
+
+const UnicodeLookupTable = new Map<string, number>(Object.entries(unicodeLookupJson))
 
 export function string(options: StringOptions): InfallibleParser<StringNode> {
 	return (src: Source, ctx: ParserContext): StringNode => {
@@ -40,7 +43,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							outer: Range.create(cStart, src),
 						})
 						ans.value += EscapeTable.get(c2)
-					} else if (options.escapable.unicode && UnicodeEscapeChar.is(c2)) {
+					} else if (options.escapable.unicode && (c2 === 'u' || (options.escapable.extendedUnicode && UnicodeEscapeChar.is(c2)))) {
 						const sequenceLength = UnicodeEscapeLengths.get(c2) || 4
 						const hex = src.peek(sequenceLength)
 						if (new RegExp(`^[0-9a-f]{${sequenceLength}}$`, 'i').test(hex)) {
@@ -61,7 +64,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							})
 							ans.value += c2
 						}
-					} else if (options.escapable.unicode && c2 === 'N') {
+					} else if (options.escapable.extendedUnicode && c2 === 'N') {
 						if (!src.trySkip('{')) {
 							ctx.err.report(
 								localize('expected', localeQuote('{')),
@@ -86,14 +89,13 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								outer: Range.create(cStart, src),
 							})
 							ans.value += c2
-						} else if (/^[-a-zA-Z0-9 ]+$/.test(name)) {
+						} else if (/^[-a-zA-Z0-9 ]+$/.test(name) && UnicodeLookupTable.has(name.toLowerCase())) {
 							src.skip(name.length + 1)
-							// TODO: Validate Unicode character name
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(cStart, src),
 							})
-							ans.value += '\uFFFD' // Placeholder for named Unicode characters
+							ans.value += String.fromCodePoint(UnicodeLookupTable.get(name.toLowerCase())!)
 						} else {
 							ctx.err.report(
 								localize('parser.string.illegal-unicode-escape-name'),

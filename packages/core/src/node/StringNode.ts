@@ -52,9 +52,13 @@ export interface StringOptions {
 			 */
 			characters?: EscapeChar[]
 			/**
-			 * Whether escapes like `\u####` where #### is a hexdecimal numeral (or \x## or \U########) are allowed.
+			 * Whether escapes like `\u####` where #### is a hexdecimal numeral are allowed.
 			 */
 			unicode?: boolean
+			/**
+			 * Whether additional escapes like `\N{<name>}`, `\x##`, or `\U########` are allowed (currently only used in SNBT).
+			 */
+			extendedUnicode?: boolean
 			/**
 			 * Whether unknown characters can be escaped, which would just result in the character itself.
 			 */
