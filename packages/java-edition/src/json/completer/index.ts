@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type { TextureSlotNode } from '../node'
+import type { TextureSlotNode } from '../node/index.js'
 
 const textureSlot: core.Completer<TextureSlotNode> = (node, ctx) => {
 	const slot = node.slot ?? core.SymbolNode.mock(node, {

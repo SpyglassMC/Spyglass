@@ -4,6 +4,7 @@
 		"outDir": "../lib"
 	},
 	"include": [
+		"./**/*.json",
 		"./**/*.ts"
 	]
 }
