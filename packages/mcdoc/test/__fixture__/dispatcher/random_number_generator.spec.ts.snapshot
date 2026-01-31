@@ -48,6 +48,14 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                   "kind": "int"
                 },
                 "optional": true
+              },
+              {
+                "kind": "pair",
+                "key": "",
+                "type": {
+                  "kind": "reference",
+                  "path": "::test::"
+                }
               }
             ]
           }
@@ -145,6 +153,42 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                 "contributor": "binder"
               }
             ]
+          },
+          "": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 74,
+                  "end": 74
+                },
+                "posRange": {
+                  "start": {
+                    "line": 3,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 3,
+                    "character": 0
+                  }
+                },
+                "fullRange": {
+                  "start": 74,
+                  "end": 74
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 3,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 3,
+                    "character": 0
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
           }
         }
       },
@@ -174,6 +218,14 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                     "min": 0,
                     "max": 1
                   }
+                }
+              },
+              {
+                "kind": "pair",
+                "key": "",
+                "type": {
+                  "kind": "reference",
+                  "path": "::test::"
                 }
               }
             ]
@@ -272,6 +324,42 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                 "contributor": "binder"
               }
             ]
+          },
+          "": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 169,
+                  "end": 169
+                },
+                "posRange": {
+                  "start": {
+                    "line": 9,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 9,
+                    "character": 0
+                  }
+                },
+                "fullRange": {
+                  "start": 169,
+                  "end": 169
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 9,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 9,
+                    "character": 0
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
           }
         }
       },
@@ -317,6 +405,14 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                     }
                   ],
                   "registry": "minecraft:rng"
+                }
+              },
+              {
+                "kind": "pair",
+                "key": "",
+                "type": {
+                  "kind": "reference",
+                  "path": "::test::"
                 }
               }
             ]
@@ -388,6 +484,42 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                   "end": {
                     "line": 12,
                     "character": 32
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          },
+          "": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 279,
+                  "end": 279
+                },
+                "posRange": {
+                  "start": {
+                    "line": 14,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 14,
+                    "character": 0
+                  }
+                },
+                "fullRange": {
+                  "start": 279,
+                  "end": 279
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 14,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 14,
+                    "character": 0
                   }
                 },
                 "contributor": "binder"
@@ -518,6 +650,14 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                       "kind": "int"
                     },
                     "optional": true
+                  },
+                  {
+                    "kind": "pair",
+                    "key": "",
+                    "type": {
+                      "kind": "reference",
+                      "path": "::test::"
+                    }
                   }
                 ]
               }
@@ -577,6 +717,14 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                       "kind": "int"
                     },
                     "optional": true
+                  },
+                  {
+                    "kind": "pair",
+                    "key": "",
+                    "type": {
+                      "kind": "reference",
+                      "path": "::test::"
+                    }
                   }
                 ]
               }
@@ -642,6 +790,14 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                         "min": 0,
                         "max": 1
                       }
+                    }
+                  },
+                  {
+                    "kind": "pair",
+                    "key": "",
+                    "type": {
+                      "kind": "reference",
+                      "path": "::test::"
                     }
                   }
                 ],
@@ -971,6 +1127,56 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                             "end": 72
                           },
                           "isOptional": true
+                        },
+                        {
+                          "type": "mcdoc:struct/field/pair",
+                          "children": [
+                            {
+                              "type": "mcdoc:identifier",
+                              "range": {
+                                "start": 74,
+                                "end": 74
+                              },
+                              "value": "",
+                              "symbol": {
+                                "category": "mcdoc",
+                                "path": [
+                                  "::test::<anonymous 0>",
+                                  ""
+                                ]
+                              }
+                            },
+                            {
+                              "type": "mcdoc:type/reference",
+                              "children": [
+                                {
+                                  "type": "mcdoc:path",
+                                  "children": [
+                                    {
+                                      "type": "mcdoc:identifier",
+                                      "range": {
+                                        "start": 74,
+                                        "end": 74
+                                      },
+                                      "value": ""
+                                    }
+                                  ],
+                                  "range": {
+                                    "start": 74,
+                                    "end": 74
+                                  }
+                                }
+                              ],
+                              "range": {
+                                "start": 74,
+                                "end": 74
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 74,
+                            "end": 74
+                          }
                         }
                       ],
                       "range": {
@@ -1256,6 +1462,56 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                             "start": 152,
                             "end": 167
                           }
+                        },
+                        {
+                          "type": "mcdoc:struct/field/pair",
+                          "children": [
+                            {
+                              "type": "mcdoc:identifier",
+                              "range": {
+                                "start": 169,
+                                "end": 169
+                              },
+                              "value": "",
+                              "symbol": {
+                                "category": "mcdoc",
+                                "path": [
+                                  "::test::<anonymous 1>",
+                                  ""
+                                ]
+                              }
+                            },
+                            {
+                              "type": "mcdoc:type/reference",
+                              "children": [
+                                {
+                                  "type": "mcdoc:path",
+                                  "children": [
+                                    {
+                                      "type": "mcdoc:identifier",
+                                      "range": {
+                                        "start": 169,
+                                        "end": 169
+                                      },
+                                      "value": ""
+                                    }
+                                  ],
+                                  "range": {
+                                    "start": 169,
+                                    "end": 169
+                                  }
+                                }
+                              ],
+                              "range": {
+                                "start": 169,
+                                "end": 169
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 169,
+                            "end": 169
+                          }
                         }
                       ],
                       "range": {
@@ -1519,6 +1775,56 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                             "start": 253,
                             "end": 277
                           }
+                        },
+                        {
+                          "type": "mcdoc:struct/field/pair",
+                          "children": [
+                            {
+                              "type": "mcdoc:identifier",
+                              "range": {
+                                "start": 279,
+                                "end": 279
+                              },
+                              "value": "",
+                              "symbol": {
+                                "category": "mcdoc",
+                                "path": [
+                                  "::test::RNG",
+                                  ""
+                                ]
+                              }
+                            },
+                            {
+                              "type": "mcdoc:type/reference",
+                              "children": [
+                                {
+                                  "type": "mcdoc:path",
+                                  "children": [
+                                    {
+                                      "type": "mcdoc:identifier",
+                                      "range": {
+                                        "start": 279,
+                                        "end": 279
+                                      },
+                                      "value": ""
+                                    }
+                                  ],
+                                  "range": {
+                                    "start": 279,
+                                    "end": 279
+                                  }
+                                }
+                              ],
+                              "range": {
+                                "start": 279,
+                                "end": 279
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 279,
+                            "end": 279
+                          }
                         }
                       ],
                       "range": {
@@ -1546,8 +1852,106 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
         }
       ],
       "locals": {},
-      "parserErrors": [],
-      "binderErrors": []
+      "parserErrors": [
+        {
+          "range": {
+            "start": 74,
+            "end": 74
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 74,
+            "end": 74
+          },
+          "message": "Expected “:” but got “}”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 74,
+            "end": 74
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 169,
+            "end": 169
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 169,
+            "end": 169
+          },
+          "message": "Expected “:” but got “}”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 169,
+            "end": 169
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 279,
+            "end": 279
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 279,
+            "end": 279
+          },
+          "message": "Expected “:” but got “}”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 279,
+            "end": 279
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        }
+      ],
+      "binderErrors": [
+        {
+          "range": {
+            "start": 74,
+            "end": 74
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
+        },
+        {
+          "range": {
+            "start": 169,
+            "end": 169
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
+        },
+        {
+          "range": {
+            "start": 279,
+            "end": 279
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
+        }
+      ]
     }
   }
 }
