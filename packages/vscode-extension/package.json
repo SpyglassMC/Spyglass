@@ -131,6 +131,7 @@
           "data/*/villager_trade/**/*.json",
           "data/*/wolf_sound_variant/**/*.json",
           "data/*/wolf_variant/**/*.json",
+          "data/*/world_clock/**/*.json",
           "data/*/zombie_nautilus_variant/**/*.json",
           "data/*/worldgen/**/*.json",
           "data/minecraft/**/*.json"
