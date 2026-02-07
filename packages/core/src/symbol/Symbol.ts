@@ -161,6 +161,7 @@ export const NormalFileCategories = Object.freeze(
 		'villager_trade',
 		'wolf_sound_variant',
 		'wolf_variant',
+		'world_clock',
 		'zombie_nautilus_variant',
 	] as const,
 )
