@@ -336,7 +336,7 @@ export function normalizeUriPathname(pathname: string): string {
 	// > -- https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#uri
 	return pathname
 		.replace(/%3A/gi, ':')
-		.replace(/^\/([A-Z]:)\//, (match) => `/${match[1].toLowerCase()}:/`)
+		.replace(/^\/[A-Z]:\//, (match) => match.toLowerCase())
 }
 
 export function normalizeUri(uri: string): string {
