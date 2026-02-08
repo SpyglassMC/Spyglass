@@ -1,5 +1,3 @@
-// https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/60592
-import chokidar from 'chokidar'
 import decompress from 'decompress'
 import { Buffer } from 'node:buffer'
 import cp from 'node:child_process'
@@ -14,13 +12,15 @@ import url from 'node:url'
 import { promisify } from 'node:util'
 import zlib from 'node:zlib'
 import type { DecompressedFile, RootUriString } from '../../index.js'
-import { Uri } from '../util.js'
-import type { Externals, FsLocation, FsWatcher } from './index.js'
+import type { Uri } from '../util.js'
+import type { Externals, FsLocation } from './index.js'
 
 const gunzip = promisify(zlib.gunzip)
 const gzip = promisify(zlib.gzip)
 
-export function getNodeJsExternals({ cacheRoot }: { cacheRoot?: RootUriString } = {}) {
+export function getNodeJsExternals(
+	{ cacheRoot, nodeFsp = fsp }: { cacheRoot?: RootUriString; nodeFsp?: typeof fsp } = {},
+) {
 	return Object.freeze(
 		{
 			archive: {
@@ -60,19 +60,22 @@ export function getNodeJsExternals({ cacheRoot }: { cacheRoot?: RootUriString } 
 			event: { EventEmitter },
 			fs: {
 				chmod(location, mode) {
-					return fsp.chmod(toFsPathLike(location), mode)
+					return nodeFsp.chmod(toFsPathLike(location), mode)
 				},
 				async mkdir(location, options) {
-					return void (await fsp.mkdir(toFsPathLike(location), options))
+					return void (await nodeFsp.mkdir(toFsPathLike(location), options))
 				},
 				readdir(location) {
-					return fsp.readdir(toFsPathLike(location), {
+					return nodeFsp.readdir(toFsPathLike(location), {
 						encoding: 'utf-8',
 						withFileTypes: true,
 					})
 				},
 				readFile(location) {
-					return fsp.readFile(toFsPathLike(location))
+					return nodeFsp.readFile(toFsPathLike(location))
+				},
+				rm(location, options): Promise<void> {
+					return nodeFsp.rm(toFsPathLike(location), options)
 				},
 				async showFile(location): Promise<void> {
 					const execFile = promisify(cp.execFile)
@@ -91,21 +94,13 @@ export function getNodeJsExternals({ cacheRoot }: { cacheRoot?: RootUriString } 
 					return void (await execFile(command, [toPath(location)]))
 				},
 				stat(location) {
-					return fsp.stat(toFsPathLike(location))
+					return nodeFsp.stat(toFsPathLike(location))
 				},
 				unlink(location) {
-					return fsp.unlink(toFsPathLike(location))
-				},
-				watch(locations, { usePolling = false } = {}) {
-					return new ChokidarWatcherWrapper(
-						chokidar.watch(locations.map(toPath), {
-							usePolling,
-							disableGlobbing: true,
-						}),
-					)
+					return nodeFsp.unlink(toFsPathLike(location))
 				},
 				writeFile(location, data, options) {
-					return fsp.writeFile(toFsPathLike(location), data, options)
+					return nodeFsp.writeFile(toFsPathLike(location), data, options)
 				},
 			},
 			web: {
@@ -124,11 +119,6 @@ export const NodeJsExternals = getNodeJsExternals()
  * @returns A {@link fs.PathLike}.
  */
 function toFsPathLike(path: FsLocation): fs.PathLike {
-	if (path instanceof Uri) {
-		// Convert WHATWG URL to string so that it will be converted
-		// to Node.js URL by the next if-block.
-		path = path.toString()
-	}
 	if (typeof path === 'string' && path.startsWith('file:')) {
 		return new url.URL(path)
 	}
@@ -142,27 +132,7 @@ function toPath(path: FsLocation): string {
 	return uriToPath(path)
 }
 
-const uriToPath = (uri: string | Uri) =>
-	url.fileURLToPath(uri instanceof Uri ? new url.URL(uri.toString()) : uri)
-const uriFromPath = (path: string) => url.pathToFileURL(path).toString()
-
-class ChokidarWatcherWrapper extends EventEmitter implements FsWatcher {
-	readonly #watcher: chokidar.FSWatcher
-
-	constructor(watcher: chokidar.FSWatcher) {
-		super()
-		this.#watcher = watcher
-			.on('ready', () => this.emit('ready'))
-			.on('add', (path) => this.emit('add', uriFromPath(path)))
-			.on('change', (path) => this.emit('change', uriFromPath(path)))
-			.on('unlink', (path) => this.emit('unlink', uriFromPath(path)))
-			.on('error', (e) => this.emit('error', e))
-	}
-
-	close(): Promise<void> {
-		return this.#watcher.close()
-	}
-}
+const uriToPath = (uri: string | Uri) => url.fileURLToPath(uri)
 
 /**
  * A non-spec-compliant, non-complete implementation of the Cache Web API for use in Spyglass.

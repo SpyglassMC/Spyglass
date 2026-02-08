@@ -76,7 +76,6 @@ describe('PartialConfig', () => {
 					signatures: true,
 				},
 				enableMcdocCaching: false,
-				useFilePolling: false,
 			},
 		}
 	}

@@ -101,6 +101,10 @@ export namespace fileUtil {
 		return isRootUri(uri) ? uri : (`${uri}/` as const)
 	}
 
+	export function trimEndingSlash(uri: string): string {
+		return isRootUri(uri) ? uri.slice(0, -1) : uri
+	}
+
 	export function join(fromUri: string, toUri: string): string {
 		return (ensureEndingSlash(fromUri) + (toUri.startsWith('/') ? toUri.slice(1) : toUri))
 	}
@@ -134,8 +138,8 @@ export namespace fileUtil {
 	}
 
 	/* istanbul ignore next */
-	export function getParentOfFile(externals: Externals, path: FsLocation): FsLocation {
-		return new Uri('.', path)
+	export function getParentOfUri(uri: FsLocation): Uri {
+		return new Uri('.', trimEndingSlash(uri.toString()))
 	}
 
 	/* istanbul ignore next */
@@ -171,7 +175,7 @@ export namespace fileUtil {
 		path: FsLocation,
 		mode: number = 0o777,
 	): Promise<void> {
-		return ensureDir(externals, getParentOfFile(externals, path), mode)
+		return ensureDir(externals, getParentOfUri(path), mode)
 	}
 
 	export async function chmod(

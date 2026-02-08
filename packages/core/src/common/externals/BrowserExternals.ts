@@ -5,8 +5,8 @@ import type {
 	ExternalEventEmitter,
 	ExternalFileSystem,
 	Externals,
+	ExternalStats,
 	FsLocation,
-	FsWatcher,
 } from './index.js'
 
 type Listener = (...args: unknown[]) => unknown
@@ -48,24 +48,7 @@ export class BrowserEventEmitter implements ExternalEventEmitter {
 	}
 }
 
-class BrowserFsWatcher implements FsWatcher {
-	on(event: string, listener: (...args: any[]) => unknown): this {
-		if (event === 'ready') {
-			listener()
-		}
-		return this
-	}
-
-	once(event: unknown, listener: (...args: any[]) => unknown): this {
-		if (event === 'ready') {
-			listener()
-		}
-		return this
-	}
-
-	async close(): Promise<void> {}
-}
-
+// TODO: Use Origin Private File System (OPFS) instead
 class BrowserFileSystem implements ExternalFileSystem {
 	private static readonly LocalStorageKey = 'spyglassmc-browser-fs'
 	private states: Record<string, { type: 'file'; content: string } | { type: 'directory' }>
@@ -106,16 +89,23 @@ class BrowserFileSystem implements ExternalFileSystem {
 		}
 		return new Uint8Array(arrayBufferFromBase64(entry.content))
 	}
+	async rm(_location: FsLocation, _options?: { recursive?: boolean }): Promise<void> {
+		throw new Error('Not implemented')
+	}
 	async showFile(_path: FsLocation): Promise<void> {
 		throw new Error('showFile not supported on browser')
 	}
-	async stat(location: FsLocation): Promise<{ isDirectory(): boolean; isFile(): boolean }> {
+	async stat(location: FsLocation): Promise<ExternalStats> {
 		location = location.toString()
 		const entry = this.states[location]
 		if (!entry) {
 			throw new Error(`ENOENT: ${location}`)
 		}
-		return { isDirectory: () => entry.type === 'directory', isFile: () => entry.type === 'file' }
+		return {
+			isDirectory: () => entry.type === 'directory',
+			isFile: () => entry.type === 'file',
+			isSymbolicLink: () => false,
+		}
 	}
 	async unlink(location: FsLocation): Promise<void> {
 		location = location.toString()
@@ -125,9 +115,6 @@ class BrowserFileSystem implements ExternalFileSystem {
 		}
 		delete this.states[location]
 		this.saveStates()
-	}
-	watch(_locations: FsLocation[]): FsWatcher {
-		return new BrowserFsWatcher()
 	}
 	async writeFile(
 		location: FsLocation,

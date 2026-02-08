@@ -14,6 +14,7 @@ import type {
 	MyLspDataHackPubifyRequestParams,
 } from './util/index.js'
 import { toCore, toLS } from './util/index.js'
+import { LspFileWatcher } from './util/LspFileWatcher.js'
 
 export * from './util/types.js'
 
@@ -30,6 +31,7 @@ const cacheRoot = fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRootPath).to
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
 let workspaceFolders!: ls.WorkspaceFolder[]
+let projectRoots!: core.RootUriString[]
 let hasShutdown = false
 
 const externals = getNodeJsExternals({ cacheRoot })
@@ -74,6 +76,7 @@ connection.onInitialize(async (params) => {
 
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
+	projectRoots = workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri))
 
 	if (initializationOptions?.inDevelopmentMode) {
 		await new Promise((resolve) => setTimeout(resolve, 3000))
@@ -107,7 +110,7 @@ connection.onInitialize(async (params) => {
 				cacheRoot,
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
-				projectRoots: workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri)),
+				projectRoots,
 			},
 		})
 		service.project.on('documentErrored', async ({ errors, uri, version }) => {
@@ -197,7 +200,45 @@ connection.onInitialized(async () => {
 
 	startDynamicSemanticTokensRegistration()
 
-	await service.project.ready()
+	// Initializes LspFileWatcher only when client supports didChangeWatchedFiles notifications.
+	const fileWatcher = capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration
+		? new LspFileWatcher({
+			capabilities,
+			connection,
+			externals,
+			locations: projectRoots,
+			logger,
+			predicate: (uri) => !service.project.shouldExclude(uri),
+		})
+			.on('ready', () => logger.info('[FileWatcher] ready'))
+			.on('add', (uri) => logger.info('[FileWatcher] added', uri))
+			.on('change', (uri) => logger.info('[FileWatcher] changed', uri))
+			.on('unlink', (uri) => logger.info('[FileWatcher] unlinked', uri))
+			.on('error', (e) => logger.error('[FileWatcher]', e))
+		: undefined
+
+	if (fileWatcher) {
+		// Listen for config changes and reconcile the internal state of the file watcher if
+		// `env.exclude` has changed.
+		service.project.on('configChanged', async ({ oldConfig, newConfig }) => {
+			const oldExclude = new Set(oldConfig.env.exclude)
+			const newExclude = new Set(newConfig.env.exclude)
+			if (oldExclude.size === newExclude.size && oldExclude.isSubsetOf(newExclude)) {
+				// `env.exclude` has not changed. Skip.
+				return
+			}
+
+			logger.info('[FileWatcher] env.exclude config has changed. Reconciling...')
+			for (const root of projectRoots) {
+				await fileWatcher.reconcile(root)
+			}
+		})
+	}
+
+	await service.project.ready({
+		projectRootsWatcher: fileWatcher,
+	})
+
 	if (capabilities.workspace?.workspaceFolders) {
 		connection.workspace.onDidChangeWorkspaceFolders(async () => {
 			// FIXME
@@ -300,8 +341,6 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, versi
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	service.project.onDidClose(uri)
 })
-
-connection.workspace.onDidRenameFiles(({}) => {})
 
 connection.onCodeAction(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)

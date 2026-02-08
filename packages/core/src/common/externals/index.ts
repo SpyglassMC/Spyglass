@@ -60,19 +60,20 @@ export interface ExternalFileSystem {
 	mkdir(location: FsLocation, options?: { mode?: number; recursive?: boolean }): Promise<void>
 	readdir(
 		location: FsLocation,
-	): Promise<
-		{ name: string; isDirectory(): boolean; isFile(): boolean; isSymbolicLink(): boolean }[]
-	>
+	): Promise<ExternalDirEntry[]>
 	readFile(location: FsLocation): Promise<Uint8Array<ArrayBuffer>>
+	rm(location: FsLocation, options?: { recursive?: boolean }): Promise<void>
 	/**
 	 * Show the file/directory in the platform-specific explorer program.
 	 *
 	 * Should not be called with unsanitized user-input path due to the possibility of arbitrary code execution.
 	 */
 	showFile(path: FsLocation): Promise<void>
-	stat(location: FsLocation): Promise<{ isDirectory(): boolean; isFile(): boolean }>
+	stat(location: FsLocation): Promise<ExternalStats>
+	/**
+	 * @deprecated Use `rm` instead
+	 */
 	unlink(location: FsLocation): Promise<void>
-	watch(locations: FsLocation[], options: { usePolling?: boolean }): FsWatcher
 	/**
 	 * @param options `mode` - File mode bit mask (e.g. `0o775`).
 	 */
@@ -83,26 +84,17 @@ export interface ExternalFileSystem {
 	): Promise<void>
 }
 
+export interface ExternalStats {
+	isDirectory(): boolean
+	isFile(): boolean
+	isSymbolicLink(): boolean
+}
+
+interface ExternalDirEntry extends ExternalStats {
+	name: string
+}
+
 /**
  * A file URI string or a URI object.
  */
 export type FsLocation = string | Uri
-
-export interface FsWatcher {
-	on(eventName: 'ready', listener: () => unknown): this
-	once(eventName: 'ready', listener: () => unknown): this
-
-	on(eventName: 'add', listener: (uri: string) => unknown): this
-	once(eventName: 'add', listener: (uri: string) => unknown): this
-
-	on(eventName: 'change', listener: (uri: string) => unknown): this
-	once(eventName: 'change', listener: (uri: string) => unknown): this
-
-	on(eventName: 'unlink', listener: (uri: string) => unknown): this
-	once(eventName: 'unlink', listener: (uri: string) => unknown): this
-
-	on(eventName: 'error', listener: (error: Error) => unknown): this
-	once(eventName: 'error', listener: (error: Error) => unknown): this
-
-	close(): Promise<void>
-}

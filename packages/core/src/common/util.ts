@@ -1,23 +1,26 @@
 import externalBinarySearch from 'binary-search'
 import rfdc from 'rfdc'
-import { URL } from 'whatwg-url'
+import { URL as WhatwgURL } from 'whatwg-url'
 import type { AstNode } from '../node/index.js'
 import type { ProcessorContext } from '../service/index.js'
 import type { Externals } from './externals/index.js'
 import type { DeepReadonly, ReadWrite } from './ReadonlyProxy.js'
 
-// Spyglass uses the URL class provided by the
-// [spec](https://url.spec.whatwg.org/)-compliant `whatwg-url` package instead
-// of the broken one shipped with browsers that do not parse non-special scheme
-// URLs with hosts properly.
+// We try to use the `URL` class built-in to the JavaScript runtime if possible, but falls back to
+// use the `URL` class from the `whatwg-url` package if a certain bug exists.
+// See more at https://github.com/SpyglassMC/Spyglass/issues/1763.
 //
-// * [Chromium bug](https://issues.chromium.org/issues/40587286)
-// * [FireFox bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1374505)
-//
-// We use the name "URI" instead of "URL" when possible, since it is what
-// LSP has chosen to use for the string that uniquely identifies a file.
-export const Uri = URL
+// The name "URI" instead of "URL" is used to align with LSP terminology.
+export const Uri = isBuiltInURLGood() ? URL : (WhatwgURL as never)
 export type Uri = URL
+
+function isBuiltInURLGood() {
+	try {
+		return new URL('archive://mcdoc.tar.gz/foo.mcdoc').host === 'mcdoc.tar.gz'
+	} catch {
+		return false
+	}
+}
 
 /**
  * `NodeJS.Timeout` on Node.js and `number` on browser.
@@ -319,9 +322,26 @@ export function isObject(val: unknown): val is object {
 	return typeof val === 'function' || (!!val && typeof val === 'object')
 }
 
+export function normalizeUriPathname(pathname: string): string {
+	// Normalize drive letters on Windows to use lowercase letters, and ensure all colons are not encoded.
+	// See also LSP spec text, quoted below.
+	//
+	// > Care should be taken to handle encoding in URIs. For example, some clients (such as VS Code) may
+	// > encode colons in drive letters while others do not. The URIs below are both valid, but clients and
+	// > servers should be consistent with the form they use themselves to ensure the other party doesn’t
+	// > interpret them as distinct URIs. Clients and servers should not assume that each other are encoding
+	// > the same way (for example a client encoding colons in drive letters cannot assume server responses
+	// > will have encoded colons). The same applies to casing of drive letters - one party should not assume
+	// > the other party will return paths with drive letters cased the same as itself.
+	// > -- https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#uri
+	return pathname
+		.replace(/%3A/gi, ':')
+		.replace(/^\/[A-Z]:\//, (match) => match.toLowerCase())
+}
+
 export function normalizeUri(uri: string): string {
 	const obj = new Uri(uri)
-	obj.pathname = obj.pathname.replace(/%3A/gi, ':')
+	obj.pathname = normalizeUriPathname(obj.pathname)
 	return obj.toString()
 }
 
