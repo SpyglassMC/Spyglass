@@ -322,9 +322,26 @@ export function isObject(val: unknown): val is object {
 	return typeof val === 'function' || (!!val && typeof val === 'object')
 }
 
+export function normalizeUriPathname(pathname: string): string {
+	// Normalize drive letters on Windows to use lowercase letters, and ensure all colons are not encoded.
+	// See also LSP spec text, quoted below.
+	// 
+	// > Care should be taken to handle encoding in URIs. For example, some clients (such as VS Code) may
+	// > encode colons in drive letters while others do not. The URIs below are both valid, but clients and
+	// > servers should be consistent with the form they use themselves to ensure the other party doesn’t
+	// > interpret them as distinct URIs. Clients and servers should not assume that each other are encoding
+	// > the same way (for example a client encoding colons in drive letters cannot assume server responses
+	// > will have encoded colons). The same applies to casing of drive letters - one party should not assume
+	// > the other party will return paths with drive letters cased the same as itself.
+	// > -- https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#uri
+	return pathname
+		.replace(/%3A/gi, ':')
+		.replace(/^\/([A-Z]:)\//, (match) => `/${match[1].toLowerCase()}:/`)
+}
+
 export function normalizeUri(uri: string): string {
 	const obj = new Uri(uri)
-	obj.pathname = obj.pathname.replace(/%3A/gi, ':')
+	obj.pathname = normalizeUriPathname(obj.pathname)
 	return obj.toString()
 }
 

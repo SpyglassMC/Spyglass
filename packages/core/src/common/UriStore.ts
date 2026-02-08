@@ -1,5 +1,5 @@
 import type { RootUriString } from '../service/index.js'
-import { Uri } from './util.js'
+import { normalizeUriPathname, Uri } from './util.js'
 
 type FileNode = Record<string, never>
 type DirectoryNode = Map<string, DirectoryNode | FileNode>
@@ -148,7 +148,7 @@ export class UriStore {
 		const parts = [
 			uri.protocol,
 			uri.host || 'localhost',
-			...uri.pathname.split('/')
+			...normalizeUriPathname(uri.pathname).split('/')
 				// Filter out empty segments
 				.filter((p) => p)
 				.map(decodeURIComponent),
@@ -165,7 +165,7 @@ export class UriStore {
 	 */
 	#buildUri(parts: string[], isDir: boolean): string {
 		const [protocol, host, ...segments] = parts
-		const pathname = `/${segments.map(encodeURIComponent).join('/')}`
+		const pathname = normalizeUriPathname(`/${segments.map(encodeURIComponent).join('/')}`)
 		const trailingSlash = isDir && segments.length ? '/' : ''
 		return `${protocol}//${host === 'localhost' ? '' : host}${pathname}${trailingSlash}`
 	}

@@ -21,7 +21,7 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 	#ready = false
 	readonly #connection: ls.Connection
 	readonly #externals: core.Externals
-	readonly #locations: readonly core.FsLocation[]
+	readonly #locations: readonly string[]
 	readonly #logger: core.Logger
 	readonly #predicate: Predicate
 	readonly #watchedFiles = new core.UriStore()
@@ -38,7 +38,7 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 
 		this.#connection = connection
 		this.#externals = externals
-		this.#locations = locations
+		this.#locations = locations.map((uri) => core.normalizeUri(uri.toString()))
 		this.#logger = logger
 		this.#predicate = predicate
 
@@ -95,16 +95,17 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 
 		for (const { type, uri } of changes) {
 			try {
+				const normalizedUri = core.normalizeUri(uri)
 				switch (type) {
 					case ls.FileChangeType.Created: {
-						await this.#handleAdd(core.fileUtil.trimEndingSlash(uri))
+						await this.#handleAdd(core.fileUtil.trimEndingSlash(normalizedUri))
 						break
 					}
 					case ls.FileChangeType.Changed:
-						await this.#handleChange(core.fileUtil.trimEndingSlash(uri))
+						await this.#handleChange(core.fileUtil.trimEndingSlash(normalizedUri))
 						break
 					case ls.FileChangeType.Deleted: {
-						this.#handleDelete(core.fileUtil.trimEndingSlash(uri))
+						this.#handleDelete(core.fileUtil.trimEndingSlash(normalizedUri))
 						break
 					}
 				}
@@ -203,7 +204,7 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 	 * `locations`.
 	 */
 	async reconcile(uri: core.FsLocation): Promise<void> {
-		return this.#reconcile(uri.toString())
+		return this.#reconcile(core.normalizeUri(uri.toString()))
 	}
 
 	async #reconcile(uri: string, stat?: core.ExternalStats): Promise<void> {
@@ -248,7 +249,7 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 	}
 
 	async #reconcileParentOf(uri: string): Promise<void> {
-		const parentUri = core.fileUtil.getParentOfUri(uri).toString()
+		const parentUri = core.fileUtil.trimEndingSlash(core.fileUtil.getParentOfUri(uri).toString())
 		// We only reconcile the parent if it is different from the current URI (to avoid an infinite
 		// loop) and if it is under the watched locations of the file watcher.
 		if (
