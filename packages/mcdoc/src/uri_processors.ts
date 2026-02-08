@@ -32,10 +32,11 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 	// file:///root/mcdoc/foo/bar.mcdoc -> foo/bar
 
 	for (const [uri, rel] of urisAndRels) {
-		ctx.symbols.query(uri, 'mcdoc', segToIdentifier(rel.split('/'))).ifKnown(() => {}).elseEnter({
-			data: { subcategory: 'module' },
-			usage: { type: 'definition' },
-		})
+		ctx.symbols.query(uri, 'mcdoc', segToIdentifier(rel.split('/'))).ifDefined(() => {})
+			.elseEnter({
+				data: { subcategory: 'module' },
+				usage: { type: 'definition' },
+			})
 	}
 }
 
