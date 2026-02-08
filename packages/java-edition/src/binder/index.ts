@@ -102,6 +102,7 @@ resource('trim_material', { since: '1.19.4' })
 resource('villager_trade', { since: '26.1' })
 resource('wolf_sound_variant', { since: '1.21.5' })
 resource('wolf_variant', { since: '1.20.5' })
+resource('world_clock', { since: '26.1' })
 resource('zombie_nautilus_variant', { since: '1.21.11' })
 
 // Worldgen

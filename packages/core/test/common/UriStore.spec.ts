@@ -1,6 +1,6 @@
-import { describe, it } from "node:test";
-import { UriStore } from "../../lib/index.js";
-import assert from "node:assert/strict";
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
+import { UriStore } from '../../lib/index.js'
 
 describe('UriStore', () => {
 	it('Should normalize Windows drive letter and colons in pathname', () => {
