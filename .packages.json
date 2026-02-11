@@ -79,8 +79,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "b5575c21d83190bd24dcf429c7aa22881d9ed71f",
-			"version": "0.1.49"
+			"commit": "d2f7f500a93928d2b49851d58474398fe212c88c",
+			"version": "0.1.50"
 		}
 	},
 	"mcfunction": {
