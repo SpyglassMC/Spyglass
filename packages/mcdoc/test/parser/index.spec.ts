@@ -152,8 +152,95 @@ const Suites: Record<
 					/// Boo doc
 					/// Another line
 					Boo = 4.2d,
+					Weee = 5D,
 					/// Qux doc
 					Qux = 12e3,
+					Baz = 1,
+				}`,
+				`enum (double) Foo {
+					Bar = 4f,
+				}`,
+				`enum (double) Foo {
+					Bar = "Hello",
+				}`,
+				`enum (byte) Foo {
+					Bar = 1,
+					Baz = 4b,
+					Boo = 5B,
+				}`,
+				`enum (byte) Foo {
+					Bar = 1.2,,
+				}`,
+				`enum (byte) Foo {
+					Bar = 4s,
+				}`,
+				`enum (byte) Foo {
+					Bar = "Hello",
+				}`,
+				`enum (short) Foo {
+					Bar = 1,
+					Baz = 4s,
+					Boo = 5S,
+				}`,
+				`enum (short) Foo {
+					Bar = 1.2,
+				}`,
+				`enum (short) Foo {
+					Bar = 4l,
+				}`,
+				`enum (short) Foo {
+					Bar = "Hello",
+				}`,
+				`enum (long) Foo {
+					Bar = 1,
+					Baz = 4l,
+					Boo = 5L,
+				}`,
+				`enum (long) Foo {
+					Bar = 1.2,
+				}`,
+				`enum (long) Foo {
+					Bar = 4s,
+				}`,
+				`enum (long) Foo {
+					Bar = "Hello",
+				}`,
+				`enum (float) Foo {
+					Bar = 1,
+					Baz = 4f,
+					Boo = 1.2,
+					Wee = 5F,
+					Qux = 12e3,
+				}`,
+				`enum (float) Foo {
+					Bar = 4l,
+				}`,
+				`enum (float) Foo {
+					Bar = 4.2d,
+				}`,
+				`enum (float) Foo {
+					Bar = "Hello",
+				}`,
+				`enum (string) Foo {
+					Bar = "Hello",
+				}`,
+				`enum (string) Foo {
+					Bar = 4,
+				}`,
+				`enum (int) Foo {
+					Bar = 1,
+				}`,
+				`enum (int) Foo {
+					Bar = 4b,
+				}`,
+				`enum (int) Foo {
+					Bar = 4L,
+				}`,
+				`enum (int) Foo {
+					Bar = "Hello",
+				}`,
+				`enum (int) Foo {
+					Bar = 1.2,
 				}`,
 			],
 		},
