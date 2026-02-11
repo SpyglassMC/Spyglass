@@ -36,6 +36,7 @@ export async function createProject(
 		projectRoots: [core.fileUtil.ensureEndingSlash(pathToFileURL(projectRoot).toString())],
 	})
 
+	await project.init()
 	await project.ready()
 	await project.cacheService.save()
 
