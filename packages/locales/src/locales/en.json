@@ -217,6 +217,7 @@
   "parser.string.illegal-escape": "Unexpected escape character %0%",
   "parser.string.illegal-quote": "Only %0% can be used to quote strings here",
   "parser.string.illegal-unicode-escape": "Hexadecimal digit expected",
+  "parser.string.illegal-unicode-escape-name": "Unicode character name expected",
   "progress.initializing.title": "Initializing Spyglass…",
   "progress.reset-project-cache.title": "Resetting Project Cache…",
   "punc.period": ".",
