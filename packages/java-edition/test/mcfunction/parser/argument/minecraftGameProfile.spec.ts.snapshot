@@ -200,8 +200,8 @@ exports[`mcfunction argument parser > minecraft:game_profile > Parse 'dd12be42-5
           "end": 36
         },
         "bits": [
-          "-2516740049682740591",
-          "-6295731287348353896"
+          -2516740049682740591,
+          -6295731287348353896
         ]
       }
     ],
@@ -212,8 +212,8 @@ exports[`mcfunction argument parser > minecraft:game_profile > Parse 'dd12be42-5
         "end": 36
       },
       "bits": [
-        "-2516740049682740591",
-        "-6295731287348353896"
+        -2516740049682740591,
+        -6295731287348353896
       ]
     }
   },

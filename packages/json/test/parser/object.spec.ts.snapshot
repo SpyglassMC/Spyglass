@@ -46,7 +46,7 @@ exports[`JSON object parser > object() > Parse '{1: 2}' 1`] = `
                   "start": 4,
                   "end": 5
                 },
-                "value": "2"
+                "value": 2
               }
             ],
             "value": {
@@ -55,7 +55,7 @@ exports[`JSON object parser > object() > Parse '{1: 2}' 1`] = `
                 "start": 4,
                 "end": 5
               },
-              "value": "2"
+              "value": 2
             },
             "range": {
               "start": 4,
@@ -76,7 +76,7 @@ exports[`JSON object parser > object() > Parse '{1: 2}' 1`] = `
                 "start": 4,
                 "end": 5
               },
-              "value": "2"
+              "value": 2
             }
           ],
           "value": {
@@ -85,7 +85,7 @@ exports[`JSON object parser > object() > Parse '{1: 2}' 1`] = `
               "start": 4,
               "end": 5
             },
-            "value": "2"
+            "value": 2
           },
           "range": {
             "start": 4,

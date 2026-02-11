@@ -7,8 +7,8 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse '1-1-1-1-1' 1`] = `
       "end": 9
     },
     "bits": [
-      "4295032833",
-      "281474976710657"
+      4295032833,
+      281474976710657
     ]
   },
   "errors": []
@@ -24,8 +24,8 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse '42' 1`] = `
       "end": 2
     },
     "bits": [
-      "0",
-      "0"
+      0,
+      0
     ]
   },
   "errors": [
@@ -50,8 +50,8 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse 'dd12be42-52a9-4a91
       "end": 36
     },
     "bits": [
-      "-2516740049682740591",
-      "-6295731287348353896"
+      -2516740049682740591,
+      -6295731287348353896
     ]
   },
   "errors": []
@@ -67,8 +67,8 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse 'fffffffffffffff-1-
       "end": 23
     },
     "bits": [
-      "-4294901759",
-      "281474976710657"
+      -4294901759,
+      281474976710657
     ]
   },
   "errors": []
@@ -84,8 +84,8 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse 'ffffffffffffffff-1
       "end": 24
     },
     "bits": [
-      "0",
-      "0"
+      0,
+      0
     ]
   },
   "errors": [
