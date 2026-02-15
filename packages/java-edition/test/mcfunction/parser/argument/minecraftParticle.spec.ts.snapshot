@@ -59,7 +59,16 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block stone' 1
       ]
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 11,
+        "end": 11
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -385,6 +394,14 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
       },
       "message": "Expected a resource location",
       "severity": 3
+    },
+    {
+      "range": {
+        "start": 34,
+        "end": 34
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
     }
   ]
 }
@@ -564,7 +581,16 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'cloud' 1`] = `
       ]
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -655,7 +681,24 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'dust 0.2 0.4 0
       ]
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 20,
+        "end": 20
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 20,
+        "end": 20
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -829,7 +872,24 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'dust_color_tra
       ]
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 49,
+        "end": 49
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 49,
+        "end": 49
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -899,7 +959,16 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'end_rod{}' 1`]
       ]
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 7,
+        "end": 7
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -1010,7 +1079,16 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'item carrot_on
       ]
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 22,
+        "end": 22
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -1053,7 +1131,16 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'sculk_charge 4
       ]
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 16,
+        "end": 16
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -1096,7 +1183,16 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'shriek 20' 1`]
       ]
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 9,
+        "end": 9
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    }
+  ]
 }
 `;
 
@@ -1176,6 +1272,23 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'vibration 0.1 
       ]
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 24,
+        "end": 24
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 24,
+        "end": 24
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    }
+  ]
 }
 `;

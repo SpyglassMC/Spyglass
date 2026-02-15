@@ -104,25 +104,29 @@ export function sequence(
 			range: Range.create(src),
 		}
 
-		for (const [i, p] of parsers.entries()) {
+		for (const p of parsers) {
 			const parser = typeof p === 'function' ? p : p.get(ans)
 			if (parser === undefined) {
 				continue
 			}
 
-			if (i > 0 && parseGap) {
-				ans.children.push(...parseGap(src, ctx))
-			}
-
+			const start = src.cursor
 			const result = parser(src, ctx)
+
 			if (result === Failure) {
 				return Failure
-			} else if (result === undefined) {
-				continue
 			} else if (SequenceUtil.is(result)) {
 				ans.children.push(...result.children)
-			} else {
+			} else if (result !== undefined) {
 				ans.children.push(result)
+			}
+
+			if (
+				parseGap
+				// If the parser didn't move the cursor, and returns undefined, calling parseGap is redundant.
+				&& src.cursor !== start && result !== undefined
+			) {
+				ans.children.push(...parseGap(src, ctx))
 			}
 		}
 

@@ -25,22 +25,18 @@ exports[`mcdoc __fixture__ > enum/duplicated keys 1`] = `
           }
         ],
         "data": {
-          "nextAnonymousIndex": 0
+          "nextAnonymousIndex": 1
         }
       },
-      "::test::Test": {
+      "::test::<anonymous 0>": {
         "data": {
           "typeDef": {
             "kind": "enum",
             "enumKind": "byte",
             "values": [
               {
-                "identifier": "Naughty",
-                "value": 42
-              },
-              {
-                "identifier": "Naughty",
-                "value": 91
+                "identifier": "Test",
+                "value": 0
               }
             ]
           }
@@ -50,67 +46,53 @@ exports[`mcdoc __fixture__ > enum/duplicated keys 1`] = `
           {
             "uri": "file:///test.mcdoc",
             "range": {
-              "start": 12,
-              "end": 16
+              "start": 0,
+              "end": 4
             },
             "posRange": {
-              "start": {
-                "line": 0,
-                "character": 12
-              },
-              "end": {
-                "line": 0,
-                "character": 16
-              }
-            },
-            "fullRange": {
-              "start": 0,
-              "end": 52
-            },
-            "fullPosRange": {
               "start": {
                 "line": 0,
                 "character": 0
               },
               "end": {
-                "line": 3,
-                "character": 1
+                "line": 0,
+                "character": 4
               }
             },
             "contributor": "binder"
           }
         ],
         "members": {
-          "Naughty": {
+          "Test": {
             "definition": [
               {
                 "uri": "file:///test.mcdoc",
                 "range": {
-                  "start": 20,
-                  "end": 27
+                  "start": 12,
+                  "end": 16
                 },
                 "posRange": {
                   "start": {
-                    "line": 1,
-                    "character": 1
+                    "line": 0,
+                    "character": 12
                   },
                   "end": {
-                    "line": 1,
-                    "character": 8
+                    "line": 0,
+                    "character": 16
                   }
                 },
                 "fullRange": {
-                  "start": 20,
-                  "end": 33
+                  "start": 12,
+                  "end": 17
                 },
                 "fullPosRange": {
                   "start": {
-                    "line": 1,
-                    "character": 1
+                    "line": 0,
+                    "character": 12
                   },
                   "end": {
-                    "line": 1,
-                    "character": 14
+                    "line": 0,
+                    "character": 17
                   }
                 },
                 "contributor": "binder"
@@ -142,7 +124,13 @@ exports[`mcdoc __fixture__ > enum/duplicated keys 1`] = `
                     "end": 4
                   },
                   "value": "enum",
-                  "colorTokenType": "keyword"
+                  "colorTokenType": "keyword",
+                  "symbol": {
+                    "category": "mcdoc",
+                    "path": [
+                      "::test::<anonymous 0>"
+                    ]
+                  }
                 },
                 {
                   "type": "mcdoc:literal",
@@ -154,20 +142,6 @@ exports[`mcdoc __fixture__ > enum/duplicated keys 1`] = `
                   "colorTokenType": "type"
                 },
                 {
-                  "type": "mcdoc:identifier",
-                  "range": {
-                    "start": 12,
-                    "end": 16
-                  },
-                  "value": "Test",
-                  "symbol": {
-                    "category": "mcdoc",
-                    "path": [
-                      "::test::Test"
-                    ]
-                  }
-                },
-                {
                   "type": "mcdoc:enum/block",
                   "children": [
                     {
@@ -176,15 +150,15 @@ exports[`mcdoc __fixture__ > enum/duplicated keys 1`] = `
                         {
                           "type": "mcdoc:identifier",
                           "range": {
-                            "start": 20,
-                            "end": 27
+                            "start": 12,
+                            "end": 16
                           },
-                          "value": "Naughty",
+                          "value": "Test",
                           "symbol": {
                             "category": "mcdoc",
                             "path": [
-                              "::test::Test",
-                              "Naughty"
+                              "::test::<anonymous 0>",
+                              "Test"
                             ]
                           }
                         },
@@ -192,147 +166,95 @@ exports[`mcdoc __fixture__ > enum/duplicated keys 1`] = `
                           "type": "mcdoc:typed_number",
                           "children": [
                             {
-                              "type": "integer",
+                              "type": "float",
                               "range": {
-                                "start": 30,
-                                "end": 32
+                                "start": 17,
+                                "end": 17
                               },
-                              "value": 42
-                            },
-                            {
-                              "type": "mcdoc:literal",
-                              "range": {
-                                "start": 32,
-                                "end": 33
-                              },
-                              "value": "b",
-                              "colorTokenType": "keyword"
+                              "value": 0
                             }
                           ],
                           "range": {
-                            "start": 30,
-                            "end": 33
+                            "start": 17,
+                            "end": 17
                           }
                         }
                       ],
                       "range": {
-                        "start": 20,
-                        "end": 33
-                      }
-                    },
-                    {
-                      "type": "mcdoc:enum/field",
-                      "children": [
-                        {
-                          "type": "mcdoc:identifier",
-                          "range": {
-                            "start": 36,
-                            "end": 43
-                          },
-                          "value": "Naughty"
-                        },
-                        {
-                          "type": "mcdoc:typed_number",
-                          "children": [
-                            {
-                              "type": "integer",
-                              "range": {
-                                "start": 46,
-                                "end": 48
-                              },
-                              "value": 91
-                            },
-                            {
-                              "type": "mcdoc:literal",
-                              "range": {
-                                "start": 48,
-                                "end": 49
-                              },
-                              "value": "b",
-                              "colorTokenType": "keyword"
-                            }
-                          ],
-                          "range": {
-                            "start": 46,
-                            "end": 49
-                          }
-                        }
-                      ],
-                      "range": {
-                        "start": 36,
-                        "end": 49
+                        "start": 12,
+                        "end": 17
                       }
                     }
                   ],
                   "range": {
-                    "start": 17,
-                    "end": 52
+                    "start": 12,
+                    "end": 17
                   }
                 }
               ],
               "range": {
                 "start": 0,
-                "end": 52
+                "end": 17
               }
             }
           ],
           "range": {
             "start": 0,
+            "end": 17
+          }
+        },
+        {
+          "type": "error",
+          "range": {
+            "start": 17,
             "end": 52
           }
         }
       ],
       "locals": {},
-      "parserErrors": [],
-      "binderErrors": [
+      "parserErrors": [
         {
           "range": {
-            "start": 36,
-            "end": 43
+            "start": 12,
+            "end": 12
           },
-          "message": "Duplicated declaration for “Naughty”",
-          "severity": 2,
-          "info": {
-            "related": [
-              {
-                "location": {
-                  "uri": "file:///test.mcdoc",
-                  "range": {
-                    "start": 20,
-                    "end": 27
-                  },
-                  "posRange": {
-                    "start": {
-                      "line": 1,
-                      "character": 1
-                    },
-                    "end": {
-                      "line": 1,
-                      "character": 8
-                    }
-                  },
-                  "fullRange": {
-                    "start": 20,
-                    "end": 33
-                  },
-                  "fullPosRange": {
-                    "start": {
-                      "line": 1,
-                      "character": 1
-                    },
-                    "end": {
-                      "line": 1,
-                      "character": 14
-                    }
-                  },
-                  "contributor": "binder"
-                },
-                "message": "“Naughty” is already declared here"
-              }
-            ]
-          }
+          "message": "Expected “{” but got “T”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 17,
+            "end": 17
+          },
+          "message": "Expected “=” but got “{”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 17,
+            "end": 17
+          },
+          "message": "Expected a float",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 17,
+            "end": 17
+          },
+          "message": "Expected “}” but got “{”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 17,
+            "end": 52
+          },
+          "message": "Encountered unparseable content",
+          "severity": 3
         }
-      ]
+      ],
+      "binderErrors": []
     }
   }
 }

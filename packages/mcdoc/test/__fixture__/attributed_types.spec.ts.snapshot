@@ -259,7 +259,11 @@ exports[`mcdoc __fixture__ > attributed types 1`] = `
       "::test::EnumValue": {
         "data": {
           "typeDef": {
-            "kind": "int",
+            "kind": "literal",
+            "value": {
+              "kind": "int",
+              "value": 1
+            },
             "attributes": [
               {
                 "name": "bitfield",
@@ -272,11 +276,7 @@ exports[`mcdoc __fixture__ > attributed types 1`] = `
                       "values": [
                         {
                           "identifier": "HandAll",
-                          "value": 1
-                        },
-                        {
-                          "identifier": "BootsAll",
-                          "value": 2
+                          "value": 0
                         }
                       ]
                     }
@@ -306,7 +306,7 @@ exports[`mcdoc __fixture__ > attributed types 1`] = `
             },
             "fullRange": {
               "start": 200,
-              "end": 276
+              "end": 252
             },
             "fullPosRange": {
               "start": {
@@ -314,8 +314,8 @@ exports[`mcdoc __fixture__ > attributed types 1`] = `
                 "character": 0
               },
               "end": {
-                "line": 7,
-                "character": 7
+                "line": 5,
+                "character": 12
               }
             },
             "contributor": "binder"
@@ -330,11 +330,7 @@ exports[`mcdoc __fixture__ > attributed types 1`] = `
             "values": [
               {
                 "identifier": "HandAll",
-                "value": 1
-              },
-              {
-                "identifier": "BootsAll",
-                "value": 2
+                "value": 0
               }
             ]
           }
@@ -855,7 +851,7 @@ exports[`mcdoc __fixture__ > attributed types 1`] = `
                   }
                 },
                 {
-                  "type": "mcdoc:type/numeric_type",
+                  "type": "mcdoc:type/literal",
                   "children": [
                     {
                       "type": "mcdoc:attribute",
@@ -872,7 +868,7 @@ exports[`mcdoc __fixture__ > attributed types 1`] = `
                           "type": "mcdoc:attribute/tree",
                           "range": {
                             "start": 228,
-                            "end": 270
+                            "end": 251
                           },
                           "children": [
                             {
@@ -923,75 +919,41 @@ exports[`mcdoc __fixture__ > attributed types 1`] = `
                                               "type": "mcdoc:typed_number",
                                               "children": [
                                                 {
-                                                  "type": "integer",
+                                                  "type": "float",
                                                   "range": {
-                                                    "start": 251,
-                                                    "end": 252
+                                                    "start": 250,
+                                                    "end": 250
                                                   },
-                                                  "value": 1
+                                                  "value": 0
                                                 }
                                               ],
                                               "range": {
-                                                "start": 251,
-                                                "end": 252
+                                                "start": 250,
+                                                "end": 250
                                               }
                                             }
                                           ],
                                           "range": {
                                             "start": 241,
-                                            "end": 252
-                                          }
-                                        },
-                                        {
-                                          "type": "mcdoc:enum/field",
-                                          "children": [
-                                            {
-                                              "type": "mcdoc:identifier",
-                                              "range": {
-                                                "start": 255,
-                                                "end": 263
-                                              },
-                                              "value": "BootsAll"
-                                            },
-                                            {
-                                              "type": "mcdoc:typed_number",
-                                              "children": [
-                                                {
-                                                  "type": "integer",
-                                                  "range": {
-                                                    "start": 266,
-                                                    "end": 267
-                                                  },
-                                                  "value": 2
-                                                }
-                                              ],
-                                              "range": {
-                                                "start": 266,
-                                                "end": 267
-                                              }
-                                            }
-                                          ],
-                                          "range": {
-                                            "start": 255,
-                                            "end": 267
+                                            "end": 250
                                           }
                                         }
                                       ],
                                       "range": {
                                         "start": 238,
-                                        "end": 270
+                                        "end": 251
                                       }
                                     }
                                   ],
                                   "range": {
                                     "start": 228,
-                                    "end": 270
+                                    "end": 251
                                   }
                                 }
                               ],
                               "range": {
                                 "start": 228,
-                                "end": 270
+                                "end": 251
                               }
                             }
                           ],
@@ -1000,39 +962,87 @@ exports[`mcdoc __fixture__ > attributed types 1`] = `
                       ],
                       "range": {
                         "start": 217,
-                        "end": 273
+                        "end": 251
                       }
                     },
                     {
-                      "type": "mcdoc:literal",
+                      "type": "mcdoc:typed_number",
+                      "children": [
+                        {
+                          "type": "integer",
+                          "range": {
+                            "start": 251,
+                            "end": 252
+                          },
+                          "value": 1
+                        }
+                      ],
                       "range": {
-                        "start": 273,
-                        "end": 276
-                      },
-                      "value": "int",
-                      "colorTokenType": "type"
+                        "start": 251,
+                        "end": 252
+                      }
                     }
                   ],
                   "range": {
                     "start": 217,
-                    "end": 276
+                    "end": 252
                   }
                 }
               ],
               "range": {
                 "start": 200,
-                "end": 276
+                "end": 252
               }
             }
           ],
           "range": {
             "start": 0,
+            "end": 252
+          }
+        },
+        {
+          "type": "error",
+          "range": {
+            "start": 252,
             "end": 276
           }
         }
       ],
       "locals": {},
-      "parserErrors": [],
+      "parserErrors": [
+        {
+          "range": {
+            "start": 250,
+            "end": 250
+          },
+          "message": "Expected a float",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 251,
+            "end": 251
+          },
+          "message": "Expected “}” but got “1”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 251,
+            "end": 251
+          },
+          "message": "Expected “]” but got “1”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 252,
+            "end": 276
+          },
+          "message": "Encountered unparseable content",
+          "severity": 3
+        }
+      ],
       "binderErrors": []
     }
   }
