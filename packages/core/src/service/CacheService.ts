@@ -1,5 +1,5 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { Uri } from '../common/index.js'
+import { bigintJsonLoslessReplacer, bigintJsonLoslessReviver, Uri } from '../common/index.js'
 import type { PosRangeLanguageError } from '../source/index.js'
 import type { UnlinkedSymbolTable } from '../symbol/index.js'
 import { SymbolTable } from '../symbol/index.js'
@@ -130,8 +130,11 @@ export class CacheService {
 		try {
 			filePath = await this.getCacheFileUri()
 			this.project.logger.info(`[CacheService#load] symbolCachePath = ${filePath}`)
-			const cache =
-				(await fileUtil.readGzippedJson(this.project.externals, filePath)) as CacheFile
+			const cache = (await fileUtil.readGzippedJson(
+				this.project.externals,
+				filePath,
+				bigintJsonLoslessReviver,
+			)) as CacheFile
 			__profiler.task('Read File')
 			if (cache.version === LatestCacheVersion) {
 				this.checksums = cache.checksums
@@ -237,7 +240,12 @@ export class CacheService {
 			}
 			__profiler.task('Unlink Symbols')
 
-			await fileUtil.writeGzippedJson(this.project.externals, filePath, cache)
+			await fileUtil.writeGzippedJson(
+				this.project.externals,
+				filePath,
+				cache,
+				bigintJsonLoslessReplacer,
+			)
 			__profiler.task('Write File').finalize()
 
 			return true

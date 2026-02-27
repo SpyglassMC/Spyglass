@@ -392,10 +392,7 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
             "kind": "literal",
             "value": {
               "kind": "long",
-              "value": {
-                "$$type": "bigint",
-                "value": "42"
-              }
+              "value": 42
             }
           }
         },
@@ -581,10 +578,7 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
             "kind": "long_array",
             "valueRange": {
               "kind": 0,
-              "min": {
-                "$$type": "bigint",
-                "value": "1"
-              }
+              "min": 1
             }
           }
         },

@@ -3,6 +3,7 @@ import rfdc from 'rfdc'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { DeepReadonly } from '../common/index.js'
 import { isIterable } from '../common/index.js'
+import { bigintJsonLoslessReplacer, bigintJsonLoslessReviver } from '../common/json.js'
 import type { RangeLike } from '../source/index.js'
 import { Location, PositionRange, Range } from '../source/index.js'
 
@@ -568,23 +569,6 @@ export namespace SymbolTable {
 	 * are set properly.
 	 */
 	export function link(table: UnlinkedSymbolTable): SymbolTable {
-		const convertData = (value: any) => {
-			if (value && typeof value === 'object') {
-				if (value['$$type'] === 'bigint' && Object.hasOwn(value, 'value')) {
-					return BigInt(value.value)
-				} else {
-					convertRecordEntries(value)
-				}
-			}
-			return value
-		}
-
-		const convertRecordEntries = (value: Record<string, any>) => {
-			for (const [key, child] of Object.entries(value)) {
-				value[key] = convertData(child)
-			}
-		}
-
 		const linkSymbol = (
 			symbol: Symbol,
 			parentMap: SymbolMap,
@@ -599,7 +583,6 @@ export namespace SymbolTable {
 			if (parentSymbol) {
 				symbol.parentSymbol = parentSymbol
 			}
-			symbol.data = convertData(symbol.data)
 
 			if (symbol.members) {
 				linkSymbolMap(symbol.members, symbol, category, path)
@@ -633,21 +616,6 @@ export namespace SymbolTable {
 	 * are deleted.
 	 */
 	export function unlink(table: SymbolTable): UnlinkedSymbolTable {
-		const convertData = (value: any) => {
-			if (typeof value === 'bigint') {
-				return { '$$type': 'bigint', value: value.toString() }
-			} else if (value && typeof value === 'object') {
-				convertRecordEntries(value)
-			}
-			return value
-		}
-
-		const convertRecordEntries = (value: Record<string, any>) => {
-			for (const [key, child] of Object.entries(value)) {
-				value[key] = convertData(child)
-			}
-		}
-
 		const unlinkSymbol = (symbol: UnlinkedSymbol) => {
 			delete symbol.category
 			delete symbol.identifier
@@ -655,7 +623,6 @@ export namespace SymbolTable {
 			delete symbol.parentSymbol
 			delete symbol.path
 
-			symbol.data = convertData(symbol.data)
 			if (symbol.members) {
 				unlinkSymbolMap(symbol.members)
 			}
@@ -681,14 +648,14 @@ export namespace SymbolTable {
 	 * a symbol table through the {@link deserialize} method.
 	 */
 	export function serialize(table: SymbolTable): string {
-		return JSON.stringify(unlink(table))
+		return JSON.stringify(unlink(table), bigintJsonLoslessReplacer)
 	}
 
 	/**
 	 * @returns The symbol table represented by the string returned by the {@link serialize} method.
 	 */
 	export function deserialize(json: string): SymbolTable {
-		return link(JSON.parse(json))
+		return link(JSON.parse(json, bigintJsonLoslessReviver))
 	}
 }
 

@@ -1,5 +1,10 @@
 import type { Externals, FsLocation } from '../common/index.js'
-import { bufferToString, Uri } from '../common/index.js'
+import {
+	bigintJsonNumberReplacer,
+	bigintJsonNumberReviver,
+	bufferToString,
+	Uri,
+} from '../common/index.js'
 
 export type RootUriString = `${string}/`
 
@@ -265,7 +270,7 @@ export namespace fileUtil {
 	 * @throws
 	 */
 	export async function readJson(externals: Externals, path: FsLocation): Promise<unknown> {
-		return JSON.parse(bufferToString(await readFile(externals, path)))
+		return JSON.parse(bufferToString(await readFile(externals, path)), bigintJsonNumberReviver)
 	}
 
 	/* istanbul ignore next */
@@ -279,7 +284,7 @@ export namespace fileUtil {
 		path: FsLocation,
 		data: any,
 	): Promise<void> {
-		return writeFile(externals, path, JSON.stringify(data))
+		return writeFile(externals, path, JSON.stringify(data, bigintJsonNumberReplacer))
 	}
 
 	/**
@@ -309,8 +314,15 @@ export namespace fileUtil {
 	/**
 	 * @throws
 	 */
-	export async function readGzippedJson(externals: Externals, path: FsLocation): Promise<unknown> {
-		return JSON.parse(bufferToString(await readGzippedFile(externals, path)))
+	export async function readGzippedJson(
+		externals: Externals,
+		path: FsLocation,
+		reviver?: (this: any, key: string, value: any) => any,
+	): Promise<unknown> {
+		return JSON.parse(
+			bufferToString(await readGzippedFile(externals, path)),
+			reviver ?? bigintJsonNumberReviver,
+		)
 	}
 
 	/**
@@ -320,7 +332,12 @@ export namespace fileUtil {
 		externals: Externals,
 		path: FsLocation,
 		data: any,
+		replacer?: (this: any, key: string, value: any) => any,
 	): Promise<void> {
-		return writeGzippedFile(externals, path, JSON.stringify(data))
+		return writeGzippedFile(
+			externals,
+			path,
+			JSON.stringify(data, replacer ?? bigintJsonNumberReplacer),
+		)
 	}
 }
