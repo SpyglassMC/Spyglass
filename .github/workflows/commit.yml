@@ -12,9 +12,6 @@ on:
       - "docs/**"
 permissions:
   contents: write
-env:
-  BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
-  BOT_NAME: ${{ secrets.BOT_NAME }}
 jobs:
   lint:
     name: Lint
@@ -82,3 +79,8 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         working-directory: packages/playground
         run: npm run deploy
+        env:
+          BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+          BOT_NAME: ${{ secrets.BOT_NAME }}
+          WORKFLOW_ACTOR: ${{ github.actor }}
+          WORKFLOW_ACTOR_ID: ${{ github.actor_id }}
