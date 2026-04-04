@@ -105,15 +105,29 @@ export function typeDefinition(
 							items: [],
 						}
 					}
-					if (!options.isPredicate && NbtNumberNode.is(node)) {
-						const literalValue = mcdoc.LiteralNumericValue.makeIfValid(
-							target.kind,
-							node.value,
-							NbtIntegerAlikeNode.is(node),
-							true,
-						)
-						if (literalValue !== undefined) {
-							return { kind: 'literal', value: literalValue }
+					if (!options.isPredicate) {
+						if (NbtNumberNode.is(node)) {
+							const literalValue = mcdoc.LiteralNumericValue.makeIfValid(
+								target.kind,
+								node.value,
+								NbtIntegerAlikeNode.is(node),
+								true,
+							)
+							if (literalValue !== undefined) {
+								return { kind: 'literal', value: literalValue }
+							}
+						}
+						if (NbtCollectionNode.is(node)) {
+							switch (target.kind) {
+								case 'list':
+									return { kind: 'list', item: { kind: 'any' } }
+								case 'byte_array':
+								case 'int_array':
+								case 'long_array':
+									return { kind: target.kind }
+								case 'tuple':
+									return { kind: 'tuple', items: [] }
+							}
 						}
 					}
 					const inferred = inferType(node)
