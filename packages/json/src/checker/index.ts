@@ -24,25 +24,36 @@ export function index(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			type,
 			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
-				isEquivalent: (inferred, def) => {
-					switch (inferred.kind) {
-						case 'list':
-							return ['list', 'byte_array', 'int_array', 'long_array', 'tuple'].includes(
-								def.kind,
+				tryConvertTo: (node, target) => {
+					switch (node.type) {
+						case 'json:array':
+							switch (target.kind) {
+								case 'list':
+									return { kind: 'list', item: { kind: 'any' } }
+								case 'byte_array':
+								case 'int_array':
+								case 'long_array':
+									return { kind: target.kind }
+								case 'tuple':
+									return { kind: 'tuple', items: [] }
+							}
+							break
+						case 'json:number':
+							const literalValue = mcdoc.LiteralNumericValue.makeIfValid(
+								target.kind,
+								node.value.value,
+								true,
+								true,
 							)
-						case 'struct':
-							return def.kind === 'struct'
-						case 'byte':
-						case 'short':
-						case 'int':
-						case 'long':
-							return ['byte', 'short', 'int', 'long', 'float', 'double'].includes(def.kind)
-						case 'float':
-						case 'double':
-							return ['float', 'double'].includes(def.kind)
-						default:
-							return false
+							if (literalValue !== undefined) {
+								return { kind: 'literal', value: literalValue }
+							}
 					}
+					const inferred = inferType(node)
+					if (inferred.kind === target.kind) {
+						return inferred
+					}
+					return undefined
 				},
 				getChildren: node => {
 					if (node.type === 'json:array') {
@@ -116,7 +127,7 @@ export function index(
 	}
 }
 
-function inferType(node: JsonNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
+function inferType(node: JsonNode): mcdoc.runtime.checker.SimplifiedMcdocTypeNoUnion {
 	switch (node.type) {
 		case 'json:boolean':
 			return { kind: 'literal', value: { kind: 'boolean', value: node.value! } }
