@@ -120,6 +120,7 @@
           "data/*/predicates/**/*.json",
           "data/*/recipe/**/*.json",
           "data/*/recipes/**/*.json",
+          "data/*/sulfur_cube_archetype/**/*.json",
           "data/*/tags/**/*.json",
           "data/*/test_instance/**/*.json",
           "data/*/test_environment/**/*.json",

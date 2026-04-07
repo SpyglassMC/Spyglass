@@ -151,6 +151,7 @@ export const NormalFileCategories = Object.freeze(
 		'predicate',
 		'recipe',
 		'structure',
+		'sulfur_cube_archetype',
 		'test_environment',
 		'test_instance',
 		'timeline',
