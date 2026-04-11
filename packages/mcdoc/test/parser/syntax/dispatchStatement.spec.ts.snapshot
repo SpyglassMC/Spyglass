@@ -72,58 +72,91 @@ exports[`mcdoc parser > dispatchStatement > Parse '#[since=1.17]↓⮀⮀⮀⮀d
           {
             "type": "mcdoc:identifier",
             "range": {
-              "start": 50,
-              "end": 53
+              "start": 44,
+              "end": 44
             },
-            "value": "cow"
-          },
-          {
-            "type": "mcdoc:identifier",
-            "range": {
-              "start": 60,
-              "end": 65
-            },
-            "value": "sheep"
+            "value": ""
           }
         ],
         "range": {
           "start": 43,
-          "end": 72
+          "end": 50
         }
       },
       {
         "type": "mcdoc:literal",
         "range": {
-          "start": 73,
-          "end": 75
+          "start": 50,
+          "end": 53
         },
-        "value": "to"
+        "value": "cow"
       },
       {
-        "type": "mcdoc:type/boolean",
+        "type": "mcdoc:type/reference",
         "children": [
           {
-            "type": "mcdoc:literal",
+            "type": "mcdoc:path",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 53,
+                  "end": 53
+                },
+                "value": ""
+              }
+            ],
             "range": {
-              "start": 76,
-              "end": 83
-            },
-            "value": "boolean",
-            "colorTokenType": "type"
+              "start": 53,
+              "end": 53
+            }
           }
         ],
         "range": {
-          "start": 76,
-          "end": 83
+          "start": 53,
+          "end": 53
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 83
+      "end": 53
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 44,
+        "end": 44
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 50,
+        "end": 50
+      },
+      "message": "Expected “]” but got “c”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 50,
+        "end": 53
+      },
+      "message": "Expected “to” but got “cow”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 53,
+        "end": 53
+      },
+      "message": "Expected an identifier",
+      "severity": 3
+    }
+  ]
 }
 `;
 
