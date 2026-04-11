@@ -2,6 +2,7 @@ import type { FullResourceLocation } from '@spyglassmc/core'
 import { Arrayable, Dev } from '@spyglassmc/core'
 import type { EnumKind } from '../node/index.js'
 import { getRangeDelimiter, RangeKind } from '../node/index.js'
+import { numericType } from '../parser/index.js'
 
 export type Attributes = Attribute[]
 export namespace Attributes {
@@ -283,6 +284,50 @@ export interface LiteralStringValue {
 export interface LiteralNumericValue {
 	kind: NumericTypeKind
 	value: number
+}
+export namespace LiteralNumericValue {
+	export function makeIfValid(
+		kind: string,
+		value: number | bigint,
+		allowInt: boolean = true,
+		allowFloat: boolean = true,
+	): LiteralNumericValue | undefined {
+		value = Number(value)
+		switch (kind) {
+			case 'byte':
+				if (allowInt && value >= -128 && value < 128) {
+					return { kind: 'byte', value }
+				}
+				break
+			case 'short':
+				if (allowInt && value >= -32768 && value < 32768) {
+					return { kind: 'short', value }
+				}
+				break
+			case 'int':
+				if (allowInt && value >= -2147483648 && value < 2147483648) {
+					return { kind: 'int', value }
+				}
+				break
+			case 'long':
+				if (allowInt && value >= -9223372036854775808 && value < 9223372036854775808) {
+					// TODO: this should NOT change type from `bigint` to `number`
+					return { kind: 'long', value }
+				}
+				break
+			case 'float':
+				if (allowFloat) {
+					return { kind: 'float', value }
+				}
+				break
+			case 'double':
+				if (allowFloat) {
+					return { kind: 'double', value }
+				}
+				break
+		}
+		return undefined
+	}
 }
 export interface LiteralType extends McdocBaseType {
 	kind: 'literal'

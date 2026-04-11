@@ -1,13 +1,21 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
+import type { SimplifiedMcdocTypeNoUnion } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
 import type { NbtPathChild, NbtPathNode, TypedNbtNode } from '../node/index.js'
 import {
+	NbtByteNode,
+	NbtCollectionNode,
 	NbtCompoundNode,
+	NbtIntegerAlikeNode,
+	NbtListNode,
+	NbtLongNode,
 	NbtNode,
+	NbtNumberNode,
 	NbtPathFilterNode,
 	NbtPathIndexNode,
 	NbtPathKeyNode,
+	NbtPrimitiveArrayNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
 } from '../node/index.js'
@@ -83,31 +91,50 @@ export function typeDefinition(
 			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
 				allowMissingKeys: options.isPredicate || options.isMerge,
 				requireCanonical: options.isPredicate,
-				isEquivalent: (inferred, def) => {
-					if (def.kind === 'boolean') {
-						// TODO: this should check whether the value is 0 or 1
-						return inferred.kind === 'byte'
+				tryConvertTo: (node, target) => {
+					if (target.kind === 'boolean' && NbtByteNode.is(node)) {
+						if (node.value === 0) {
+							return { kind: 'literal', value: { kind: 'boolean', value: false } }
+						} else if (node.value === 1) {
+							return { kind: 'literal', value: { kind: 'boolean', value: true } }
+						}
 					}
-					if (inferred.kind === 'list') {
-						return def.kind === 'list' || def.kind === 'tuple'
+					if (target.kind === 'tuple' && NbtListNode.is(node)) {
+						return {
+							kind: 'tuple',
+							items: [],
+						}
 					}
-					if (options.isPredicate) {
-						return inferred.kind === def.kind
+					if (!options.isPredicate) {
+						if (NbtNumberNode.is(node)) {
+							const literalValue = mcdoc.LiteralNumericValue.makeIfValid(
+								target.kind,
+								node.value,
+								NbtIntegerAlikeNode.is(node),
+								true,
+							)
+							if (literalValue !== undefined) {
+								return { kind: 'literal', value: literalValue }
+							}
+						}
+						if (NbtCollectionNode.is(node)) {
+							switch (target.kind) {
+								case 'list':
+									return { kind: 'list', item: { kind: 'any' } }
+								case 'byte_array':
+								case 'int_array':
+								case 'long_array':
+									return { kind: target.kind }
+								case 'tuple':
+									return { kind: 'tuple', items: [] }
+							}
+						}
 					}
-					switch (inferred.kind) {
-						case 'struct':
-							return def.kind === 'struct'
-						case 'byte':
-						case 'short':
-						case 'int':
-						case 'long':
-							return ['byte', 'short', 'int', 'long', 'float', 'double'].includes(def.kind)
-						case 'float':
-						case 'double':
-							return ['float', 'double'].includes(def.kind)
-						default:
-							return false
+					const inferred = inferType(node)
+					if (inferred.kind === target.kind) {
+						return inferred
 					}
+					return undefined
 				},
 				getChildren: node => {
 					const { type } = node
@@ -186,7 +213,7 @@ export function typeDefinition(
 	}
 }
 
-function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
+function inferType(node: NbtNode): SimplifiedMcdocTypeNoUnion {
 	switch (node.type) {
 		case 'nbt:byte':
 			return { kind: 'literal', value: { kind: 'byte', value: node.value } }
@@ -312,18 +339,24 @@ export function path(
 			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
 				allowMissingKeys: true,
 				requireCanonical: true,
-				isEquivalent: (inferred, def) => {
-					switch (inferred.kind) {
-						case 'list':
-						case 'byte_array':
-						case 'int_array':
-						case 'long_array':
-							return ['list', 'tuple', 'byte_array', 'int_array', 'long_array'].includes(
-								def.kind,
-							)
-						default:
-							return false
+				tryConvertTo: (node, target) => {
+					if (NbtPathIndexNode.is(node.node)) {
+						switch (target.kind) {
+							case 'list':
+								return { kind: 'list', item: { kind: 'any' } }
+							case 'byte_array':
+							case 'int_array':
+							case 'long_array':
+								return { kind: target.kind }
+							case 'tuple':
+								return { kind: 'tuple', items: [] }
+						}
 					}
+					const inferred = inferPath(node)
+					if (inferred.kind === target.kind) {
+						return inferred
+					}
+					return undefined
 				},
 				getChildren: (link): mcdoc.runtime.checker.RuntimeUnion<NbtPathLink>[] => {
 					while (link.next && link.node.type !== 'leaf' && NbtPathFilterNode.is(link.node)) {
@@ -400,7 +433,7 @@ export function path(
 	}
 }
 
-function inferPath(link: NbtPathLink): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
+function inferPath(link: NbtPathLink): SimplifiedMcdocTypeNoUnion {
 	if (link.node.type === 'leaf') {
 		return { kind: 'unsafe' }
 	}
