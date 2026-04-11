@@ -12114,8 +12114,8 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'dd12be42-52a9-4a
         "end": 36
       },
       "bits": [
-        "-2516740049682740591",
-        "-6295731287348353896"
+        -2516740049682740591,
+        -6295731287348353896
       ]
     }
   },
@@ -12138,8 +12138,8 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'dd12be42-52a9-4a
         "end": 36
       },
       "bits": [
-        "-2516740049682740591",
-        "-6295731287348353896"
+        -2516740049682740591,
+        -6295731287348353896
       ]
     }
   },
