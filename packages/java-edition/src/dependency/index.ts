@@ -1,15 +1,16 @@
 export * from './common.js'
 export * from './mcmeta.js'
+export * from './mcmeta/index.js'
 
 import * as core from '@spyglassmc/core'
+import { Fluids } from './mcmeta.js'
 import type {
 	McmetaCommands,
 	McmetaRegistries,
 	McmetaStates,
 	McmetaSummary,
 	McmetaVersions,
-} from './mcmeta.js'
-import { Fluids } from './mcmeta.js'
+} from './mcmeta/index.js'
 
 /* istanbul ignore next */
 /**
