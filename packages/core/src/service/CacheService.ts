@@ -1,5 +1,5 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { bigintJsonLoslessReplacer, bigintJsonLoslessReviver, Uri } from '../common/index.js'
+import { bigintJsonLosslessReplacer, bigintJsonLosslessReviver, Uri } from '../common/index.js'
 import type { PosRangeLanguageError } from '../source/index.js'
 import type { UnlinkedSymbolTable } from '../symbol/index.js'
 import { SymbolTable } from '../symbol/index.js'
@@ -133,7 +133,7 @@ export class CacheService {
 			const cache = (await fileUtil.readGzippedJson(
 				this.project.externals,
 				filePath,
-				bigintJsonLoslessReviver,
+				bigintJsonLosslessReviver,
 			)) as CacheFile
 			__profiler.task('Read File')
 			if (cache.version === LatestCacheVersion) {
@@ -244,7 +244,7 @@ export class CacheService {
 				this.project.externals,
 				filePath,
 				cache,
-				bigintJsonLoslessReplacer,
+				bigintJsonLosslessReplacer,
 			)
 			__profiler.task('Write File').finalize()
 

@@ -3,7 +3,7 @@ import rfdc from 'rfdc'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { DeepReadonly } from '../common/index.js'
 import { isIterable } from '../common/index.js'
-import { bigintJsonLoslessReplacer, bigintJsonLoslessReviver } from '../common/json.js'
+import { bigintJsonLosslessReplacer, bigintJsonLosslessReviver } from '../common/json.js'
 import type { RangeLike } from '../source/index.js'
 import { Location, PositionRange, Range } from '../source/index.js'
 
@@ -648,14 +648,14 @@ export namespace SymbolTable {
 	 * a symbol table through the {@link deserialize} method.
 	 */
 	export function serialize(table: SymbolTable): string {
-		return JSON.stringify(unlink(table), bigintJsonLoslessReplacer)
+		return JSON.stringify(unlink(table), bigintJsonLosslessReplacer)
 	}
 
 	/**
 	 * @returns The symbol table represented by the string returned by the {@link serialize} method.
 	 */
 	export function deserialize(json: string): SymbolTable {
-		return link(JSON.parse(json, bigintJsonLoslessReviver))
+		return link(JSON.parse(json, bigintJsonLosslessReviver))
 	}
 }
 
