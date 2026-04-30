@@ -31,7 +31,7 @@ export function bigintJsonLosslessReviver(_key: string, value: any) {
  */
 export function bigintJsonNumberReplacer(_key: string, value: any) {
 	return typeof value === 'bigint'
-		? (<any> JSON).rawJSON(value.toString())
+		? (JSON as any).rawJSON(value.toString())
 		: value
 }
 
