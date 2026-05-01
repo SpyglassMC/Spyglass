@@ -16,7 +16,9 @@
     "release": "npm publish",
     "release:dry": "npm publish --tag latest --dry-run"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@zip.js/zip.js": "^2.8.26"
+  },
   "devDependencies": {},
   "publishConfig": {
     "access": "public"
