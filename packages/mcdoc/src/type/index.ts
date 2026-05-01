@@ -515,7 +515,7 @@ export namespace McdocType {
 	}
 
 	export function toString(type: McdocType | undefined): string {
-		const rangeToString = (range: NumericRange<any> | undefined): string => {
+		const rangeToString = (range: NumericRange | undefined): string => {
 			return range ? ` @ ${NumericRange.toString(range)}` : ''
 		}
 
