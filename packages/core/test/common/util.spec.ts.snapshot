@@ -50,6 +50,10 @@ exports[`common util > numericEquals() > 9 & 1n 1`] = `
 false
 `;
 
+exports[`common util > numericEquals() > 9.191919191919191e+23 & 919191919191919127691264n 1`] = `
+true
+`;
+
 exports[`common util > numericEquals() > 9.191919191919191e+23 & 919191919191919191919191n 1`] = `
 false
 `;
