@@ -6,7 +6,7 @@ import {
 	min,
 	normalizeUri,
 	numericEquals,
-	tryConvertToNumberWithoutPercisionLoss,
+	tryConvertToNumberWithoutPrecisionLoss,
 } from '../../lib/index.js'
 import { assertType, typing } from '../utils.ts'
 
@@ -73,7 +73,7 @@ describe('common util', () => {
 		}
 	})
 
-	describe('tryConvertToNumberWithoutPercisionLoss()', () => {
+	describe('tryConvertToNumberWithoutPrecisionLoss()', () => {
 		const suites: (number | bigint | undefined)[] = [
 			91,
 			91n,
@@ -83,7 +83,7 @@ describe('common util', () => {
 		]
 		for (const n of suites) {
 			it(numericToString(n) ?? 'undefined', (t) => {
-				const result = tryConvertToNumberWithoutPercisionLoss(n)
+				const result = tryConvertToNumberWithoutPrecisionLoss(n)
 				t.assert.snapshot(numericToString(result))
 			})
 		}

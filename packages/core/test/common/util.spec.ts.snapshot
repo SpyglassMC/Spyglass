@@ -66,22 +66,22 @@ exports[`common util > numericEquals() > 91n & 91n 1`] = `
 true
 `;
 
-exports[`common util > tryConvertToNumberWithoutPercisionLoss() > 9.191919191919191e+23 1`] = `
+exports[`common util > tryConvertToNumberWithoutPrecisionLoss() > 9.191919191919191e+23 1`] = `
 9.191919191919191e+23
 `;
 
-exports[`common util > tryConvertToNumberWithoutPercisionLoss() > 91 1`] = `
+exports[`common util > tryConvertToNumberWithoutPrecisionLoss() > 91 1`] = `
 91
 `;
 
-exports[`common util > tryConvertToNumberWithoutPercisionLoss() > 919191919191919191919191n 1`] = `
+exports[`common util > tryConvertToNumberWithoutPrecisionLoss() > 919191919191919191919191n 1`] = `
 919191919191919191919191n
 `;
 
-exports[`common util > tryConvertToNumberWithoutPercisionLoss() > 91n 1`] = `
+exports[`common util > tryConvertToNumberWithoutPrecisionLoss() > 91n 1`] = `
 91
 `;
 
-exports[`common util > tryConvertToNumberWithoutPercisionLoss() > undefined 1`] = `
+exports[`common util > tryConvertToNumberWithoutPrecisionLoss() > undefined 1`] = `
 undefined
 `;

@@ -377,17 +377,17 @@ export type InheritReadonly<
  * @returns True if the numeric falue is equal, false otherwise.
  */
 export function numericEquals(a: bigint | number | undefined, b: bigint | number | undefined) {
-	return tryConvertToNumberWithoutPercisionLoss(a) === tryConvertToNumberWithoutPercisionLoss(b)
+	return tryConvertToNumberWithoutPrecisionLoss(a) === tryConvertToNumberWithoutPrecisionLoss(b)
 }
 
 /**
- * Tries to convert a numeric type to number if that is possible without percision loss.
+ * Tries to convert a numeric type to number if that is possible without precision loss.
  * Undefined stays untouched.
  * @param n The numeric value
- * @returns The numeric value converted to a number if there was no percision loss, the given value
+ * @returns The numeric value converted to a number if there was no precision loss, the given value
  * otherwise
  */
-export function tryConvertToNumberWithoutPercisionLoss<T extends (number | bigint | undefined)>(
+export function tryConvertToNumberWithoutPrecisionLoss<T extends (number | bigint | undefined)>(
 	n: T,
 ) {
 	if (typeof n === 'bigint') {
