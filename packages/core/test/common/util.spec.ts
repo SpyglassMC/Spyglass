@@ -63,6 +63,7 @@ describe('common util', () => {
 			[9, 1],
 			[9, 1n],
 			[0, undefined],
+			[919191919191919191919191, 919191919191919191919191n],
 		]
 		for (const [a, b] of suites) {
 			it(`${numericToString(a)} & ${numericToString(b)}`, (t) => {
