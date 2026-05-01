@@ -346,3 +346,25 @@ export type InheritReadonly<
 	TARGET extends AstNode,
 	INPUT extends DeepReadonly<AstNode> | undefined,
 > = INPUT & (INPUT extends ReadWrite<AstNode> ? TARGET : DeepReadonly<TARGET>)
+
+export function numericEquals(a: bigint | number | undefined, b: bigint | number | undefined) {
+	return tryConvertToNumberWithoutPercisionLoss(a) === tryConvertToNumberWithoutPercisionLoss(b)
+}
+
+export function tryConvertToNumberWithoutPercisionLoss(n: bigint | number | undefined) {
+	if (typeof n === 'bigint') {
+		const num = Number(n)
+		if (BigInt(num) === n) {
+			return num
+		}
+	}
+	return n
+}
+
+export function min<T extends (number | bigint)>(a: T, b: T) {
+	return a < b ? a : b
+}
+
+export function max<T extends (number | bigint)>(a: T, b: T) {
+	return a > b ? a : b
+}

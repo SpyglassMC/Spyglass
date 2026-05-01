@@ -1,5 +1,5 @@
 import type { FullResourceLocation } from '@spyglassmc/core'
-import { Arrayable, Dev } from '@spyglassmc/core'
+import { Arrayable, Dev, max, min, numericEquals } from '@spyglassmc/core'
 import type { EnumKind } from '../node/index.js'
 import { getRangeDelimiter, RangeKind } from '../node/index.js'
 
@@ -106,29 +106,25 @@ export namespace NumericRange {
 		a: NumericRange<T>,
 		b: NumericRange<T>,
 	): NumericRange<T> {
-		const min: T | undefined = a.min !== undefined && b.min !== undefined
-			? (a.min > b.min ? a.min : b.min)
-			: a.min !== undefined
-			? a.min
-			: b.min
-		const max: T | undefined = a.max !== undefined && b.max !== undefined
-			? (a.max < b.max ? a.max : b.max)
-			: a.max !== undefined
-			? a.max
-			: b.max
+		const rangeMin: T | undefined = a.min !== undefined && b.min !== undefined
+			? max(a.min, b.min)
+			: a.min ?? b.min
+		const rangeMax: T | undefined = a.max !== undefined && b.max !== undefined
+			? min(a.max, b.max)
+			: a.max ?? b.max
 
 		let kind: RangeKind = 0b00
-		if (min === a.min && RangeKind.isLeftExclusive(a.kind)) {
+		if (numericEquals(rangeMin, a.min) && RangeKind.isLeftExclusive(a.kind)) {
 			kind |= 0b10
-		} else if (min === b.min && RangeKind.isLeftExclusive(b.kind)) {
+		} else if (numericEquals(rangeMin, b.min) && RangeKind.isLeftExclusive(b.kind)) {
 			kind |= 0b10
 		}
-		if (max === a.max && RangeKind.isRightExclusive(a.kind)) {
+		if (numericEquals(rangeMax, a.max) && RangeKind.isRightExclusive(a.kind)) {
 			kind |= 0b01
-		} else if (max === b.max && RangeKind.isRightExclusive(b.kind)) {
+		} else if (numericEquals(rangeMax, b.max) && RangeKind.isRightExclusive(b.kind)) {
 			kind |= 0b01
 		}
-		return { kind: kind as RangeKind, min, max }
+		return { kind: kind as RangeKind, min: rangeMin, max: rangeMax }
 	}
 
 	export function toString({ kind, min, max }: NumericRange) {
