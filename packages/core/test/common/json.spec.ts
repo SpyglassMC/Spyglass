@@ -79,7 +79,9 @@ describe('common json', () => {
 
 function toString(obj: any) {
 	return JSON.stringify(obj, bigIntTestDescriptorReplacer)
+		// Remove quotes around bigint literals
 		.replace(/"(\d+n)"/g, '$1')
+		// Remove quotes around keys if possible
 		.replace(/"([a-zA-Z0-9_.-]+)":/g, '$1:')
 
 	function bigIntTestDescriptorReplacer(_key: string, value: any) {
