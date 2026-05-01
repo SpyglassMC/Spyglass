@@ -56,12 +56,13 @@ describe('common util', () => {
 	})
 
 	describe('numericEquals()', () => {
-		const suites: [number | bigint, number | bigint][] = [
+		const suites: [number | bigint | undefined, number | bigint | undefined][] = [
 			[91, 91],
 			[91, 91n],
 			[91n, 91n],
 			[9, 1],
 			[9, 1n],
+			[0, undefined],
 		]
 		for (const [a, b] of suites) {
 			it(`${numericToString(a)} & ${numericToString(b)}`, (t) => {
@@ -119,6 +120,6 @@ describe('common util', () => {
 	})
 })
 
-function numericToString(n: number | bigint) {
-	return typeof n === 'number' ? n.toString() : `${n}n`
+function numericToString(n: number | bigint | undefined) {
+	return typeof n === 'bigint' ? `${n}n` : n?.toString()
 }

@@ -38,6 +38,10 @@ exports[`common util > min() > 9n & 1 1`] = `
 1
 `;
 
+exports[`common util > numericEquals() > 0 & undefined 1`] = `
+false
+`;
+
 exports[`common util > numericEquals() > 9 & 1 1`] = `
 false
 `;
