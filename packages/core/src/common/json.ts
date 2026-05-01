@@ -47,7 +47,9 @@ export function bigintJsonNumberReviver(_key: string, value: any, data?: { sourc
 	return typeof value === 'number'
 			&& data?.source !== undefined
 			&& !data.source.includes('.')
-			&& value.toString() !== data.source
+			&& !data.source.includes('e')
+			&& !data.source.includes('E')
+			&& BigInt(value).toString() !== data.source
 		? BigInt(data.source)
 		: value
 }
