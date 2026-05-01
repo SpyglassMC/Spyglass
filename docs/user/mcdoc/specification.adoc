@@ -609,9 +609,9 @@ The first optional range defines the range the value must be in, while the secon
 [source,rust]
 ----
 byte[]              // A collection of bytes.
-byte#0..1[]         // A collection of bytes 0 or 1.
-int[] # 4           // A collection of 4 integers.
-long#0..[] # 3..    // A collection of 3 or more non-negative longs.
+byte@0..1[]         // A collection of bytes 0 or 1.
+int[] @ 4           // A collection of 4 integers.
+long@0..[] @ 3..    // A collection of 3 or more non-negative longs.
 ----
 ====
 

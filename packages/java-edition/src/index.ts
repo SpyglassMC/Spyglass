@@ -2,7 +2,7 @@ import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
-import { jsonUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
+import { jeFileUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
 import type { McmetaSummary, PackInfo } from './dependency/index.js'
 import {
 	getMcmetaSummary,
@@ -131,15 +131,15 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	registerMcdocAttributes(meta, summary.commands, release)
 	registerPackFormatAttribute(meta, versions, packs)
 
-	meta.registerLanguage('zip', { extensions: ['.zip'] })
-	meta.registerLanguage('png', { extensions: ['.png'] })
-	meta.registerLanguage('ogg', { extensions: ['.ogg'] })
-	meta.registerLanguage('ttf', { extensions: ['.ttf'] })
-	meta.registerLanguage('otf', { extensions: ['.otf'] })
-	meta.registerLanguage('fsh', { extensions: ['.fsh'] })
-	meta.registerLanguage('vsh', { extensions: ['.vsh'] })
+	meta.registerLanguage('zip', { extensions: ['.zip'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('png', { extensions: ['.png'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('ogg', { extensions: ['.ogg'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('ttf', { extensions: ['.ttf'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('otf', { extensions: ['.otf'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('fsh', { extensions: ['.fsh'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('vsh', { extensions: ['.vsh'], uriPredicate: jeFileUriPredicate })
 
-	json.getInitializer(jsonUriPredicate)(ctx)
+	json.getInitializer(jeFileUriPredicate)(ctx)
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)

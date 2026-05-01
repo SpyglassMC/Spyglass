@@ -6,13 +6,14 @@ import type { McdocType, UnionType } from '@spyglassmc/mcdoc/lib/type/index.js'
 import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { McdocRuntimeError } from '../../lib/runtime/checker/error.js'
+import { registerAttribute } from '../../lib/runtime/index.js'
 
 describe('mcdoc runtime checker', () => {
 	type JsValue = boolean | number | string | JsValue[] | { [key: string]: JsValue }
 	const suites: {
 		name: string
 		type: McdocType
-		init?: (symbols: core.SymbolUtil) => void
+		init?: (symbols: core.SymbolUtil, meta: core.MetaRegistry) => void
 		values: JsValue[]
 	}[] = [{
 		name: 'struct { test: double }',
@@ -30,6 +31,20 @@ describe('mcdoc runtime checker', () => {
 		},
 		values: [2, {}, { foo: 'hello' }, { foo: true, bar: [] }],
 	}, {
+		name: 'struct { foo: string, #["test:filter"] bar: [double] }',
+		type: {
+			kind: 'struct',
+			fields: [{ kind: 'pair', key: 'foo', type: { kind: 'string' } }, {
+				attributes: [{ name: 'test:filter' }],
+				kind: 'pair',
+				key: 'bar',
+				type: { kind: 'list', item: { kind: 'double' } },
+			}],
+		},
+		values: [{}, { foo: 'hello' }, { foo: 'hello', bar: [2] }],
+		init: (_, meta) =>
+			registerAttribute(meta, 'test:filter', _ => true, { filterElement: _ => false }),
+	}, {
 		name: '( struct { text: string } | struct { selector: number })',
 		type: {
 			kind: 'union',
@@ -44,6 +59,15 @@ describe('mcdoc runtime checker', () => {
 		values: [{}, { text: 'something' }, { selector: 20 }, { text: 'foo', selector: 40 }, {
 			selector: [1],
 		}],
+	}, {
+		name: '( string | #["test:filter"] int)',
+		type: {
+			kind: 'union',
+			members: [{ kind: 'string' }, { kind: 'int', attributes: [{ name: 'test:filter' }] }],
+		},
+		values: ['hello', 1],
+		init: (_, meta) =>
+			registerAttribute(meta, 'test:filter', _ => true, { filterElement: _ => false }),
 	}, {
 		name:
 			'( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })',
@@ -641,6 +665,66 @@ describe('mcdoc runtime checker', () => {
 			id: 'elytra',
 			tag: { Damage: true },
 		}, { id: 'elytra', tag: { Damage: 20 } }],
+	}, {
+		name:
+			'dispatch minecraft:item[elytra] to struct { Damage: double }; #["test:filter"] dispatch minecraft:item[filtered] to struct { Test: string }; struct { id: string, tag?: minecraft:item[[id]] }',
+		type: {
+			kind: 'struct',
+			fields: [{ kind: 'pair', key: 'id', type: { kind: 'string' } }, {
+				kind: 'pair',
+				key: 'tag',
+				optional: true,
+				type: {
+					kind: 'dispatcher',
+					registry: 'minecraft:item',
+					parallelIndices: [{ kind: 'dynamic', accessor: ['id'] }],
+				},
+			}],
+		},
+		init: (symbols, meta) => {
+			symbols
+				.query(TextDocument.create('', '', 0, ''), 'mcdoc/dispatcher', 'minecraft:item')
+				.enter({ usage: { type: 'reference' } })
+			symbols
+				.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc/dispatcher',
+					'minecraft:item',
+					'elytra',
+				)
+				.enter({
+					data: {
+						data: {
+							typeDef: {
+								kind: 'struct',
+								fields: [{ kind: 'pair', key: 'Damage', type: { kind: 'double' } }],
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			symbols
+				.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc/dispatcher',
+					'minecraft:item',
+					'filtered',
+				)
+				.enter({
+					data: {
+						data: {
+							typeDef: {
+								kind: 'struct',
+								fields: [{ kind: 'pair', key: 'Test', type: { kind: 'string' } }],
+								attributes: [{ name: 'test:filter' }],
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			registerAttribute(meta, 'test:filter', _ => true, { filterElement: _ => false })
+		},
+		values: [{ id: 'filtered', tag: { A: 'abc' } }, { id: 'elytra', tag: {} }],
 	}]
 
 	function inferType(value: JsValue): Exclude<McdocType, UnionType> {
@@ -665,7 +749,7 @@ describe('mcdoc runtime checker', () => {
 				it(`with value ${JSON.stringify(value)}`, (t) => {
 					const errors: McdocRuntimeError<JsValue>[] = []
 					const project = mockProjectData()
-					init?.(project.symbols)
+					init?.(project.symbols, project.meta)
 					const checkerCtx = core.CheckerContext.create(project, {
 						doc: TextDocument.create('', '', 0, ''),
 					})

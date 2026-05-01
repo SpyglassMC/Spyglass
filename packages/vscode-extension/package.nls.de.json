@@ -1,4 +1,5 @@
 {
+	"spyglassmc.commands.dataHackPubify.title": "Daten-Hack veröffentlichen",
 	"spyglassmc.commands.resetProjectCache.title": "Projekt-Cache zurücksetzen",
 	"spyglassmc.commands.showCacheRoot.title": "Cache-Ordner öffnen",
 	"spyglassmc.commands.showOutput.title": "Ausgabe anzeigen",

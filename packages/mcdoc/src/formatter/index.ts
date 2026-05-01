@@ -50,7 +50,7 @@ import type {
 	TypeParamNode,
 	UnionTypeNode,
 	UseStatementNode,
-} from '../node'
+} from '../node/index.js'
 import { AttributeTreeClosure } from '../parser/index.js'
 
 // These formatters operate under the assumption that each AST node's children are in the same order as they appear when formatted.
