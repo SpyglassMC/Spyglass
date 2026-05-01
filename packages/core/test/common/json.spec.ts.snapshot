@@ -86,7 +86,23 @@ exports[`common json > bigintJsonNumberReviver() > 919191919191919191919191 1`] 
 919191919191919191919191n
 `;
 
+exports[`common json > bigintJsonNumberReviver() > 919191919191919191919191.0 1`] = `
+9.191919191919191e+23
+`;
+
+exports[`common json > bigintJsonNumberReviver() > 919191919191919191919191E1 1`] = `
+9.191919191919192e+24
+`;
+
+exports[`common json > bigintJsonNumberReviver() > 919191919191919191919191e1 1`] = `
+9.191919191919192e+24
+`;
+
 exports[`common json > bigintJsonNumberReviver() > \"91\" 1`] = `
+"91"
+`;
+
+exports[`common json > bigintJsonNumberReviver() > \"91\" 2`] = `
 "91"
 `;
 
