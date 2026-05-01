@@ -136,8 +136,10 @@ class HttpCache implements Cache {
 
 		const fileName = this.#getFileName(request)
 		try {
-			const etag = (await fsp.readFile(new URL(`${fileName}.etag`, this.#cacheRoot), 'utf8'))
-				.trim()
+			const headers = JSON.parse(
+				(await fsp.readFile(new URL(`${fileName}.headers`, this.#cacheRoot), 'utf8'))
+					.trim(),
+			)
 			const bodyStream = fs.createReadStream(new URL(`${fileName}.bin`, this.#cacheRoot))
 			return new Response(
 				stream.Readable.toWeb(bodyStream) as ReadableStream,
@@ -145,7 +147,7 @@ class HttpCache implements Cache {
 				// stream Readable -> stream/web ReadableStream
 				//                                \_______________/
 				//                 stream/web ReadableStream -> DOM ReadableStream
-				{ headers: { etag } },
+				{ headers },
 			)
 		} catch (e) {
 			if ((e as NodeJS.ErrnoException)?.code === 'ENOENT') {
@@ -158,7 +160,8 @@ class HttpCache implements Cache {
 
 	async put(request: RequestInfo | URL, response: Response): Promise<void> {
 		const etag = response.headers.get('etag')
-		if (!(this.#cacheRoot && response.body && etag)) {
+		const lastModified = response.headers.get('last-modified')
+		if (!(this.#cacheRoot && response.body && (etag || lastModified))) {
 			return
 		}
 
@@ -172,7 +175,10 @@ class HttpCache implements Cache {
 				//                 |       DOM ReadableStream -> stream/web ReadableStream
 				// stream/web ReadableStream -> stream Readable
 			),
-			fsp.writeFile(new URL(`${fileName}.etag`, this.#cacheRoot), `${etag}${os.EOL}`),
+			fsp.writeFile(
+				new URL(`${fileName}.headers`, this.#cacheRoot),
+				`${JSON.stringify({ etag, 'last-modified': lastModified })}${os.EOL}`,
+			),
 		])
 	}
 

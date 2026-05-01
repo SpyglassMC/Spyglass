@@ -17,11 +17,14 @@ export async function fetchWithCache(
 	const cache = await web.getCache()
 	const request = new Request(input, init)
 	const cachedResponse = await cache.match(request)
-	const cachedEtag = cachedResponse?.headers.get('ETag')
+	const cachedEtag = cachedResponse?.headers.get('etag')
+	const cachedLastModified = cachedResponse?.headers.get('last-modified')
 	if (cachedEtag) {
-		request.headers.set('If-None-Match', cachedEtag)
+		request.headers.set('if-none-match', cachedEtag)
+	} else if (cachedLastModified) {
+		request.headers.set('if-modified-since', cachedLastModified)
 	}
-	request.headers.set('User-Agent', 'SpyglassMC (+https://spyglassmc.com)')
+	request.headers.set('user-agent', 'SpyglassMC (+https://spyglassmc.com)')
 	try {
 		const response = await fetchWithRetries(request)
 		if (response.status === 304) {
@@ -31,7 +34,7 @@ export async function fetchWithCache(
 		} else if (!response.ok) {
 			let message = response.statusText
 			try {
-				message = (await response.json()).message
+				message = await response.text()
 			} catch {}
 			throw new TypeError(`${response.status} ${message}`)
 		} else {
