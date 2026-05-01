@@ -98,8 +98,8 @@ export namespace NumericRange {
 
 	export function equals(a: NumericRange, b: NumericRange): boolean {
 		return a.kind === b.kind
-			&& a.min === b.min
-			&& a.max === b.max
+			&& numericEquals(a.min, b.min)
+			&& numericEquals(a.max, b.max)
 	}
 
 	export function intersect<T extends (number | bigint) = number>(
