@@ -351,7 +351,9 @@ export function numericEquals(a: bigint | number | undefined, b: bigint | number
 	return tryConvertToNumberWithoutPercisionLoss(a) === tryConvertToNumberWithoutPercisionLoss(b)
 }
 
-export function tryConvertToNumberWithoutPercisionLoss(n: bigint | number | undefined) {
+export function tryConvertToNumberWithoutPercisionLoss<T extends (number | bigint | undefined)>(
+	n: T,
+) {
 	if (typeof n === 'bigint') {
 		const num = Number(n)
 		if (BigInt(num) === n) {
