@@ -73,14 +73,15 @@ describe('common util', () => {
 	})
 
 	describe('tryConvertToNumberWithoutPercisionLoss()', () => {
-		const suites: (number | bigint)[] = [
+		const suites: (number | bigint | undefined)[] = [
 			91,
 			91n,
 			919191919191919191919191,
 			919191919191919191919191n,
+			undefined,
 		]
 		for (const n of suites) {
-			it(numericToString(n), (t) => {
+			it(numericToString(n) ?? 'undefined', (t) => {
 				const result = tryConvertToNumberWithoutPercisionLoss(n)
 				t.assert.snapshot(numericToString(result))
 			})

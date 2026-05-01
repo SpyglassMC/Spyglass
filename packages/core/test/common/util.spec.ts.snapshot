@@ -77,3 +77,7 @@ exports[`common util > tryConvertToNumberWithoutPercisionLoss() > 91919191919191
 exports[`common util > tryConvertToNumberWithoutPercisionLoss() > 91n 1`] = `
 91
 `;
+
+exports[`common util > tryConvertToNumberWithoutPercisionLoss() > undefined 1`] = `
+undefined
+`;
