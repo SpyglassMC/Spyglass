@@ -12,7 +12,7 @@ describe('common json', () => {
 			91n,
 			91,
 			'91',
-			{ num: 91, bigint: 91n, str: 91 },
+			{ num: 91, bigint: 91n, str: '91' },
 			919191919191919191919191,
 			919191919191919191919191n,
 		]
@@ -28,7 +28,7 @@ describe('common json', () => {
 			91n,
 			91,
 			'91',
-			{ num: 91, bigint: 91n, str: 91 },
+			{ num: 91, bigint: 91n, str: '91' },
 			919191919191919191919191,
 			919191919191919191919191n,
 		]
@@ -74,11 +74,13 @@ describe('common json', () => {
 })
 
 function toString(obj: any) {
-	return JSON.stringify(obj, bigIntTestDescriptorReplacer).replace(/"(\d+n)"/, '$1')
-}
+	return JSON.stringify(obj, bigIntTestDescriptorReplacer)
+		.replace(/"(\d+n)"/g, '$1')
+		.replace(/"([a-zA-Z0-9_.-]+)":/g, '$1:')
 
-function bigIntTestDescriptorReplacer(_key: string, value: any) {
-	return typeof value === 'bigint'
-		? `${value}n`
-		: value
+	function bigIntTestDescriptorReplacer(_key: string, value: any) {
+		return typeof value === 'bigint'
+			? `${value}n`
+			: value
+	}
 }
