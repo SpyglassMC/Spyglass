@@ -403,7 +403,7 @@ export function tryConvertToNumberWithoutPercisionLoss<T extends (number | bigin
  * Compares two numeric types and finds the smallest
  * @param a The first value
  * @param b The second value
- * @returns The smallest of `a` and `b`
+ * @returns The smaller value of `a` and `b`
  */
 export function min<T extends (number | bigint)>(a: T, b: T) {
 	return a < b ? a : b
@@ -413,7 +413,7 @@ export function min<T extends (number | bigint)>(a: T, b: T) {
  * Compares two numeric types and finds the biggest
  * @param a The first value
  * @param b The second value
- * @returns The biggest of `a` and `b`
+ * @returns The bigger value of `a` and `b`
  */
 export function max<T extends (number | bigint)>(a: T, b: T) {
 	return a > b ? a : b
