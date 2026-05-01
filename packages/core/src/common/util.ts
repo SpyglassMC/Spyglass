@@ -369,10 +369,24 @@ export type InheritReadonly<
 	INPUT extends DeepReadonly<AstNode> | undefined,
 > = INPUT & (INPUT extends ReadWrite<AstNode> ? TARGET : DeepReadonly<TARGET>)
 
+/**
+ * Checks if the numeric value of a number or bigint is the same. Undefined is **not** the same as
+ * 0 for this function.
+ * @param a The first number to compare
+ * @param b The second number to compare
+ * @returns True if the numeric falue is equal, false otherwise.
+ */
 export function numericEquals(a: bigint | number | undefined, b: bigint | number | undefined) {
 	return tryConvertToNumberWithoutPercisionLoss(a) === tryConvertToNumberWithoutPercisionLoss(b)
 }
 
+/**
+ * Tries to convert a numeric type to number if that is possible without percision loss.
+ * Undefined stays untouched.
+ * @param n The numeric value
+ * @returns The numeric value converted to a number if there was no percision loss, the given value
+ * otherwise
+ */
 export function tryConvertToNumberWithoutPercisionLoss<T extends (number | bigint | undefined)>(
 	n: T,
 ) {
@@ -385,10 +399,22 @@ export function tryConvertToNumberWithoutPercisionLoss<T extends (number | bigin
 	return n
 }
 
+/**
+ * Compares two numeric types and finds the smallest
+ * @param a The first value
+ * @param b The second value
+ * @returns The smallest of `a` and `b`
+ */
 export function min<T extends (number | bigint)>(a: T, b: T) {
 	return a < b ? a : b
 }
 
+/**
+ * Compares two numeric types and finds the biggest
+ * @param a The first value
+ * @param b The second value
+ * @returns The biggest of `a` and `b`
+ */
 export function max<T extends (number | bigint)>(a: T, b: T) {
 	return a > b ? a : b
 }
