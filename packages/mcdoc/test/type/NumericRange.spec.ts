@@ -29,3 +29,33 @@ describe('NumericRange', () => {
 		}
 	})
 })
+
+describe('NumericRange', () => {
+	describe('equals()', () => {
+		const suites: [NumericRange, NumericRange][] = [
+			[{ kind: 0b00, min: 2, max: 4 }, { kind: 0b00, min: 2, max: 4 }],
+			[{ kind: 0b00, min: 2, max: 4 }, { kind: 0b00, min: 2n, max: 4n }],
+			[{ kind: 0b00, min: 2, max: 3 }, { kind: 0b00, min: 2, max: 5 }],
+			[{ kind: 0b00, min: 2, max: 3 }, { kind: 0b00, min: 3, max: 4 }],
+			[{ kind: 0b00, min: 2, max: 3 }, { kind: 0b10, min: 2, max: 4 }],
+			[{ kind: 0b00, min: 2, max: 4 }, { kind: 0b00, min: 2 }],
+			[{ kind: 0b00, min: 2, max: 4 }, { kind: 0b00, max: 4 }],
+			[{ kind: 0b00, min: 2 }, { kind: 0b00, min: 2 }],
+			[{ kind: 0b00, min: 2 }, { kind: 0b00, min: 2n }],
+			[{ kind: 0b00, min: 2 }, { kind: 0b00, min: 3 }],
+			[{ kind: 0b00, min: 2 }, { kind: 0b10, min: 2 }],
+			[{ kind: 0b00, max: 4 }, { kind: 0b00, max: 4 }],
+			[{ kind: 0b00, max: 4 }, { kind: 0b00, max: 4n }],
+			[{ kind: 0b00, max: 4 }, { kind: 0b00, max: 5 }],
+			[{ kind: 0b00, max: 4 }, { kind: 0b01, max: 4 }],
+			[{ kind: 0b00 }, { kind: 0b00 }],
+			[{ kind: 0b00 }, { kind: 0b10 }],
+		]
+		for (const [a, b] of suites) {
+			it(`${NumericRange.toString(a)} & ${NumericRange.toString(b)}`, (t) => {
+				const result = NumericRange.equals(a, b)
+				t.assert.snapshot(result)
+			})
+		}
+	})
+})
