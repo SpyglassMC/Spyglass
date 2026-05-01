@@ -28,9 +28,7 @@ describe('NumericRange', () => {
 			})
 		}
 	})
-})
 
-describe('NumericRange', () => {
 	describe('equals()', () => {
 		const suites: [NumericRange, NumericRange][] = [
 			[{ kind: 0b00, min: 2, max: 4 }, { kind: 0b00, min: 2, max: 4 }],
