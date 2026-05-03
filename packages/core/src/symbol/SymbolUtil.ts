@@ -1,5 +1,10 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { DeepReadonly, ExternalEventEmitter, Externals } from '../common/index.js'
+import {
+	bigintJsonNumberReplacer,
+	type DeepReadonly,
+	type ExternalEventEmitter,
+	type Externals,
+} from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import type { RangeLike } from '../source/index.js'
 import { Range } from '../source/index.js'
@@ -1301,7 +1306,7 @@ export namespace SymbolFormatter {
 				+ ` [${stringifyVisibility(symbol.visibility, symbol.visibilityRestriction)}]`,
 		)
 		if (symbol.data) {
-			ans.push(`${IndentChar}data: ${JSON.stringify(symbol.data)}`)
+			ans.push(`${IndentChar}data: ${JSON.stringify(symbol.data, bigintJsonNumberReplacer)}`)
 		}
 		if (symbol.desc) {
 			ans.push(`${IndentChar}description: ${symbol.desc}`)

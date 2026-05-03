@@ -3,6 +3,7 @@ import rfdc from 'rfdc'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { DeepReadonly } from '../common/index.js'
 import { isIterable } from '../common/index.js'
+import { bigintJsonLosslessReplacer, bigintJsonLosslessReviver } from '../common/json.js'
 import type { RangeLike } from '../source/index.js'
 import { Location, PositionRange, Range } from '../source/index.js'
 
@@ -584,6 +585,7 @@ export namespace SymbolTable {
 			if (parentSymbol) {
 				symbol.parentSymbol = parentSymbol
 			}
+
 			if (symbol.members) {
 				linkSymbolMap(symbol.members, symbol, category, path)
 			}
@@ -622,6 +624,7 @@ export namespace SymbolTable {
 			delete symbol.parentMap
 			delete symbol.parentSymbol
 			delete symbol.path
+
 			if (symbol.members) {
 				unlinkSymbolMap(symbol.members)
 			}
@@ -647,14 +650,14 @@ export namespace SymbolTable {
 	 * a symbol table through the {@link deserialize} method.
 	 */
 	export function serialize(table: SymbolTable): string {
-		return JSON.stringify(unlink(table))
+		return JSON.stringify(unlink(table), bigintJsonLosslessReplacer)
 	}
 
 	/**
 	 * @returns The symbol table represented by the string returned by the {@link serialize} method.
 	 */
 	export function deserialize(json: string): SymbolTable {
-		return link(JSON.parse(json))
+		return link(JSON.parse(json, bigintJsonLosslessReviver))
 	}
 }
 

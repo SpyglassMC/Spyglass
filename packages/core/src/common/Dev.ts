@@ -1,3 +1,5 @@
+import { bigintJsonNumberReplacer } from './index.js'
+
 export namespace Dev {
 	export function assertDefined<T>(value: T): asserts value is Exclude<T, undefined> {
 		if (value === undefined) {
@@ -66,11 +68,11 @@ export namespace Dev {
 		if (value && typeof value === 'object') {
 			try {
 				const seen = new Set<object>()
-				return JSON.stringify(value, (_k, v) => {
+				return JSON.stringify(value, (k, v) => {
 					if (v && typeof v === 'object') {
 						return seen.has(v) ? '[Circular]' : (seen.add(v), v)
 					} else {
-						return v
+						return bigintJsonNumberReplacer(k, v)
 					}
 				})
 			} catch (ignored) {
