@@ -1,10 +1,14 @@
 import type { Parser } from '@spyglassmc/core'
 import { showWhitespaceGlyph, snapshotWithUri, testParser } from '@spyglassmc/core/test/utils.ts'
 import { describe, it } from 'node:test'
+import { DocCommentsNode } from '../../lib/node/index.js'
 
 const Suites: Record<
 	'terminator' | 'syntax' | 'syntax/type',
-	Record<string, { content: string[]; functionParams?: readonly unknown[] }>
+	Record<
+		string,
+		{ content: string[]; functionParams?: readonly unknown[]; isDocCommentsTest?: boolean }
+	>
 > = {
 	terminator: {
 		comment: {
@@ -105,9 +109,13 @@ const Suites: Record<
 			],
 		},
 		docComments: {
-			content: [`/// First line
-				/// Second line
-				Not comment`],
+			content: [
+				'/// First line\n/// Second line\nNot comment\n',
+				'/// First line\r\n/// Second line\r\nNot comment\r\n',
+				'/// First paragraph\n///\n/// Second paragraph\nNot comment\n',
+				'/// First paragraph\r\n///\r\n/// Second paragraph\r\nNot comment\r\n',
+			],
+			isDocCommentsTest: true,
 		},
 		useStatement: {
 			content: [
@@ -259,6 +267,8 @@ const Suites: Record<
 				'int @ 4..',
 				'int @ ..4',
 				'int @ 0..1',
+				'int @ 10000000000000001',
+				'long @ 10000000000000001',
 				'double@4.2..5.5',
 				'double[]',
 			],
@@ -272,6 +282,7 @@ const Suites: Record<
 				'byte@0..1[]',
 				'int[] @ 4',
 				'byte @ 0..1 [] @ 0..',
+				'long @ 10000000000000001.. [] @ 0..',
 			],
 		},
 		referenceType: { content: ['', '#[uuid] UuidMostLeast', 'MinMaxBounds<float @ 1..2>'] },
@@ -339,7 +350,9 @@ const Suites: Record<
 
 describe('mcdoc parser', async () => {
 	for (const [directory, parserSuites] of Object.entries(Suites)) {
-		for (const [parserName, { functionParams }] of Object.entries(parserSuites)) {
+		for (
+			const [parserName, { functionParams, isDocCommentsTest }] of Object.entries(parserSuites)
+		) {
 			const importedParser =
 				((await import('@spyglassmc/mcdoc/lib/parser/index.js')) as unknown as Record<
 					string,
@@ -353,9 +366,19 @@ describe('mcdoc parser', async () => {
 				for (const content of parserSuites[parserName].content) {
 					const itTitle = `Parse '${showWhitespaceGlyph(content)}'`
 					it(itTitle, (t) => {
+						const testResult = testParser(parser, content)
 						snapshotWithUri(t, {
 							uri,
-							value: testParser(parser, content),
+							value: {
+								...testResult,
+								...isDocCommentsTest
+									? {
+										docCommentsText: DocCommentsNode.asText(
+											testResult.node as DocCommentsNode,
+										),
+									}
+									: {},
+							},
 						})
 					})
 				}

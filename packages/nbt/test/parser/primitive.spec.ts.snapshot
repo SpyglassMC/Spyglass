@@ -46,7 +46,7 @@ exports[`nbt primitive() > Parse '1024L' 1`] = `
       "start": 0,
       "end": 5
     },
-    "value": "1024"
+    "value": 1024
   },
   "errors": []
 }

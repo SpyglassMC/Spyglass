@@ -92,6 +92,7 @@ resource('instrument', { since: '1.21.2' })
 resource('jukebox_song', { since: '1.21' })
 resource('painting_variant', { since: '1.21' })
 resource('pig_variant', { since: '1.21.5' })
+resource('sulfur_cube_archetype', { since: '26.2' })
 resource('test_instance', { since: '1.21.5' })
 resource('test_environment', { since: '1.21.5' })
 resource('timeline', { since: '1.21.11' })
@@ -102,6 +103,7 @@ resource('trim_material', { since: '1.19.4' })
 resource('villager_trade', { since: '26.1' })
 resource('wolf_sound_variant', { since: '1.21.5' })
 resource('wolf_variant', { since: '1.20.5' })
+resource('world_clock', { since: '26.1' })
 resource('zombie_nautilus_variant', { since: '1.21.11' })
 
 // Worldgen
@@ -407,11 +409,11 @@ export function registerUriBuilders(meta: MetaRegistry) {
 }
 
 /**
- * Returns true for JSON file URIs that belong to any known resource category. No version check is
+ * Returns true for file URIs that belong to any known resource category. No version check is
  * performed as we would like to provide errors even for files in the wrong folder or files for the
  * wrong version.
  */
-export const jsonUriPredicate: UriPredicate = (uri, ctx) => {
+export const jeFileUriPredicate: UriPredicate = (uri, ctx) => {
 	const rels = [...getRels(uri, ctx.roots)]
 	return rels.some((rel) => getCandidateResourcesForRel(rel).length > 0)
 }

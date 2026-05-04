@@ -1,0 +1,111 @@
+exports[`common json > bigintJsonLosslessReplacer() > 9.191919191919191e+23 1`] = `
+9.191919191919191e+23
+`;
+
+exports[`common json > bigintJsonLosslessReplacer() > 91 1`] = `
+91
+`;
+
+exports[`common json > bigintJsonLosslessReplacer() > 919191919191919191919191n 1`] = `
+"$$type:bigint;$$value:919191919191919191919191"
+`;
+
+exports[`common json > bigintJsonLosslessReplacer() > 91n 1`] = `
+"$$type:bigint;$$value:91"
+`;
+
+exports[`common json > bigintJsonLosslessReplacer() > \"91\" 1`] = `
+"91"
+`;
+
+exports[`common json > bigintJsonLosslessReplacer() > {num:91,bigint:91n,str:\"91\"} 1`] = `
+{"num":91,"bigint":"$$type:bigint;$$value:91","str":"91"}
+`;
+
+exports[`common json > bigintJsonLosslessReviver() > 91 1`] = `
+91
+`;
+
+exports[`common json > bigintJsonLosslessReviver() > 919191919191919191919191 1`] = `
+9.191919191919191e+23
+`;
+
+exports[`common json > bigintJsonLosslessReviver() > \"$$type:bigint;$$value:919191919191919191919191\" 1`] = `
+919191919191919191919191n
+`;
+
+exports[`common json > bigintJsonLosslessReviver() > \"$$type:bigint;$$value:91\" 1`] = `
+91n
+`;
+
+exports[`common json > bigintJsonLosslessReviver() > \"91\" 1`] = `
+"91"
+`;
+
+exports[`common json > bigintJsonLosslessReviver() > { \"num\": 91, \"bigint\": \"$$type:bigint;$$value:91\", \"str\": \"91\" } 1`] = `
+{num:91,bigint:91n,str:"91"}
+`;
+
+exports[`common json > bigintJsonNumberReplacer() > 9.191919191919191e+23 1`] = `
+9.191919191919191e+23
+`;
+
+exports[`common json > bigintJsonNumberReplacer() > 91 1`] = `
+91
+`;
+
+exports[`common json > bigintJsonNumberReplacer() > 919191919191919191919191n 1`] = `
+919191919191919191919191
+`;
+
+exports[`common json > bigintJsonNumberReplacer() > 91n 1`] = `
+91
+`;
+
+exports[`common json > bigintJsonNumberReplacer() > \"91\" 1`] = `
+"91"
+`;
+
+exports[`common json > bigintJsonNumberReplacer() > {num:91,bigint:91n,str:\"91\"} 1`] = `
+{"num":91,"bigint":91,"str":"91"}
+`;
+
+exports[`common json > bigintJsonNumberReviver() > 9.191919191919191e+23 1`] = `
+9.191919191919191e+23
+`;
+
+exports[`common json > bigintJsonNumberReviver() > 91 1`] = `
+91
+`;
+
+exports[`common json > bigintJsonNumberReviver() > 919191919191919127691264 1`] = `
+9.191919191919191e+23
+`;
+
+exports[`common json > bigintJsonNumberReviver() > 919191919191919191919191 1`] = `
+919191919191919191919191n
+`;
+
+exports[`common json > bigintJsonNumberReviver() > 919191919191919191919191.0 1`] = `
+9.191919191919191e+23
+`;
+
+exports[`common json > bigintJsonNumberReviver() > 919191919191919191919191E1 1`] = `
+9.191919191919192e+24
+`;
+
+exports[`common json > bigintJsonNumberReviver() > 919191919191919191919191e1 1`] = `
+9.191919191919192e+24
+`;
+
+exports[`common json > bigintJsonNumberReviver() > \"91\" 1`] = `
+"91"
+`;
+
+exports[`common json > bigintJsonNumberReviver() > \"91\" 2`] = `
+"91"
+`;
+
+exports[`common json > bigintJsonNumberReviver() > { \"num\": 91, \"bigint\": 919191919191919191919191, \"str\": \"91\" } 1`] = `
+{num:91,bigint:919191919191919191919191n,str:"91"}
+`;

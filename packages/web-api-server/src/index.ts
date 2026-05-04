@@ -2,7 +2,7 @@ import cors from 'cors'
 import express, { type Request } from 'express'
 import assert from 'node:assert/strict'
 import pino from 'pino'
-import pinoHttp from 'pino-http'
+import { pinoHttp } from 'pino-http'
 import {
 	assertRootDir,
 	errorHandler,

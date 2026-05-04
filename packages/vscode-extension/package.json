@@ -48,11 +48,11 @@
   ],
   "devDependencies": {
     "@types/vscode": "1.67.0",
-    "@vscode/vsce": "^2.29.0",
+    "@vscode/vsce": "^3.7.1",
     "esbuild": "^0.25.2",
     "ovsx": "^0.9.1",
     "vscode-languageclient": "^9.0.1",
-    "vscode-test": "^1.5.2"
+    "vscode-test": "^1.4.1"
   },
   "repository": {
     "type": "git",
@@ -120,6 +120,7 @@
           "data/*/predicates/**/*.json",
           "data/*/recipe/**/*.json",
           "data/*/recipes/**/*.json",
+          "data/*/sulfur_cube_archetype/**/*.json",
           "data/*/tags/**/*.json",
           "data/*/test_instance/**/*.json",
           "data/*/test_environment/**/*.json",
@@ -131,6 +132,7 @@
           "data/*/villager_trade/**/*.json",
           "data/*/wolf_sound_variant/**/*.json",
           "data/*/wolf_variant/**/*.json",
+          "data/*/world_clock/**/*.json",
           "data/*/zombie_nautilus_variant/**/*.json",
           "data/*/worldgen/**/*.json",
           "data/minecraft/**/*.json"
@@ -240,6 +242,16 @@
           "markdownDescription": "%spyglassmc.env.gameVersion%",
           "default": "Auto"
         },
+        "spyglassmc.env.enableMcdocCaching": {
+          "type": "boolean",
+          "markdownDescription": "%spyglassmc.env.enableMcdocCaching%",
+          "default": false
+        },
+        "spyglassmc.env.useFilePolling": {
+          "type": "boolean",
+          "markdownDescription": "%spyglassmc.env.useFilePolling%",
+          "default": false
+        },
         "spyglassmc.trace.server": {
           "type": "string",
           "enum": [
@@ -249,6 +261,65 @@
           ],
           "markdownDescription": "%spyglassmc.trace.server%",
           "default": "off"
+        },
+        "spyglassmc.env.feature.codeActions": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.env.feature.colors": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.env.feature.completions": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.env.feature.documentHighlighting": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.env.feature.documentLinks": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.env.feature.foldingRanges": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.env.feature.formatting": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.env.feature.hover": {
+          "type": "boolean",
+          "default": true
+        },
+        "spyglassmc.env.feature.inlayHint.enabledNodes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "boolean",
+            "double",
+            "float",
+            "integer",
+            "long",
+            "mcfunction:coordinate",
+            "mcfunction:vector",
+            "mcfunction:command_child/unknown"
+          ]
+        },
+        "spyglassmc.env.feature.semanticColoring.disabledLanguages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "spyglassmc.env.feature.signatures": {
+          "type": "boolean",
+          "default": true
         }
       }
     },

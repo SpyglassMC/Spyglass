@@ -14,6 +14,7 @@ import type {
 	MyLspDataHackPubifyRequestParams,
 } from './util/index.js'
 import { toCore, toLS } from './util/index.js'
+import { LspFileWatcher } from './util/LspFileWatcher.js'
 
 export * from './util/types.js'
 
@@ -30,6 +31,7 @@ const cacheRoot = fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRootPath).to
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
 let workspaceFolders!: ls.WorkspaceFolder[]
+let projectRoots!: core.RootUriString[]
 let hasShutdown = false
 
 const externals = getNodeJsExternals({ cacheRoot })
@@ -41,9 +43,22 @@ const logger: core.Logger = {
 }
 let service!: core.Service
 
-function buildSemanticTokensCapability(): ls.SemanticTokensRegistrationOptions {
+function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensRegistrationOptions {
+	// Always register everything for static registration, so all changes to the config can be
+	// processed by the request handlers instead
+	const semanticTokensConfig = service.project.config.env.feature.semanticColoring
+	let disabledLanguages: string[] = []
+	if (
+		isDynamic && typeof semanticTokensConfig === 'object'
+		&& Array.isArray(semanticTokensConfig.disabledLanguages)
+	) {
+		disabledLanguages = semanticTokensConfig.disabledLanguages
+	}
 	return {
-		documentSelector: toLS.documentSelector(service.project.meta),
+		documentSelector: toLS.documentSelector(
+			service.project.meta,
+			{ disabledLanguages },
+		),
 		legend: toLS.semanticTokensLegend(),
 		full: { delta: false },
 		range: true,
@@ -61,6 +76,7 @@ connection.onInitialize(async (params) => {
 
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
+	projectRoots = workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri))
 
 	if (initializationOptions?.inDevelopmentMode) {
 		await new Promise((resolve) => setTimeout(resolve, 3000))
@@ -87,13 +103,14 @@ connection.onInitialize(async (params) => {
 				'project#ready#bind',
 			]),
 			project: {
-				defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
-					env: { gameVersion: initializationOptions?.gameVersion },
-				}),
+				defaultConfig: core.ConfigService.merge(
+					core.VanillaConfig,
+					initializationOptions?.defaultConfig ?? {},
+				),
 				cacheRoot,
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
-				projectRoots: workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri)),
+				projectRoots,
 			},
 		})
 		service.project.on('documentErrored', async ({ errors, uri, version }) => {
@@ -123,7 +140,7 @@ connection.onInitialize(async (params) => {
 		logger.info(
 			"[startDynamicSemanticTokensRegistration] LanguageClient didn't permit dynamic registration for semantic tokens. Registering semantic tokens statically instead...",
 		)
-		semanticTokensProvider = buildSemanticTokensCapability()
+		semanticTokensProvider = buildSemanticTokensCapability(false)
 	}
 
 	const customCapabilities: CustomServerCapabilities = {
@@ -171,10 +188,57 @@ connection.onInitialized(async () => {
 			{ documentSelector: [{ language: 'mcdoc' }] },
 		)
 	}
+	if (capabilities.workspace?.didChangeConfiguration?.dynamicRegistration) {
+		void connection.client.register(
+			ls.DidChangeConfigurationNotification.type,
+			{ section: ['spyglassmc'] },
+		)
+	}
+
+	// In case the initializationOptions were incomplete (for example because the client doesn't support them)
+	await updateEditorConfiguration()
 
 	startDynamicSemanticTokensRegistration()
 
-	await service.project.ready()
+	// Initializes LspFileWatcher only when client supports didChangeWatchedFiles notifications.
+	const fileWatcher = capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration
+		? new LspFileWatcher({
+			capabilities,
+			connection,
+			externals,
+			locations: projectRoots,
+			logger,
+			predicate: (uri) => !service.project.shouldExclude(uri),
+		})
+			.on('ready', () => logger.info('[FileWatcher] ready'))
+			.on('add', (uri) => logger.info('[FileWatcher] added', uri))
+			.on('change', (uri) => logger.info('[FileWatcher] changed', uri))
+			.on('unlink', (uri) => logger.info('[FileWatcher] unlinked', uri))
+			.on('error', (e) => logger.error('[FileWatcher]', e))
+		: undefined
+
+	if (fileWatcher) {
+		// Listen for config changes and reconcile the internal state of the file watcher if
+		// `env.exclude` has changed.
+		service.project.on('configChanged', async ({ oldConfig, newConfig }) => {
+			const oldExclude = new Set(oldConfig.env.exclude)
+			const newExclude = new Set(newConfig.env.exclude)
+			if (oldExclude.size === newExclude.size && oldExclude.isSubsetOf(newExclude)) {
+				// `env.exclude` has not changed. Skip.
+				return
+			}
+
+			logger.info('[FileWatcher] env.exclude config has changed. Reconciling...')
+			for (const root of projectRoots) {
+				await fileWatcher.reconcile(root)
+			}
+		})
+	}
+
+	await service.project.ready({
+		projectRootsWatcher: fileWatcher,
+	})
+
 	if (capabilities.workspace?.workspaceFolders) {
 		connection.workspace.onDidChangeWorkspaceFolders(async () => {
 			// FIXME
@@ -202,7 +266,7 @@ function startDynamicSemanticTokensRegistration() {
 		logger.info('[registerDynamicSemanticTokens] Registering dynamic semantic tokens')
 		dynamicSemanticTokensDiposable = connection.client.register(
 			ls.SemanticTokensRegistrationType.type,
-			buildSemanticTokensCapability(),
+			buildSemanticTokensCapability(true),
 		)
 	}
 
@@ -216,11 +280,52 @@ function startDynamicSemanticTokensRegistration() {
 		registerDynamicSemanticTokens()
 	}
 
-	service.project.on('configChanged', config => {
-		if (config.env.feature.semanticColoring) {
-			registerDynamicSemanticTokens()
-		} else {
+	function didConfigChange(
+		oldSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
+		newSemanticTokensConfig: boolean | { disabledLanguages?: string[] },
+	): boolean {
+		if (oldSemanticTokensConfig === newSemanticTokensConfig) {
+			return false
+		}
+		if (
+			typeof oldSemanticTokensConfig !== 'object'
+			|| typeof newSemanticTokensConfig !== 'object'
+		) {
+			return true
+		}
+		if (
+			!oldSemanticTokensConfig.disabledLanguages
+			&& !newSemanticTokensConfig.disabledLanguages
+		) {
+			return false
+		}
+		if (
+			Array.isArray(oldSemanticTokensConfig.disabledLanguages)
+			&& Array.isArray(newSemanticTokensConfig.disabledLanguages)
+			&& oldSemanticTokensConfig.disabledLanguages.length
+				=== newSemanticTokensConfig.disabledLanguages.length
+			&& oldSemanticTokensConfig.disabledLanguages.every((language, index) =>
+				language === newSemanticTokensConfig.disabledLanguages!![index]
+			)
+		) {
+			return false
+		}
+		return true
+	}
+
+	service.project.on('configChanged', ({ oldConfig, newConfig }) => {
+		const oldSemanticTokensConfig = oldConfig.env.feature.semanticColoring
+		const newSemanticTokensConfig = newConfig.env.feature.semanticColoring
+
+		if (!didConfigChange(oldSemanticTokensConfig, newSemanticTokensConfig)) {
+			return
+		}
+
+		if (oldSemanticTokensConfig) {
 			unregisterDynamicSemanticTokens()
+		}
+		if (newSemanticTokensConfig) {
+			registerDynamicSemanticTokens()
 		}
 	})
 }
@@ -236,8 +341,6 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, versi
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	service.project.onDidClose(uri)
 })
-
-connection.workspace.onDidRenameFiles(({}) => {})
 
 connection.onCodeAction(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
@@ -483,6 +586,13 @@ connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
 	}
 	return [toLS.textEdit(node.range, text, doc)]
 })
+
+connection.onDidChangeConfiguration(updateEditorConfiguration)
+async function updateEditorConfiguration() {
+	const settings = await connection.workspace.getConfiguration({ section: 'spyglassmc' })
+	const config = core.PartialConfig.buildConfigFromEditorSettingsSafe(settings)
+	await service.project.onEditorConfigurationUpdate(config)
+}
 
 connection.onShutdown(async (): Promise<void> => {
 	await service.project.close()

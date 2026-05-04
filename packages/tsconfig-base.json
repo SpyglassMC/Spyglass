@@ -2,14 +2,17 @@
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
-		"module": "ES2022",
-		"moduleResolution": "Bundler",
+		"module": "node20",
+		"moduleResolution": "node16",
 		"target": "ES2022",
 		"lib": [
-			"ES2023",
+			"ES2024",
+			"ESNext.Array",
+			"ESNext.Collection",
+			"ESNext.Iterator",
 			"DOM"
 		],
-		
+
 		"alwaysStrict": true,
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,

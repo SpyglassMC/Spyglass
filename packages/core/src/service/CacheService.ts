@@ -1,5 +1,5 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { Uri } from '../common/index.js'
+import { bigintJsonLosslessReplacer, bigintJsonLosslessReviver, Uri } from '../common/index.js'
 import type { PosRangeLanguageError } from '../source/index.js'
 import type { UnlinkedSymbolTable } from '../symbol/index.js'
 import { SymbolTable } from '../symbol/index.js'
@@ -12,7 +12,7 @@ import type { Project } from './Project.js'
  * The format version of the cache. Should be increased when any changes that
  * could invalidate the cache are introduced to the Spyglass codebase.
  */
-export const LatestCacheVersion = 6
+export const LatestCacheVersion = 7
 
 /**
  * Checksums of cached files or roots.
@@ -130,8 +130,11 @@ export class CacheService {
 		try {
 			filePath = await this.getCacheFileUri()
 			this.project.logger.info(`[CacheService#load] symbolCachePath = ${filePath}`)
-			const cache =
-				(await fileUtil.readGzippedJson(this.project.externals, filePath)) as CacheFile
+			const cache = (await fileUtil.readGzippedJson(
+				this.project.externals,
+				filePath,
+				bigintJsonLosslessReviver,
+			)) as CacheFile
 			__profiler.task('Read File')
 			if (cache.version === LatestCacheVersion) {
 				this.checksums = cache.checksums
@@ -237,7 +240,12 @@ export class CacheService {
 			}
 			__profiler.task('Unlink Symbols')
 
-			await fileUtil.writeGzippedJson(this.project.externals, filePath, cache)
+			await fileUtil.writeGzippedJson(
+				this.project.externals,
+				filePath,
+				cache,
+				bigintJsonLosslessReplacer,
+			)
 			__profiler.task('Write File').finalize()
 
 			return true
