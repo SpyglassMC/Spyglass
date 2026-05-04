@@ -465,38 +465,47 @@ exports[`mcdoc parser > enum_ > Parse 'enum (byte) Foo {↓⮀⮀⮀⮀⮀Bar = 
                       "end": 30
                     },
                     "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 30,
+                      "end": 31
+                    },
+                    "value": "s",
+                    "colorTokenType": "keyword"
                   }
                 ],
                 "range": {
                   "start": 29,
-                  "end": 30
+                  "end": 31
                 }
               }
             ],
             "range": {
               "start": 23,
-              "end": 30
+              "end": 31
             }
           }
         ],
         "range": {
           "start": 16,
-          "end": 30
+          "end": 38
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 30
+      "end": 38
     }
   },
   "errors": [
     {
       "range": {
         "start": 30,
-        "end": 30
+        "end": 31
       },
-      "message": "Expected “}” but got “s”",
+      "message": "Expected “b” or “B” but got “s”",
       "severity": 3
     }
   ]
@@ -960,38 +969,47 @@ exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀Bar 
                       "end": 32
                     },
                     "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 32,
+                      "end": 33
+                    },
+                    "value": "f",
+                    "colorTokenType": "keyword"
                   }
                 ],
                 "range": {
                   "start": 31,
-                  "end": 32
+                  "end": 33
                 }
               }
             ],
             "range": {
               "start": 25,
-              "end": 32
+              "end": 33
             }
           }
         ],
         "range": {
           "start": 18,
-          "end": 32
+          "end": 40
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 32
+      "end": 40
     }
   },
   "errors": [
     {
       "range": {
         "start": 32,
-        "end": 32
+        "end": 33
       },
-      "message": "Expected “}” but got “f”",
+      "message": "Expected “d” or “D” but got “f”",
       "severity": 3
     }
   ]
@@ -1392,38 +1410,47 @@ exports[`mcdoc parser > enum_ > Parse 'enum (float) Foo {↓⮀⮀⮀⮀⮀Bar =
                       "end": 33
                     },
                     "value": 4.2
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 33,
+                      "end": 34
+                    },
+                    "value": "d",
+                    "colorTokenType": "keyword"
                   }
                 ],
                 "range": {
                   "start": 30,
-                  "end": 33
+                  "end": 34
                 }
               }
             ],
             "range": {
               "start": 24,
-              "end": 33
+              "end": 34
             }
           }
         ],
         "range": {
           "start": 17,
-          "end": 33
+          "end": 41
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 33
+      "end": 41
     }
   },
   "errors": [
     {
       "range": {
         "start": 33,
-        "end": 33
+        "end": 34
       },
-      "message": "Expected “}” but got “d”",
+      "message": "Expected “f” or “F” but got “d”",
       "severity": 3
     }
   ]
@@ -1485,38 +1512,47 @@ exports[`mcdoc parser > enum_ > Parse 'enum (float) Foo {↓⮀⮀⮀⮀⮀Bar =
                       "end": 31
                     },
                     "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 31,
+                      "end": 32
+                    },
+                    "value": "l",
+                    "colorTokenType": "keyword"
                   }
                 ],
                 "range": {
                   "start": 30,
-                  "end": 31
+                  "end": 32
                 }
               }
             ],
             "range": {
               "start": 24,
-              "end": 31
+              "end": 32
             }
           }
         ],
         "range": {
           "start": 17,
-          "end": 31
+          "end": 39
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 31
+      "end": 39
     }
   },
   "errors": [
     {
       "range": {
         "start": 31,
-        "end": 31
+        "end": 32
       },
-      "message": "Expected “}” but got “l”",
+      "message": "Expected “f” or “F” but got “l”",
       "severity": 3
     }
   ]
@@ -2461,7 +2497,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = 
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "integer",
+                    "type": "long",
                     "range": {
                       "start": 29,
                       "end": 30
@@ -2495,7 +2531,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = 
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "integer",
+                    "type": "long",
                     "range": {
                       "start": 43,
                       "end": 44
@@ -2538,7 +2574,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = 
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "integer",
+                    "type": "long",
                     "range": {
                       "start": 58,
                       "end": 59
@@ -2631,7 +2667,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = 
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "integer",
+                    "type": "long",
                     "range": {
                       "start": 29,
                       "end": 30
@@ -2724,44 +2760,53 @@ exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = 
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "integer",
+                    "type": "long",
                     "range": {
                       "start": 29,
                       "end": 30
                     },
                     "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 30,
+                      "end": 31
+                    },
+                    "value": "s",
+                    "colorTokenType": "keyword"
                   }
                 ],
                 "range": {
                   "start": 29,
-                  "end": 30
+                  "end": 31
                 }
               }
             ],
             "range": {
               "start": 23,
-              "end": 30
+              "end": 31
             }
           }
         ],
         "range": {
           "start": 16,
-          "end": 30
+          "end": 38
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 30
+      "end": 38
     }
   },
   "errors": [
     {
       "range": {
         "start": 30,
-        "end": 30
+        "end": 31
       },
-      "message": "Expected “}” but got “s”",
+      "message": "Expected “l” or “L” but got “s”",
       "severity": 3
     }
   ]
@@ -2817,7 +2862,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = 
                 "type": "mcdoc:typed_number",
                 "children": [
                   {
-                    "type": "integer",
+                    "type": "long",
                     "range": {
                       "start": 29,
                       "end": 29
@@ -2854,7 +2899,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum (long) Foo {↓⮀⮀⮀⮀⮀Bar = 
         "start": 29,
         "end": 29
       },
-      "message": "Expected an integer",
+      "message": "Expected a long",
       "severity": 3
     },
     {
@@ -3187,38 +3232,47 @@ exports[`mcdoc parser > enum_ > Parse 'enum (short) Foo {↓⮀⮀⮀⮀⮀Bar =
                       "end": 31
                     },
                     "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 31,
+                      "end": 32
+                    },
+                    "value": "l",
+                    "colorTokenType": "keyword"
                   }
                 ],
                 "range": {
                   "start": 30,
-                  "end": 31
+                  "end": 32
                 }
               }
             ],
             "range": {
               "start": 24,
-              "end": 31
+              "end": 32
             }
           }
         ],
         "range": {
           "start": 17,
-          "end": 31
+          "end": 39
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 31
+      "end": 39
     }
   },
   "errors": [
     {
       "range": {
         "start": 31,
-        "end": 31
+        "end": 32
       },
-      "message": "Expected “}” but got “l”",
+      "message": "Expected “s” or “S” but got “l”",
       "severity": 3
     }
   ]
