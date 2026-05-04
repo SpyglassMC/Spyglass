@@ -1306,6 +1306,9 @@ function getValueType(
 		case 'literal':
 			return { kind: type.value.kind }
 		case 'enum':
+			if (type.enumKind === undefined) {
+				return { kind: 'any' }
+			}
 			return { kind: type.enumKind }
 		default:
 			return type

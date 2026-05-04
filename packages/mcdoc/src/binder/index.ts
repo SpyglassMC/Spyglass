@@ -853,9 +853,6 @@ function convertTypeArgBlock(node: TypeArgBlockNode, ctx: McdocBinderContext): M
 
 function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 	const { block, enumKind, identifier } = EnumNode.destruct(node)
-	if (enumKind === undefined) {
-		return EmptyUnion
-	}
 
 	// Return reference if the enum has been hoisted
 	if (identifier && !ctx.isHoisting) {
@@ -887,6 +884,12 @@ function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 				values: convertEnumBlock(block, ctx).filter((f): f is EnumTypeField<string> =>
 					typeof (f.value) === 'string'
 				),
+			}, ctx)
+		case undefined:
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, ctx),
 			}, ctx)
 		default:
 			return wrapType(node, {
