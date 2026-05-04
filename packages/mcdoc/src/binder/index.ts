@@ -873,17 +873,23 @@ function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 			return wrapType(node, {
 				kind: 'enum',
 				enumKind,
-				values: convertEnumBlock(block, ctx).filter((f): f is EnumTypeField<bigint> =>
-					typeof (f.value) === 'number'
-				),
+				values: convertEnumBlock(block, ctx).map(f => ({
+					...f,
+					value: typeof (f.value) === 'bigint'
+						? f.value
+						: typeof (f.value) === 'number'
+						? BigInt(f.value)
+						: 0n,
+				})),
 			}, ctx)
 		case 'string':
 			return wrapType(node, {
 				kind: 'enum',
 				enumKind,
-				values: convertEnumBlock(block, ctx).filter((f): f is EnumTypeField<string> =>
-					typeof (f.value) === 'string'
-				),
+				values: convertEnumBlock(block, ctx).map(f => ({
+					...f,
+					value: typeof (f.value) === 'string' ? f.value : f.value.toString(),
+				})),
 			}, ctx)
 		case undefined:
 			return wrapType(node, {
@@ -895,9 +901,14 @@ function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 			return wrapType(node, {
 				kind: 'enum',
 				enumKind,
-				values: convertEnumBlock(block, ctx).filter((f): f is EnumTypeField<number> =>
-					typeof (f.value) === 'number'
-				),
+				values: convertEnumBlock(block, ctx).map(f => ({
+					...f,
+					value: typeof (f.value) === 'number'
+						? f.value
+						: typeof (f.value) === 'bigint'
+						? Number(f.value)
+						: 0,
+				})),
 			}, ctx)
 	}
 }
