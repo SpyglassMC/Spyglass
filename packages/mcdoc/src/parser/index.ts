@@ -618,21 +618,44 @@ export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 		regex: /^(?:\+|-)?\d+L/i,
 		parser: sequence([
 			long,
-			optional(keyword(LiteralIntCaseInsensitiveSuffixes, { colorTokenType: 'keyword' })),
+			optional(
+				failOnEmpty(literal(LiteralIntCaseInsensitiveSuffixes, { colorTokenType: 'keyword' })),
+			),
 		]),
 	}, {
 		regex: /^(?:\+|-)?\d+(?!\d|[.dfe])/i,
 		parser: sequence([
 			integer,
-			optional(keyword(LiteralIntCaseInsensitiveSuffixes, { colorTokenType: 'keyword' })),
+			optional(
+				failOnEmpty(literal(LiteralIntCaseInsensitiveSuffixes, { colorTokenType: 'keyword' })),
+			),
 		]),
 	}, {
 		parser: sequence([
 			float,
-			optional(keyword(LiteralFloatCaseInsensitiveSuffixes, { colorTokenType: 'keyword' })),
+			optional(failOnEmpty(
+				literal(LiteralFloatCaseInsensitiveSuffixes, { colorTokenType: 'keyword' }),
+			)),
 		]),
 	}]),
 )
+
+export const failableTypedNumber: Parser<TypedNumberNode> = (src, ctx) => {
+	const { updateSrcAndCtx, result, errorAmount } = core.attempt(typedNumber, src, ctx)
+
+	if (errorAmount > 0) {
+		if (result.children.length !== 2) {
+			return Failure
+		}
+
+		const { errorAmount: numberErrors } = core.attempt(float, src, ctx)
+		if (numberErrors > 0) {
+			return Failure
+		}
+	}
+	updateSrcAndCtx()
+	return result
+}
 
 const enumValue = (kind: EnumKind): InfallibleParser<EnumValueNode> => {
 	let numberParser
@@ -669,7 +692,7 @@ const enumValue = (kind: EnumKind): InfallibleParser<EnumValueNode> => {
 		suffix.length > 0
 			? sequence([
 				numberParser,
-				optional(keyword(suffix, { colorTokenType: 'keyword' })),
+				optional(failOnEmpty(literal(suffix, { colorTokenType: 'keyword' }))),
 			])
 			: sequence([numberParser]),
 	)
@@ -1005,7 +1028,7 @@ export const literalType: Parser<LiteralTypeNode> = typeBase(
 			parser: keyword(['false', 'true'], { colorTokenType: 'type' }),
 		},
 		{ prefix: '"', parser: failOnEmpty(string) },
-		{ parser: failOnError(typedNumber) },
+		{ parser: failableTypedNumber },
 	]),
 )
 
