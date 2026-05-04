@@ -134,7 +134,10 @@ function inferType(node: JsonNode): mcdoc.runtime.checker.SimplifiedMcdocTypeNoU
 		case 'json:number':
 			return {
 				kind: 'literal',
-				value: { kind: node.value.type, value: Number(node.value.value) },
+				value: {
+					kind: node.value.type,
+					value: node.value.value,
+				} as (mcdoc.LiteralNumericValue | mcdoc.LiteralLongNumberValue),
 			}
 		case 'json:null':
 			return { kind: 'any' } // null is always invalid?

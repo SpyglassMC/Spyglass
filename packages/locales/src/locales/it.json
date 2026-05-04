@@ -1,4 +1,5 @@
 {
+	"array": "un array",
 	"boolean": "un booleano",
 	"code-action.block-state-sort-keys": "Ordina stato blocco",
 	"code-action.fix-file": "Aggiusta tutti i problemi auto-aggiustabili in questo file",

@@ -52,7 +52,7 @@
     "esbuild": "^0.25.2",
     "ovsx": "^0.9.1",
     "vscode-languageclient": "^9.0.1",
-    "vscode-test": "^1.5.2"
+    "vscode-test": "^1.4.1"
   },
   "repository": {
     "type": "git",
@@ -120,6 +120,7 @@
           "data/*/predicates/**/*.json",
           "data/*/recipe/**/*.json",
           "data/*/recipes/**/*.json",
+          "data/*/sulfur_cube_archetype/**/*.json",
           "data/*/tags/**/*.json",
           "data/*/test_instance/**/*.json",
           "data/*/test_environment/**/*.json",
@@ -295,7 +296,9 @@
         },
         "spyglassmc.env.feature.inlayHint.enabledNodes": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [
             "boolean",
             "double",
@@ -309,8 +312,10 @@
         },
         "spyglassmc.env.feature.semanticColoring.disabledLanguages": {
           "type": "array",
-          "items": { "type": "string" },
-          "default": [ ]
+          "items": {
+            "type": "string"
+          },
+          "default": []
         },
         "spyglassmc.env.feature.signatures": {
           "type": "boolean",
