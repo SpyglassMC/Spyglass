@@ -689,12 +689,10 @@ const enumValue = (kind: EnumKind): InfallibleParser<EnumValueNode> => {
 	}
 	return setType(
 		'mcdoc:typed_number',
-		suffix.length > 0
-			? sequence([
-				numberParser,
-				optional(failOnEmpty(literal(suffix, { colorTokenType: 'keyword' }))),
-			])
-			: sequence([numberParser]),
+		sequence([
+			numberParser,
+			optional(failOnEmpty(literal(suffix, { colorTokenType: 'keyword' }))),
+		]),
 	)
 }
 

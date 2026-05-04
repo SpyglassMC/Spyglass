@@ -1941,38 +1941,47 @@ exports[`mcdoc parser > enum_ > Parse 'enum (int) Foo {↓⮀⮀⮀⮀⮀Bar = 4
                       "end": 29
                     },
                     "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 29,
+                      "end": 30
+                    },
+                    "value": "L",
+                    "colorTokenType": "keyword"
                   }
                 ],
                 "range": {
                   "start": 28,
-                  "end": 29
+                  "end": 30
                 }
               }
             ],
             "range": {
               "start": 22,
-              "end": 29
+              "end": 30
             }
           }
         ],
         "range": {
           "start": 15,
-          "end": 29
+          "end": 37
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 29
+      "end": 37
     }
   },
   "errors": [
     {
       "range": {
         "start": 29,
-        "end": 29
+        "end": 30
       },
-      "message": "Expected “}” but got “L”",
+      "message": "Expected nothing but got “L”",
       "severity": 3
     }
   ]
@@ -2034,38 +2043,47 @@ exports[`mcdoc parser > enum_ > Parse 'enum (int) Foo {↓⮀⮀⮀⮀⮀Bar = 4
                       "end": 29
                     },
                     "value": 4
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 29,
+                      "end": 30
+                    },
+                    "value": "b",
+                    "colorTokenType": "keyword"
                   }
                 ],
                 "range": {
                   "start": 28,
-                  "end": 29
+                  "end": 30
                 }
               }
             ],
             "range": {
               "start": 22,
-              "end": 29
+              "end": 30
             }
           }
         ],
         "range": {
           "start": 15,
-          "end": 29
+          "end": 37
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 29
+      "end": 37
     }
   },
   "errors": [
     {
       "range": {
         "start": 29,
-        "end": 29
+        "end": 30
       },
-      "message": "Expected “}” but got “b”",
+      "message": "Expected nothing but got “b”",
       "severity": 3
     }
   ]
