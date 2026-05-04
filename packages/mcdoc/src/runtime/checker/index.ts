@@ -2,7 +2,6 @@ import { Range, Source } from '@spyglassmc/core'
 import type { CheckerContext, FullResourceLocation, SymbolQuery } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../../binder/index.js'
-import { type EnumKind } from '../../node/index.js'
 import type {
 	ConcreteType,
 	DispatcherType,
@@ -40,7 +39,7 @@ export type SimplifiedMcdocType =
 	| UnionType<SimplifiedMcdocTypeNoUnion>
 
 export type SimplifiedMcdocTypeNoUnion =
-	| SimplifiedEnum
+	| EnumType
 	| KeywordType
 	| ListType
 	| LiteralType
@@ -51,9 +50,6 @@ export type SimplifiedMcdocTypeNoUnion =
 	| SimplifiedStructType
 	| TupleType
 
-export interface SimplifiedEnum extends EnumType {
-	enumKind: EnumKind
-}
 export interface SimplifiedStructType extends StructType {
 	fields: SimplifiedStructTypePairField[]
 }
@@ -1235,11 +1231,11 @@ function simplifyTuple<T>(
 function simplifyEnum<T>(
 	typeDef: EnumType,
 	context: SimplifyContext<T>,
-): SimplifyResult<SimplifiedEnum> {
+): SimplifyResult<EnumType> {
 	const filteredValues = typeDef.values.filter(value =>
 		shouldKeepAccordingToAttributeFilters(value.attributes, context.ctx)
 	)
-	return { typeDef: { ...typeDef, enumKind: typeDef.enumKind ?? 'int', values: filteredValues } }
+	return { typeDef: { ...typeDef, values: filteredValues } as EnumType }
 }
 
 function simplifyConcrete<T>(

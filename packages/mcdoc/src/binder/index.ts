@@ -97,6 +97,7 @@ import type {
 	StructTypePairField,
 	StructTypeSpreadField,
 } from '../type/index.js'
+import { EmptyUnion } from '../type/index.js'
 
 interface McdocBinderContext extends BinderContext {
 	moduleIdentifier: string
@@ -852,6 +853,9 @@ function convertTypeArgBlock(node: TypeArgBlockNode, ctx: McdocBinderContext): M
 
 function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 	const { block, enumKind, identifier } = EnumNode.destruct(node)
+	if (enumKind === undefined) {
+		return EmptyUnion
+	}
 
 	// Return reference if the enum has been hoisted
 	if (identifier && !ctx.isHoisting) {
@@ -867,15 +871,46 @@ function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 		return symbol.data.typeDef
 	}
 
-	return wrapType(node, { kind: 'enum', enumKind, values: convertEnumBlock(block, ctx) }, ctx)
+	switch (enumKind) {
+		case 'long':
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, ctx).filter((f): f is EnumTypeField<bigint> =>
+					typeof (f.value) === 'number'
+				),
+			}, ctx)
+		case 'string':
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, ctx).filter((f): f is EnumTypeField<string> =>
+					typeof (f.value) === 'string'
+				),
+			}, ctx)
+		default:
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, ctx).filter((f): f is EnumTypeField<number> =>
+					typeof (f.value) === 'number'
+				),
+			}, ctx)
+	}
 }
 
-function convertEnumBlock(node: EnumBlockNode, ctx: McdocBinderContext): EnumTypeField[] {
+function convertEnumBlock(
+	node: EnumBlockNode,
+	ctx: McdocBinderContext,
+): EnumTypeField<bigint | number | string>[] {
 	const { fields } = EnumBlockNode.destruct(node)
 	return fields.map((n) => convertEnumField(n, ctx))
 }
 
-function convertEnumField(node: EnumFieldNode, ctx: McdocBinderContext): EnumTypeField {
+function convertEnumField(
+	node: EnumFieldNode,
+	ctx: McdocBinderContext,
+): EnumTypeField<bigint | number | string> {
 	const { attributes, docComments, identifier, value } = EnumFieldNode.destruct(node)
 	return {
 		attributes: convertAttributes(attributes, ctx),
@@ -885,7 +920,7 @@ function convertEnumField(node: EnumFieldNode, ctx: McdocBinderContext): EnumTyp
 	}
 }
 
-function convertEnumValue(node: EnumValueNode, ctx: McdocBinderContext): string | number | bigint {
+function convertEnumValue(node: EnumValueNode, ctx: McdocBinderContext): bigint | number | string {
 	if (TypedNumberNode.is(node)) {
 		const { value } = TypedNumberNode.destruct(node)
 		return value.value

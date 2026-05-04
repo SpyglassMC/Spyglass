@@ -215,14 +215,26 @@ export interface StructTypeSpreadField extends McdocBaseType {
 	type: McdocType
 }
 
-export interface EnumType extends McdocBaseType {
+export type EnumType = NumberEnumType | LongEnumType | StringEnumType
+
+interface EnumTypeBase extends McdocBaseType {
 	kind: 'enum'
-	enumKind?: EnumKind
-	values: EnumTypeField[]
 }
-export interface EnumTypeField extends McdocBaseType {
+interface NumberEnumType extends EnumTypeBase {
+	enumKind: 'byte' | 'short' | 'int' | 'float' | 'double'
+	values: EnumTypeField<number>[]
+}
+interface LongEnumType extends EnumTypeBase {
+	enumKind: 'long'
+	values: EnumTypeField<bigint>[]
+}
+interface StringEnumType extends EnumTypeBase {
+	enumKind: 'string'
+	values: EnumTypeField<string>[]
+}
+export interface EnumTypeField<T> extends McdocBaseType {
 	identifier: string
-	value: string | number | bigint
+	value: T
 	desc?: string
 }
 
