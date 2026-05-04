@@ -51,7 +51,6 @@ import type {
 	EnumBlockNode,
 	EnumFieldNode,
 	EnumInjectionNode,
-	EnumKind,
 	EnumNode,
 	EnumValueNode,
 	FloatRangeNode,
@@ -657,113 +656,29 @@ export const failableTypedNumber: Parser<TypedNumberNode> = (src, ctx) => {
 	return result
 }
 
-const enumValue = (kind: EnumKind): InfallibleParser<EnumValueNode> => {
-	let numberParser
-	let suffix: string[] = []
-	switch (kind) {
-		case 'byte':
-			numberParser = integer
-			suffix = ['b', 'B']
-			break
-		case 'short':
-			numberParser = integer
-			suffix = ['s', 'S']
-			break
-		case 'int':
-			numberParser = integer
-			break
-		case 'long':
-			numberParser = long
-			suffix = ['l', 'L']
-			break
-		case 'string':
-			return string
-		case 'float':
-			numberParser = float
-			suffix = ['f', 'F']
-			break
-		case 'double':
-			numberParser = float
-			suffix = ['d', 'D']
-			break
-	}
-	return setType(
-		'mcdoc:typed_number',
-		sequence([
-			numberParser,
-			optional(failOnEmpty(literal(suffix, { colorTokenType: 'keyword' }))),
-		]),
-	)
-}
+const enumValue: InfallibleParser<EnumValueNode> = select([{ prefix: '"', parser: string }, {
+	parser: typedNumber,
+}])
 
-const enumField = (kind: EnumKind): InfallibleParser<EnumFieldNode> =>
-	setType(
-		'mcdoc:enum/field',
-		syntax([prelim, identifier, punctuation('='), enumValue(kind)], true),
-	)
+const enumField: InfallibleParser<EnumFieldNode> = setType(
+	'mcdoc:enum/field',
+	syntax([prelim, identifier, punctuation('='), enumValue], true),
+)
 
-const enumBlock = (kind: EnumKind): InfallibleParser<EnumBlockNode> =>
-	setType(
-		'mcdoc:enum/block',
-		syntax([
-			punctuation('{'),
-			select([{ prefix: '}', parser: punctuation('}') }, {
-				parser: syntax([
-					enumField(kind),
-					syntaxRepeat(syntax([marker(','), failOnEmpty(enumField(kind))], true), true),
-					optional(marker(',')),
-					punctuation('}'),
-				], true),
-			}]),
-		], true),
-	)
-
-const enumTypeSelect = <T extends AstNode>(
-	inner: (
-		kind: EnumKind,
-	) => InfallibleParser<SyntaxUtil<T>>,
-) =>
-	select([
-		{
-			prefix: 'byte',
-			parser: inner('byte'),
-		},
-		{
-			prefix: 'short',
-			parser: inner('short'),
-		},
-		{
-			prefix: 'int',
-			parser: inner('int'),
-		},
-		{
-			prefix: 'long',
-			parser: inner('long'),
-		},
-		{
-			prefix: 'string',
-			parser: inner('string'),
-		},
-		{
-			prefix: 'float',
-			parser: inner('float'),
-		},
-		{
-			prefix: 'double',
-			parser: inner('double'),
-		},
-		{
-			parser: any([
-				inner('byte'),
-				inner('short'),
-				inner('int'),
-				inner('long'),
-				inner('string'),
-				inner('float'),
-				inner('double'),
-			]),
-		},
-	])
+const enumBlock: InfallibleParser<EnumBlockNode> = setType(
+	'mcdoc:enum/block',
+	syntax([
+		punctuation('{'),
+		select([{ prefix: '}', parser: punctuation('}') }, {
+			parser: syntax([
+				enumField,
+				syntaxRepeat(syntax([marker(','), failOnEmpty(enumField)], true), true),
+				optional(marker(',')),
+				punctuation('}'),
+			], true),
+		}]),
+	], true),
+)
 
 export const enum_: Parser<EnumNode> = setType(
 	'mcdoc:enum',
@@ -771,14 +686,10 @@ export const enum_: Parser<EnumNode> = setType(
 		prelim,
 		keyword('enum'),
 		punctuation('('),
-		enumTypeSelect((kind: EnumKind) =>
-			syntax([
-				enumType,
-				punctuation(')'),
-				optional(failOnError(identifier)),
-				enumBlock(kind),
-			])
-		),
+		enumType,
+		punctuation(')'),
+		optional(failOnError(identifier)),
+		enumBlock,
 	], true),
 )
 
@@ -840,18 +751,7 @@ export const struct: Parser<StructNode> = setType(
 
 const enumInjection: InfallibleParser<EnumInjectionNode> = setType(
 	'mcdoc:injection/enum',
-	syntax([
-		literal('enum'),
-		punctuation('('),
-		enumTypeSelect((kind: EnumKind) =>
-			syntax([
-				enumType,
-				punctuation(')'),
-				path,
-				enumBlock(kind),
-			])
-		),
-	]),
+	syntax([literal('enum'), punctuation('('), enumType, punctuation(')'), path, enumBlock]),
 )
 
 const structInjection: InfallibleParser<StructInjectionNode> = setType(
