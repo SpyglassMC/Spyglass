@@ -770,11 +770,6 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
             "item": {
               "kind": "struct",
               "fields": []
-            },
-            "lengthRange": {
-              "kind": 0,
-              "min": 1,
-              "max": 1
             }
           }
         },
@@ -798,7 +793,7 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
             },
             "fullRange": {
               "start": 481,
-              "end": 514
+              "end": 510
             },
             "fullPosRange": {
               "start": {
@@ -806,8 +801,8 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
                 "character": 0
               },
               "end": {
-                "line": 17,
-                "character": 0
+                "line": 16,
+                "character": 29
               }
             },
             "contributor": "binder"
@@ -837,103 +832,6 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
               "end": {
                 "line": 16,
                 "character": 24
-              }
-            },
-            "contributor": "binder"
-          }
-        ]
-      },
-      "::test::TupleTest0": {
-        "data": {
-          "typeDef": {
-            "kind": "tuple",
-            "items": [
-              {
-                "kind": "byte"
-              }
-            ]
-          }
-        },
-        "subcategory": "type_alias",
-        "definition": [
-          {
-            "uri": "file:///test.mcdoc",
-            "range": {
-              "start": 519,
-              "end": 529
-            },
-            "posRange": {
-              "start": {
-                "line": 17,
-                "character": 5
-              },
-              "end": {
-                "line": 17,
-                "character": 15
-              }
-            },
-            "fullRange": {
-              "start": 514,
-              "end": 540
-            },
-            "fullPosRange": {
-              "start": {
-                "line": 17,
-                "character": 0
-              },
-              "end": {
-                "line": 18,
-                "character": 0
-              }
-            },
-            "contributor": "binder"
-          }
-        ]
-      },
-      "::test::TupleTest1": {
-        "data": {
-          "typeDef": {
-            "kind": "tuple",
-            "items": [
-              {
-                "kind": "string"
-              },
-              {
-                "kind": "boolean"
-              }
-            ]
-          }
-        },
-        "subcategory": "type_alias",
-        "definition": [
-          {
-            "uri": "file:///test.mcdoc",
-            "range": {
-              "start": 545,
-              "end": 555
-            },
-            "posRange": {
-              "start": {
-                "line": 18,
-                "character": 5
-              },
-              "end": {
-                "line": 18,
-                "character": 15
-              }
-            },
-            "fullRange": {
-              "start": 540,
-              "end": 575
-            },
-            "fullPosRange": {
-              "start": {
-                "line": 18,
-                "character": 0
-              },
-              "end": {
-                "line": 18,
-                "character": 35
               }
             },
             "contributor": "binder"
@@ -2118,181 +2016,44 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
                         "start": 499,
                         "end": 508
                       }
-                    },
-                    {
-                      "type": "mcdoc:int_range",
-                      "children": [
-                        {
-                          "type": "integer",
-                          "range": {
-                            "start": 512,
-                            "end": 513
-                          },
-                          "value": 1
-                        }
-                      ],
-                      "range": {
-                        "start": 512,
-                        "end": 513
-                      }
                     }
                   ],
                   "range": {
                     "start": 498,
-                    "end": 514
+                    "end": 510
                   }
                 }
               ],
               "range": {
                 "start": 481,
-                "end": 514
-              }
-            },
-            {
-              "type": "mcdoc:type_alias",
-              "children": [
-                {
-                  "type": "mcdoc:literal",
-                  "range": {
-                    "start": 514,
-                    "end": 518
-                  },
-                  "value": "type",
-                  "colorTokenType": "keyword"
-                },
-                {
-                  "type": "mcdoc:identifier",
-                  "range": {
-                    "start": 519,
-                    "end": 529
-                  },
-                  "value": "TupleTest0",
-                  "symbol": {
-                    "category": "mcdoc",
-                    "path": [
-                      "::test::TupleTest0"
-                    ]
-                  }
-                },
-                {
-                  "type": "mcdoc:type/tuple",
-                  "children": [
-                    {
-                      "type": "mcdoc:type/numeric_type",
-                      "children": [
-                        {
-                          "type": "mcdoc:literal",
-                          "range": {
-                            "start": 533,
-                            "end": 537
-                          },
-                          "value": "byte",
-                          "colorTokenType": "type"
-                        }
-                      ],
-                      "range": {
-                        "start": 533,
-                        "end": 537
-                      }
-                    }
-                  ],
-                  "range": {
-                    "start": 532,
-                    "end": 540
-                  }
-                }
-              ],
-              "range": {
-                "start": 514,
-                "end": 540
-              }
-            },
-            {
-              "type": "mcdoc:type_alias",
-              "children": [
-                {
-                  "type": "mcdoc:literal",
-                  "range": {
-                    "start": 540,
-                    "end": 544
-                  },
-                  "value": "type",
-                  "colorTokenType": "keyword"
-                },
-                {
-                  "type": "mcdoc:identifier",
-                  "range": {
-                    "start": 545,
-                    "end": 555
-                  },
-                  "value": "TupleTest1",
-                  "symbol": {
-                    "category": "mcdoc",
-                    "path": [
-                      "::test::TupleTest1"
-                    ]
-                  }
-                },
-                {
-                  "type": "mcdoc:type/tuple",
-                  "children": [
-                    {
-                      "type": "mcdoc:type/string",
-                      "children": [
-                        {
-                          "type": "mcdoc:literal",
-                          "range": {
-                            "start": 559,
-                            "end": 565
-                          },
-                          "value": "string",
-                          "colorTokenType": "type"
-                        }
-                      ],
-                      "range": {
-                        "start": 559,
-                        "end": 565
-                      }
-                    },
-                    {
-                      "type": "mcdoc:type/boolean",
-                      "children": [
-                        {
-                          "type": "mcdoc:literal",
-                          "range": {
-                            "start": 567,
-                            "end": 574
-                          },
-                          "value": "boolean",
-                          "colorTokenType": "type"
-                        }
-                      ],
-                      "range": {
-                        "start": 567,
-                        "end": 574
-                      }
-                    }
-                  ],
-                  "range": {
-                    "start": 558,
-                    "end": 575
-                  }
-                }
-              ],
-              "range": {
-                "start": 540,
-                "end": 575
+                "end": 510
               }
             }
           ],
           "range": {
             "start": 0,
+            "end": 510
+          }
+        },
+        {
+          "type": "error",
+          "range": {
+            "start": 510,
             "end": 575
           }
         }
       ],
       "locals": {},
-      "parserErrors": [],
+      "parserErrors": [
+        {
+          "range": {
+            "start": 510,
+            "end": 575
+          },
+          "message": "Encountered unparseable content",
+          "severity": 3
+        }
+      ],
       "binderErrors": []
     }
   }

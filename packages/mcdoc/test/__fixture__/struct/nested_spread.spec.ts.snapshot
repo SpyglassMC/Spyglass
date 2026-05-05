@@ -67,6 +67,14 @@ exports[`mcdoc __fixture__ > struct/nested spread 1`] = `
                         ],
                         "registry": "minecraft:carver_config"
                       }
+                    },
+                    {
+                      "kind": "pair",
+                      "key": "",
+                      "type": {
+                        "kind": "reference",
+                        "path": "::test::"
+                      }
                     }
                   ],
                   "attributes": [
@@ -74,6 +82,14 @@ exports[`mcdoc __fixture__ > struct/nested spread 1`] = `
                       "name": "expandable"
                     }
                   ]
+                }
+              },
+              {
+                "kind": "pair",
+                "key": "",
+                "type": {
+                  "kind": "reference",
+                  "path": "::test::"
                 }
               }
             ]
@@ -113,7 +129,45 @@ exports[`mcdoc __fixture__ > struct/nested spread 1`] = `
             },
             "contributor": "binder"
           }
-        ]
+        ],
+        "members": {
+          "": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 114,
+                  "end": 114
+                },
+                "posRange": {
+                  "start": {
+                    "line": 5,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 5,
+                    "character": 0
+                  }
+                },
+                "fullRange": {
+                  "start": 114,
+                  "end": 114
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 5,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 5,
+                    "character": 0
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
       },
       "::test::<anonymous 0>": {
         "data": {
@@ -136,6 +190,14 @@ exports[`mcdoc __fixture__ > struct/nested spread 1`] = `
                     }
                   ],
                   "registry": "minecraft:carver_config"
+                }
+              },
+              {
+                "kind": "pair",
+                "key": "",
+                "type": {
+                  "kind": "reference",
+                  "path": "::test::"
                 }
               }
             ],
@@ -166,7 +228,45 @@ exports[`mcdoc __fixture__ > struct/nested spread 1`] = `
             },
             "contributor": "binder"
           }
-        ]
+        ],
+        "members": {
+          "": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 111,
+                  "end": 111
+                },
+                "posRange": {
+                  "start": {
+                    "line": 4,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 4,
+                    "character": 1
+                  }
+                },
+                "fullRange": {
+                  "start": 111,
+                  "end": 111
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 4,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 4,
+                    "character": 1
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
       }
     },
     "mcdoc/dispatcher": {
@@ -400,6 +500,56 @@ exports[`mcdoc __fixture__ > struct/nested spread 1`] = `
                                     "start": 66,
                                     "end": 108
                                   }
+                                },
+                                {
+                                  "type": "mcdoc:struct/field/pair",
+                                  "children": [
+                                    {
+                                      "type": "mcdoc:identifier",
+                                      "range": {
+                                        "start": 111,
+                                        "end": 111
+                                      },
+                                      "value": "",
+                                      "symbol": {
+                                        "category": "mcdoc",
+                                        "path": [
+                                          "::test::<anonymous 0>",
+                                          ""
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "type": "mcdoc:type/reference",
+                                      "children": [
+                                        {
+                                          "type": "mcdoc:path",
+                                          "children": [
+                                            {
+                                              "type": "mcdoc:identifier",
+                                              "range": {
+                                                "start": 111,
+                                                "end": 111
+                                              },
+                                              "value": ""
+                                            }
+                                          ],
+                                          "range": {
+                                            "start": 111,
+                                            "end": 111
+                                          }
+                                        }
+                                      ],
+                                      "range": {
+                                        "start": 111,
+                                        "end": 111
+                                      }
+                                    }
+                                  ],
+                                  "range": {
+                                    "start": 111,
+                                    "end": 111
+                                  }
                                 }
                               ],
                               "range": {
@@ -417,6 +567,56 @@ exports[`mcdoc __fixture__ > struct/nested spread 1`] = `
                       "range": {
                         "start": 23,
                         "end": 112
+                      }
+                    },
+                    {
+                      "type": "mcdoc:struct/field/pair",
+                      "children": [
+                        {
+                          "type": "mcdoc:identifier",
+                          "range": {
+                            "start": 114,
+                            "end": 114
+                          },
+                          "value": "",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::NestedSpread",
+                              ""
+                            ]
+                          }
+                        },
+                        {
+                          "type": "mcdoc:type/reference",
+                          "children": [
+                            {
+                              "type": "mcdoc:path",
+                              "children": [
+                                {
+                                  "type": "mcdoc:identifier",
+                                  "range": {
+                                    "start": 114,
+                                    "end": 114
+                                  },
+                                  "value": ""
+                                }
+                              ],
+                              "range": {
+                                "start": 114,
+                                "end": 114
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 114,
+                            "end": 114
+                          }
+                        }
+                      ],
+                      "range": {
+                        "start": 114,
+                        "end": 114
                       }
                     }
                   ],
@@ -439,8 +639,74 @@ exports[`mcdoc __fixture__ > struct/nested spread 1`] = `
         }
       ],
       "locals": {},
-      "parserErrors": [],
-      "binderErrors": []
+      "parserErrors": [
+        {
+          "range": {
+            "start": 111,
+            "end": 111
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 111,
+            "end": 111
+          },
+          "message": "Expected “:” but got “}”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 111,
+            "end": 111
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 114,
+            "end": 114
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 114,
+            "end": 114
+          },
+          "message": "Expected “:” but got “}”",
+          "severity": 3
+        },
+        {
+          "range": {
+            "start": 114,
+            "end": 114
+          },
+          "message": "Expected an identifier",
+          "severity": 3
+        }
+      ],
+      "binderErrors": [
+        {
+          "range": {
+            "start": 111,
+            "end": 111
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
+        },
+        {
+          "range": {
+            "start": 114,
+            "end": 114
+          },
+          "message": "Identifier “” does not exist in module “::test”",
+          "severity": 2
+        }
+      ]
     }
   }
 }
