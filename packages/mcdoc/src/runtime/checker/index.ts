@@ -27,7 +27,7 @@ import type {
 } from '../../type/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
 import { handleAttributes, shouldKeepAccordingToAttributeFilters } from '../attribute/index.js'
-import type { NodeEquivalenceChecker, RuntimeNode, RuntimePair, RuntimeUnion } from './context.js'
+import type { RuntimeNode, RuntimePair, RuntimeUnion, TypeConverter } from './context.js'
 import { McdocCheckerContext } from './context.js'
 import type { ErrorCondensingDefinition, McdocRuntimeError } from './error.js'
 import { condenseAndPropagate } from './error.js'
@@ -87,7 +87,7 @@ export function isAssignable(
 	assignValue: McdocType,
 	typeDef: McdocType,
 	ctx: CheckerContext,
-	isEquivalent?: NodeEquivalenceChecker,
+	convert?: TypeConverter<McdocType>,
 ): boolean {
 	if (
 		assignValue.kind === 'literal' && typeDef.kind === 'literal'
@@ -98,18 +98,27 @@ export function isAssignable(
 	}
 	let ans = true
 	const newCtx = McdocCheckerContext.create(ctx, {
-		isEquivalent,
+		tryConvertTo: convert,
 		getChildren: (_, d) => {
 			switch (d.kind) {
 				case 'list':
 					const vals = getPossibleTypes(d.item)
 					return [vals.map(v => ({ originalNode: v, inferredType: v }))]
 				case 'byte_array':
-					return [[{ originalNode: { kind: 'byte' }, inferredType: { kind: 'byte' } }]]
+					return [[{
+						originalNode: { kind: 'byte' },
+						inferredType: { kind: 'byte' },
+					}]] satisfies RuntimeUnion<McdocType>[]
 				case 'int_array':
-					return [[{ originalNode: { kind: 'int' }, inferredType: { kind: 'int' } }]]
+					return [[{
+						originalNode: { kind: 'int' },
+						inferredType: { kind: 'int' },
+					}]] satisfies RuntimeUnion<McdocType>[]
 				case 'long_array':
-					return [[{ originalNode: { kind: 'long' }, inferredType: { kind: 'long' } }]]
+					return [[{
+						originalNode: { kind: 'long' },
+						inferredType: { kind: 'long' },
+					}]] satisfies RuntimeUnion<McdocType>[]
 				case 'struct':
 					return d.fields.map(f => {
 						const vals = getPossibleTypes(f.type)
@@ -460,12 +469,15 @@ function checkShallowly<T>(
 	}
 
 	const typeDefValueType = getValueType(typeDef)
-	const runtimeValueType = getValueType(simplifiedInferred)
+	let runtimeValueType = getValueType(simplifiedInferred)
 
-	if (
-		runtimeValueType.kind !== typeDefValueType.kind
-		&& !ctx.isEquivalent(runtimeValueType, typeDefValueType)
-	) {
+	if (runtimeValueType.kind !== typeDefValueType.kind) {
+		simplifiedInferred = ctx.tryConvertTo(runtimeNode.originalNode, typeDefValueType)
+			?? simplifiedInferred
+		runtimeValueType = getValueType(simplifiedInferred)
+	}
+
+	if (runtimeValueType.kind !== typeDefValueType.kind) {
 		return {
 			childDefinitions,
 			errors: [{ kind: 'type_mismatch', node: runtimeNode, expected: [typeDef] }],
@@ -588,7 +600,10 @@ function checkShallowly<T>(
 								kvp.value.key.inferredType,
 								pair.key,
 								ctx,
-								ctx.isEquivalent,
+								(type, target) =>
+									type === kvp.value.key.inferredType
+										? ctx.tryConvertTo(kvp.value.key.originalNode, target)
+										: undefined,
 							)
 						) {
 							foundMatch = true
@@ -596,13 +611,22 @@ function checkShallowly<T>(
 						}
 					}
 					for (const kvp of literalKvps.entries()) {
+						const literalType = {
+							kind: 'literal',
+							value: { kind: 'string', value: kvp[0] },
+						} satisfies LiteralType
 						if (
 							(!kvp[1].definition || kvp[1].definition.keyType?.kind !== 'literal')
-							&& isAssignable(
-								{ kind: 'literal', value: { kind: 'string', value: kvp[0] } },
-								pair.key,
-								ctx,
-								ctx.isEquivalent,
+							&& kvp[1].values.some(v =>
+								isAssignable(
+									literalType,
+									pair.key,
+									ctx,
+									(type, target) =>
+										type === literalType
+											? ctx.tryConvertTo(v.pair.key.originalNode, target)
+											: undefined,
+								)
 							)
 						) {
 							foundMatch = true

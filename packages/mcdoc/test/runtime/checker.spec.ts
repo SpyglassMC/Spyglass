@@ -2,7 +2,11 @@ import * as core from '@spyglassmc/core/lib/index.js'
 import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import { localeQuote } from '@spyglassmc/locales'
 import { McdocCheckerContext, typeDefinition } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
-import type { McdocType, UnionType } from '@spyglassmc/mcdoc/lib/type/index.js'
+import {
+	LiteralNumericValue,
+	type McdocType,
+	type UnionType,
+} from '@spyglassmc/mcdoc/lib/type/index.js'
 import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { McdocRuntimeError } from '../../lib/runtime/checker/error.js'
@@ -768,20 +772,31 @@ describe('mcdoc runtime checker', () => {
 						reportError: (error) => {
 							errors.push(error)
 						},
-						isEquivalent: (inferred, def) => {
-							switch (inferred.kind) {
-								case 'list':
-									return ['list', 'byte_array', 'int_array', 'long_array', 'tuple']
-										.includes(def.kind)
-								case 'struct':
-									return def.kind === 'struct'
-								case 'double':
-									return ['byte', 'short', 'int', 'long', 'float', 'double'].includes(
-										def.kind,
-									)
-								default:
-									return false
+						tryConvertTo: (node, target) => {
+							if (node instanceof Array) {
+								switch (target.kind) {
+									case 'list':
+										return { kind: 'list', item: { kind: 'any' } }
+									case 'byte_array':
+									case 'int_array':
+									case 'long_array':
+										return { kind: target.kind }
+									case 'tuple':
+										return { kind: 'tuple', items: [] }
+								}
 							}
+							if (typeof node === 'number' || typeof node === 'bigint') {
+								const literalValue = LiteralNumericValue.makeIfValid(
+									target.kind,
+									node,
+									true,
+									true,
+								)
+								if (literalValue !== undefined) {
+									return { kind: 'literal', value: literalValue }
+								}
+							}
+							return undefined
 						},
 					})
 					typeDefinition(

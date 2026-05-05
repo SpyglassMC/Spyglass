@@ -2,6 +2,7 @@ import type { FullResourceLocation } from '@spyglassmc/core'
 import { Arrayable, Dev, max, min, numericEquals } from '@spyglassmc/core'
 import type { EnumKind } from '../node/index.js'
 import { getRangeDelimiter, RangeKind } from '../node/index.js'
+import { numericType } from '../parser/index.js'
 
 export type Attributes = Attribute[]
 export namespace Attributes {
@@ -293,6 +294,48 @@ export interface LiteralStringValue {
 export interface LiteralNumericValue {
 	kind: Exclude<NumericTypeKind, 'long'>
 	value: number
+}
+export namespace LiteralNumericValue {
+	export function makeIfValid(
+		kind: string,
+		value: number | bigint,
+		allowInt: boolean = true,
+		allowFloat: boolean = true,
+	): LiteralNumericValue | LiteralLongNumberValue | undefined {
+		switch (kind) {
+			case 'byte':
+				if (allowInt && value >= -128 && value < 128) {
+					return { kind: 'byte', value: Number(value) }
+				}
+				break
+			case 'short':
+				if (allowInt && value >= -32768 && value < 32768) {
+					return { kind: 'short', value: Number(value) }
+				}
+				break
+			case 'int':
+				if (allowInt && value >= -2147483648 && value < 2147483648) {
+					return { kind: 'int', value: Number(value) }
+				}
+				break
+			case 'long':
+				if (allowInt && value >= -9223372036854775808n && value < 9223372036854775808n) {
+					return { kind: 'long', value: BigInt(value) }
+				}
+				break
+			case 'float':
+				if (allowFloat) {
+					return { kind: 'float', value: Number(value) }
+				}
+				break
+			case 'double':
+				if (allowFloat) {
+					return { kind: 'double', value: Number(value) }
+				}
+				break
+		}
+		return undefined
+	}
 }
 export interface LiteralLongNumberValue {
 	kind: 'long'
