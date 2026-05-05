@@ -187,7 +187,7 @@ exports[`mcdoc parser > struct > Parse 'struct Foo {}' 1`] = `
 }
 `;
 
-exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello world.↓⮀⮀⮀⮀⮀Bar: boolean,↓⮀⮀⮀⮀⮀Boo: struct Duh { Ha: any },↓⮀⮀⮀⮀⮀UUID: #[uuid] int[] @ 4,↓⮀⮀⮀⮀⮀#[meh]↓⮀⮀⮀⮀⮀Qux: enum (int) {},↓⮀⮀⮀⮀⮀#[since=1.17]↓⮀⮀⮀⮀⮀...Lol,↓⮀⮀⮀⮀}' 1`] = `
+exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello world.↓⮀⮀⮀⮀⮀Bar: boolean,↓⮀⮀⮀⮀⮀Boo: struct Duh { Ha: any },↓⮀⮀⮀⮀⮀UUID: #[uuid] int[] @ 4,↓⮀⮀⮀⮀⮀EvilLiteral: 7Hi,↓⮀⮀⮀⮀⮀#[meh]↓⮀⮀⮀⮀⮀Qux: enum (int) {},↓⮀⮀⮀⮀⮀#[since=1.17]↓⮀⮀⮀⮀⮀...Lol,↓⮀⮀⮀⮀}' 1`] = `
 {
   "node": {
     "type": "mcdoc:struct",
@@ -433,27 +433,79 @@ exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello 
             "type": "mcdoc:struct/field/pair",
             "children": [
               {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 123,
+                  "end": 134
+                },
+                "value": "EvilLiteral"
+              },
+              {
+                "type": "mcdoc:type/literal",
+                "children": [
+                  {
+                    "type": "mcdoc:typed_number",
+                    "children": [
+                      {
+                        "type": "integer",
+                        "range": {
+                          "start": 136,
+                          "end": 137
+                        },
+                        "value": 7
+                      },
+                      {
+                        "type": "mcdoc:literal",
+                        "range": {
+                          "start": 137,
+                          "end": 139
+                        },
+                        "value": "Hi",
+                        "colorTokenType": "keyword"
+                      }
+                    ],
+                    "range": {
+                      "start": 136,
+                      "end": 139
+                    }
+                  }
+                ],
+                "range": {
+                  "start": 136,
+                  "end": 139
+                }
+              }
+            ],
+            "range": {
+              "start": 123,
+              "end": 139
+            }
+          },
+          {
+            "type": "mcdoc:struct/field/pair",
+            "children": [
+              {
                 "type": "mcdoc:attribute",
                 "children": [
                   {
                     "type": "mcdoc:identifier",
                     "range": {
-                      "start": 125,
-                      "end": 128
+                      "start": 148,
+                      "end": 151
                     },
                     "value": "meh"
                   }
                 ],
                 "range": {
-                  "start": 123,
-                  "end": 129
+                  "start": 146,
+                  "end": 152
                 }
               },
               {
                 "type": "mcdoc:identifier",
                 "range": {
-                  "start": 135,
-                  "end": 138
+                  "start": 158,
+                  "end": 161
                 },
                 "value": "Qux"
               },
@@ -463,8 +515,8 @@ exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello 
                   {
                     "type": "mcdoc:literal",
                     "range": {
-                      "start": 140,
-                      "end": 144
+                      "start": 163,
+                      "end": 167
                     },
                     "value": "enum",
                     "colorTokenType": "keyword"
@@ -472,8 +524,8 @@ exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello 
                   {
                     "type": "mcdoc:literal",
                     "range": {
-                      "start": 146,
-                      "end": 149
+                      "start": 169,
+                      "end": 172
                     },
                     "value": "int",
                     "colorTokenType": "type"
@@ -482,20 +534,20 @@ exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello 
                     "type": "mcdoc:enum/block",
                     "children": [],
                     "range": {
-                      "start": 151,
-                      "end": 153
+                      "start": 174,
+                      "end": 176
                     }
                   }
                 ],
                 "range": {
-                  "start": 140,
-                  "end": 153
+                  "start": 163,
+                  "end": 176
                 }
               }
             ],
             "range": {
-              "start": 123,
-              "end": 153
+              "start": 146,
+              "end": 176
             }
           },
           {
@@ -507,8 +559,8 @@ exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello 
                   {
                     "type": "mcdoc:identifier",
                     "range": {
-                      "start": 162,
-                      "end": 167
+                      "start": 185,
+                      "end": 190
                     },
                     "value": "since"
                   },
@@ -521,27 +573,27 @@ exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello 
                           {
                             "type": "float",
                             "range": {
-                              "start": 168,
-                              "end": 172
+                              "start": 191,
+                              "end": 195
                             },
                             "value": 1.17
                           }
                         ],
                         "range": {
-                          "start": 168,
-                          "end": 172
+                          "start": 191,
+                          "end": 195
                         }
                       }
                     ],
                     "range": {
-                      "start": 168,
-                      "end": 172
+                      "start": 191,
+                      "end": 195
                     }
                   }
                 ],
                 "range": {
-                  "start": 160,
-                  "end": 179
+                  "start": 183,
+                  "end": 202
                 }
               },
               {
@@ -553,42 +605,51 @@ exports[`mcdoc parser > struct > Parse 'struct Foo {↓⮀⮀⮀⮀⮀/// Hello 
                       {
                         "type": "mcdoc:identifier",
                         "range": {
-                          "start": 182,
-                          "end": 185
+                          "start": 205,
+                          "end": 208
                         },
                         "value": "Lol"
                       }
                     ],
                     "range": {
-                      "start": 182,
-                      "end": 185
+                      "start": 205,
+                      "end": 208
                     }
                   }
                 ],
                 "range": {
-                  "start": 182,
-                  "end": 185
+                  "start": 205,
+                  "end": 208
                 }
               }
             ],
             "range": {
-              "start": 160,
-              "end": 185
+              "start": 183,
+              "end": 208
             }
           }
         ],
         "range": {
           "start": 11,
-          "end": 192
+          "end": 215
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 192
+      "end": 215
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 137,
+        "end": 139
+      },
+      "message": "Expected “b”, “s”, “l”, “B”, “S”, or “L” but got “Hi”",
+      "severity": 3
+    }
+  ]
 }
 `;
 
