@@ -1,13 +1,16 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Quote, StringNode, StringOptions } from '../node/index.js'
-import { EscapeChar, EscapeTable } from '../node/index.js'
+import { EscapeChar, EscapeTable, UnicodeEscapeChar, UnicodeEscapeLengths } from '../node/index.js'
 import type { InfallibleParser } from '../parser/index.js'
 import type { ParserContext } from '../service/index.js'
 import type { IndexMap } from '../source/index.js'
 import { Range, Source } from '../source/index.js'
 import type { Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
+import unicodeLookupJson from './unicode-lookup-table.json' with { type: 'json' }
+
+const UnicodeLookupTable = new Map<string, number>(Object.entries(unicodeLookupJson))
 
 export function string(options: StringOptions): InfallibleParser<StringNode> {
 	return (src: Source, ctx: ParserContext): StringNode => {
@@ -40,10 +43,14 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							outer: Range.create(cStart, src),
 						})
 						ans.value += EscapeTable.get(c2)
-					} else if (options.escapable.unicode && c2 === 'u') {
-						const hex = src.peek(4)
-						if (/^[0-9a-f]{4}$/i.test(hex)) {
-							src.skip(4)
+					} else if (
+						options.escapable.unicode
+						&& (c2 === 'u' || (options.escapable.extendedUnicode && UnicodeEscapeChar.is(c2)))
+					) {
+						const sequenceLength = UnicodeEscapeLengths.get(c2) || 4
+						const hex = src.peek(sequenceLength)
+						if (new RegExp(`^[0-9a-f]{${sequenceLength}}$`, 'i').test(hex)) {
+							src.skip(sequenceLength)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(cStart, src),
@@ -52,7 +59,52 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						} else {
 							ctx.err.report(
 								localize('parser.string.illegal-unicode-escape'),
-								Range.create(src, src.getCharRange(3).end),
+								Range.create(src, src.getCharRange(sequenceLength - 1).end),
+							)
+							ans.valueMap.push({
+								inner: Range.create(ans.value.length, ans.value.length + 1),
+								outer: Range.create(cStart, src),
+							})
+							ans.value += c2
+						}
+					} else if (options.escapable.extendedUnicode && c2 === 'N') {
+						if (!src.trySkip('{')) {
+							ctx.err.report(
+								localize('expected', localeQuote('{')),
+								src.getCharRange(-1),
+							)
+							ans.valueMap.push({
+								inner: Range.create(ans.value.length, ans.value.length + 1),
+								outer: Range.create(cStart, src),
+							})
+							ans.value += c2
+							cStart = src.cursor
+							continue
+						}
+						const name = src.peekUntil('}')
+						if (src.peek(1, name.length) !== '}') {
+							ctx.err.report(
+								localize('expected', localeQuote('}')),
+								Range.create(src, src.getCharRange(name.length - 1).end),
+							)
+							ans.valueMap.push({
+								inner: Range.create(ans.value.length, ans.value.length + 1),
+								outer: Range.create(cStart, src),
+							})
+							ans.value += c2
+						} else if (
+							/^[-a-zA-Z0-9 ]+$/.test(name) && UnicodeLookupTable.has(name.toLowerCase())
+						) {
+							src.skip(name.length + 1)
+							ans.valueMap.push({
+								inner: Range.create(ans.value.length, ans.value.length + 1),
+								outer: Range.create(cStart, src),
+							})
+							ans.value += String.fromCodePoint(UnicodeLookupTable.get(name.toLowerCase())!)
+						} else {
+							ctx.err.report(
+								localize('parser.string.illegal-unicode-escape-name'),
+								Range.create(src, src.getCharRange(name.length - 1).end),
 							)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),

@@ -2,5 +2,9 @@
 	"extends": "../../tsconfig-base",
 	"compilerOptions": {
 		"outDir": "../lib"
-	}
+	},
+	"include": [
+		"**/*.ts",
+		"parser/unicode-lookup-table.json"
+	]
 }
