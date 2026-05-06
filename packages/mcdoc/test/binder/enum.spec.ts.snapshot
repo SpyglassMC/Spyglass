@@ -1,0 +1,989 @@
+exports[`mcdoc binder > mcdoc:enum > Bind 'enum () Foo { A = 1, B = 1.2, C = 1.2f, D = 4s, E = \"Hello\", }' 1`] = `
+{
+  "symbols": {
+    "mcdoc": {
+      "test::Foo": {
+        "data": {
+          "typeDef": {
+            "kind": "enum",
+            "values": [
+              {
+                "identifier": "A",
+                "value": 1
+              },
+              {
+                "identifier": "B",
+                "value": 1.2
+              },
+              {
+                "identifier": "C",
+                "value": 1.2
+              },
+              {
+                "identifier": "D",
+                "value": 4
+              },
+              {
+                "identifier": "E",
+                "value": "Hello"
+              }
+            ]
+          }
+        },
+        "subcategory": "enum",
+        "definition": [
+          {
+            "uri": ""
+          }
+        ],
+        "members": {
+          "A": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "B": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "C": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "D": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "E": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`mcdoc binder > mcdoc:enum > Bind 'enum (byte) Foo { A = 1, B = 4b, C = 5B, D = 1.2, E = 1.2f, F = 4s, G = \"Hello\", }' 1`] = `
+{
+  "symbols": {
+    "mcdoc": {
+      "test::Foo": {
+        "data": {
+          "typeDef": {
+            "kind": "enum",
+            "enumKind": "byte",
+            "values": [
+              {
+                "identifier": "A",
+                "value": 1
+              },
+              {
+                "identifier": "B",
+                "value": 4
+              },
+              {
+                "identifier": "C",
+                "value": 5
+              },
+              {
+                "identifier": "D",
+                "value": 1
+              },
+              {
+                "identifier": "E",
+                "value": 1
+              },
+              {
+                "identifier": "F",
+                "value": 4
+              },
+              {
+                "identifier": "G",
+                "value": null
+              }
+            ]
+          }
+        },
+        "subcategory": "enum",
+        "definition": [
+          {
+            "uri": ""
+          }
+        ],
+        "members": {
+          "A": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "B": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "C": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "D": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "E": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "F": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "G": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 27,
+        "end": 28
+      },
+      "message": "Expected byte",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 65,
+        "end": 68
+      },
+      "message": "Expected byte",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 79,
+        "end": 83
+      },
+      "message": "Expected byte",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 94,
+        "end": 96
+      },
+      "message": "Expected byte",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 107,
+        "end": 114
+      },
+      "message": "Expected byte",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc binder > mcdoc:enum > Bind 'enum (double) Foo { A = 1, B = 4d, C = 5D, D = 1.2, E = 1.2f, F = 4s, G = \"Hello\", }' 1`] = `
+{
+  "symbols": {
+    "mcdoc": {
+      "test::Foo": {
+        "data": {
+          "typeDef": {
+            "kind": "enum",
+            "enumKind": "double",
+            "values": [
+              {
+                "identifier": "A",
+                "value": 1
+              },
+              {
+                "identifier": "B",
+                "value": 4
+              },
+              {
+                "identifier": "C",
+                "value": 5
+              },
+              {
+                "identifier": "D",
+                "value": 1.2
+              },
+              {
+                "identifier": "E",
+                "value": 1.2
+              },
+              {
+                "identifier": "F",
+                "value": 4
+              },
+              {
+                "identifier": "G",
+                "value": null
+              }
+            ]
+          }
+        },
+        "subcategory": "enum",
+        "definition": [
+          {
+            "uri": ""
+          }
+        ],
+        "members": {
+          "A": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "B": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "C": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "D": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "E": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "F": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "G": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 27,
+        "end": 28
+      },
+      "message": "Expected double",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 79,
+        "end": 83
+      },
+      "message": "Expected double",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 94,
+        "end": 96
+      },
+      "message": "Expected double",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 107,
+        "end": 114
+      },
+      "message": "Expected double",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc binder > mcdoc:enum > Bind 'enum (float) Foo { A = 1, B = 4f, C = 5F, D = 1.2, E = 1.2f, F = 4s, G = \"Hello\", }' 1`] = `
+{
+  "symbols": {
+    "mcdoc": {
+      "test::Foo": {
+        "data": {
+          "typeDef": {
+            "kind": "enum",
+            "enumKind": "float",
+            "values": [
+              {
+                "identifier": "A",
+                "value": 1
+              },
+              {
+                "identifier": "B",
+                "value": 4
+              },
+              {
+                "identifier": "C",
+                "value": 5
+              },
+              {
+                "identifier": "D",
+                "value": 1.2
+              },
+              {
+                "identifier": "E",
+                "value": 1.2
+              },
+              {
+                "identifier": "F",
+                "value": 4
+              },
+              {
+                "identifier": "G",
+                "value": null
+              }
+            ]
+          }
+        },
+        "subcategory": "enum",
+        "definition": [
+          {
+            "uri": ""
+          }
+        ],
+        "members": {
+          "A": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "B": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "C": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "D": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "E": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "F": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "G": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 27,
+        "end": 28
+      },
+      "message": "Expected a float",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 65,
+        "end": 68
+      },
+      "message": "Expected a float",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 94,
+        "end": 96
+      },
+      "message": "Expected a float",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 107,
+        "end": 114
+      },
+      "message": "Expected a float",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc binder > mcdoc:enum > Bind 'enum (int) Foo { A = 1, B = 1.2, C = 1.2f, D = 4s, E = \"Hello\", }' 1`] = `
+{
+  "symbols": {
+    "mcdoc": {
+      "test::Foo": {
+        "data": {
+          "typeDef": {
+            "kind": "enum",
+            "enumKind": "int",
+            "values": [
+              {
+                "identifier": "A",
+                "value": 1
+              },
+              {
+                "identifier": "B",
+                "value": 1
+              },
+              {
+                "identifier": "C",
+                "value": 1
+              },
+              {
+                "identifier": "D",
+                "value": 4
+              },
+              {
+                "identifier": "E",
+                "value": null
+              }
+            ]
+          }
+        },
+        "subcategory": "enum",
+        "definition": [
+          {
+            "uri": ""
+          }
+        ],
+        "members": {
+          "A": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "B": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "C": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "D": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "E": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 65,
+        "end": 68
+      },
+      "message": "Expected int",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 79,
+        "end": 83
+      },
+      "message": "Expected int",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 94,
+        "end": 96
+      },
+      "message": "Expected int",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 107,
+        "end": 114
+      },
+      "message": "Expected int",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc binder > mcdoc:enum > Bind 'enum (long) Foo { A = 1, B = 4l, C = 5L, D = 1.2, E = 1.2f, F = 4s, G = \"Hello\", }' 1`] = `
+{
+  "symbols": {
+    "mcdoc": {
+      "test::Foo": {
+        "data": {
+          "typeDef": {
+            "kind": "enum",
+            "enumKind": "long",
+            "values": [
+              {
+                "identifier": "A",
+                "value": 1
+              },
+              {
+                "identifier": "B",
+                "value": 4
+              },
+              {
+                "identifier": "C",
+                "value": 5
+              },
+              {
+                "identifier": "D",
+                "value": 1
+              },
+              {
+                "identifier": "E",
+                "value": 1
+              },
+              {
+                "identifier": "F",
+                "value": 4
+              },
+              {
+                "identifier": "G",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "subcategory": "enum",
+        "definition": [
+          {
+            "uri": ""
+          }
+        ],
+        "members": {
+          "A": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "B": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "C": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "D": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "E": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "F": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "G": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 27,
+        "end": 28
+      },
+      "message": "Expected a long",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 65,
+        "end": 68
+      },
+      "message": "Expected a long",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 79,
+        "end": 83
+      },
+      "message": "Expected a long",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 94,
+        "end": 96
+      },
+      "message": "Expected a long",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 107,
+        "end": 114
+      },
+      "message": "Expected a long",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc binder > mcdoc:enum > Bind 'enum (short) Foo { A = 1, B = 4s, C = 5S, D = 1.2, E = 1.2f, F = 4b, G = \"Hello\", }' 1`] = `
+{
+  "symbols": {
+    "mcdoc": {
+      "test::Foo": {
+        "data": {
+          "typeDef": {
+            "kind": "enum",
+            "enumKind": "short",
+            "values": [
+              {
+                "identifier": "A",
+                "value": 1
+              },
+              {
+                "identifier": "B",
+                "value": 4
+              },
+              {
+                "identifier": "C",
+                "value": 5
+              },
+              {
+                "identifier": "D",
+                "value": 1
+              },
+              {
+                "identifier": "E",
+                "value": 1
+              },
+              {
+                "identifier": "F",
+                "value": 4
+              },
+              {
+                "identifier": "G",
+                "value": null
+              }
+            ]
+          }
+        },
+        "subcategory": "enum",
+        "definition": [
+          {
+            "uri": ""
+          }
+        ],
+        "members": {
+          "A": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "B": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "C": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "D": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "E": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "F": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "G": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 27,
+        "end": 28
+      },
+      "message": "Expected short",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 65,
+        "end": 68
+      },
+      "message": "Expected short",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 79,
+        "end": 83
+      },
+      "message": "Expected short",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 94,
+        "end": 96
+      },
+      "message": "Expected short",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 107,
+        "end": 114
+      },
+      "message": "Expected short",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcdoc binder > mcdoc:enum > Bind 'enum (string) Foo { A = 1, B = 1.2, C = \"Hello\", }' 1`] = `
+{
+  "symbols": {
+    "mcdoc": {
+      "test::Foo": {
+        "data": {
+          "typeDef": {
+            "kind": "enum",
+            "enumKind": "string",
+            "values": [
+              {
+                "identifier": "A",
+                "value": "1"
+              },
+              {
+                "identifier": "B",
+                "value": "1.2"
+              },
+              {
+                "identifier": "C",
+                "value": "Hello"
+              }
+            ]
+          }
+        },
+        "subcategory": "enum",
+        "definition": [
+          {
+            "uri": ""
+          }
+        ],
+        "members": {
+          "A": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "B": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          },
+          "C": {
+            "definition": [
+              {
+                "uri": ""
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 27,
+        "end": 28
+      },
+      "message": "Expected a string",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 65,
+        "end": 68
+      },
+      "message": "Expected a string",
+      "severity": 3
+    }
+  ]
+}
+`;
