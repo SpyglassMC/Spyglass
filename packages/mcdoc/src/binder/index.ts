@@ -5,7 +5,6 @@ import type {
 	Location,
 	MetaRegistry,
 	RangeLike,
-	StringNode,
 	Symbol,
 	SymbolQuery,
 } from '@spyglassmc/core'
@@ -14,8 +13,12 @@ import {
 	atArray,
 	Dev,
 	ErrorSeverity,
+	FloatNode,
+	IntegerNode,
+	LongNode,
 	Range,
 	ResourceLocationNode,
+	StringNode,
 	SymbolUtil,
 	SymbolVisibility,
 	traversePreOrder,
@@ -77,7 +80,12 @@ import {
 	UnionTypeNode,
 	UseStatementNode,
 } from '../node/index.js'
-import type { LiteralNumberCaseInsensitiveSuffix } from '../parser/index.js'
+import type {
+	LiteralFloatSuffix,
+	LiteralIntSuffix,
+	LiteralNumberCaseInsensitiveSuffix,
+} from '../parser/index.js'
+import { number } from '../runtime/attribute/validator.js'
 import type { SimplifiedMcdocType } from '../runtime/checker/index.js'
 import type {
 	Attribute,
@@ -867,30 +875,168 @@ function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 		return symbol.data.typeDef
 	}
 
-	return wrapType(node, { kind: 'enum', enumKind, values: convertEnumBlock(block, ctx) }, ctx)
+	switch (enumKind) {
+		case 'byte':
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, convertEnumIntValue(enumKind, 'b'), ctx),
+			}, ctx)
+		case 'short':
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, convertEnumIntValue(enumKind, 's'), ctx),
+			}, ctx)
+		case 'int':
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, convertEnumIntValue(enumKind), ctx),
+			}, ctx)
+		case 'long':
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, convertEnumLongValue, ctx),
+			}, ctx)
+		case 'float':
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, convertEnumFloatValue(enumKind, 'f'), ctx),
+			}, ctx)
+		case 'double':
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, convertEnumFloatValue(enumKind, 'd'), ctx),
+			}, ctx)
+		case 'string':
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, convertEnumStringValue, ctx),
+			}, ctx)
+		case undefined:
+			return wrapType(node, {
+				kind: 'enum',
+				enumKind,
+				values: convertEnumBlock(block, convertEnumValue, ctx),
+			}, ctx)
+	}
 }
 
-function convertEnumBlock(node: EnumBlockNode, ctx: McdocBinderContext): EnumTypeField[] {
+function convertEnumBlock<T>(
+	node: EnumBlockNode,
+	getEnumFieldValue: (node: EnumValueNode, ctx: McdocBinderContext) => T,
+	ctx: McdocBinderContext,
+): EnumTypeField<T>[] {
 	const { fields } = EnumBlockNode.destruct(node)
-	return fields.map((n) => convertEnumField(n, ctx))
+	return fields.map((n) => convertEnumField(n, getEnumFieldValue, ctx))
 }
 
-function convertEnumField(node: EnumFieldNode, ctx: McdocBinderContext): EnumTypeField {
+function convertEnumField<T>(
+	node: EnumFieldNode,
+	getEnumFieldValue: (node: EnumValueNode, ctx: McdocBinderContext) => T,
+	ctx: McdocBinderContext,
+): EnumTypeField<T> {
 	const { attributes, docComments, identifier, value } = EnumFieldNode.destruct(node)
 	return {
 		attributes: convertAttributes(attributes, ctx),
 		desc: DocCommentsNode.asText(docComments),
 		identifier: identifier.value,
-		value: convertEnumValue(value, ctx),
+		value: getEnumFieldValue(value, ctx),
 	}
 }
 
-function convertEnumValue(node: EnumValueNode, ctx: McdocBinderContext): string | number | bigint {
-	if (TypedNumberNode.is(node)) {
-		const { value } = TypedNumberNode.destruct(node)
-		return value.value
+function convertEnumIntValue(expected: string, expectedSuffix?: Exclude<LiteralIntSuffix, 'l'>) {
+	return (node: EnumValueNode, ctx: McdocBinderContext) => {
+		const { value: valueNode, suffix: suffixNode } = TypedNumberNode.is(node)
+			? TypedNumberNode.destruct(node)
+			: { value: node }
+		const value = Math.floor(
+			typeof valueNode.value === 'string'
+				? Number.parseFloat(valueNode.value)
+				: Number(valueNode.value),
+		)
+		const suffix = suffixNode?.value.toLowerCase()
+
+		if (suffix !== expectedSuffix || !IntegerNode.is(valueNode)) {
+			ctx.err.report(localize('expected', localize(expected)), node)
+		}
+
+		return value
 	}
-	return node.value
+}
+function convertEnumFloatValue(expected: string, expectedSuffix: LiteralFloatSuffix) {
+	return (node: EnumValueNode, ctx: McdocBinderContext) => {
+		const { value: valueNode, suffix: suffixNode } = TypedNumberNode.is(node)
+			? TypedNumberNode.destruct(node)
+			: { value: node }
+		const value = typeof valueNode.value === 'string'
+			? Number.parseFloat(valueNode.value)
+			: Number(valueNode.value)
+		const suffix = suffixNode?.value.toLowerCase()
+
+		if (
+			suffix !== expectedSuffix
+			&& (expectedSuffix !== 'd' || suffix !== undefined || !FloatNode.is(valueNode))
+		) {
+			ctx.err.report(localize('expected', localize(expected)), node)
+		}
+
+		return value
+	}
+}
+function convertEnumStringValue(node: EnumValueNode, ctx: McdocBinderContext) {
+	const { value: valueNode } = TypedNumberNode.is(node)
+		? TypedNumberNode.destruct(node)
+		: { value: node }
+	const value = typeof valueNode.value === 'string'
+		? valueNode.value
+		: valueNode.value.toString()
+
+	if (!StringNode.is(valueNode)) {
+		ctx.err.report(localize('expected', localize('string')), node)
+	}
+
+	return value
+}
+function convertEnumLongValue(node: EnumValueNode, ctx: McdocBinderContext) {
+	const { value: valueNode } = TypedNumberNode.is(node)
+		? TypedNumberNode.destruct(node)
+		: { value: node }
+	let value = valueNode.value
+
+	if (typeof value === 'string') {
+		if (/^-?\d+$/.test(value)) {
+			value = BigInt(value)
+		} else {
+			value = parseFloat(value)
+		}
+	}
+
+	if (typeof value === 'number') {
+		if (isNaN(value) || !isFinite(value)) {
+			value = 0n
+		} else {
+			value = BigInt(Math.floor(value))
+		}
+	}
+
+	if (!LongNode.is(valueNode)) {
+		ctx.err.report(localize('expected', localize('long')), node)
+	}
+
+	return value
+}
+function convertEnumValue(node: EnumValueNode, ctx: McdocBinderContext) {
+	const { value } = TypedNumberNode.is(node)
+		? TypedNumberNode.destruct(node)
+		: { value: node }
+
+	return value.value
 }
 
 function convertStruct(node: StructNode, ctx: McdocBinderContext): McdocType {

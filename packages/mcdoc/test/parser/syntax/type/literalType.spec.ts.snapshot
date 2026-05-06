@@ -110,6 +110,56 @@ exports[`mcdoc parser > literalType > Parse '42' 1`] = `
 }
 `;
 
+exports[`mcdoc parser > literalType > Parse '7invalid' 1`] = `
+{
+  "node": {
+    "type": "mcdoc:type/literal",
+    "children": [
+      {
+        "type": "mcdoc:typed_number",
+        "children": [
+          {
+            "type": "integer",
+            "range": {
+              "start": 0,
+              "end": 1
+            },
+            "value": 7
+          },
+          {
+            "type": "mcdoc:literal",
+            "range": {
+              "start": 1,
+              "end": 8
+            },
+            "value": "invalid",
+            "colorTokenType": "keyword"
+          }
+        ],
+        "range": {
+          "start": 0,
+          "end": 8
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 8
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 1,
+        "end": 8
+      },
+      "message": "Expected “b”, “s”, “l”, “B”, “S”, or “L” but got “invalid”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
 exports[`mcdoc parser > literalType > Parse '9.1f' 1`] = `
 {
   "node": {

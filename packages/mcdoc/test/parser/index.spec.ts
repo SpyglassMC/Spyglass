@@ -154,6 +154,8 @@ const Suites: Record<
 					Boo = 4.2d,
 					/// Qux doc
 					Qux = 12e3,
+					Bad = 91bad,
+					String = "hi",
 				}`,
 			],
 		},
@@ -169,6 +171,7 @@ const Suites: Record<
 				'42',
 				'1.23e4',
 				'9.1f',
+				'7invalid',
 			],
 		},
 		numericType: {
@@ -214,6 +217,7 @@ const Suites: Record<
 					Bar: boolean,
 					Boo: struct Duh { Ha: any },
 					UUID: #[uuid] int[] @ 4,
+					EvilLiteral: 7Hi,
 					#[meh]
 					Qux: enum (int) {},
 					#[since=1.17]
