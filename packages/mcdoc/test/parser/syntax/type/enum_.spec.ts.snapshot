@@ -147,7 +147,7 @@ exports[`mcdoc parser > enum_ > Parse 'enum () Foo' 1`] = `
 }
 `;
 
-exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀⮀/// Boo doc↓⮀⮀⮀⮀⮀/// Another line↓⮀⮀⮀⮀⮀Boo = 4.2d,↓⮀⮀⮀⮀⮀/// Qux doc↓⮀⮀⮀⮀⮀Qux = 12e3,↓⮀⮀⮀⮀}' 1`] = `
+exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀⮀/// Boo doc↓⮀⮀⮀⮀⮀/// Another line↓⮀⮀⮀⮀⮀Boo = 4.2d,↓⮀⮀⮀⮀⮀/// Qux doc↓⮀⮀⮀⮀⮀Qux = 12e3,↓⮀⮀⮀⮀⮀Bad = 91bad,↓⮀⮀⮀⮀⮀String = \"hi\",↓⮀⮀⮀⮀}' 1`] = `
 {
   "node": {
     "type": "mcdoc:enum",
@@ -354,20 +354,110 @@ exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀/// 
               "start": 114,
               "end": 141
             }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 148,
+                  "end": 151
+                },
+                "value": "Bad"
+              },
+              {
+                "type": "mcdoc:typed_number",
+                "children": [
+                  {
+                    "type": "integer",
+                    "range": {
+                      "start": 154,
+                      "end": 156
+                    },
+                    "value": 91
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 156,
+                      "end": 159
+                    },
+                    "value": "bad",
+                    "colorTokenType": "keyword"
+                  }
+                ],
+                "range": {
+                  "start": 154,
+                  "end": 159
+                }
+              }
+            ],
+            "range": {
+              "start": 148,
+              "end": 159
+            }
+          },
+          {
+            "type": "mcdoc:enum/field",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 166,
+                  "end": 172
+                },
+                "value": "String"
+              },
+              {
+                "type": "string",
+                "range": {
+                  "start": 175,
+                  "end": 179
+                },
+                "value": "hi",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 176,
+                      "end": 176
+                    }
+                  }
+                ],
+                "quote": "\\""
+              }
+            ],
+            "range": {
+              "start": 166,
+              "end": 179
+            }
           }
         ],
         "range": {
           "start": 18,
-          "end": 148
+          "end": 186
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 148
+      "end": 186
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 156,
+        "end": 159
+      },
+      "message": "Expected “b”, “s”, “l”, “B”, “S”, or “L” but got “bad”",
+      "severity": 3
+    }
+  ]
 }
 `;
 
