@@ -30,6 +30,7 @@
 		"composite": true,
 		"incremental": true,
 		"newLine": "LF",
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"types": ["node"]
 	}
 }

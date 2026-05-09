@@ -30,7 +30,8 @@
     "@types/pako": "^2.0.0",
     "@types/picomatch": "^3.0.1",
     "@types/whatwg-url": "^11.0.4",
-    "memfs": "^4.51.1"
+    "memfs": "^4.51.1",
+    "@jsonjoy.com/fs-node-utils": "^4.57.2"
   },
   "publishConfig": {
     "access": "public"

@@ -1,21 +1,9 @@
-import {
-	BinderContext,
-	Failure,
-	ParserContext,
-	Range,
-	Source,
-	type Success,
-	SymbolTable,
-} from '@spyglassmc/core'
-import {
-	mockProjectData,
-	showWhitespaceGlyph,
-	snapshotWithUri,
-} from '@spyglassmc/core/test/utils.ts'
+import { BinderContext, Failure, ParserContext, Source, SymbolTable } from '@spyglassmc/core'
+import { mockProjectData, snapshotWithUri } from '@spyglassmc/core/test/utils.ts'
 import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { module_ as binder } from '../../lib/binder/index.js'
-import type { ModuleNode, TopLevelNode } from '../../lib/index.js'
+import type { TopLevelNode } from '../../lib/index.js'
 import { module_ as parser } from '../../lib/parser/index.js'
 
 const Suites: Partial<Record<TopLevelNode['type'], string[]>> = {

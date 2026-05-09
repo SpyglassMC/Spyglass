@@ -39,7 +39,7 @@ exports[`semanticTokens > Tokenize \"foo↓bar\" without multiline token support
   {
     "deltaLine": 0,
     "deltaStartChar": 0,
-    "length": 4,
+    "length": 3,
     "tokenType": 0,
     "tokenModifiers": 0
   },
@@ -70,14 +70,14 @@ exports[`semanticTokens > Tokenize \"foo↓bar↓qux\" without multiline token s
   {
     "deltaLine": 0,
     "deltaStartChar": 0,
-    "length": 4,
+    "length": 3,
     "tokenType": 0,
     "tokenModifiers": 0
   },
   {
     "deltaLine": 1,
     "deltaStartChar": 0,
-    "length": 4,
+    "length": 3,
     "tokenType": 0,
     "tokenModifiers": 0
   },
