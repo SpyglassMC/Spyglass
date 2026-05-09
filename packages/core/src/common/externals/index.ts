@@ -9,12 +9,6 @@ export interface Externals {
 		gzip: (buffer: Uint8Array<ArrayBuffer>) => Promise<Uint8Array<ArrayBuffer>>
 		gunzip: (buffer: Uint8Array<ArrayBuffer>) => Promise<Uint8Array<ArrayBuffer>>
 	}
-	crypto: {
-		/**
-		 * @returns SHA-1 digest of the given data in hexadecimal format.
-		 */
-		getSha1: (data: string | Uint8Array<ArrayBuffer>) => Promise<string>
-	}
 	error: {
 		/**
 		 * @returns an error of the specified kind

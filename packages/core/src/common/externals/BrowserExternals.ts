@@ -143,15 +143,6 @@ export const BrowserExternals: Externals = {
 			return pako.gzip(buffer) as Uint8Array<ArrayBuffer>
 		},
 	},
-	crypto: {
-		async getSha1(data) {
-			if (typeof data === 'string') {
-				data = new TextEncoder().encode(data)
-			}
-			const hash = await crypto.subtle.digest('SHA-1', data.buffer)
-			return uint8ArrayToHex(new Uint8Array(hash))
-		},
-	},
 	error: {
 		createKind(kind, message) {
 			return new Error(`${kind}: ${message}`)
@@ -166,14 +157,6 @@ export const BrowserExternals: Externals = {
 		fetch,
 		getCache: () => window.caches.open('spyglassmc'),
 	},
-}
-
-function uint8ArrayToHex(array: Uint8Array) {
-	let ans = ''
-	for (const v of array) {
-		ans += v.toString(16).padStart(2, '0')
-	}
-	return ans
 }
 
 Object.freeze(BrowserExternals)

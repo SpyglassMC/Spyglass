@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 import type { DecompressedFile, Externals, Logger } from '../common/index.js'
-import { Uri } from '../common/index.js'
+import { getSha1, Uri } from '../common/index.js'
 import { TwoWayMap } from '../common/TwoWayMap.js'
 import type { Dependency } from './Dependency.js'
 import type { RootUriString } from './fileUtil.js'
@@ -142,9 +142,9 @@ export class FileServiceImpl implements FileService {
 		try {
 			let mappedUri = this.map.getKey(virtualUri)
 			if (mappedUri === undefined) {
-				mappedUri = `${this.virtualUrisRoot}${await this.externals.crypto.getSha1(
-					virtualUri,
-				)}/${fileUtil.basename(virtualUri)}`
+				mappedUri = `${this.virtualUrisRoot}${await getSha1(virtualUri)}/${
+					fileUtil.basename(virtualUri)
+				}`
 
 				// Delete old mapped file if it exists. This makes sure the
 				// readonly permission on the file is not removed by it being
@@ -261,7 +261,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 			return this.archiveHashes.get(archiveName)!
 		} else {
 			// Hash the corresponding file.
-			return this.externals.crypto.getSha1(this.getDataInArchive(archiveName, pathInArchive))
+			return getSha1(this.getDataInArchive(archiveName, pathInArchive))
 		}
 	}
 
@@ -367,7 +367,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 				logger.info(
 					`[ArchiveUriSupporter#create] Extracted ${files.length} files from ${archiveName}`,
 				)
-				const hash = await externals.crypto.getSha1(bytes)
+				const hash = await getSha1(bytes)
 				archiveHashes.set(archiveName, hash)
 				entries.set(archiveName, new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])))
 			} catch (e) {
@@ -380,5 +380,5 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 }
 
 async function hashFile(externals: Externals, uri: string): Promise<string> {
-	return externals.crypto.getSha1(await externals.fs.readFile(uri))
+	return getSha1(await externals.fs.readFile(uri))
 }

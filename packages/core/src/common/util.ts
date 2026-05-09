@@ -345,6 +345,30 @@ export function normalizeUri(uri: string): string {
 	return obj.toString()
 }
 
+export async function getSha1(data: string | Uint8Array<ArrayBuffer>): Promise<string> {
+	if (typeof data === 'string') {
+		data = new TextEncoder().encode(data)
+	}
+	const hash = await crypto.subtle.digest('SHA-1', data.buffer)
+	return bytesToHex(new Uint8Array(hash))
+}
+
+/**
+ * TODO: replace with ESNext Uint8Array.prototype.toHex once it's widely supported
+ */
+export function bytesToHex(bytes: Uint8Array): string {
+	if ('Buffer' in globalThis && bytes instanceof Buffer) {
+		return bytes.toString('hex')
+	} else if ('toHex' in Uint8Array.prototype && typeof Uint8Array.prototype.toHex === 'function') {
+		return Uint8Array.prototype.toHex.call(bytes)
+	}
+	let ans = ''
+	for (const v of bytes) {
+		ans += v.toString(16).padStart(2, '0')
+	}
+	return ans
+}
+
 /**
  * Return a read-write TARGET type if the INPUT type is read-write, and a
  * readonly TARGET type if the INPUT type is readonly, and `never` if the INPUT

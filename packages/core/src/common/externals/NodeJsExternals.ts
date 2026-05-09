@@ -40,13 +40,6 @@ export function getNodeJsExternals(
 					return gzip(buffer)
 				},
 			},
-			crypto: {
-				async getSha1(data) {
-					const hash = crypto.createHash('sha1')
-					hash.update(data)
-					return hash.digest('hex')
-				},
-			},
 			error: {
 				createKind(kind, message) {
 					const error = new Error(message)
