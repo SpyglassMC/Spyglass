@@ -4,12 +4,11 @@
 		"esModuleInterop": true,
 		"module": "node20",
 		"moduleResolution": "node16",
-		"target": "ES2022",
+		"target": "ES2024",
 		"lib": [
 			"ES2024",
-			"ESNext.Array",
-			"ESNext.Collection",
-			"ESNext.Iterator",
+			"ES2025.Collection",
+			"ES2025.Iterator",
 			"DOM"
 		],
 
@@ -21,7 +20,6 @@
 		"noImplicitOverride": true,
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
-		"strict": true,
 
 		"pretty": true,
 		"declaration": true,
@@ -31,6 +29,7 @@
 		"incremental": true,
 		"newLine": "LF",
 		"skipLibCheck": true,
+		"stableTypeOrdering": true,
 		"types": ["node"]
 	}
 }
