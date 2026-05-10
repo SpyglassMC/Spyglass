@@ -283,10 +283,6 @@ export function isIterable(value: unknown): value is Iterable<unknown> {
 }
 
 // #region ESNext functions polyfill
-export function atArray<T>(array: readonly T[] | undefined, index: number): T | undefined {
-	return index >= 0 ? array?.[index] : array?.[array.length + index]
-}
-
 export function emplaceMap<K, V>(
 	map: Map<K, V>,
 	key: K,

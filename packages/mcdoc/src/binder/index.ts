@@ -10,7 +10,6 @@ import type {
 } from '@spyglassmc/core'
 import {
 	AsyncBinder,
-	atArray,
 	Dev,
 	ErrorSeverity,
 	FloatNode,
@@ -483,7 +482,7 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 					ctx.err.report(
 						localize(
 							'mcdoc.binder.path.unknown-identifier',
-							localeQuote(atArray(identifiers, -1)!),
+							localeQuote(identifiers.at(-1)!),
 							localeQuote(pathArrayToString(identifiers.slice(0, -1))),
 						),
 						node,
@@ -678,7 +677,7 @@ function resolvePath(
 	ctx: McdocBinderContext,
 	options: { reportErrors?: boolean } = {},
 ): readonly string[] | undefined {
-	return atArray([...resolvePathByStep(path, ctx, options)], -1)?.identifiers
+	return [...resolvePathByStep(path, ctx, options)].at(-1)?.identifiers
 }
 
 function identifierToUri(module: string, ctx: McdocBinderContext): string | undefined {
