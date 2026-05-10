@@ -307,6 +307,24 @@ export function emplaceMap<K, V>(
 	}
 }
 
+export function getOrInsert<K, V>(map: Map<K, V>, key: K, defaultValue: V): V {
+	if (!map.has(key)) {
+		map.set(key, defaultValue)
+	}
+	return map.get(key)!
+}
+
+export function getOrInsertComputed<K, V>(
+	map: Map<K, V>,
+	key: K,
+	callbackFunction: (key: K) => V,
+): V {
+	if (!map.has(key)) {
+		map.set(key, callbackFunction(key))
+	}
+	return map.get(key)!
+}
+
 /**
  * TODO: replace with ESNext Uint8Array.prototype.toHex once it's widely supported
  */
