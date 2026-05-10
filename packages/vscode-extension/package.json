@@ -48,11 +48,11 @@
   ],
   "devDependencies": {
     "@types/vscode": "1.67.0",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.7.1",
     "esbuild": "^0.25.2",
     "ovsx": "^0.9.1",
-    "vscode-languageclient": "^9.0.1",
-    "vscode-test": "^1.4.1"
+    "vscode-languageclient": "^9.0.1"
   },
   "repository": {
     "type": "git",

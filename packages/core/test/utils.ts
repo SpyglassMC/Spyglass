@@ -1,3 +1,4 @@
+import type { FsPromisesApi } from '@jsonjoy.com/fs-node-utils'
 import type {
 	ColorToken,
 	Externals,
@@ -28,7 +29,6 @@ import {
 	VanillaConfig,
 } from '@spyglassmc/core'
 import { getNodeJsExternals, NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
-import type { FsPromisesApi } from 'memfs/lib/node/types/FsPromisesApi.js'
 import { fail } from 'node:assert/strict'
 import type fsp from 'node:fs/promises'
 import type { TestContext } from 'node:test'
