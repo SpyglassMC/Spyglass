@@ -1,5 +1,4 @@
 import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from 'base64-arraybuffer'
-import pako from 'pako'
 import { fileUtil } from '../../service/fileUtil.js'
 import type {
 	ExternalEventEmitter,
@@ -135,12 +134,6 @@ export const BrowserExternals: Externals = {
 	archive: {
 		decompressBall(_buffer, _options) {
 			throw new Error('decompressBall not supported on browser.')
-		},
-		async gunzip(buffer) {
-			return pako.inflate(buffer) as Uint8Array<ArrayBuffer>
-		},
-		async gzip(buffer) {
-			return pako.gzip(buffer) as Uint8Array<ArrayBuffer>
 		},
 	},
 	error: {

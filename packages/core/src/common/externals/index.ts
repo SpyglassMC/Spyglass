@@ -6,8 +6,6 @@ export interface Externals {
 			buffer: Uint8Array<ArrayBuffer>,
 			options?: { stripLevel?: number },
 		) => Promise<DecompressedFile[]>
-		gzip: (buffer: Uint8Array<ArrayBuffer>) => Promise<Uint8Array<ArrayBuffer>>
-		gunzip: (buffer: Uint8Array<ArrayBuffer>) => Promise<Uint8Array<ArrayBuffer>>
 	}
 	error: {
 		/**

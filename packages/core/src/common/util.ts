@@ -192,11 +192,8 @@ export function promisifyAsyncIterable<T, U>(
 	})()
 }
 
-export async function parseGzippedJson(
-	externals: Externals,
-	buffer: Uint8Array<ArrayBuffer>,
-): Promise<unknown> {
-	return JSON.parse(bufferToString(await externals.archive.gunzip(buffer)))
+export async function parseGzippedJson(bytes: Uint8Array<ArrayBuffer>): Promise<unknown> {
+	return JSON.parse(bufferToString(await decompressBytes(bytes, 'gzip')))
 }
 
 /**
@@ -313,6 +310,22 @@ export function emplaceMap<K, V>(
 		throw new Error(`No key ${key} in map and no insert handler provided`)
 	}
 }
+
+/**
+ * TODO: replace with ESNext Uint8Array.prototype.toHex once it's widely supported
+ */
+export function bytesToHex(bytes: Uint8Array): string {
+	if ('Buffer' in globalThis && bytes instanceof Buffer) {
+		return bytes.toString('hex')
+	} else if ('toHex' in Uint8Array.prototype && typeof Uint8Array.prototype.toHex === 'function') {
+		return Uint8Array.prototype.toHex.call(bytes)
+	}
+	let ans = ''
+	for (const v of bytes) {
+		ans += v.toString(16).padStart(2, '0')
+	}
+	return ans
+}
 // #endregion
 
 /**
@@ -353,20 +366,44 @@ export async function getSha1(data: string | Uint8Array<ArrayBuffer>): Promise<s
 	return bytesToHex(new Uint8Array(hash))
 }
 
-/**
- * TODO: replace with ESNext Uint8Array.prototype.toHex once it's widely supported
- */
-export function bytesToHex(bytes: Uint8Array): string {
-	if ('Buffer' in globalThis && bytes instanceof Buffer) {
-		return bytes.toString('hex')
-	} else if ('toHex' in Uint8Array.prototype && typeof Uint8Array.prototype.toHex === 'function') {
-		return Uint8Array.prototype.toHex.call(bytes)
-	}
-	let ans = ''
-	for (const v of bytes) {
-		ans += v.toString(16).padStart(2, '0')
-	}
-	return ans
+export function compressBytes(
+	bytes: Uint8Array<ArrayBuffer>,
+	algorithm: CompressionFormat,
+): Promise<Uint8Array<ArrayBuffer>> {
+	return streamToBytes(compressStream(bytesToStream(bytes), algorithm))
+}
+
+export function compressStream(
+	stream: ReadableStream<Uint8Array<ArrayBuffer>>,
+	algorithm: CompressionFormat,
+): ReadableStream<Uint8Array<ArrayBuffer>> {
+	return stream.pipeThrough(new CompressionStream(algorithm))
+}
+
+export function decompressBytes(
+	bytes: Uint8Array<ArrayBuffer>,
+	algorithm: CompressionFormat,
+): Promise<Uint8Array<ArrayBuffer>> {
+	return streamToBytes(decompressStream(bytesToStream(bytes), algorithm))
+}
+
+export function decompressStream(
+	stream: ReadableStream<Uint8Array<ArrayBuffer>>,
+	algorithm: CompressionFormat,
+): ReadableStream<Uint8Array<ArrayBuffer>> {
+	return stream.pipeThrough(new DecompressionStream(algorithm))
+}
+
+export function bytesToStream(
+	bytes: Uint8Array<ArrayBuffer>,
+): ReadableStream<Uint8Array<ArrayBuffer>> {
+	return new Blob([bytes]).stream()
+}
+
+export function streamToBytes(
+	stream: ReadableStream<Uint8Array<ArrayBuffer>>,
+): Promise<Uint8Array<ArrayBuffer>> {
+	return new Response(stream).bytes()
 }
 
 /**
