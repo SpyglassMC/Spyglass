@@ -1,8 +1,6 @@
 import decompress from 'decompress'
 import { Buffer } from 'node:buffer'
 import cp from 'node:child_process'
-import crypto from 'node:crypto'
-import { EventEmitter } from 'node:events'
 import fs, { promises as fsp } from 'node:fs'
 import os from 'node:os'
 import process from 'node:process'
@@ -40,7 +38,6 @@ export function getNodeJsExternals(
 					return e instanceof Error && (e as NodeJS.ErrnoException).code === kind
 				},
 			},
-			event: { EventEmitter },
 			fs: {
 				chmod(location, mode) {
 					return nodeFsp.chmod(toFsPathLike(location), mode)

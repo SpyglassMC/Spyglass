@@ -1,10 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import {
-	bigintJsonNumberReplacer,
-	type DeepReadonly,
-	type ExternalEventEmitter,
-	type Externals,
-} from '../common/index.js'
+import { bigintJsonNumberReplacer, type DeepReadonly, EventDispatcher } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import type { RangeLike } from '../source/index.js'
 import { Range } from '../source/index.js'
@@ -55,11 +50,14 @@ interface DocAndNode {
 	node: AstNode
 }
 
-export class SymbolUtil implements ExternalEventEmitter {
+export class SymbolUtil extends EventDispatcher<{
+	symbolCreated: SymbolEvent
+	symbolAmended: SymbolEvent
+	symbolRemoved: SymbolEvent
+	symbolLocationCreated: SymbolLocationEvent
+	symbolLocationRemoved: SymbolLocationEvent
+}> {
 	readonly #global: SymbolTable
-
-	readonly #eventEmitter: ExternalEventEmitter
-	readonly #eventEmitterConstructor: Externals['event']['EventEmitter']
 
 	readonly #trimmableSymbols = new Set<string>()
 	readonly #cache: { [contributor: string]: UriSymbolCache } = Object.create(null)
@@ -83,14 +81,12 @@ export class SymbolUtil implements ExternalEventEmitter {
 
 	constructor(
 		global: SymbolTable,
-		eventEmitterConstructor: Externals['event']['EventEmitter'],
 		/** @internal */
 		_currentContributor?: string,
 		/** @internal */
 		_inDelayMode = false,
 	) {
-		this.#eventEmitter = new eventEmitterConstructor()
-		this.#eventEmitterConstructor = eventEmitterConstructor
+		super()
 		this.#global = global
 		this.#currentContributor = _currentContributor
 		this._inDelayMode = _inDelayMode
@@ -110,35 +106,6 @@ export class SymbolUtil implements ExternalEventEmitter {
 			const path = SymbolPath.toString(symbol)
 			this.#trimmableSymbols.add(path)
 		})
-	}
-
-	on(event: 'symbolCreated', callbackFn: (data: SymbolEvent) => void): this
-	on(event: 'symbolAmended', callbackFn: (data: SymbolEvent) => void): this
-	on(event: 'symbolRemoved', callbackFn: (data: SymbolEvent) => void): this
-	on(event: 'symbolLocationCreated', callbackFn: (data: SymbolLocationEvent) => void): this
-	on(event: 'symbolLocationRemoved', callbackFn: (data: SymbolLocationEvent) => void): this
-	on(event: string, callbackFn: (...args: any[]) => unknown): this {
-		this.#eventEmitter.on(event, callbackFn)
-		return this
-	}
-
-	once(event: 'symbolCreated', callbackFn: (data: SymbolEvent) => void): this
-	once(event: 'symbolAmended', callbackFn: (data: SymbolEvent) => void): this
-	once(event: 'symbolRemoved', callbackFn: (data: SymbolEvent) => void): this
-	once(event: 'symbolLocationCreated', callbackFn: (data: SymbolLocationEvent) => void): this
-	once(event: 'symbolLocationRemoved', callbackFn: (data: SymbolLocationEvent) => void): this
-	once(event: string, callbackFn: (...args: any[]) => unknown): this {
-		this.#eventEmitter.once(event, callbackFn)
-		return this
-	}
-
-	emit(event: 'symbolCreated', data: SymbolEvent): boolean
-	emit(event: 'symbolAmended', data: SymbolEvent): boolean
-	emit(event: 'symbolRemoved', data: SymbolEvent): boolean
-	emit(event: 'symbolLocationCreated', data: SymbolLocationEvent): boolean
-	emit(event: 'symbolLocationRemoved', data: SymbolLocationEvent): boolean
-	emit(event: string, ...args: unknown[]): boolean {
-		return this.#eventEmitter.emit(event, ...args)
 	}
 
 	/**
@@ -163,7 +130,6 @@ export class SymbolUtil implements ExternalEventEmitter {
 	clone(): SymbolUtil {
 		return new SymbolUtil(
 			this.#global,
-			this.#eventEmitterConstructor,
 			this.#currentContributor,
 			true,
 		)

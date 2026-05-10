@@ -17,7 +17,6 @@ export interface Externals {
 		 */
 		isKind: (e: unknown, kind: ExternalErrorKind) => boolean
 	}
-	event: { EventEmitter: new() => ExternalEventEmitter }
 	fs: ExternalFileSystem
 	web: {
 		getCache: () => Promise<Cache>
@@ -33,12 +32,6 @@ export interface DecompressedFile {
 }
 
 export type ExternalErrorKind = 'EEXIST' | 'EISDIR' | 'ENOENT'
-
-export interface ExternalEventEmitter {
-	emit(eventName: string, ...args: unknown[]): boolean
-	on(eventName: string, listener: (...args: unknown[]) => unknown): this
-	once(eventName: string, listener: (...args: unknown[]) => unknown): this
-}
 
 export interface ExternalFileSystem {
 	/**

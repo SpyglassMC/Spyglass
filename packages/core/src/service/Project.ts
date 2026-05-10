@@ -1,9 +1,10 @@
 import picomatch from 'picomatch'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { ExternalEventEmitter, Externals, IntervalId } from '../common/index.js'
+import type { Externals, IntervalId } from '../common/index.js'
 import {
 	bufferToString,
+	EventDispatcher,
 	Logger,
 	normalizeUri,
 	SingletonPromise,
@@ -162,7 +163,18 @@ export type ProjectData = Pick<
  *
  * After the READY process is complete, editing text documents as signaled by the client or the file watcher results in the file being re-processed.
  */
-export class Project implements ExternalEventEmitter {
+export class Project extends EventDispatcher<{
+	documentErrored: DocumentErrorEvent
+	documentUpdated: DocumentEvent
+	documentRemoved: FileEvent
+	fileCreated: FileEvent
+	fileModified: FileEvent
+	fileDeleted: FileEvent
+	ready: EmptyEvent
+	rootsUpdated: RootsEvent
+	symbolRegistrarExecuted: SymbolRegistrarEvent
+	configChanged: ConfigChangeEvent
+}> {
 	private static readonly RootSuffix = '/pack.mcmeta'
 
 	/** Prevent circular binding. */
@@ -174,7 +186,6 @@ export class Project implements ExternalEventEmitter {
 	readonly #clientManagedDocAndNodes = new Map<string, DocAndNode>()
 	readonly #configService: ConfigService
 	readonly #symbolUpToDateUris = new Set<string>()
-	readonly #eventEmitter: ExternalEventEmitter
 	readonly #initializers: readonly ProjectInitializer[]
 	#watcher: FileWatcher | undefined
 	get watchedFiles() {
@@ -245,52 +256,6 @@ export class Project implements ExternalEventEmitter {
 		this.emit('rootsUpdated', { roots: this.#roots })
 	}
 
-	on(event: 'documentErrored', callbackFn: (data: DocumentErrorEvent) => void): this
-	on(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
-	// `documentRemoved` uses a `FileEvent` instead of `DocumentEvent`, as it doesn't have access to
-	// the document anymore.
-	on(event: 'documentRemoved', callbackFn: (data: FileEvent) => void): this
-	on(
-		event: `file${'Created' | 'Modified' | 'Deleted'}`,
-		callbackFn: (data: FileEvent) => void,
-	): this
-	on(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
-	on(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
-	on(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
-	on(event: 'configChanged', callbackFn: (data: ConfigChangeEvent) => void): this
-	on(event: string, callbackFn: (...args: any[]) => unknown): this {
-		this.#eventEmitter.on(event, callbackFn)
-		return this
-	}
-
-	once(event: 'documentErrored', callbackFn: (data: DocumentErrorEvent) => void): this
-	once(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
-	once(event: 'documentRemoved', callbackFn: (data: FileEvent) => void): this
-	once(
-		event: `file${'Created' | 'Modified' | 'Deleted'}`,
-		callbackFn: (data: FileEvent) => void,
-	): this
-	once(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
-	once(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
-	once(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
-	once(event: 'configChanged', callbackFn: (data: ConfigChangeEvent) => void): this
-	once(event: string, callbackFn: (...args: any[]) => unknown): this {
-		this.#eventEmitter.once(event, callbackFn)
-		return this
-	}
-
-	emit(event: 'documentErrored', data: DocumentErrorEvent): boolean
-	emit(event: 'documentUpdated', data: DocumentEvent): boolean
-	emit(event: 'documentRemoved', data: FileEvent): boolean
-	emit(event: `file${'Created' | 'Modified' | 'Deleted'}`, data: FileEvent): boolean
-	emit(event: 'ready', data: EmptyEvent): boolean
-	emit(event: 'rootsUpdated', data: RootsEvent): boolean
-	emit(event: 'symbolRegistrarExecuted', data: SymbolRegistrarEvent): boolean
-	emit(event: 'configChanged', data: ConfigChangeEvent): boolean
-	emit(event: string, ...args: unknown[]): boolean {
-		return this.#eventEmitter.emit(event, ...args)
-	}
-
 	/**
 	 * Get all files that are tracked and supported.
 	 *
@@ -318,8 +283,8 @@ export class Project implements ExternalEventEmitter {
 			projectRoots,
 		}: ProjectOptions,
 	) {
+		super()
 		this.#cacheRoot = cacheRoot
-		this.#eventEmitter = new externals.event.EventEmitter()
 		this.externals = externals
 		this.fs = fs
 		this.#initializers = initializers
@@ -330,7 +295,7 @@ export class Project implements ExternalEventEmitter {
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
-		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
+		this.symbols = new SymbolUtil({})
 
 		this.#ctx = {}
 
@@ -435,7 +400,7 @@ export class Project implements ExternalEventEmitter {
 		const __profiler = this.profilers.get('project#init')
 
 		const { symbols } = await this.cacheService.load()
-		this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
+		this.symbols = new SymbolUtil(symbols)
 		this.symbols.buildCache()
 		__profiler.task('Load Cache')
 
@@ -647,7 +612,7 @@ export class Project implements ExternalEventEmitter {
 
 		// Reset cache.
 		const { symbols } = this.cacheService.reset()
-		this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
+		this.symbols = new SymbolUtil(symbols)
 		this.symbols.buildCache()
 
 		return this.restart()

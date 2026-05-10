@@ -1,51 +1,6 @@
 import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from 'base64-arraybuffer'
 import { fileUtil } from '../../service/fileUtil.js'
-import type {
-	ExternalEventEmitter,
-	ExternalFileSystem,
-	Externals,
-	ExternalStats,
-	FsLocation,
-} from './index.js'
-
-type Listener = (...args: unknown[]) => unknown
-export class BrowserEventEmitter implements ExternalEventEmitter {
-	readonly #listeners = new Map<string, { all: Set<Listener>; once: Set<Listener> }>()
-
-	emit(eventName: string, ...args: unknown[]): boolean {
-		const listeners = this.#listeners.get(eventName)
-		if (!listeners?.all?.size) {
-			return false
-		}
-		for (const listener of listeners.all) {
-			listener(...args)
-			if (listeners.once.has(listener)) {
-				listeners.all.delete(listener)
-				listeners.once.delete(listener)
-			}
-		}
-		return false
-	}
-
-	on(eventName: string, listener: Listener): this {
-		if (!this.#listeners.has(eventName)) {
-			this.#listeners.set(eventName, { all: new Set(), once: new Set() })
-		}
-		const listeners = this.#listeners.get(eventName)!
-		listeners.all.add(listener)
-		return this
-	}
-
-	once(eventName: string, listener: Listener): this {
-		if (!this.#listeners.has(eventName)) {
-			this.#listeners.set(eventName, { all: new Set(), once: new Set() })
-		}
-		const listeners = this.#listeners.get(eventName)!
-		listeners.all.add(listener)
-		listeners.once.add(listener)
-		return this
-	}
-}
+import type { ExternalFileSystem, Externals, ExternalStats, FsLocation } from './index.js'
 
 // TODO: Use Origin Private File System (OPFS) instead
 class BrowserFileSystem implements ExternalFileSystem {
@@ -144,7 +99,6 @@ export const BrowserExternals: Externals = {
 			return e instanceof Error && e.message.startsWith(kind)
 		},
 	},
-	event: { EventEmitter: BrowserEventEmitter },
 	fs: new BrowserFileSystem(),
 	web: {
 		getCache: () => window.caches.open('spyglassmc'),

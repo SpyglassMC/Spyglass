@@ -54,7 +54,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 		profilers: data.profilers ?? ProfilerFactory.noop(),
 		projectRoots: data.projectRoots ?? ['file:///'],
 		roots: data.roots ?? [],
-		symbols: data.symbols ?? new SymbolUtil({}, externals.event.EventEmitter),
+		symbols: data.symbols ?? new SymbolUtil({}),
 	}
 }
 
@@ -197,7 +197,7 @@ export class SimpleProject {
 	readonly #global: SymbolTable = Object.create(null)
 	#nodes: Record<string, FileNode<AstNode>> = Object.create(null)
 
-	readonly #symbols = new SymbolUtil(this.#global, NodeJsExternals.event.EventEmitter)
+	readonly #symbols = new SymbolUtil(this.#global)
 
 	readonly #meta: MetaRegistry
 	readonly #files: readonly { uri: string; content: string }[]
