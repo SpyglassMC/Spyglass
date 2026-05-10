@@ -97,7 +97,6 @@ export function getNodeJsExternals(
 				},
 			},
 			web: {
-				fetch,
 				getCache: async () => {
 					return new HttpCache(cacheRoot)
 				},

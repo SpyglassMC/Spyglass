@@ -154,7 +154,6 @@ export const BrowserExternals: Externals = {
 	event: { EventEmitter: BrowserEventEmitter },
 	fs: new BrowserFileSystem(),
 	web: {
-		fetch,
 		getCache: () => window.caches.open('spyglassmc'),
 	},
 }

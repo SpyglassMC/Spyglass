@@ -22,7 +22,6 @@ export interface Externals {
 	event: { EventEmitter: new() => ExternalEventEmitter }
 	fs: ExternalFileSystem
 	web: {
-		fetch: typeof fetch
 		getCache: () => Promise<Cache>
 	}
 }
