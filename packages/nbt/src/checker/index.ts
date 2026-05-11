@@ -9,13 +9,11 @@ import {
 	NbtCompoundNode,
 	NbtIntegerAlikeNode,
 	NbtListNode,
-	NbtLongNode,
 	NbtNode,
 	NbtNumberNode,
 	NbtPathFilterNode,
 	NbtPathIndexNode,
 	NbtPathKeyNode,
-	NbtPrimitiveArrayNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
 } from '../node/index.js'

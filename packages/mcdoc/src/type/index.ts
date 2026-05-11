@@ -2,7 +2,6 @@ import type { FullResourceLocation } from '@spyglassmc/core'
 import { Arrayable, Dev, max, min, numericEquals } from '@spyglassmc/core'
 import type { EnumKind } from '../node/index.js'
 import { getRangeDelimiter, RangeKind } from '../node/index.js'
-import { numericType } from '../parser/index.js'
 
 export type Attributes = Attribute[]
 export namespace Attributes {
