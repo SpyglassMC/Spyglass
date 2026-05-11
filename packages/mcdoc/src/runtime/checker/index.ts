@@ -607,10 +607,10 @@ function checkShallowly<T>(
 						}
 					}
 					for (const kvp of literalKvps.entries()) {
-						const literalType = {
+						const literalType: LiteralType = {
 							kind: 'literal',
 							value: { kind: 'string', value: kvp[0] },
-						} satisfies LiteralType
+						}
 						if (
 							(!kvp[1].definition || kvp[1].definition.keyType?.kind !== 'literal')
 							&& kvp[1].values.some(v =>
