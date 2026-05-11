@@ -49,10 +49,6 @@ export function index(
 								return { kind: 'literal', value: literalValue }
 							}
 					}
-					const inferred = inferType(node)
-					if (inferred.kind === target.kind) {
-						return inferred
-					}
 					return undefined
 				},
 				getChildren: node => {

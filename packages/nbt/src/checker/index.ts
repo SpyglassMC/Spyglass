@@ -128,10 +128,6 @@ export function typeDefinition(
 							}
 						}
 					}
-					const inferred = inferType(node)
-					if (inferred.kind === target.kind) {
-						return inferred
-					}
 					return undefined
 				},
 				getChildren: node => {
@@ -345,10 +341,6 @@ export function path(
 							case 'tuple':
 								return { kind: 'tuple', items: [] }
 						}
-					}
-					const inferred = inferPath(node)
-					if (inferred.kind === target.kind) {
-						return inferred
 					}
 					return undefined
 				},
