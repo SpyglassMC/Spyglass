@@ -17,8 +17,8 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version-file: "package.json"
           cache: "npm"
@@ -32,8 +32,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -44,7 +44,7 @@ jobs:
       - run: npm test
 
       - run: tar -cvf build-artifact.tar packages/*/lib/ packages/*/out/ packages/*/dist/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: build-artifact
           path: build-artifact.tar
@@ -56,17 +56,17 @@ jobs:
       - lint
       - test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       # - run: git pull origin gh-pages:gh-pages --ff-only
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
           cache: "npm"
       - run: npm ci
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: build-artifact
       - run: |

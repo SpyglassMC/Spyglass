@@ -9,23 +9,26 @@ jobs:
     name: Test & Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version-file: "package.json"
+          # Caching for release workflow is explicitly configured via actions/cache with a separate
+          # cache key from regular workflows. Disabling cache with setup-node.
+          package-manager-cache: false
 
       - run: npm i -g npm@latest
 
       - name: Cache node modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-release-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-release-node-
 
       - run: npm ci
 
