@@ -15,18 +15,18 @@ for (const key of packageNames) {
 		? [...dependencies ?? [], ...devDependencies ?? []]
 		: undefined
 	const p = getPackagePath(key)
-	const tsconfigPath = path.join(p, 'tsconfig.json')
-	const tsconfig: { [key: string]: any; references?: { path: string }[] } = JSON.parse(
-		fs.readFileSync(tsconfigPath, 'utf-8'),
+	const srcTsconfigPath = path.join(p, 'src', 'tsconfig.json')
+	const srcTsconfig: { [key: string]: any; references?: { path: string }[] } = JSON.parse(
+		fs.readFileSync(srcTsconfigPath, 'utf-8'),
 	)
-	if (tsconfig.references) {
-		tsconfig.references = tsconfig.references.filter(v => !v.path.startsWith('../'))
+	if (srcTsconfig.references) {
+		srcTsconfig.references = srcTsconfig.references.filter(v => !v.path.startsWith('../../'))
 	}
 	if (allDependencies) {
-		tsconfig.references = tsconfig.references ?? []
-		tsconfig.references.unshift(...allDependencies.map(d => ({ path: `../${d}` })))
+		srcTsconfig.references = srcTsconfig.references ?? []
+		srcTsconfig.references.unshift(...allDependencies.map(d => ({ path: `../../${d}` })))
 	}
-	fs.writeFileSync(tsconfigPath, JSON.stringify(tsconfig, undefined, '\t') + '\n', {
+	fs.writeFileSync(srcTsconfigPath, JSON.stringify(srcTsconfig, undefined, '\t') + '\n', {
 		encoding: 'utf-8',
 	})
 }

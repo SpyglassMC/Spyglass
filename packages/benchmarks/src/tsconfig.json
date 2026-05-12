@@ -3,5 +3,16 @@
 	"compilerOptions": {
 		"noEmit": false,
 		"outDir": "../lib"
-	}
+	},
+	"references": [
+		{
+			"path": "../../core"
+		},
+		{
+			"path": "../../java-edition"
+		},
+		{
+			"path": "../../json"
+		}
+	]
 }

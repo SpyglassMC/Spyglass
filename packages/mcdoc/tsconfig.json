@@ -3,12 +3,6 @@
 	"files": [],
 	"references": [
 		{
-			"path": "../core"
-		},
-		{
-			"path": "../locales"
-		},
-		{
 			"path": "src"
 		},
 		{

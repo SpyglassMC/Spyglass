@@ -1,0 +1,13 @@
+{
+	"extends": "../../tsconfig-base",
+	"compilerOptions": {
+		"outDir": "../out",
+		"declarationMap": false,
+		"sourceMap": false
+	},
+	"references": [
+		{
+			"path": "../../language-server"
+		}
+	]
+}

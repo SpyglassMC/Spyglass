@@ -2,5 +2,19 @@
 	"extends": "../../tsconfig-base",
 	"compilerOptions": {
 		"outDir": "../lib"
-	}
+	},
+	"references": [
+		{
+			"path": "../../core"
+		},
+		{
+			"path": "../../java-edition"
+		},
+		{
+			"path": "../../locales"
+		},
+		{
+			"path": "../../mcdoc"
+		}
+	]
 }
