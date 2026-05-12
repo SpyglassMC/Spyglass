@@ -3,7 +3,6 @@ import rfdc from 'rfdc'
 import { URL as WhatwgURL } from 'whatwg-url'
 import type { AstNode } from '../node/index.js'
 import type { ProcessorContext } from '../service/index.js'
-import type { Externals } from './externals/index.js'
 import type { DeepReadonly, ReadWrite } from './ReadonlyProxy.js'
 
 // We try to use the `URL` class built-in to the JavaScript runtime if possible, but falls back to
@@ -283,30 +282,6 @@ export function isIterable(value: unknown): value is Iterable<unknown> {
 }
 
 // #region ESNext functions polyfill
-export function emplaceMap<K, V>(
-	map: Map<K, V>,
-	key: K,
-	handler: {
-		insert?: (key: K, map: Map<K, V>) => V
-		update?: (existing: V, key: K, map: Map<K, V>) => V
-	},
-): V {
-	if (map.has(key)) {
-		let value: V = map.get(key)!
-		if (handler.update) {
-			value = handler.update(value, key, map)
-			map.set(key, value)
-		}
-		return value
-	} else if (handler.insert) {
-		const value = handler.insert(key, map)
-		map.set(key, value)
-		return value
-	} else {
-		throw new Error(`No key ${key} in map and no insert handler provided`)
-	}
-}
-
 export function getOrInsert<K, V>(map: Map<K, V>, key: K, defaultValue: V): V {
 	if (!map.has(key)) {
 		map.set(key, defaultValue)

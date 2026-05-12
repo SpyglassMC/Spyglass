@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict'
-import { describe, it } from 'node:test'
+import { describe, it, mock } from 'node:test'
 import type { AstNode, CommentNode, DeepReadonly, InheritReadonly } from '../../lib/index.js'
 import {
+	bytesToHex,
+	compressBytes,
+	decompressBytes,
+	getSha1,
 	max,
 	min,
 	normalizeUri,
@@ -53,6 +57,84 @@ describe('common util', () => {
 		assertType<never>(0 as unknown as UndefinedNode)
 		assertType<DeepReadonly<CommentNode>>(0 as unknown as ReadonlyNode)
 		assertType<CommentNode>(0 as unknown as ReadWriteNode)
+	})
+
+	describe('bytesToHex()', () => {
+		const byteNumbers = [89, 178, 82, 105, 221, 13, 59, 38, 158, 100]
+		const expectedHex = '59b25269dd0d3b269e64'
+
+		it('Should convert Node.js Buffer to hex correctly', () => {
+			const buffer = Buffer.from(byteNumbers)
+			const actualHex = bytesToHex(buffer)
+			assert.equal(actualHex, expectedHex)
+		})
+
+		it('Should convert bytes to hex correctly', () => {
+			const bytes = new Uint8Array(byteNumbers)
+			const actualHex = bytesToHex(bytes)
+			assert.equal(actualHex, expectedHex)
+		})
+
+		it('Should convert bytes to hex correctly with fallback algorithm', () => {
+			const toHexDescriptor = Reflect.getOwnPropertyDescriptor(Uint8Array.prototype, 'toHex')
+			Reflect.deleteProperty(Uint8Array.prototype, 'toHex')
+			try {
+				const bytes = new Uint8Array(byteNumbers)
+				const actualHex = bytesToHex(bytes)
+				assert.equal(actualHex, expectedHex)
+			} finally {
+				if (toHexDescriptor) {
+					Reflect.defineProperty(Uint8Array.prototype, 'toHex', toHexDescriptor)
+				}
+			}
+		})
+
+		it('Should use Uint8Array.prototype.toHex() if available', () => {
+			const toHexDescriptor = Reflect.getOwnPropertyDescriptor(Uint8Array.prototype, 'toHex')
+			const toHexMock = mock.fn()
+			Reflect.defineProperty(Uint8Array.prototype, 'toHex', {
+				configurable: true,
+				enumerable: false,
+				writable: true,
+				value: toHexMock,
+			})
+			try {
+				const bytes = new Uint8Array(byteNumbers)
+				bytesToHex(bytes)
+				assert.equal(toHexMock.mock.callCount(), 1)
+			} finally {
+				if (toHexDescriptor) {
+					Reflect.defineProperty(Uint8Array.prototype, 'toHex', toHexDescriptor)
+				} else {
+					Reflect.deleteProperty(Uint8Array.prototype, 'toHex')
+				}
+			}
+		})
+	})
+
+	describe('getSha1()', () => {
+		const inputString = 'mapo tofu'
+		const inputBytes = new Uint8Array([109, 97, 112, 111, 32, 116, 111, 102, 117])
+		const expectedSha1 = '19bea783b6470a376530f0dbaa33b12ee9fb0df3'
+
+		it('Should compute SHA-1 for string', async () => {
+			const actualSha1 = await getSha1(inputString)
+			assert.equal(actualSha1, expectedSha1)
+		})
+
+		it('Should compute SHA-1 for bytes', async () => {
+			const actualSha1 = await getSha1(inputBytes)
+			assert.equal(actualSha1, expectedSha1)
+		})
+	})
+
+	describe('compressBytes() decompressBytes()', async () => {
+		it('Should compress and decompress correctly', async () => {
+			const inputBytes = new Uint8Array([109, 97, 112, 111, 32, 116, 111, 102, 117])
+			const compressedBytes = await compressBytes(inputBytes, 'gzip')
+			const decompressedBytes = await decompressBytes(compressedBytes, 'gzip')
+			assert.deepEqual(decompressedBytes, inputBytes)
+		})
 	})
 
 	describe('numericEquals()', () => {
