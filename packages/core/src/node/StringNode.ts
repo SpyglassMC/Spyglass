@@ -25,6 +25,21 @@ export const EscapeTable = new Map<EscapeChar, string>([
 	['t', '\t'],
 ])
 
+export const UnicodeEscapeChars = ['x', 'u', 'U'] as const
+export type UnicodeEscapeChar = (typeof UnicodeEscapeChars)[number]
+export namespace UnicodeEscapeChar {
+	/* istanbul ignore next */
+	export function is(c: string): c is UnicodeEscapeChar {
+		return UnicodeEscapeChars.includes(c as any)
+	}
+}
+
+export const UnicodeEscapeLengths = new Map<UnicodeEscapeChar, number>([
+	['x', 2],
+	['u', 4],
+	['U', 8],
+])
+
 export type Quote = "'" | '"'
 
 export interface StringOptions {
@@ -40,6 +55,10 @@ export interface StringOptions {
 			 * Whether escapes like `\u####` where #### is a hexdecimal numeral are allowed.
 			 */
 			unicode?: boolean
+			/**
+			 * Whether additional escapes like `\N{<name>}`, `\x##`, or `\U########` are allowed (currently only used in SNBT).
+			 */
+			extendedUnicode?: boolean
 			/**
 			 * Whether unknown characters can be escaped, which would just result in the character itself.
 			 */
