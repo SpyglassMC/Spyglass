@@ -5,10 +5,10 @@
 	},
 	"references": [
 		{
-			"path": "../../core"
+			"path": "../../core/src"
 		},
 		{
-			"path": "../../mcdoc"
+			"path": "../../mcdoc/src"
 		}
 	]
 }

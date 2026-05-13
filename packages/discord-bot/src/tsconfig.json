@@ -5,16 +5,16 @@
 	},
 	"references": [
 		{
-			"path": "../../core"
+			"path": "../../core/src"
 		},
 		{
-			"path": "../../java-edition"
+			"path": "../../java-edition/src"
 		},
 		{
-			"path": "../../locales"
+			"path": "../../locales/src"
 		},
 		{
-			"path": "../../mcdoc"
+			"path": "../../mcdoc/src"
 		}
 	]
 }

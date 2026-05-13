@@ -6,13 +6,16 @@
 	},
 	"references": [
 		{
-			"path": "../../core"
+			"path": "../../core/src"
 		},
 		{
-			"path": "../../java-edition"
+			"path": "../../java-edition/src"
 		},
 		{
-			"path": "../../json"
+			"path": "../../json/src"
+		},
+		{
+			"path": "../../mcdoc/src"
 		}
 	]
 }

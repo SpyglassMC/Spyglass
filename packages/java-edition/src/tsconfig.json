@@ -5,22 +5,22 @@
 	},
 	"references": [
 		{
-			"path": "../../core"
+			"path": "../../core/src"
 		},
 		{
-			"path": "../../json"
+			"path": "../../json/src"
 		},
 		{
-			"path": "../../locales"
+			"path": "../../locales/src"
 		},
 		{
-			"path": "../../mcfunction"
+			"path": "../../mcfunction/src"
 		},
 		{
-			"path": "../../mcdoc"
+			"path": "../../mcdoc/src"
 		},
 		{
-			"path": "../../nbt"
+			"path": "../../nbt/src"
 		}
 	]
 }

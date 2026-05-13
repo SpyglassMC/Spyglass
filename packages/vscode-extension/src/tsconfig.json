@@ -7,7 +7,7 @@
 	},
 	"references": [
 		{
-			"path": "../../language-server"
+			"path": "../../language-server/src"
 		}
 	]
 }

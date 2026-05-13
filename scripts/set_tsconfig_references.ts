@@ -24,7 +24,7 @@ for (const key of packageNames) {
 	}
 	if (allDependencies) {
 		srcTsconfig.references = srcTsconfig.references ?? []
-		srcTsconfig.references.unshift(...allDependencies.map(d => ({ path: `../../${d}` })))
+		srcTsconfig.references.unshift(...allDependencies.map(d => ({ path: `../../${d}/src` })))
 	}
 	fs.writeFileSync(srcTsconfigPath, JSON.stringify(srcTsconfig, undefined, '\t') + '\n', {
 		encoding: 'utf-8',

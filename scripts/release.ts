@@ -193,7 +193,9 @@ async function main(): Promise<void> {
 			packagesToBump.set(name, type)
 			for (const [key, info] of Object.entries(packagesInfo)) {
 				const dependencies = [...info.dependencies ?? [], ...info.devDependencies ?? []]
-				if (dependencies.includes(name) && !packagesToBump.has(key)) {
+				if (
+					dependencies.includes(name) && !packagesToBump.has(key) && !info.released?.private
+				) {
 					console.log(`${key}: patch bump due to its dependency on ${name}`)
 					addPackageToBump(key, BumpType.Patch)
 				}
@@ -203,6 +205,10 @@ async function main(): Promise<void> {
 
 	for (const [key, info] of Object.entries(packagesInfo)) {
 		maxPackageNameLength = Math.max(maxPackageNameLength, key.length)
+		if (info.released?.private) {
+			console.log(`${key}: skip analyzing commits for private package`)
+			continue
+		}
 		const commits = await getPackageCommits(key)
 		console.log(`${key}: analyzing commits...`)
 		if (!info.released) {
@@ -234,12 +240,16 @@ async function main(): Promise<void> {
 	const versionSummaries: string[] = []
 	for (const [key, info] of Object.entries(packagesInfo)) {
 		const displayableKey = key + ':' + ' '.repeat(maxPackageNameLength - key.length)
+		if (info.released?.private) {
+			versionSummaries.push(`${displayableKey} (private)`)
+			continue
+		}
 		const type = packagesToBump.get(key)
 		if (type === undefined) {
 			versionSummaries.push(`${displayableKey} ${info.released!.version} (unchanged)`)
 		} else {
 			const oldVersion = info.released!.version
-			info.released!.version = bumpVersion(packagesInfo[key].released!.version, type)
+			info.released!.version = bumpVersion(oldVersion, type)
 			versionSummaries.push(
 				`${displayableKey} ${oldVersion} -> ${info.released!.version} (${
 					bumpTypeToString(type)
