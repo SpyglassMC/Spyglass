@@ -1,17 +1,8 @@
 {
-	"extends": "../tsconfig-base",
-	"compilerOptions": {
-		"rootDir": "src",
-		"outDir": "out",
-		"declarationMap": false,
-		"sourceMap": false
-	},
-	"files": [
-		"src/extension.mts"
-	],
+	"files": [],
 	"references": [
 		{
-			"path": "../language-server"
+			"path": "src"
 		}
 	]
 }

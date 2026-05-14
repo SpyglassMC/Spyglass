@@ -1,4 +1,15 @@
 {
+	"benchmarks": {
+		"dependencies": [
+			"core",
+			"java-edition",
+			"json",
+			"mcdoc"
+		],
+		"released": {
+			"private": true
+		}
+	},
 	"core": {
 		"dependencies": [
 			"locales"

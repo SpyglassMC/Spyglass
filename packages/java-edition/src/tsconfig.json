@@ -2,5 +2,25 @@
 	"extends": "../../tsconfig-base",
 	"compilerOptions": {
 		"outDir": "../lib"
-	}
+	},
+	"references": [
+		{
+			"path": "../../core/src"
+		},
+		{
+			"path": "../../json/src"
+		},
+		{
+			"path": "../../locales/src"
+		},
+		{
+			"path": "../../mcfunction/src"
+		},
+		{
+			"path": "../../mcdoc/src"
+		},
+		{
+			"path": "../../nbt/src"
+		}
+	]
 }

@@ -3,24 +3,6 @@
 	"files": [],
 	"references": [
 		{
-			"path": "../core"
-		},
-		{
-			"path": "../json"
-		},
-		{
-			"path": "../locales"
-		},
-		{
-			"path": "../mcfunction"
-		},
-		{
-			"path": "../mcdoc"
-		},
-		{
-			"path": "../nbt"
-		},
-		{
 			"path": "src"
 		},
 		{

@@ -2,5 +2,10 @@
 	"extends": "../../tsconfig-base",
 	"compilerOptions": {
 		"outDir": "../lib"
-	}
+	},
+	"references": [
+		{
+			"path": "../../locales/src"
+		}
+	]
 }

@@ -3,18 +3,6 @@
 	"files": [],
 	"references": [
 		{
-			"path": "../core"
-		},
-		{
-			"path": "../java-edition"
-		},
-		{
-			"path": "../locales"
-		},
-		{
-			"path": "../mcdoc"
-		},
-		{
 			"path": "src"
 		},
 		{

@@ -3,12 +3,6 @@
 	"files": [],
 	"references": [
 		{
-			"path": "../core"
-		},
-		{
-			"path": "../mcdoc"
-		},
-		{
 			"path": "src"
 		},
 		{
