@@ -34,13 +34,13 @@ let workspaceFolders!: ls.WorkspaceFolder[]
 let projectRoots!: core.RootUriString[]
 let hasShutdown = false
 
-const externals = getNodeJsExternals({ cacheRoot })
 const logger: core.Logger = {
 	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
 	info: (msg: any, ...args: any[]): void => connection.console.info(util.format(msg, ...args)),
 	log: (msg: any, ...args: any[]): void => connection.console.log(util.format(msg, ...args)),
 	warn: (msg: any, ...args: any[]): void => connection.console.warn(util.format(msg, ...args)),
 }
+const externals = getNodeJsExternals({ cacheRoot, logger })
 let service!: core.Service
 
 function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensRegistrationOptions {
