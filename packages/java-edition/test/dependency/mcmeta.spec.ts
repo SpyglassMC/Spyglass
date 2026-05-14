@@ -66,7 +66,7 @@ describe('mcmeta', () => {
 				fluids: Fluids,
 				registries: Fixtures.Registries,
 			}, '1.18.2')
-			const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
+			const symbols = new SymbolUtil({})
 			registrar(symbols, {})
 			t.assert.snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})

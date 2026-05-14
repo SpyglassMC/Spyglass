@@ -1,4 +1,4 @@
-import { emplaceMap, isObject } from './util.js'
+import { getOrInsertComputed, isObject } from './util.js'
 
 type DeepReadonlyValue<T> = T extends object ? DeepReadonly<T> : T
 export type DeepReadonly<T extends object> = { readonly [K in keyof T]: DeepReadonlyValue<T[K]> }
@@ -17,7 +17,7 @@ class ReadonlyProxyHandler<T extends object> implements ProxyHandler<T> {
 	get(target: T, p: string | symbol, receiver: any): any {
 		const value = Reflect.get(target, p, receiver)
 		if (p !== 'prototype' && isObject(value)) {
-			return emplaceMap(this.map, p, { insert: () => ReadonlyProxy.create(value) })
+			return getOrInsertComputed(this.map, p, () => ReadonlyProxy.create(value))
 		}
 		return value
 	}

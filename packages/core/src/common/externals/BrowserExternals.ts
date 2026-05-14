@@ -1,52 +1,6 @@
 import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from 'base64-arraybuffer'
-import pako from 'pako'
 import { fileUtil } from '../../service/fileUtil.js'
-import type {
-	ExternalEventEmitter,
-	ExternalFileSystem,
-	Externals,
-	ExternalStats,
-	FsLocation,
-} from './index.js'
-
-type Listener = (...args: unknown[]) => unknown
-export class BrowserEventEmitter implements ExternalEventEmitter {
-	readonly #listeners = new Map<string, { all: Set<Listener>; once: Set<Listener> }>()
-
-	emit(eventName: string, ...args: unknown[]): boolean {
-		const listeners = this.#listeners.get(eventName)
-		if (!listeners?.all?.size) {
-			return false
-		}
-		for (const listener of listeners.all) {
-			listener(...args)
-			if (listeners.once.has(listener)) {
-				listeners.all.delete(listener)
-				listeners.once.delete(listener)
-			}
-		}
-		return false
-	}
-
-	on(eventName: string, listener: Listener): this {
-		if (!this.#listeners.has(eventName)) {
-			this.#listeners.set(eventName, { all: new Set(), once: new Set() })
-		}
-		const listeners = this.#listeners.get(eventName)!
-		listeners.all.add(listener)
-		return this
-	}
-
-	once(eventName: string, listener: Listener): this {
-		if (!this.#listeners.has(eventName)) {
-			this.#listeners.set(eventName, { all: new Set(), once: new Set() })
-		}
-		const listeners = this.#listeners.get(eventName)!
-		listeners.all.add(listener)
-		listeners.once.add(listener)
-		return this
-	}
-}
+import type { ExternalFileSystem, Externals, ExternalStats, FsLocation } from './index.js'
 
 // TODO: Use Origin Private File System (OPFS) instead
 class BrowserFileSystem implements ExternalFileSystem {
@@ -136,21 +90,6 @@ export const BrowserExternals: Externals = {
 		decompressBall(_buffer, _options) {
 			throw new Error('decompressBall not supported on browser.')
 		},
-		async gunzip(buffer) {
-			return pako.inflate(buffer) as Uint8Array<ArrayBuffer>
-		},
-		async gzip(buffer) {
-			return pako.gzip(buffer) as Uint8Array<ArrayBuffer>
-		},
-	},
-	crypto: {
-		async getSha1(data) {
-			if (typeof data === 'string') {
-				data = new TextEncoder().encode(data)
-			}
-			const hash = await crypto.subtle.digest('SHA-1', data.buffer)
-			return uint8ArrayToHex(new Uint8Array(hash))
-		},
 	},
 	error: {
 		createKind(kind, message) {
@@ -160,20 +99,10 @@ export const BrowserExternals: Externals = {
 			return e instanceof Error && e.message.startsWith(kind)
 		},
 	},
-	event: { EventEmitter: BrowserEventEmitter },
 	fs: new BrowserFileSystem(),
 	web: {
-		fetch,
 		getCache: () => window.caches.open('spyglassmc'),
 	},
-}
-
-function uint8ArrayToHex(array: Uint8Array) {
-	let ans = ''
-	for (const v of array) {
-		ans += v.toString(16).padStart(2, '0')
-	}
-	return ans
 }
 
 Object.freeze(BrowserExternals)

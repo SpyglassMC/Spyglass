@@ -9,7 +9,7 @@ export namespace Dev {
 	export function assertNever(value: never): never {
 		throw new Error(`'${Dev.stringify(value)}' is not of type 'never'`)
 	}
-	export function assertTrue(value: boolean, message: string): void {
+	export function assertTrue(value: unknown, message: string): asserts value {
 		if (!value) {
 			throw new Error(`Assertion failed: ${message}. '${Dev.stringify(value)}' should be true.`)
 		}

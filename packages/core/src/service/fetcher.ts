@@ -18,7 +18,7 @@ export async function fetchWithCache(
 	}
 	request.headers.set('User-Agent', 'SpyglassMC (+https://spyglassmc.com)')
 	try {
-		const response = await web.fetch(request, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
+		const response = await fetch(request, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
 		if (response.status === 304) {
 			Dev.assertDefined(cachedResponse)
 			logger.info(`[fetchWithCache] reusing cache for ${request.url}`)

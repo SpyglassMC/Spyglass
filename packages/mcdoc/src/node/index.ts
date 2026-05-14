@@ -1,6 +1,5 @@
 import type { AstNode, ColorTokenType, SymbolBaseNode } from '@spyglassmc/core'
 import {
-	atArray,
 	CommentNode,
 	FloatNode,
 	IntegerNode,
@@ -775,7 +774,7 @@ export namespace PathNode {
 		isAbsolute?: boolean
 		lastIdentifier?: IdentifierNode
 	} {
-		const lastChild = atArray(node?.children, -1)
+		const lastChild = node?.children.at(-1)
 		return {
 			children: node?.children ?? [],
 			isAbsolute: node?.isAbsolute,

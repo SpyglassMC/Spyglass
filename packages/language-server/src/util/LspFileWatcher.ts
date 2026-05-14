@@ -1,5 +1,4 @@
 import * as core from '@spyglassmc/core'
-import EventEmitter from 'events'
 import * as ls from 'vscode-languageserver/node.js'
 
 type Predicate = (uri: string) => boolean
@@ -17,7 +16,9 @@ export interface LspFileWatcherOptions {
  * A file watcher based on Language Server Protocol's `workspace/didChangeWatchedFiles`
  * notification.
  */
-export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
+export class LspFileWatcher extends core.EventDispatcher<core.FileWatcherEventMap>
+	implements core.FileWatcher
+{
 	#ready = false
 	readonly #connection: ls.Connection
 	readonly #externals: core.Externals
@@ -75,9 +76,9 @@ export class LspFileWatcher extends EventEmitter implements core.FileWatcher {
 			}
 
 			this.#ready = true
-			this.emit('ready')
+			this.emit('ready', undefined)
 		} catch (e) {
-			this.emit('error', e)
+			this.emit('error', e as Error)
 		}
 	}
 

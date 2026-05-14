@@ -6,14 +6,6 @@ export interface Externals {
 			buffer: Uint8Array<ArrayBuffer>,
 			options?: { stripLevel?: number },
 		) => Promise<DecompressedFile[]>
-		gzip: (buffer: Uint8Array<ArrayBuffer>) => Promise<Uint8Array<ArrayBuffer>>
-		gunzip: (buffer: Uint8Array<ArrayBuffer>) => Promise<Uint8Array<ArrayBuffer>>
-	}
-	crypto: {
-		/**
-		 * @returns SHA-1 digest of the given data in hexadecimal format.
-		 */
-		getSha1: (data: string | Uint8Array<ArrayBuffer>) => Promise<string>
 	}
 	error: {
 		/**
@@ -25,10 +17,8 @@ export interface Externals {
 		 */
 		isKind: (e: unknown, kind: ExternalErrorKind) => boolean
 	}
-	event: { EventEmitter: new() => ExternalEventEmitter }
 	fs: ExternalFileSystem
 	web: {
-		fetch: typeof fetch
 		getCache: () => Promise<Cache>
 	}
 }
@@ -42,12 +32,6 @@ export interface DecompressedFile {
 }
 
 export type ExternalErrorKind = 'EEXIST' | 'EISDIR' | 'ENOENT'
-
-export interface ExternalEventEmitter {
-	emit(eventName: string, ...args: unknown[]): boolean
-	on(eventName: string, listener: (...args: unknown[]) => unknown): this
-	once(eventName: string, listener: (...args: unknown[]) => unknown): this
-}
 
 export interface ExternalFileSystem {
 	/**

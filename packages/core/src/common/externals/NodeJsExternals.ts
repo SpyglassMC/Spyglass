@@ -1,8 +1,6 @@
 import decompress from 'decompress'
 import { Buffer } from 'node:buffer'
 import cp from 'node:child_process'
-import crypto from 'node:crypto'
-import { EventEmitter } from 'node:events'
 import fs, { promises as fsp } from 'node:fs'
 import os from 'node:os'
 import process from 'node:process'
@@ -10,13 +8,9 @@ import stream from 'node:stream'
 import type streamWeb from 'node:stream/web'
 import url from 'node:url'
 import { promisify } from 'node:util'
-import zlib from 'node:zlib'
 import type { DecompressedFile, RootUriString } from '../../index.js'
 import type { Uri } from '../util.js'
 import type { Externals, FsLocation } from './index.js'
-
-const gunzip = promisify(zlib.gunzip)
-const gzip = promisify(zlib.gzip)
 
 export function getNodeJsExternals(
 	{ cacheRoot, nodeFsp = fsp }: { cacheRoot?: RootUriString; nodeFsp?: typeof fsp } = {},
@@ -33,19 +27,6 @@ export function getNodeJsExternals(
 						{ strip: options?.stripLevel },
 					) as Promise<DecompressedFile[]>
 				},
-				gunzip(buffer) {
-					return gunzip(buffer)
-				},
-				gzip(buffer) {
-					return gzip(buffer)
-				},
-			},
-			crypto: {
-				async getSha1(data) {
-					const hash = crypto.createHash('sha1')
-					hash.update(data)
-					return hash.digest('hex')
-				},
 			},
 			error: {
 				createKind(kind, message) {
@@ -57,7 +38,6 @@ export function getNodeJsExternals(
 					return e instanceof Error && (e as NodeJS.ErrnoException).code === kind
 				},
 			},
-			event: { EventEmitter },
 			fs: {
 				chmod(location, mode) {
 					return nodeFsp.chmod(toFsPathLike(location), mode)
@@ -104,7 +84,6 @@ export function getNodeJsExternals(
 				},
 			},
 			web: {
-				fetch,
 				getCache: async () => {
 					return new HttpCache(cacheRoot)
 				},

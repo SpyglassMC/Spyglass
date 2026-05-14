@@ -1,4 +1,4 @@
-import { emplaceMap, isObject } from '../common/index.js'
+import { getOrInsertComputed, isObject } from '../common/index.js'
 import { Operations } from './Operations.js'
 
 const BranchOff = Symbol('StateBranchOff')
@@ -81,7 +81,7 @@ class StateProxyHandler<T extends object> implements ProxyHandler<T> {
 		}
 		const value = Reflect.get(target, p, receiver)
 		if (p !== 'prototype' && isObject(value)) {
-			return emplaceMap(this.map, p, { insert: () => _createStateProxy(value, this.rootOps) })
+			return getOrInsertComputed(this.map, p, () => _createStateProxy(value, this.rootOps))
 		}
 		return value
 	}

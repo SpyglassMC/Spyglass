@@ -3,7 +3,6 @@ import rfdc from 'rfdc'
 import { URL as WhatwgURL } from 'whatwg-url'
 import type { AstNode } from '../node/index.js'
 import type { ProcessorContext } from '../service/index.js'
-import type { Externals } from './externals/index.js'
 import type { DeepReadonly, ReadWrite } from './ReadonlyProxy.js'
 
 // We try to use the `URL` class built-in to the JavaScript runtime if possible, but falls back to
@@ -192,11 +191,8 @@ export function promisifyAsyncIterable<T, U>(
 	})()
 }
 
-export async function parseGzippedJson(
-	externals: Externals,
-	buffer: Uint8Array<ArrayBuffer>,
-): Promise<unknown> {
-	return JSON.parse(bufferToString(await externals.archive.gunzip(buffer)))
+export async function parseGzippedJson(bytes: Uint8Array<ArrayBuffer>): Promise<unknown> {
+	return JSON.parse(bufferToString(await decompressBytes(bytes, 'gzip')))
 }
 
 /**
@@ -286,32 +282,38 @@ export function isIterable(value: unknown): value is Iterable<unknown> {
 }
 
 // #region ESNext functions polyfill
-export function atArray<T>(array: readonly T[] | undefined, index: number): T | undefined {
-	return index >= 0 ? array?.[index] : array?.[array.length + index]
+export function getOrInsert<K, V>(map: Map<K, V>, key: K, defaultValue: V): V {
+	if (!map.has(key)) {
+		map.set(key, defaultValue)
+	}
+	return map.get(key)!
 }
 
-export function emplaceMap<K, V>(
+export function getOrInsertComputed<K, V>(
 	map: Map<K, V>,
 	key: K,
-	handler: {
-		insert?: (key: K, map: Map<K, V>) => V
-		update?: (existing: V, key: K, map: Map<K, V>) => V
-	},
+	callbackFunction: (key: K) => V,
 ): V {
-	if (map.has(key)) {
-		let value: V = map.get(key)!
-		if (handler.update) {
-			value = handler.update(value, key, map)
-			map.set(key, value)
-		}
-		return value
-	} else if (handler.insert) {
-		const value = handler.insert(key, map)
-		map.set(key, value)
-		return value
-	} else {
-		throw new Error(`No key ${key} in map and no insert handler provided`)
+	if (!map.has(key)) {
+		map.set(key, callbackFunction(key))
 	}
+	return map.get(key)!
+}
+
+/**
+ * TODO: replace with ESNext Uint8Array.prototype.toHex once it's widely supported
+ */
+export function bytesToHex(bytes: Uint8Array): string {
+	if ('Buffer' in globalThis && bytes instanceof Buffer) {
+		return bytes.toString('hex')
+	} else if ('toHex' in Uint8Array.prototype && typeof Uint8Array.prototype.toHex === 'function') {
+		return Uint8Array.prototype.toHex.call(bytes)
+	}
+	let ans = ''
+	for (const v of bytes) {
+		ans += v.toString(16).padStart(2, '0')
+	}
+	return ans
 }
 // #endregion
 
@@ -343,6 +345,54 @@ export function normalizeUri(uri: string): string {
 	const obj = new Uri(uri)
 	obj.pathname = normalizeUriPathname(obj.pathname)
 	return obj.toString()
+}
+
+export async function getSha1(data: string | Uint8Array<ArrayBuffer>): Promise<string> {
+	if (typeof data === 'string') {
+		data = new TextEncoder().encode(data)
+	}
+	const hash = await crypto.subtle.digest('SHA-1', data.buffer)
+	return bytesToHex(new Uint8Array(hash))
+}
+
+export function compressBytes(
+	bytes: Uint8Array<ArrayBuffer>,
+	algorithm: CompressionFormat,
+): Promise<Uint8Array<ArrayBuffer>> {
+	return streamToBytes(compressStream(bytesToStream(bytes), algorithm))
+}
+
+export function compressStream(
+	stream: ReadableStream<Uint8Array<ArrayBuffer>>,
+	algorithm: CompressionFormat,
+): ReadableStream<Uint8Array<ArrayBuffer>> {
+	return stream.pipeThrough(new CompressionStream(algorithm))
+}
+
+export function decompressBytes(
+	bytes: Uint8Array<ArrayBuffer>,
+	algorithm: CompressionFormat,
+): Promise<Uint8Array<ArrayBuffer>> {
+	return streamToBytes(decompressStream(bytesToStream(bytes), algorithm))
+}
+
+export function decompressStream(
+	stream: ReadableStream<Uint8Array<ArrayBuffer>>,
+	algorithm: CompressionFormat,
+): ReadableStream<Uint8Array<ArrayBuffer>> {
+	return stream.pipeThrough(new DecompressionStream(algorithm))
+}
+
+export function bytesToStream(
+	bytes: Uint8Array<ArrayBuffer>,
+): ReadableStream<Uint8Array<ArrayBuffer>> {
+	return new Blob([bytes]).stream()
+}
+
+export function streamToBytes(
+	stream: ReadableStream<Uint8Array<ArrayBuffer>>,
+): Promise<Uint8Array<ArrayBuffer>> {
+	return new Response(stream).bytes()
 }
 
 /**

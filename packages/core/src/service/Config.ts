@@ -1,8 +1,14 @@
 import rfdc from 'rfdc'
-import type { DeepPartial, ExternalEventEmitter } from '../common/index.js'
-import { Arrayable, bufferToString, merge, TypePredicates } from '../common/index.js'
+import type { DeepPartial } from '../common/index.js'
+import {
+	Arrayable,
+	bufferToString,
+	EventDispatcher,
+	merge,
+	TypePredicates,
+} from '../common/index.js'
 import { ErrorSeverity } from '../source/index.js'
-import { DataFileCategories, FileCategories, RegistryCategories } from '../symbol/index.js'
+import { DataFileCategories, RegistryCategories } from '../symbol/index.js'
 import type { Project } from './Project.js'
 /* eslint-disable no-restricted-syntax */
 
@@ -523,16 +529,15 @@ export namespace PartialConfig {
 type ConfigEvent = { config: Config }
 type ErrorEvent = { error: unknown; uri: string }
 
-export class ConfigService implements ExternalEventEmitter {
+export class ConfigService extends EventDispatcher<{ changed: ConfigEvent; error: ErrorEvent }> {
 	static readonly ConfigFileNames = Object.freeze(
 		['spyglass.json', '.spyglassrc', '.spyglassrc.json'] as const,
 	)
 
-	readonly #eventEmitter: ExternalEventEmitter
 	private currentEditorConfiguration: PartialConfig = {}
 
 	constructor(private readonly project: Project, private readonly defaultConfig = VanillaConfig) {
-		this.#eventEmitter = new project.externals.event.EventEmitter()
+		super()
 		const handler = async ({ uri }: { uri: string }) => {
 			if (ConfigService.isConfigFile(uri)) {
 				this.emit('changed', { config: await this.load() })
@@ -541,26 +546,6 @@ export class ConfigService implements ExternalEventEmitter {
 		project.on('fileCreated', handler)
 		project.on('fileModified', handler)
 		project.on('fileDeleted', handler)
-	}
-
-	on(event: 'changed', callbackFn: (data: ConfigEvent) => void): this
-	on(event: 'error', callbackFn: (data: ErrorEvent) => void): this
-	on(event: string, callbackFn: (...args: any[]) => unknown): this {
-		this.#eventEmitter.on(event, callbackFn)
-		return this
-	}
-
-	once(event: 'changed', callbackFn: (data: ConfigEvent) => void): this
-	once(event: 'error', callbackFn: (data: ErrorEvent) => void): this
-	once(event: string, callbackFn: (...args: any[]) => unknown): this {
-		this.#eventEmitter.once(event, callbackFn)
-		return this
-	}
-
-	emit(event: 'changed', data: ConfigEvent): boolean
-	emit(event: 'error', data: ErrorEvent): boolean
-	emit(event: string, ...args: unknown[]): boolean {
-		return this.#eventEmitter.emit(event, ...args)
 	}
 
 	async onEditorConfigurationUpdate(editorConfiguration: PartialConfig) {

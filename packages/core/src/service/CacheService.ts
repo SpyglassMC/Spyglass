@@ -1,5 +1,10 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { bigintJsonLosslessReplacer, bigintJsonLosslessReviver, Uri } from '../common/index.js'
+import {
+	bigintJsonLosslessReplacer,
+	bigintJsonLosslessReviver,
+	getSha1,
+	Uri,
+} from '../common/index.js'
 import type { PosRangeLanguageError } from '../source/index.js'
 import type { UnlinkedSymbolTable } from '../symbol/index.js'
 import { SymbolTable } from '../symbol/index.js'
@@ -77,9 +82,7 @@ export class CacheService {
 			}
 			try {
 				// TODO: Don't update this for every single change.
-				this.checksums.files[doc.uri] = await this.project.externals.crypto.getSha1(
-					doc.getText(),
-				)
+				this.checksums.files[doc.uri] = await getSha1(doc.getText())
 			} catch (e) {
 				if (!this.project.externals.error.isKind(e, 'EISDIR')) {
 					this.project.logger.error(`[CacheService#hash-file] ${doc.uri}`)
@@ -114,7 +117,7 @@ export class CacheService {
 	private async getCacheFileUri(): Promise<string> {
 		if (!this.#cacheFilePath) {
 			const sortedRoots = [...this.project.projectRoots].sort()
-			const hash = await this.project.externals.crypto.getSha1(sortedRoots.join(':'))
+			const hash = await getSha1(sortedRoots.join(':'))
 			this.#cacheFilePath = new Uri(`symbols/${hash}.json.gz`, this.cacheRoot).toString()
 		}
 		return this.#cacheFilePath
@@ -256,8 +259,7 @@ export class CacheService {
 	}
 
 	async hasFileChangedSinceCache(doc: TextDocument): Promise<boolean> {
-		return (this.checksums.files[doc.uri]
-			!== (await this.project.externals.crypto.getSha1(doc.getText())))
+		return (this.checksums.files[doc.uri] !== (await getSha1(doc.getText())))
 	}
 
 	reset(): LoadResult {

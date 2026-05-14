@@ -3,6 +3,8 @@ import {
 	bigintJsonNumberReplacer,
 	bigintJsonNumberReviver,
 	bufferToString,
+	compressBytes,
+	decompressBytes,
 	Uri,
 } from '../common/index.js'
 
@@ -298,7 +300,7 @@ export namespace fileUtil {
 		externals: Externals,
 		path: FsLocation,
 	): Promise<Uint8Array<ArrayBuffer>> {
-		return externals.archive.gunzip(await readFile(externals, path))
+		return decompressBytes(await readFile(externals, path), 'gzip')
 	}
 
 	/**
@@ -312,7 +314,7 @@ export namespace fileUtil {
 		if (typeof buffer === 'string') {
 			buffer = new TextEncoder().encode(buffer)
 		}
-		return writeFile(externals, path, await externals.archive.gzip(buffer))
+		return writeFile(externals, path, await compressBytes(buffer, 'gzip'))
 	}
 
 	/**
