@@ -314,6 +314,49 @@ export interface LiteralLongNumberValue {
 	kind: 'long'
 	value: bigint
 }
+export namespace LiteralNumericValue {
+	export function makeIfValid(
+		kind: string,
+		value: number | bigint,
+		allowInt: boolean = true,
+		allowFloat: boolean = true,
+	): LiteralNumericValue | LiteralLongNumberValue | undefined {
+		value = Number(value)
+		switch (kind) {
+			case 'byte':
+				if (allowInt && value >= -128 && value < 128) {
+					return { kind: 'byte', value }
+				}
+				break
+			case 'short':
+				if (allowInt && value >= -32768 && value < 32768) {
+					return { kind: 'short', value }
+				}
+				break
+			case 'int':
+				if (allowInt && value >= -2147483648 && value < 2147483648) {
+					return { kind: 'int', value }
+				}
+				break
+			case 'long':
+				if (allowInt && value >= -9223372036854775808n && value < 9223372036854775808n) {
+					return { kind: 'long', value: BigInt(value) }
+				}
+				break
+			case 'float':
+				if (allowFloat) {
+					return { kind: 'float', value }
+				}
+				break
+			case 'double':
+				if (allowFloat) {
+					return { kind: 'double', value }
+				}
+				break
+		}
+		return undefined
+	}
+}
 export interface LiteralType extends McdocBaseType {
 	kind: 'literal'
 	value: LiteralValue
