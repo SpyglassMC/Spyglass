@@ -12,16 +12,13 @@ on:
       - "docs/**"
 permissions:
   contents: write
-env:
-  BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
-  BOT_NAME: ${{ secrets.BOT_NAME }}
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version-file: "package.json"
           cache: "npm"
@@ -35,8 +32,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -47,7 +44,7 @@ jobs:
       - run: npm test
 
       - run: tar -cvf build-artifact.tar packages/*/lib/ packages/*/out/ packages/*/dist/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: build-artifact
           path: build-artifact.tar
@@ -59,17 +56,17 @@ jobs:
       - lint
       - test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       # - run: git pull origin gh-pages:gh-pages --ff-only
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
           cache: "npm"
       - run: npm ci
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: build-artifact
       - run: |
@@ -82,3 +79,8 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         working-directory: packages/playground
         run: npm run deploy
+        env:
+          BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+          BOT_NAME: ${{ secrets.BOT_NAME }}
+          WORKFLOW_ACTOR: ${{ github.actor }}
+          WORKFLOW_ACTOR_ID: ${{ github.actor_id }}
