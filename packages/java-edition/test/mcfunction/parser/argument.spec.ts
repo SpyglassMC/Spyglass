@@ -189,6 +189,7 @@ const Suites: Partial<
 	'minecraft:style': [{ content: ['{"bold": true}', '{ "color": "red", "italic": true }'] }],
 	'minecraft:swizzle': [{ content: ['xyz', 'x'] }],
 	'minecraft:team': [{ content: ['foo', '123'] }],
+	'minecraft:team_color': [{ content: ['red', 'green'] }],
 	'minecraft:time': [{ content: ['0d', '0s', '0t', '0', '0foo'] }],
 	'minecraft:uuid': [{
 		content: [

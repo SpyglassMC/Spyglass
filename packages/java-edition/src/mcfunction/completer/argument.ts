@@ -13,6 +13,7 @@ import {
 	binarySearch,
 	BooleanNode,
 	BrigadierStringOptions,
+	Color,
 	completer,
 	CompletionItem,
 	CompletionKind,
@@ -190,6 +191,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return LiteralNode.mock(range, { pool: SwizzleArgumentValues })
 		case 'minecraft:team':
 			return SymbolNode.mock(range, { category: 'team' })
+		case 'minecraft:team_color':
+			return LiteralNode.mock(range, { pool: Color.ColorNames })
 		case 'minecraft:template_mirror':
 			return LiteralNode.mock(range, { pool: MirrorValues })
 		case 'minecraft:template_rotation':
