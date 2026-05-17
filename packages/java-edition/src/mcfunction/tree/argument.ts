@@ -234,6 +234,9 @@ export interface MinecraftSwizzleArgumentTreeNode extends mcf.ArgumentTreeNode {
 export interface MinecraftTeamArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:team'
 }
+export interface MinecraftTeamColorArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:team_color'
+}
 export interface MinecraftTemplateMirrorArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:template_mirror'
 }
@@ -315,6 +318,7 @@ export type ArgumentTreeNode =
 	| MinecraftStyleArgumentTreeNode
 	| MinecraftSwizzleArgumentTreeNode
 	| MinecraftTeamArgumentTreeNode
+	| MinecraftTeamColorArgumentTreeNode
 	| MinecraftTemplateMirrorArgumentTreeNode
 	| MinecraftTemplateRotationArgumentTreeNode
 	| MinecraftTimeArgumentTreeNode

@@ -37,3 +37,17 @@ exports[`mcfunction argument parser > minecraft:color > Parse 'red' 1`] = `
   "errors": []
 }
 `;
+
+exports[`mcfunction argument parser > minecraft:color > Parse 'reset' 1`] = `
+{
+  "node": {
+    "type": "literal",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": "reset"
+  },
+  "errors": []
+}
+`;

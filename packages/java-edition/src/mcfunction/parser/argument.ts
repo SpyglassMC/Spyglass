@@ -284,6 +284,18 @@ export const argument: mcf.ArgumentParserGetter = (
 						: undefined,
 				),
 			)
+		case 'minecraft:team_color':
+			return wrap(
+				core.map(
+					commandLiteral({ pool: core.Color.ColorNames }),
+					(res) => ({
+						...res,
+						color: core.Color.NamedColors.has(res.value)
+							? core.Color.fromCompositeRGB(core.Color.NamedColors.get(res.value)!)
+							: undefined,
+					}),
+				),
+			)
 		case 'minecraft:template_mirror':
 			return wrap(commandLiteral({ pool: MirrorValues }))
 		case 'minecraft:template_rotation':
