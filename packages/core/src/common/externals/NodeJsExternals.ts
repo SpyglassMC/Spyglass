@@ -2,7 +2,7 @@ import decompress from 'decompress'
 import { Buffer } from 'node:buffer'
 import cp from 'node:child_process'
 import { createHash, randomUUID } from 'node:crypto'
-import fs from 'node:fs'
+import type fs from 'node:fs'
 import fsp from 'node:fs/promises'
 import os from 'node:os'
 import process from 'node:process'
@@ -93,7 +93,7 @@ export function getNodeJsExternals(
 			},
 			web: {
 				getCache: async () => {
-					return new HttpCache(cacheRoot, logger)
+					return new HttpCache(cacheRoot, logger, nodeFsp)
 				},
 			},
 		} satisfies Externals,
@@ -167,20 +167,25 @@ namespace CacheIndex {
  */
 class HttpCache implements Cache {
 	readonly #cacheRoot: RootUriString | undefined
+	readonly #httpRoot: RootUriString | undefined
 	readonly #indexUri: string | undefined
 	readonly #objectsRoot: RootUriString | undefined
 	readonly #tempRoot: RootUriString | undefined
 	readonly #logger: Logger
+	readonly #fsp: typeof fsp
 	#index: CacheIndex | undefined
+	#loadIndexPromise: Promise<void> | undefined
 
-	constructor(cacheRoot: RootUriString | undefined, logger: Logger) {
+	constructor(cacheRoot: RootUriString | undefined, logger: Logger, nodeFsp: typeof fsp) {
 		if (cacheRoot) {
-			this.#cacheRoot = `${cacheRoot}http/`
-			this.#indexUri = `${this.#cacheRoot}index.json`
-			this.#objectsRoot = `${this.#cacheRoot}objects/`
-			this.#tempRoot = `${this.#cacheRoot}temp/`
+			this.#cacheRoot = cacheRoot
+			this.#httpRoot = `${this.#cacheRoot}http/`
+			this.#indexUri = `${this.#httpRoot}index.json`
+			this.#objectsRoot = `${this.#httpRoot}objects/`
+			this.#tempRoot = `${this.#httpRoot}temp/`
 		}
 		this.#logger = logger
+		this.#fsp = nodeFsp
 	}
 
 	async match(
@@ -200,7 +205,7 @@ class HttpCache implements Cache {
 		}
 
 		try {
-			const objectFileHandle = await fsp.open(
+			const objectFileHandle = await this.#fsp.open(
 				this.#getObjectUri(this.#objectsRoot, indexEntry.sha1),
 			)
 			const bodyStream = objectFileHandle.createReadStream({ autoClose: true })
@@ -214,6 +219,7 @@ class HttpCache implements Cache {
 			)
 		} catch (e) {
 			if ((e as NodeJS.ErrnoException)?.code === 'ENOENT') {
+				this.#logger.warn(`Object file for ${JSON.stringify(indexEntry)} does not exist`, e)
 				delete index.index[requestUri]?.[requestRange ?? '']
 				if (Object.values(index.index[requestUri]!).length === 0) {
 					delete index.index[requestUri]
@@ -274,45 +280,49 @@ class HttpCache implements Cache {
 
 		// Tee the body stream to both a temporary file write stream and the SHA-1 hash stream
 		const tempUri = new URL(`body.${randomUUID()}.tmp`, tempRoot)
-		await fsp.mkdir(new URL(tempRoot), { recursive: true })
-		const writeStream = fs.createWriteStream(tempUri, { autoClose: true })
+		await this.#fsp.mkdir(new URL(tempRoot), { recursive: true, mode: 0o755 })
+		const tempHandle = await this.#fsp.open(tempUri, 'w', 0o644)
+		const writeStream = tempHandle.createWriteStream({ autoClose: true })
 		bodyStream.pipe(bodyHash)
 		await pipeline(bodyStream, writeStream)
 
 		// Move the temporary file to the SHA-1 Content-addressable objects store
 		const bodySha1 = bodyHash.digest('hex')
 		const objectUri = this.#getObjectUri(objectsRoot, bodySha1)
-		await fsp.mkdir(new URL('.', objectUri), { recursive: true })
-		await fsp.rename(tempUri, objectUri)
+		await this.#fsp.mkdir(new URL('.', objectUri), { recursive: true, mode: 0o755 })
+		await this.#fsp.rename(tempUri, objectUri)
 
 		return bodySha1
 	}
 
 	async #loadIndex(indexUri: string): Promise<CacheIndex> {
-		if (!this.#index) {
+		await (this.#loadIndexPromise ??= (async () => {
 			try {
-				const parsedIndex = JSON.parse(await fsp.readFile(new URL(indexUri), 'utf8'))
+				const parsedIndex = JSON.parse(await this.#fsp.readFile(new URL(indexUri), 'utf8'))
 				CacheIndex.assert(parsedIndex)
 				this.#index = parsedIndex
 			} catch (e) {
 				if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
 					// Triger legacy cache clean up if no index file for the new cache scheme exists.
+					this.#logger.info('[HttpCache] No cache index found; cleaning up legacy cache files')
 					await this.#cleanUpLegacyCache()
 				} else {
 					this.#logger.warn('[HttpCache] Corrupted cache index', e)
 				}
 				this.#index = { index: {} }
 			}
-		}
-		return this.#index
+		})())
+		return this.#index!
 	}
 
 	async #saveIndex(indexUri: string, tempRoot: RootUriString): Promise<void> {
 		try {
 			const tempUri = new URL(`index.${randomUUID()}.tmp`, tempRoot)
-			await fsp.mkdir(new URL(tempRoot), { recursive: true })
-			await fsp.writeFile(tempUri, `${JSON.stringify(this.#index)}${os.EOL}`)
-			await fsp.rename(tempUri, new URL(indexUri))
+			await this.#fsp.mkdir(new URL(tempRoot), { recursive: true, mode: 0o755 })
+			await this.#fsp.writeFile(tempUri, `${JSON.stringify(this.#index)}${os.EOL}`, {
+				mode: 0o644,
+			})
+			await this.#fsp.rename(tempUri, new URL(indexUri))
 		} catch (e) {
 			this.#logger.warn('[HttpCache] Failed saving index', e)
 		}
@@ -325,12 +335,12 @@ class HttpCache implements Cache {
 	 */
 	async #cleanUpLegacyCache(): Promise<void> {
 		// Stupid hardcoded path check to make sure we don't accidentally delete some random files somehow
-		if (!(this.#cacheRoot && this.#cacheRoot.endsWith('/spyglassmc-nodejs/'))) {
+		if (!(this.#cacheRoot && this.#cacheRoot.endsWith('/spyglassmc-nodejs/') && this.#httpRoot)) {
 			return
 		}
 
 		try {
-			await fsp.rm(new URL('downloader/', this.#cacheRoot), { recursive: true })
+			await this.#fsp.rm(new URL('downloader/', this.#cacheRoot), { recursive: true })
 		} catch (e) {
 			if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
 				this.#logger.warn('[HttpCache] Failed cleaning up downloader/ dir', e)
@@ -338,11 +348,10 @@ class HttpCache implements Cache {
 		}
 
 		try {
-			const httpRootUri = new URL('http/', this.#cacheRoot)
-			const httpDir = await fsp.opendir(httpRootUri)
+			const httpDir = await this.#fsp.opendir(new URL(this.#httpRoot))
 			for await (const entry of httpDir) {
 				if (entry.isFile() && (entry.name.endsWith('.bin') || entry.name.endsWith('.etag'))) {
-					await fsp.rm(new URL(entry.name, httpRootUri))
+					await this.#fsp.rm(new URL(entry.name, this.#httpRoot))
 				}
 			}
 		} catch (e) {
@@ -370,7 +379,7 @@ class HttpCache implements Cache {
 		}
 
 		try {
-			await fsp.rm(this.#getObjectUri(objectsRoot, sha1))
+			await this.#fsp.rm(this.#getObjectUri(objectsRoot, sha1))
 			return true
 		} catch (e) {
 			if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {

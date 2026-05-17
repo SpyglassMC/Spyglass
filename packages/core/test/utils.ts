@@ -29,7 +29,7 @@ import {
 	VanillaConfig,
 } from '@spyglassmc/core'
 import { getNodeJsExternals, NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
-import { fail } from 'node:assert/strict'
+import assert, { fail } from 'node:assert/strict'
 import type fsp from 'node:fs/promises'
 import type { TestContext } from 'node:test'
 import type { URL } from 'node:url'
@@ -330,4 +330,23 @@ export function mockExternals(
 	return getNodeJsExternals({
 		nodeFsp: nodeFsp as unknown as typeof fsp,
 	})
+}
+
+export async function assertUriExists(nodeFsp: typeof fsp, uri: string) {
+	try {
+		await nodeFsp.access(uri)
+	} catch (e) {
+		fail(e as Error)
+	}
+}
+
+export async function assertUriNotExists(nodeFsp: typeof fsp, uri: string) {
+	try {
+		await nodeFsp.access(uri)
+		fail(`Expected ${uri} to not exist`)
+	} catch (e) {
+		if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
+			fail(e as Error)
+		}
+	}
 }
