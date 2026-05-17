@@ -262,13 +262,12 @@ export async function fetchMojangVersionJsonFromClientJar(
 			}
 		}
 		if (!versionJsonEntry) {
-			logger.info(`Client Jar from '${clientJarUri}' does not have 'version.json'`)
-			return undefined
+			throw new Error(`Client Jar from '${clientJarUri}' does not have 'version.json'`)
 		}
 
 		const versionJsonText = await versionJsonEntry.getData(new TextWriter())
 		versionJson = JSON.parse(versionJsonText)
-		core.Dev.assertTrue(MojangVersionJson.is(versionJson), 'Invalid MojangVersionJson')
+		MojangVersionJson.assert(versionJson)
 
 		return versionJson
 	} catch (e) {
