@@ -37,3 +37,26 @@ exports[`mcfunction argument parser > minecraft:team_color > Parse 'red' 1`] = `
   "errors": []
 }
 `;
+
+exports[`mcfunction argument parser > minecraft:team_color > Parse 'reset' 1`] = `
+{
+  "node": {
+    "type": "literal",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": "reset"
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected “light_purple”, “dark_purple”, “dark_green”, “dark_aqua”, “dark_blue”, “dark_gray”, “dark_red”, “yellow”, “black”, “green”, “white”, “aqua”, “blue”, “gold”, “gray”, or “red”",
+      "severity": 3
+    }
+  ]
+}
+`;

@@ -290,7 +290,9 @@ export const argument: mcf.ArgumentParserGetter = (
 					commandLiteral({ pool: core.Color.ColorNames }),
 					(res) => ({
 						...res,
-						color: core.Color.fromCompositeRGB(core.Color.NamedColors.get(res.value)!),
+						color: core.Color.NamedColors.has(res.value)
+							? core.Color.fromCompositeRGB(core.Color.NamedColors.get(res.value)!)
+							: undefined,
 					}),
 				),
 			)
