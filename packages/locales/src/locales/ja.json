@@ -158,7 +158,6 @@
 	"tag-not-following-convention": "tag%0%は命名規則に従い%1%である必要があります",
 	"team": "チーム",
 	"team-not-following-convention": "チーム%0%は命名規則に従い%1%である必要があります",
-	"text-component": "",
 	"time-unit": "時間の単位",
 	"too-many-block-affected": "指定した領域にあるブロックが多すぎます（最大 %0%、指定 %1%）",
 	"too-many-chunk-affected": "指定した領域にあるチャンクが多すぎます（最大 %0%、指定 %1%）",
