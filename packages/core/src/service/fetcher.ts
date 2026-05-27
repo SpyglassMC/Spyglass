@@ -8,11 +8,19 @@ const FETCH_TOTAL_TIMEOUT_MS = 15_000
 
 const STALE_HEADER = 'spyglassmc-is-stale'
 
+export interface FetcherOptions {
+	retryBaseMs?: number
+	retryMaxAttempts?: number
+	perTryTimeoutMs?: number
+	totalTimeoutMs?: number
+}
+
 export async function fetchWithCache(
 	{ web }: Externals,
 	logger: Logger,
 	input: RequestInfo | URL,
 	init?: RequestInit,
+	options?: FetcherOptions,
 ): Promise<Response> {
 	const cache = await web.getCache()
 	const request = new Request(input, init)
@@ -26,7 +34,7 @@ export async function fetchWithCache(
 	}
 	request.headers.set('user-agent', 'SpyglassMC (+https://spyglassmc.com)')
 	try {
-		const response = await fetchWithRetries(request)
+		const response = await fetchWithRetries(request, options)
 		if (response.status === 304) {
 			Dev.assertDefined(cachedResponse)
 			logger.info(`[fetchWithCache] reusing cache for ${request.url}`)
@@ -67,18 +75,26 @@ export function isStaleFetcherResponse(response: Response) {
 	return response.headers.has(STALE_HEADER)
 }
 
-async function fetchWithRetries(request: Request) {
+async function fetchWithRetries(
+	request: Request,
+	{
+		perTryTimeoutMs = FETCH_PER_TRY_TIMEOUT_MS,
+		retryBaseMs = FETCH_RETRY_BASE_MS,
+		retryMaxAttempts = FETCH_RETRY_MAX_ATTEMPTS,
+		totalTimeoutMs = FETCH_TOTAL_TIMEOUT_MS,
+	}: FetcherOptions = {},
+) {
 	let lastResult: Response | Error | undefined
-	const totalSignal = AbortSignal.timeout(FETCH_TOTAL_TIMEOUT_MS)
+	const totalSignal = AbortSignal.timeout(totalTimeoutMs)
 
-	Dev.assertTrue(FETCH_RETRY_MAX_ATTEMPTS > 0, 'Number of attempts must be greater than 0')
-	for (let i = 0; i < FETCH_RETRY_MAX_ATTEMPTS; i++) {
-		const isLastAttempt = i === FETCH_RETRY_MAX_ATTEMPTS - 1
+	Dev.assertTrue(retryMaxAttempts > 0, 'Number of attempts must be greater than 0')
+	for (let i = 0; i < retryMaxAttempts; i++) {
+		const isLastAttempt = i === retryMaxAttempts - 1
 		try {
 			lastResult = await fetch(request.clone(), {
 				signal: AbortSignal.any([
 					totalSignal,
-					AbortSignal.timeout(FETCH_PER_TRY_TIMEOUT_MS),
+					AbortSignal.timeout(perTryTimeoutMs),
 				]),
 			})
 			if (lastResult.status < 500) {
@@ -88,7 +104,7 @@ async function fetchWithRetries(request: Request) {
 			lastResult = e as Error
 		}
 		if (!isLastAttempt) {
-			await sleep(Math.round(Math.random() * (2 ** i) * FETCH_RETRY_BASE_MS))
+			await sleep(Math.round(Math.random() * (2 ** i) * retryBaseMs))
 		}
 	}
 

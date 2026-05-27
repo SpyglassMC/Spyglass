@@ -76,6 +76,7 @@
 		"globals": "^17.6.0",
 		"ts-loader": "^9.4.2",
 		"typescript": "^6.0.3",
+		"undici": "^7.25.0",
 		"webpack": "^5.95.0",
 		"webpack-cli": "^5.0.2",
 		"wireit": "^0.9.5"
