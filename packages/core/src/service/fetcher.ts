@@ -52,6 +52,11 @@ export async function fetchWithCache(
 			} catch (e) {
 				logger.warn('[fetchWithCache] put cache', e)
 			}
+			try {
+				await cachedResponse?.body?.cancel()
+			} catch (e) {
+				logger.warn('[fetchWithCache] failed cancelling cachedResponse body stream', e)
+			}
 			return response
 		}
 	} catch (e) {
