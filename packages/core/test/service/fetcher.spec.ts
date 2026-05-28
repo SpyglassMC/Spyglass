@@ -120,39 +120,168 @@ describe('fetcher', () => {
 					TEST_FETCHER_OPTIONS,
 				)
 			}, { name: 'TypeError', message: '500 example error' })
+		})
 
-			it('Should throw exception when fetch times out after all retries', async () => {
-				agent
-					.get('https://example.com')
-					.intercept({ path: '/foo' })
-					.reply(() => {
-						return {
-							statusCode: 500,
-							data: 'example error',
-						}
-					})
-					.delay(100)
-					.times(2)
+		it('Should throw exception when fetch times out after all retries', async () => {
+			agent
+				.get('https://example.com')
+				.intercept({ path: '/foo' })
+				.reply(() => {
+					return {
+						statusCode: 200,
+						data: 'example data',
+					}
+				})
+				.delay(100)
+				.times(2)
 
-				const { externals } = mockExternals()
-				await assert.rejects(async () => {
-					await fetchWithCache(
-						externals,
-						logger,
-						'https://example.com/foo',
-						undefined,
-						TEST_FETCHER_OPTIONS,
-					)
-				}, { name: 'TimeoutError', message: 'The operation was aborted due to timeout' })
-			})
+			const { externals } = mockExternals()
+			await assert.rejects(async () => {
+				await fetchWithCache(
+					externals,
+					logger,
+					'https://example.com/foo',
+					undefined,
+					TEST_FETCHER_OPTIONS,
+				)
+			}, { name: 'TimeoutError', message: 'The operation was aborted due to timeout' })
 		})
 	})
 
 	describe('Has existing cache entry', () => {
-		// cache exists, 304, returned
-		// cache exists, ok on first attempt, returned & updated cache
-		// cache exists, ok on retry, returned & updated cache
-		// cache exists, not ok, stale response returned
-		// cache exists, timeout, stale response returned
+		let externals!: Externals
+
+		beforeEach(async () => {
+			externals = mockExternals().externals
+			const cache = await externals.web.getCache()
+			await cache.put(
+				'https://example.com/foo',
+				new Response('cached data', {
+					status: 200,
+					statusText: 'OK',
+					headers: { etag: '67' },
+				}),
+			)
+		})
+
+		it('Should return cache on 304', async () => {
+			agent
+				.get('https://example.com')
+				.intercept({ path: '/foo' })
+				.reply(() => {
+					return {
+						statusCode: 304,
+					}
+				})
+				.times(1)
+
+			const response = await fetchWithCache(
+				externals,
+				logger,
+				'https://example.com/foo',
+				undefined,
+				TEST_FETCHER_OPTIONS,
+			)
+			assert.equal(await response.text(), 'cached data')
+		})
+
+		it('Should return remote data on ok', async () => {
+			agent
+				.get('https://example.com')
+				.intercept({ path: '/foo' })
+				.reply(() => {
+					return {
+						statusCode: 200,
+						data: 'remote data',
+					}
+				})
+				.times(1)
+
+			const response = await fetchWithCache(
+				externals,
+				logger,
+				'https://example.com/foo',
+				undefined,
+				TEST_FETCHER_OPTIONS,
+			)
+			assert.equal(await response.text(), 'remote data')
+		})
+
+		it('Should return remote data on retry ok', async () => {
+			agent
+				.get('https://example.com')
+				.intercept({ path: '/foo' })
+				.reply(() => {
+					return {
+						statusCode: 500,
+						data: 'remote error',
+					}
+				})
+				.times(1)
+			agent
+				.get('https://example.com')
+				.intercept({ path: '/foo' })
+				.reply(() => {
+					return {
+						statusCode: 200,
+						data: 'remote data',
+					}
+				})
+				.times(1)
+
+			const response = await fetchWithCache(
+				externals,
+				logger,
+				'https://example.com/foo',
+				undefined,
+				TEST_FETCHER_OPTIONS,
+			)
+			assert.equal(await response.text(), 'remote data')
+		})
+
+		it('Should return stale cache data when remote error', async () => {
+			agent
+				.get('https://example.com')
+				.intercept({ path: '/foo' })
+				.reply(() => {
+					return {
+						statusCode: 500,
+						data: 'remote error',
+					}
+				})
+				.times(2)
+
+			const response = await fetchWithCache(
+				externals,
+				logger,
+				'https://example.com/foo',
+				undefined,
+				TEST_FETCHER_OPTIONS,
+			)
+			assert.equal(await response.text(), 'cached data')
+		})
+
+		it('Should return stale cache data when remote times out', async () => {
+			agent
+				.get('https://example.com')
+				.intercept({ path: '/foo' })
+				.reply(() => {
+					return {
+						statusCode: 200,
+						data: 'remote data',
+					}
+				})
+				.delay(100)
+				.times(2)
+
+			const response = await fetchWithCache(
+				externals,
+				logger,
+				'https://example.com/foo',
+				undefined,
+				TEST_FETCHER_OPTIONS,
+			)
+			assert.equal(await response.text(), 'cached data')
+		})
 	})
 })
