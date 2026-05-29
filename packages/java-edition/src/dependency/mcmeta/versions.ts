@@ -245,7 +245,7 @@ async function inferMcmetaVersionFromMojangVersionManifestEntry(
 	}
 }
 
-export async function fetchMojangVersionJsonFromClientJar(
+async function fetchMojangVersionJsonFromClientJar(
 	{ externals, logger, clientJarUri, index }: {
 		externals: core.Externals
 		logger: core.Logger

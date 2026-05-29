@@ -1,2 +1,2 @@
 export * from './types.js'
-export { fetchMcmetaVersions } from './versions.js'
+export * from './versions.js'
