@@ -26,7 +26,7 @@
     }
   },
   "dependencies": {
-    "@zip.js/zip.js": "^2.8.26"
+    "@spgoding/zip.js": "^2.8.26-customfetch.1"
   },
   "devDependencies": {},
   "publishConfig": {

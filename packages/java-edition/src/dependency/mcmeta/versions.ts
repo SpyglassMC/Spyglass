@@ -1,6 +1,6 @@
+import type { FileEntry } from '@spgoding/zip.js'
+import { HttpRangeReader, HttpReader, TextWriter, ZipReader } from '@spgoding/zip.js'
 import * as core from '@spyglassmc/core'
-import type { FileEntry } from '@zip.js/zip.js'
-import { HttpRangeReader, TextWriter, ZipReader } from '@zip.js/zip.js'
 import type { McmetaVersion, MojangVersionManifestEntry } from './types.js'
 import {
 	McmetaVersions,
@@ -208,6 +208,7 @@ async function inferMcmetaVersionFromMojangVersionManifestEntry(
 
 	if (mojangClientJson) {
 		mojangVersionJson = await fetchMojangVersionJsonFromClientJar({
+			externals,
 			logger,
 			clientJarUri: mojangClientJson.downloads.client.url,
 		})
@@ -234,15 +235,22 @@ async function inferMcmetaVersionFromMojangVersionManifestEntry(
 	}
 }
 
-async function fetchMojangVersionJsonFromClientJar(
-	{ logger, clientJarUri }: {
+export async function fetchMojangVersionJsonFromClientJar(
+	{ externals, logger, clientJarUri }: {
+		externals: core.Externals
 		logger: core.Logger
 		clientJarUri: string
 	},
 ): Promise<MojangVersionJson | undefined> {
 	let versionJson: unknown
 	try {
-		const zipReader = new ZipReader(new HttpRangeReader(clientJarUri))
+		const zipReader = new ZipReader(
+			new HttpReader(clientJarUri, {
+				forceRangeRequests: true,
+				combineSizeEocd: true,
+				customFetch: (input, init) => core.fetchWithCache(externals, logger, input, init),
+			}),
+		)
 		let versionJsonEntry: FileEntry | undefined
 		for await (const entry of zipReader.getEntriesGenerator()) {
 			if (entry.directory) {
