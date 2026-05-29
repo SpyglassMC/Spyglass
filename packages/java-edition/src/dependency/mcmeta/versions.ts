@@ -1,5 +1,5 @@
 import type { FileEntry } from '@spgoding/zip.js'
-import { HttpRangeReader, HttpReader, TextWriter, ZipReader } from '@spgoding/zip.js'
+import { HttpReader, TextWriter, ZipReader } from '@spgoding/zip.js'
 import * as core from '@spyglassmc/core'
 import type { McmetaVersion, MojangVersionManifestEntry } from './types.js'
 import {
@@ -14,6 +14,7 @@ const GITHUB_API_URI =
 	'https://raw.githubusercontent.com/misode/mcmeta/refs/heads/summary/versions/data.min.json'
 const MOJANG_VERSION_MANIFEST_URI =
 	'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'
+const MAX_CLIENT_JAR_FETCHES = 5
 
 export async function fetchMcmetaVersions(
 	externals: core.Externals,
@@ -181,12 +182,13 @@ async function hydrateWithMojangApi(
 	}
 
 	const newMcmetaVersions = await Promise.all(
-		newMojangVersionManifestEntries.map((mojangVersionManifestEntry) =>
+		newMojangVersionManifestEntries.map((mojangVersionManifestEntry, index) =>
 			inferMcmetaVersionFromMojangVersionManifestEntry({
 				externals,
 				logger,
 				mojangVersionManifestEntry,
 				latestMcmetaVersion: versions[0],
+				index,
 			})
 		),
 	)
@@ -195,11 +197,12 @@ async function hydrateWithMojangApi(
 }
 
 async function inferMcmetaVersionFromMojangVersionManifestEntry(
-	{ externals, logger, mojangVersionManifestEntry, latestMcmetaVersion }: {
+	{ externals, logger, mojangVersionManifestEntry, latestMcmetaVersion, index }: {
 		externals: core.Externals
 		logger: core.Logger
 		mojangVersionManifestEntry: MojangVersionManifestEntry
 		latestMcmetaVersion: McmetaVersion
+		index: number
 	},
 ): Promise<McmetaVersion> {
 	const mojangClientJson = await fetchMojangApi({
@@ -215,6 +218,7 @@ async function inferMcmetaVersionFromMojangVersionManifestEntry(
 			externals,
 			logger,
 			clientJarUri: mojangClientJson.downloads.client.url,
+			index,
 		})
 	}
 
@@ -242,12 +246,20 @@ async function inferMcmetaVersionFromMojangVersionManifestEntry(
 }
 
 export async function fetchMojangVersionJsonFromClientJar(
-	{ externals, logger, clientJarUri }: {
+	{ externals, logger, clientJarUri, index }: {
 		externals: core.Externals
 		logger: core.Logger
 		clientJarUri: string
+		index: number
 	},
 ): Promise<MojangVersionJson | undefined> {
+	if (index >= MAX_CLIENT_JAR_FETCHES) {
+		logger.info(
+			`Skip fetching version.json from client Jar ${clientJarUri} as ${index} >= ${MAX_CLIENT_JAR_FETCHES}`,
+		)
+		return undefined
+	}
+
 	let versionJson: unknown
 	try {
 		const zipReader = new ZipReader(
