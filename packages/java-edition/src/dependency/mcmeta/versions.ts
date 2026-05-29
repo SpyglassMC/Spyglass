@@ -171,6 +171,10 @@ async function hydrateWithMojangApi(
 	const newMojangVersionManifestEntries: MojangVersionManifestEntry[] = []
 	for (const mojangVersionManifestEntry of mojangVersionManifest.versions) {
 		if (existingMcmetaVersions.has(mojangVersionManifestEntry.id)) {
+			// Once we encounter a version from Mojang version_manifest that is included in the
+			// existing mcmeta versions, we can probably assume we've gotten all the new versions and
+			// can break away from the loop.
+			// This prevents us from adding versions older than the oldest version in mcmeta (1.14).
 			break
 		}
 		newMojangVersionManifestEntries.push(mojangVersionManifestEntry)
@@ -214,6 +218,8 @@ async function inferMcmetaVersionFromMojangVersionManifestEntry(
 		})
 	}
 
+	// Use values from version.json if available, otherwise use the latest mcmeta version's values
+	// as a guess.
 	return {
 		build_time: mojangVersionManifestEntry.time,
 		data_pack_version: mojangVersionJson?.pack_version.data_major
