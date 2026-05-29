@@ -47,10 +47,10 @@ export async function fetchMcmetaVersions(
 		candidates.push(bundledResult)
 	}
 
-	const mojangVersionManifest = await fetchMojangApi({
+	const mojangVersionManifest = await core.fetchJson({
 		externals,
 		logger,
-		uri: MOJANG_VERSION_MANIFEST_URI,
+		input: MOJANG_VERSION_MANIFEST_URI,
 		typeAsserter: MojangVersionManifest.assert,
 	})
 
@@ -116,36 +116,6 @@ async function loadBundledMcmetaVersions(
 	return undefined
 }
 
-async function fetchMojangApi<T>(
-	{
-		externals,
-		logger,
-		uri,
-		typeAsserter,
-	}: {
-		externals: core.Externals
-		logger: core.Logger
-		uri: string
-		typeAsserter: (val: unknown) => asserts val is T
-	},
-): Promise<T | undefined> {
-	let data: unknown
-	try {
-		const response = await core.fetchWithCache(externals, logger, uri)
-		data = await response.json()
-
-		// TS2775: Assertions require every name in the call target to be declared with an explicit type annotation
-		// https://github.com/microsoft/TypeScript/pull/33622
-		const asserter: (val: unknown) => asserts val is T = typeAsserter
-		asserter(data)
-
-		return data
-	} catch (e) {
-		logger.warn(`Fetch from Mojang API failure: ${uri}`, e, data)
-	}
-	return undefined
-}
-
 /**
  * Simply return the candidate with the most entries as we can probably assume that one is the
  * latest one, and thus probably include all the versions.
@@ -205,10 +175,10 @@ async function inferMcmetaVersionFromMojangVersionManifestEntry(
 		index: number
 	},
 ): Promise<McmetaVersion> {
-	const mojangClientJson = await fetchMojangApi({
+	const mojangClientJson = await core.fetchJson({
 		externals,
 		logger,
-		uri: mojangVersionManifestEntry.url,
+		input: mojangVersionManifestEntry.url,
 		typeAsserter: MojangClientJson.assert,
 	})
 	let mojangVersionJson: MojangVersionJson | undefined

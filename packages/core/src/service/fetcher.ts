@@ -119,4 +119,36 @@ async function fetchWithRetries(
 	throw lastResult!
 }
 
+export async function fetchJson<T>(
+	{
+		externals,
+		logger,
+		input,
+		init,
+		typeAsserter,
+	}: {
+		externals: Externals
+		logger: Logger
+		input: RequestInfo | URL
+		init?: RequestInit
+		typeAsserter: (val: unknown) => asserts val is T
+	},
+): Promise<T | undefined> {
+	let data: unknown
+	try {
+		const response = await fetchWithCache(externals, logger, input, init)
+		data = await response.json()
+
+		// TS2775: Assertions require every name in the call target to be declared with an explicit type annotation
+		// https://github.com/microsoft/TypeScript/pull/33622
+		const asserter: (val: unknown) => asserts val is T = typeAsserter
+		asserter(data)
+
+		return data
+	} catch (e) {
+		logger.warn(`Fetch as JSON failed: ${input}`, e, data)
+	}
+	return undefined
+}
+
 // Fetchr? I hardly know her: https://github.com/NeunEinser/bingo
