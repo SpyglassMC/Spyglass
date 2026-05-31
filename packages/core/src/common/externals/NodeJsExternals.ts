@@ -335,11 +335,10 @@ class HttpCache implements Cache {
 	 * - until v2026.5.16+9c4fa2, `${cacheRoot}http/${base64UrlEncoded}.${'bin' | 'etag'}`
 	 */
 	async #cleanUpLegacyCache(): Promise<void> {
-		// Stupid hardcoded path check to make sure we don't accidentally delete some random files somehow
-		if (!(this.#cacheRoot && this.#cacheRoot.endsWith('/spyglassmc-nodejs/') && this.#httpRoot)) {
+		if (!this.#httpRoot) {
 			return
 		}
-
+		
 		try {
 			await this.#fsp.rm(new URL('downloader/', this.#cacheRoot), { recursive: true })
 		} catch (e) {
