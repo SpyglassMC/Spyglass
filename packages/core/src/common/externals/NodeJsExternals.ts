@@ -247,14 +247,15 @@ class HttpCache implements Cache {
 		const requestUri = request instanceof Request ? request.url : request.toString()
 		const requestRange = request instanceof Request ? request.headers.get('range') : undefined
 
-		const bodySha1 = await this.#saveResponseBody(
+		// Save response body in a temp file and computes its SHA-1 digest
+		const { bodySha1, bodyTempUri } = await this.#saveResponseBody(
 			response.body as streamWeb.ReadableStream,
 			this.#tempRoot,
-			this.#objectsRoot,
 		)
 
+		// Update the index
 		const index = await this.#loadIndex(this.#indexUri)
-		index.index[requestUri] ??= Object.create(null)
+		index.index[requestUri] ??= {}
 		const previousEntry = index.index[requestUri]![requestRange ?? '']
 		index.index[requestUri]![requestRange ?? ''] = {
 			status: response.status,
@@ -268,13 +269,18 @@ class HttpCache implements Cache {
 		if (previousEntry) {
 			await this.#cleanUpDanglingObject(this.#objectsRoot, index, previousEntry.sha1)
 		}
+
+		// Rename the temp body file to its final location in the content-addressable object store
+		// match() would gracefully handle missing object if this step fails for any reason
+		const objectUri = this.#getObjectUri(this.#objectsRoot, bodySha1)
+		await this.#fsp.mkdir(new URL('.', objectUri), { recursive: true, mode: 0o755 })
+		await this.#fsp.rename(bodyTempUri, objectUri)
 	}
 
 	async #saveResponseBody(
 		body: streamWeb.ReadableStream,
 		tempRoot: RootUriString,
-		objectsRoot: RootUriString,
-	) {
+	): Promise<{ bodySha1: string; bodyTempUri: URL }> {
 		const bodyStream = stream.Readable.fromWeb(body)
 		const bodyHash = createHash('sha1')
 
@@ -286,13 +292,9 @@ class HttpCache implements Cache {
 		bodyStream.pipe(bodyHash)
 		await pipeline(bodyStream, writeStream)
 
-		// Move the temporary file to the SHA-1 Content-addressable objects store
 		const bodySha1 = bodyHash.digest('hex')
-		const objectUri = this.#getObjectUri(objectsRoot, bodySha1)
-		await this.#fsp.mkdir(new URL('.', objectUri), { recursive: true, mode: 0o755 })
-		await this.#fsp.rename(tempUri, objectUri)
 
-		return bodySha1
+		return { bodySha1, bodyTempUri: tempUri }
 	}
 
 	async #loadIndex(indexUri: string): Promise<CacheIndex> {
@@ -338,7 +340,7 @@ class HttpCache implements Cache {
 		if (!this.#httpRoot) {
 			return
 		}
-		
+
 		try {
 			await this.#fsp.rm(new URL('downloader/', this.#cacheRoot), { recursive: true })
 		} catch (e) {
