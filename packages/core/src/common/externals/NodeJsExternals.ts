@@ -11,7 +11,7 @@ import { pipeline } from 'node:stream/promises'
 import type streamWeb from 'node:stream/web'
 import url from 'node:url'
 import { promisify } from 'node:util'
-import { isObject, type DecompressedFile, type RootUriString } from '../../index.js'
+import { type DecompressedFile, Dev, isObject, type RootUriString } from '../../index.js'
 import { Logger } from '../Logger.js'
 import type { Uri } from '../util.js'
 import type { Externals, FsLocation } from './index.js'
@@ -317,6 +317,7 @@ class HttpCache implements Cache {
 
 	async #saveIndex(indexUri: string, tempRoot: RootUriString): Promise<void> {
 		try {
+			Dev.assertDefined(this.#index)
 			const tempUri = new URL(`index.${randomUUID()}.tmp`, tempRoot)
 			await this.#fsp.mkdir(new URL(tempRoot), { recursive: true, mode: 0o755 })
 			await this.#fsp.writeFile(tempUri, `${JSON.stringify(this.#index)}${os.EOL}`, {
