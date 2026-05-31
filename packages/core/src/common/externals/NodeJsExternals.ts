@@ -11,7 +11,7 @@ import { pipeline } from 'node:stream/promises'
 import type streamWeb from 'node:stream/web'
 import url from 'node:url'
 import { promisify } from 'node:util'
-import type { DecompressedFile, RootUriString } from '../../index.js'
+import { isObject, type DecompressedFile, type RootUriString } from '../../index.js'
 import { Logger } from '../Logger.js'
 import type { Uri } from '../util.js'
 import type { Externals, FsLocation } from './index.js'
@@ -136,20 +136,20 @@ interface CacheIndex {
 }
 namespace CacheIndex {
 	export function assert(val: unknown): asserts val is CacheIndex {
-		if (!(!!val && typeof val === 'object')) {
+		if (!isObject(val)) {
 			throw new Error('Expected an object')
 		}
-		if (!('index' in val && !!val.index && typeof val.index === 'object')) {
+		if (!('index' in val && isObject(val.index))) {
 			throw new Error("Expected 'index' to exist as an object")
 		}
 		if (
 			!(Object.values(val.index).every((i) =>
-				!!i && typeof i === 'object'
+				isObject(i)
 				&& Object.values(i).every((v) =>
-					!!v && typeof v === 'object'
+					isObject(v)
 					&& 'status' in v && typeof v.status === 'number'
 					&& 'statusText' in v && typeof v.statusText === 'string'
-					&& 'headers' in v && !!v.headers && typeof v.headers === 'object'
+					&& 'headers' in v && isObject(v.headers)
 					&& Object.values(v.headers).every((s) => typeof s === 'string')
 					&& 'sha1' in v && typeof v.sha1 === 'string' && /^[0-9a-f]{40}$/.test(v.sha1)
 					&& 'cacheTime' in v && typeof v.cacheTime === 'number'
