@@ -395,6 +395,10 @@ export function streamToBytes(
 	return new Response(stream).bytes()
 }
 
+export function sleep(delayMs: number): Promise<void> {
+	return new Promise(resolve => setTimeout(resolve, delayMs))
+}
+
 /**
  * Return a read-write TARGET type if the INPUT type is read-write, and a
  * readonly TARGET type if the INPUT type is readonly, and `never` if the INPUT
