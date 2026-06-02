@@ -9,22 +9,7 @@ import type {
 	McmetaRegistries,
 	McmetaStates,
 	McmetaSummary,
-	McmetaVersions,
 } from './mcmeta/index.js'
-
-/* istanbul ignore next */
-/**
- * Return the deserialized [`versions.json`][versions.json].
- *
- * [versions.json]: https://github.com/misode/mcmeta/blob/summary/versions/data.json
- */
-export async function getVersions(
-	externals: core.Externals,
-	logger: core.Logger,
-): Promise<McmetaVersions | undefined> {
-	return (await core.fetchWithCache(externals, logger, 'https://api.spyglassmc.com/mcje/versions'))
-		.json()
-}
 
 interface GetMcmetaSummaryResult extends Partial<McmetaSummary> {
 	checksum: string | undefined

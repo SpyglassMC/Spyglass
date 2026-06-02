@@ -19,6 +19,7 @@ const MAX_CLIENT_JAR_FETCHES = 5
 export async function fetchMcmetaVersions(
 	externals: core.Externals,
 	logger: core.Logger,
+	loadBundled = () => loadBundledMcmetaVersions({ logger }),
 ): Promise<McmetaVersions> {
 	const candidates: McmetaVersions[] = []
 
@@ -42,10 +43,12 @@ export async function fetchMcmetaVersions(
 		return githubApiResult
 	}
 
-	const bundledResult = await loadBundledMcmetaVersions({ logger })
-	if (bundledResult) {
-		candidates.push(bundledResult)
+	const bundledResult = await loadBundled()
+	if (!bundledResult) {
+		throw new Error('No bundled McmetaVersions')
 	}
+
+	candidates.push(bundledResult)
 
 	const mojangVersionManifest = await core.fetchJson({
 		externals,
@@ -120,7 +123,7 @@ async function loadBundledMcmetaVersions(
  * Simply return the candidate with the most entries as we can probably assume that one is the
  * latest one, and thus probably include all the versions.
  */
-function reduceCandidates(candidates: McmetaVersions[]): McmetaVersions {
+function reduceCandidates(candidates: readonly McmetaVersions[]): McmetaVersions {
 	return candidates.reduce((latest, current) => current.length > latest.length ? current : latest)
 }
 
@@ -195,7 +198,7 @@ async function inferMcmetaVersionFromMojangVersionManifestEntry(
 	// Use values from version.json if available, otherwise use the latest mcmeta version's values
 	// as a guess.
 	return {
-		build_time: mojangVersionManifestEntry.time,
+		build_time: mojangVersionJson?.build_time ?? mojangVersionManifestEntry.releaseTime,
 		data_pack_version: mojangVersionJson?.pack_version.data_major
 			?? latestMcmetaVersion.data_pack_version,
 		data_pack_version_minor: mojangVersionJson?.pack_version.data_minor

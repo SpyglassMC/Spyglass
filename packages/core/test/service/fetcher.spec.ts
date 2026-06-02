@@ -34,6 +34,7 @@ describe('fetcher', () => {
 	})
 	beforeEach(() => {
 		agent = new MockAgent()
+		agent.disableNetConnect()
 		setGlobalDispatcher(agent)
 	})
 	after(() => {

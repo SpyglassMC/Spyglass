@@ -249,6 +249,7 @@ export interface MojangVersionJson {
 	protocol_version: number
 	stable: boolean
 	world_version: number
+	build_time: string
 	// ... other fields omitted
 }
 export namespace MojangVersionJson {
@@ -288,6 +289,9 @@ export namespace MojangVersionJson {
 		}
 		if (!('world_version' in val && typeof val.world_version === 'number')) {
 			return 'world_version is not a number'
+		}
+		if (!('build_time' in val && typeof val.build_time === 'string')) {
+			return 'build_time is not a string'
 		}
 		return undefined
 	}
