@@ -19,7 +19,11 @@ const MAX_CLIENT_JAR_FETCHES = 5
 export async function fetchMcmetaVersions(
 	externals: core.Externals,
 	logger: core.Logger,
-	loadBundled = () => loadBundledMcmetaVersions({ logger }),
+	{ __loadBundledOverrideForTestOnlyDoNotUseOrYouGetFired }: {
+		__loadBundledOverrideForTestOnlyDoNotUseOrYouGetFired?: () => Promise<
+			McmetaVersions | undefined
+		>
+	} = {},
 ): Promise<McmetaVersions> {
 	const candidates: McmetaVersions[] = []
 
@@ -43,7 +47,9 @@ export async function fetchMcmetaVersions(
 		return githubApiResult
 	}
 
-	const bundledResult = await loadBundled()
+	const bundledResult = __loadBundledOverrideForTestOnlyDoNotUseOrYouGetFired
+		? await __loadBundledOverrideForTestOnlyDoNotUseOrYouGetFired()
+		: await loadBundledMcmetaVersions({ logger })
 	if (!bundledResult) {
 		throw new Error('No bundled McmetaVersions')
 	}
