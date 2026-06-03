@@ -259,7 +259,10 @@ describe('java-edition dependency: mcmeta versions', async () => {
 		loadBundledMock = async () => undefined
 	}
 
-	const testFetchVersions = () => fetchMcmetaVersions(externals, logger, loadBundledMock)
+	const testFetchVersions = () =>
+		fetchMcmetaVersions(externals, logger, {
+			__loadBundledOverrideForTestOnlyDoNotUseOrYouGetFired: loadBundledMock,
+		})
 
 	const setUpMockAgent = () => {
 		agent = new MockAgent()
@@ -359,7 +362,9 @@ describe('java-edition dependency: mcmeta versions', async () => {
 		mockBundledExists()
 		mockMojangVersionManifestApiOk()
 		mockMojangClientJarApiOk()
-		const freshResult = await fetchMcmetaVersions(externals, silentLogger, loadBundledMock)
+		const freshResult = await fetchMcmetaVersions(externals, silentLogger, {
+			__loadBundledOverrideForTestOnlyDoNotUseOrYouGetFired: loadBundledMock,
+		})
 		setUpMockAgent()
 
 		mockSpyglassApiBad()
