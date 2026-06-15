@@ -5,7 +5,6 @@
 :page-permalink: /
 
 :link-github-repo: https://github.com/SpyglassMC/Spyglass
-:link-l10n: https://l10n.spgoding.com/projects/spyglass/locales/
 
 Welcome to the documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real-time diagnostics, semantic coloring and such.
 
@@ -31,16 +30,47 @@ Install https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-la
 
 Install https://open-vsx.org/extension/SPGoding/datapack-language-server[from the Open VSX Registry].
 
-=== Sublime Text
+=== Generic LSP Client
 
-Planned.
+Any software implementing the https://microsoft.github.io/language-server-protocol/[Language Server Protocol (LSP)] as a client can be configured to use the Spyglass Language Server.
+Note that support for these clients are not guaranteed at the moment, but you are welcome to {link-github-repo}/issues/new/choose[create an issue] for any problems encountered.
 
-=== Zed Editor
+. Ensure you have the latest LTS version of https://nodejs.org/en/download[Node.js] installed
+. Install the language server from the command line: +
+  `npm install --global @spyglassmc/language-server`
+. Configure your LSP client following their documentation. Some information you may need:
+** Command for running the LSP server: `spyglassmc-language-server --stdio`
+** Initialization options: This is mostly optional. See xref:../developer/language-server/initialization-options.adoc[Initialization Options] for possible values
+** Supported documents: `.mcdoc` files, `.mcfunction` files, `.mcmeta` files, `.snbt` files, and data pack/resource pack `.json` files.
 
-Planned.
+Example configs for some LSP clients that you may find helpful:
+
+.Helix
+[%collapsible]
+====
+
+https://docs.helix-editor.com/languages.html#configuring-language-servers-for-a-language[Helix documentation]
+
+[source,toml]
+----
+# This only adds support for mcfunction. Contribution welcome for config to enable support for `.mcdoc`, `.mcmeta`, `.snbt`, and pack `.json` files.
+
+[[language]]
+name = "mcfunction"
+scope = "source.mcfunction"
+file-types = ["mcfunction"]
+roots = ["pack.mcmeta"]
+comment-tokens = ["#"]
+language-servers = ["spyglassmc"]
+
+[language-server.spyglassmc]
+command = "spyglassmc-language-server"
+args = ["--stdio"]
+----
+====
 
 == Contributing
 
 * {link-github-repo}/issues/new/choose[Create an issue]
 * {link-github-repo}[GitHub Repository]
-* {link-l10n}[Localization]
+* https://weblate.spyglassmc.com/projects/spyglass/#components[Localization]
