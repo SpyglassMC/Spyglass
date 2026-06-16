@@ -53,7 +53,7 @@ https://docs.helix-editor.com/languages.html#configuring-language-servers-for-a-
 
 [source,toml]
 ----
-# This only adds support for mcfunction. Contribution welcome for config to enable support for `.mcdoc`, `.mcmeta`, `.snbt`, and pack `.json` files.
+# This only adds support for mcfunction. Contribution welcomed for config to enable support for `.mcdoc`, `.mcmeta`, `.snbt`, and pack `.json` files.
 
 [[language]]
 name = "mcfunction"
