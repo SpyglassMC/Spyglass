@@ -30,6 +30,14 @@ Install https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-la
 
 Install https://open-vsx.org/extension/SPGoding/datapack-language-server[from the Open VSX Registry].
 
+=== Sublime Text
+
+Official package planned. A WIP package exists at https://github.com/SpyglassMC/LSP-Spyglass that may or may not work. Any feedback would be appreciated.
+
+=== Zed
+
+Official extension planned.
+
 === Generic LSP Client
 
 Any software implementing the https://microsoft.github.io/language-server-protocol/[Language Server Protocol (LSP)] as a client can be configured to use the Spyglass Language Server.
