@@ -225,6 +225,9 @@ export interface MinecraftScoreHolderArgumentTreeNode extends mcf.ArgumentTreeNo
 export interface MinecraftScoreboardSlotArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:scoreboard_slot'
 }
+export interface MinecraftSlotSourceArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:slot_source'
+}
 export interface MinecraftStyleArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:style'
 }
@@ -315,6 +318,7 @@ export type ArgumentTreeNode =
 	| MinecraftRotationArgumentTreeNode
 	| MinecraftScoreHolderArgumentTreeNode
 	| MinecraftScoreboardSlotArgumentTreeNode
+	| MinecraftSlotSourceArgumentTreeNode
 	| MinecraftStyleArgumentTreeNode
 	| MinecraftSwizzleArgumentTreeNode
 	| MinecraftTeamArgumentTreeNode
