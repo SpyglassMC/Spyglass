@@ -1493,13 +1493,13 @@ export function scoreHolder(
 	)
 }
 
-const slotSource: core.Parser<core.LiteralNode | NbtResourceNode | core.ResourceLocationNode> = core.any([
-	(src, ctx) => {
-		return commandLiteral({ pool: getItemSlotsArgumentValues(ctx) })(src, ctx)
-	},
-	resourceOrInline('slot_source'),
-])
-
+const slotSource: core.Parser<core.LiteralNode | NbtResourceNode | core.ResourceLocationNode> = core
+	.any([
+		(src, ctx) => {
+			return commandLiteral({ pool: getItemSlotsArgumentValues(ctx) })(src, ctx)
+		},
+		resourceOrInline('slot_source'),
+	])
 
 function symbol(
 	options: core.AllCategory | core.SymbolOptions,
