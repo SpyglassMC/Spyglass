@@ -32,7 +32,7 @@ export const RegistryCategories = Object.freeze(
 		'data_component_predicate_type',
 		'data_component_type',
 		'debug_subscription',
-		'decorated_pot_pattern',
+		'decorated_pot_pattern', // Removed as registry
 		'decorated_pot_patterns', // Removed
 		'dialog_action_type',
 		'dialog_body_type',
@@ -139,6 +139,7 @@ export const NormalFileCategories = Object.freeze(
 		'chicken_variant',
 		'cow_variant',
 		'damage_type',
+		'decorated_pot_pattern',
 		'dialog',
 		'dimension',
 		'dimension_type',
@@ -154,6 +155,7 @@ export const NormalFileCategories = Object.freeze(
 		'pig_variant',
 		'predicate',
 		'recipe',
+		'slot_source',
 		'structure',
 		'sulfur_cube_archetype',
 		'test_environment',
