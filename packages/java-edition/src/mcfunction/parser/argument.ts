@@ -272,6 +272,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap((src, ctx) => {
 				return commandLiteral({ pool: getScoreboardSlotArgumentValues(ctx) })(src, ctx)
 			})
+		case 'minecraft:slot_source':
+			return wrap(slotSource)
 		case 'minecraft:style':
 			return wrap(typeRefParser('::java::server::util::text::TextStyle'))
 		case 'minecraft:swizzle':
@@ -1490,6 +1492,14 @@ export function scoreHolder(
 		},
 	)
 }
+
+const slotSource: core.Parser<core.LiteralNode | NbtResourceNode | core.ResourceLocationNode> = core.any([
+	(src, ctx) => {
+		return commandLiteral({ pool: getItemSlotsArgumentValues(ctx) })(src, ctx)
+	},
+	resourceOrInline('slot_source'),
+])
+
 
 function symbol(
 	options: core.AllCategory | core.SymbolOptions,

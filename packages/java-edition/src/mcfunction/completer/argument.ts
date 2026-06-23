@@ -185,6 +185,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return LiteralNode.mock(range, { pool: getScoreboardSlotArgumentValues(ctx) })
 		case 'minecraft:score_holder':
 			return ScoreHolderNode.mock(range)
+		case 'minecraft:slot_source':
+			return LiteralNode.mock(range, { pool: getItemSlotsArgumentValues(ctx) })
 		case 'minecraft:style':
 			return json.JsonObjectNode.mock(range)
 		case 'minecraft:swizzle':
