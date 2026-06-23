@@ -104,11 +104,14 @@ export const RegistryCategories = Object.freeze(
 		'worldgen/chunk_generator',
 		'worldgen/decorator', // Removed
 		'worldgen/density_function_type',
-		'worldgen/feature',
+		'worldgen/feature', // Removed as registry
 		'worldgen/feature_size_type',
+		'worldgen/feature_type',
 		'worldgen/foliage_placer_type',
-		'worldgen/material_condition',
-		'worldgen/material_rule',
+		'worldgen/material_condition', // Removed as registry
+		'worldgen/material_condition_type',
+		'worldgen/material_rule', // Removed as registry
+		'worldgen/material_rule_type',
 		'worldgen/placement_modifier_type',
 		'worldgen/pool_alias_binding',
 		'worldgen/root_placer_type',
@@ -173,11 +176,14 @@ export const WorldgenFileCategories = Object.freeze(
 	[
 		'worldgen/biome',
 		'worldgen/configured_carver',
-		'worldgen/configured_feature',
-		'worldgen/configured_structure_feature',
-		'worldgen/configured_surface_builder',
+		'worldgen/configured_feature', // Removed
+		'worldgen/configured_structure_feature', // Removed
+		'worldgen/configured_surface_builder', // Removed
 		'worldgen/density_function',
+		'worldgen/feature',
 		'worldgen/flat_level_generator_preset',
+		'worldgen/material_condition',
+		'worldgen/material_rule',
 		'worldgen/multi_noise_biome_source_parameter_list',
 		'worldgen/noise',
 		'worldgen/noise_settings',
