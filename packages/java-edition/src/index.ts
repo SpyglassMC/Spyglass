@@ -5,11 +5,11 @@ import * as nbt from '@spyglassmc/nbt'
 import { jeFileUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
 import type { McmetaSummary, PackInfo } from './dependency/index.js'
 import {
+	fetchMcmetaVersions,
 	getMcmetaSummary,
 	getVanillaDatapack,
 	getVanillaMcdoc,
 	getVanillaResourcepack,
-	getVersions,
 	PackMcmeta,
 	resolveConfiguredVersion,
 	symbolRegistrar,
@@ -69,7 +69,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	registerUriBuilders(meta)
 
 	const [versions, packs] = await Promise.all([
-		getVersions(externals, logger),
+		fetchMcmetaVersions(externals, logger),
 		findPackMcmetas(),
 	])
 	if (!versions) {

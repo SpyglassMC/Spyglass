@@ -13,10 +13,21 @@
     "test": "test/"
   },
   "scripts": {
+    "build": "wireit",
     "release": "npm publish",
     "release:dry": "npm publish --tag latest --dry-run"
   },
-  "dependencies": {},
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "../..:build:tsc"
+      ],
+      "command": "node ./scripts/fetch_bundled_meta_resources.ts"
+    }
+  },
+  "dependencies": {
+    "@spgoding/zip.js": "^2.8.26-customfetch.1"
+  },
   "devDependencies": {},
   "publishConfig": {
     "access": "public"
