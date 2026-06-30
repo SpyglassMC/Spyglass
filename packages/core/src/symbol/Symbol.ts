@@ -23,7 +23,7 @@ export const RegistryCategories = Object.freeze(
 		'block',
 		'block_entity_type',
 		'block_predicate_type',
-		'block_type',
+		'block_type', // Removed
 		'chunk_status',
 		'command_argument_type',
 		'consume_effect_type',
@@ -100,7 +100,8 @@ export const RegistryCategories = Object.freeze(
 		'worldgen/biome_source',
 		'worldgen/block_placer_type', // Removed
 		'worldgen/block_state_provider_type',
-		'worldgen/carver',
+		'worldgen/carver', // Removed as registry
+		'worldgen/carver_type',
 		'worldgen/chunk_generator',
 		'worldgen/decorator', // Removed
 		'worldgen/density_function_type',
@@ -181,7 +182,8 @@ export type NormalFileCategory = (typeof NormalFileCategories)[number]
 export const WorldgenFileCategories = Object.freeze(
 	[
 		'worldgen/biome',
-		'worldgen/configured_carver',
+		'worldgen/carver',
+		'worldgen/configured_carver', // Removed
 		'worldgen/configured_feature', // Removed
 		'worldgen/configured_structure_feature', // Removed
 		'worldgen/configured_surface_builder', // Removed
