@@ -15,8 +15,8 @@
 			"locales"
 		],
 		"released": {
-			"commit": "b0e1ac01847bbde3054a1a1fd4e90da25c8858a5",
-			"version": "0.4.49"
+			"commit": "0556359f7d4e86b67ff8182c169991d442dc2abf",
+			"version": "0.4.50"
 		}
 	},
 	"discord-bot": {
@@ -28,7 +28,7 @@
 		],
 		"released": {
 			"commit": "3e5c5f38b051918dd2f797b81c7717dc3f587d98",
-			"version": "0.3.64"
+			"version": "0.3.65"
 		}
 	},
 	"java-edition": {
@@ -41,8 +41,8 @@
 			"nbt"
 		],
 		"released": {
-			"commit": "b0e1ac01847bbde3054a1a1fd4e90da25c8858a5",
-			"version": "0.3.62"
+			"commit": "0556359f7d4e86b67ff8182c169991d442dc2abf",
+			"version": "0.3.63"
 		}
 	},
 	"json": {
@@ -53,7 +53,7 @@
 		],
 		"released": {
 			"commit": "67ea404b6b677e298e2e831b6940081321ac3b40",
-			"version": "0.3.53"
+			"version": "0.3.54"
 		}
 	},
 	"language-server": {
@@ -65,7 +65,7 @@
 		],
 		"released": {
 			"commit": "0738f3238b066087dbd3464b6c831f2a337759f9",
-			"version": "0.4.62"
+			"version": "0.4.63"
 		}
 	},
 	"locales": {
@@ -81,7 +81,7 @@
 		],
 		"released": {
 			"commit": "67ea404b6b677e298e2e831b6940081321ac3b40",
-			"version": "0.3.53"
+			"version": "0.3.54"
 		}
 	},
 	"mcdoc-cli": {
@@ -91,7 +91,7 @@
 		],
 		"released": {
 			"commit": "3e5c5f38b051918dd2f797b81c7717dc3f587d98",
-			"version": "0.1.55"
+			"version": "0.1.56"
 		}
 	},
 	"mcfunction": {
@@ -101,7 +101,7 @@
 		],
 		"released": {
 			"commit": "3e5c5f38b051918dd2f797b81c7717dc3f587d98",
-			"version": "0.2.52"
+			"version": "0.2.53"
 		}
 	},
 	"nbt": {
@@ -112,7 +112,7 @@
 		],
 		"released": {
 			"commit": "67ea404b6b677e298e2e831b6940081321ac3b40",
-			"version": "0.3.55"
+			"version": "0.3.56"
 		}
 	},
 	"playground": {
@@ -124,7 +124,7 @@
 		],
 		"released": {
 			"commit": "3e5c5f38b051918dd2f797b81c7717dc3f587d98",
-			"version": "0.2.62"
+			"version": "0.2.63"
 		}
 	},
 	"vscode-extension": {
@@ -133,7 +133,7 @@
 		],
 		"released": {
 			"commit": "b0e1ac01847bbde3054a1a1fd4e90da25c8858a5",
-			"version": "4.8.5"
+			"version": "4.8.6"
 		}
 	},
 	"web-api-server": {
