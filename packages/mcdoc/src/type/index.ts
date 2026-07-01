@@ -3,6 +3,8 @@ import { Arrayable, Dev, max, min, numericEquals } from '@spyglassmc/core'
 import type { EnumKind } from '../node/index.js'
 import { getRangeDelimiter, RangeKind } from '../node/index.js'
 
+export * from './reference.js'
+
 export type Attributes = Attribute[]
 export namespace Attributes {
 	export function equals(a: Attributes | undefined, b: Attributes | undefined): boolean {
