@@ -2,6 +2,7 @@ import * as core from '@spyglassmc/core'
 import { sequence } from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
+import * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../../dependency/index.js'
@@ -161,7 +162,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:column_pos':
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
-			return wrap(typeRefParser('::java::server::util::text::Text'))
+			return wrap(typeRefParser(mcdoc.typeRefPath('text_component')))
 		case 'minecraft:dialog':
 			return wrap(resourceOrInline('dialog'))
 		case 'minecraft:dimension':
@@ -275,7 +276,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:slot_source':
 			return wrap(slotSource)
 		case 'minecraft:style':
-			return wrap(typeRefParser('::java::server::util::text::TextStyle'))
+			return wrap(typeRefParser(mcdoc.typeRefPath('text_style')))
 		case 'minecraft:swizzle':
 			return wrap(commandLiteral({ pool: SwizzleArgumentValues }))
 		case 'minecraft:team':

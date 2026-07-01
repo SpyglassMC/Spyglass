@@ -87,7 +87,7 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 					type: 'json:typed',
 					range: res.range,
 					children: [res],
-					targetType: { kind: 'reference', path: '::java::server::util::text::Text' },
+					targetType: mcdoc.typeRef('text_component'),
 				} satisfies json.TypedJsonNode)),
 				localize('text-component'),
 			),
