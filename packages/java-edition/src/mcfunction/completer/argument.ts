@@ -127,6 +127,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return LiteralNode.mock(range, { pool: EntityAnchorArgumentValues })
 		case 'minecraft:entity_summon':
 			return ResourceLocationNode.mock(range, { category: 'entity_type' })
+		case 'minecraft:feature':
+			return ResourceLocationNode.mock(range, { category: 'worldgen/feature' })
 		case 'minecraft:function':
 			return ResourceLocationNode.mock(range, { category: 'function' })
 		case 'minecraft:gamemode':
@@ -186,7 +188,10 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:score_holder':
 			return ScoreHolderNode.mock(range)
 		case 'minecraft:slot_source':
-			return LiteralNode.mock(range, { pool: getItemSlotsArgumentValues(ctx) })
+			return [
+				LiteralNode.mock(range, { pool: getItemSlotsArgumentValues(ctx) }),
+				ResourceLocationNode.mock(range, { category: 'slot_source' }),
+			]
 		case 'minecraft:style':
 			return json.JsonObjectNode.mock(range)
 		case 'minecraft:swizzle':
