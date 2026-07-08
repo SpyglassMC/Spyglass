@@ -304,7 +304,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:template_rotation':
 			return wrap(commandLiteral({ pool: RotationValues }))
 		case 'minecraft:time':
-			return wrap(time)
+			return wrap(time(treeNode.properties?.min))
 		case 'minecraft:uuid':
 			return wrap(uuid)
 		case 'minecraft:vec2':
@@ -1576,24 +1576,26 @@ function unquotableSymbol(
 	return validateUnquotable(symbol(options, terminators))
 }
 
-const time: core.InfallibleParser<TimeNode> = core.map(
-	core.sequence([
-		float(0, undefined),
-		core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
-	]),
-	(res) => {
-		const valueNode = res.children.find(core.FloatNode.is)!
-		const unitNode = res.children.find(core.LiteralNode.is)
-		const ans: TimeNode = {
-			type: 'mcfunction:time',
-			range: res.range,
-			children: res.children,
-			value: valueNode.value,
-			unit: unitNode?.value,
-		}
-		return ans
-	},
-)
+function time(minimum = 0): core.InfallibleParser<TimeNode> {
+	return core.map(
+		core.sequence([
+			float(minimum, undefined),
+			core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
+		]),
+		(res) => {
+			const valueNode = res.children.find(core.FloatNode.is)!
+			const unitNode = res.children.find(core.LiteralNode.is)
+			const ans: TimeNode = {
+				type: 'mcfunction:time',
+				range: res.range,
+				children: res.children,
+				value: valueNode.value,
+				unit: unitNode?.value,
+			}
+			return ans
+		},
+	)
+}
 
 const unquotedString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: core.BrigadierUnquotableOption,
