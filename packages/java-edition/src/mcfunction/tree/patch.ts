@@ -607,6 +607,19 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			},
 			schedule: {
 				children: {
+					function: {
+						children: {
+							function: {
+								children: {
+									time: {
+										properties: {
+											min: 1,
+										},
+									},
+								},
+							},
+						},
+					},
 					clear: {
 						children: {
 							function: {

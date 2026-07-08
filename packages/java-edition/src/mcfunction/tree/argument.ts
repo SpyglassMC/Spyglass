@@ -248,6 +248,9 @@ export interface MinecraftTemplateRotationArgumentTreeNode extends mcf.ArgumentT
 }
 export interface MinecraftTimeArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:time'
+	properties?: {
+		min: number
+	}
 }
 export interface MinecraftUuidArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:uuid'
