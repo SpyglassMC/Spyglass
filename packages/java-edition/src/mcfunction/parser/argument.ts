@@ -173,6 +173,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(commandLiteral({ pool: EntityAnchorArgumentValues }))
 		case 'minecraft:entity_summon':
 			return wrap(core.resourceLocation({ category: 'entity_type' }))
+		case 'minecraft:feature':
+			return wrap(resourceOrInline('worldgen/feature'))
 		case 'minecraft:float_range':
 			return wrap(
 				range(

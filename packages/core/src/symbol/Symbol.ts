@@ -155,6 +155,7 @@ export const NormalFileCategories = Object.freeze(
 		'item_modifier',
 		'jukebox_song',
 		'loot_table',
+		'number_provider',
 		'painting_variant',
 		'pig_sound_variant',
 		'pig_variant',

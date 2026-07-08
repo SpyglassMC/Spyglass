@@ -532,6 +532,40 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				}
 				: {}),
 			playsound: Sound,
+			...(ReleaseVersion.cmp(release, '26.3') >= 0
+				? {
+					posteffect: {
+						children: {
+							add: {
+								children: {
+									targets: {
+										children: {
+											posteffect: {
+												properties: {
+													category: 'post_effect',
+												},
+											},
+										},
+									},
+								},
+							},
+							remove: {
+								children: {
+									targets: {
+										children: {
+											posteffect: {
+												properties: {
+													category: 'post_effect',
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				}
+				: {}),
 			publish: {
 				permission: 4,
 			},

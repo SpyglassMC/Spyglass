@@ -62,6 +62,9 @@ export interface MinecraftEntityAnchorArgumentTreeNode extends mcf.ArgumentTreeN
 export interface MinecraftEntitySummonArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:entity_summon'
 }
+export interface MinecraftFeatureArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:feature'
+}
 export interface RangeProperties extends Record<string, unknown> {
 	min: number
 	max: number
@@ -289,6 +292,7 @@ export type ArgumentTreeNode =
 	| MinecraftEntityArgumentTreeNode
 	| MinecraftEntityAnchorArgumentTreeNode
 	| MinecraftEntitySummonArgumentTreeNode
+	| MinecraftFeatureArgumentTreeNode
 	| MinecraftFloatRangeArgumentTreeNode
 	| MinecraftFunctionArgumentTreeNode
 	| MinecraftGamemodeArgumentTreeNode

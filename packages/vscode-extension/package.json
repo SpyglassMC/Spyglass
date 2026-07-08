@@ -118,6 +118,7 @@
           "data/*/jukebox_song/**/*.json",
           "data/*/loot_table/**/*.json",
           "data/*/loot_tables/**/*.json",
+          "data/*/number_provider/**/*.json",
           "data/*/painting_variant/**/*.json",
           "data/*/pig_sound_variant/**/*.json",
           "data/*/pig_variant/**/*.json",
