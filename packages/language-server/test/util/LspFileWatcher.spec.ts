@@ -5,6 +5,7 @@ import { mockExternals } from '@spyglassmc/core/test/utils.ts'
 import { memfs } from 'memfs'
 import assert, { fail } from 'node:assert/strict'
 import { afterEach, beforeEach, describe, it, mock } from 'node:test'
+import { fileURLToPath } from 'node:url'
 import * as ls from 'vscode-languageserver/node.js'
 import { LspFileWatcher } from '../../lib/util/LspFileWatcher.js'
 
@@ -22,8 +23,8 @@ const Names = {
 	A: 'a.txt',
 	B: 'b.txt',
 }
-const getTestUris = (rootName: string) => {
-	const Outside = `file:///outside.txt`
+const getTestUris = (rootName: string, outsidePath: string) => {
+	const Outside = `file:///${outsidePath}`
 	const Root = `file:///${rootName}/`
 	const A = `${Root}${Names.A}`
 	const Git = `${Root}${Names.Git}/`
@@ -54,27 +55,44 @@ const getTestUris = (rootName: string) => {
 }
 
 /**
- * Small wrapper around memfs so that it treats URIs of different drive leter casing as the same
- * cuz this shit also doesn't handle them properly.
+ * Small wrapper around memfs so that
+ * 1. it treats URIs of different drive leter casing as the same cuz this shit also doesn't handle them properly
+ * 2. it works on Windows hosts by being handled path strings instead of URLs (https://github.com/streamich/memfs/issues/1098),
+ *    with the path strings being normalized according to the mock platform's rules controlled by the `windows` parameter
+ *    (but only on Windows, because Unix systems handle drive letters just fine! unless it's passed through a `fileURLToPath('...', { windows: true })` then it's suddenly not fine! but it's needed on Windows or else it's not fine there! don't ask! don't know! why the hell is a memory-only file system even platform sensitive?).
  */
-const getMockNodeFsp = (rootName: string): FsPromisesApi => {
+const getMockNodeFsp = (rootName: string, windows: boolean): FsPromisesApi => {
 	const memfsFsp = memfs({ [rootName]: {} }, '/').fs.promises
+	windows &&= process.platform === 'win32'
 
 	return {
 		mkdir: (path, options) => {
-			return memfsFsp.mkdir(new Uri(core.normalizeUri(path.toString())), options)
+			return memfsFsp.mkdir(
+				fileURLToPath(core.normalizeUri(path.toString()), { windows }),
+				options,
+			)
 		},
 		readdir: (path, options) => {
-			return memfsFsp.readdir(new Uri(core.normalizeUri(path.toString())), options)
+			return memfsFsp.readdir(
+				fileURLToPath(core.normalizeUri(path.toString()), { windows }),
+				options,
+			)
 		},
 		rm: (path, options) => {
-			return memfsFsp.rm(new Uri(core.normalizeUri(path.toString())), options)
+			return memfsFsp.rm(fileURLToPath(core.normalizeUri(path.toString()), { windows }), options)
 		},
 		stat: (path, options) => {
-			return memfsFsp.stat(new Uri(core.normalizeUri(path.toString())), options)
+			return memfsFsp.stat(
+				fileURLToPath(core.normalizeUri(path.toString()), { windows }),
+				options,
+			)
 		},
 		writeFile: (id, data, options) => {
-			return memfsFsp.writeFile(new Uri(core.normalizeUri(id.toString())), data, options)
+			return memfsFsp.writeFile(
+				fileURLToPath(core.normalizeUri(id.toString()), { windows }),
+				data,
+				options,
+			)
 		},
 	} as FsPromisesApi
 }
@@ -109,7 +127,7 @@ describe('LspFileWatcher', () => {
 				capabilities: UnsupportedCapabilities,
 				connection,
 				externals: mockExternals({
-					nodeFsp: getMockNodeFsp('root'),
+					nodeFsp: getMockNodeFsp('root', false),
 				}),
 				locations,
 				logger,
@@ -128,22 +146,25 @@ describe('LspFileWatcher', () => {
 	const Suites = [
 		{
 			name: 'Unix-like paths',
-			inputUris: getTestUris('root'),
-			normalizedUris: getTestUris('root'),
+			inputUris: getTestUris('root', 'outside.txt'),
+			normalizedUris: getTestUris('root', 'outside.txt'),
+			windows: false,
 		},
 		{
 			name: 'Windows-like paths with lowercase drive letter and encoded colon',
-			inputUris: getTestUris('c%3a'),
-			normalizedUris: getTestUris('c:'),
+			inputUris: getTestUris('c%3a/root', 'c%3a/outside.txt'),
+			normalizedUris: getTestUris('c:/root', 'c:/outside.txt'),
+			windows: true,
 		},
 		{
 			name: 'Windows-like paths with uppercase drive letter and encoded colon',
-			inputUris: getTestUris('C%3A'),
-			normalizedUris: getTestUris('c:'),
+			inputUris: getTestUris('C%3A/root', 'C%3A/outside.txt'),
+			normalizedUris: getTestUris('c:/root', 'c:/outside.txt'),
+			windows: true,
 		},
 	]
 
-	for (const { name, inputUris, normalizedUris } of Suites) {
+	for (const { name, inputUris, normalizedUris, windows } of Suites) {
 		describe(name, () => {
 			describe('LSP file change event tests', () => {
 				let connection: ls.Connection & MockLspConnection
@@ -156,7 +177,7 @@ describe('LspFileWatcher', () => {
 				beforeEach(() => {
 					connection = new MockLspConnection() as ls.Connection & MockLspConnection
 					externals = mockExternals({
-						nodeFsp: getMockNodeFsp(normalizedUris.RootName),
+						nodeFsp: getMockNodeFsp(normalizedUris.RootName, windows),
 					})
 					watcher = new LspFileWatcher({
 						capabilities: SupportedCapabilities,
@@ -208,9 +229,10 @@ describe('LspFileWatcher', () => {
 					})
 
 					assert.equal(addListener.mock.callCount(), 3)
-					assert.deepEqual(addListener.mock.calls[0].arguments, [normalizedUris.FooA])
-					assert.deepEqual(addListener.mock.calls[1].arguments, [normalizedUris.FooBarA])
-					assert.deepEqual(addListener.mock.calls[2].arguments, [normalizedUris.FooBarB])
+					assert.deepEqual(
+						addListener.mock.calls.flatMap((c) => c.arguments).sort(),
+						[normalizedUris.FooA, normalizedUris.FooBarA, normalizedUris.FooBarB].sort(),
+					)
 					assert.equal(changeListener.mock.callCount(), 0)
 					assert.equal(unlinkListener.mock.callCount(), 0)
 				})
@@ -229,9 +251,10 @@ describe('LspFileWatcher', () => {
 					})
 
 					assert.equal(addListener.mock.callCount(), 3)
-					assert.deepEqual(addListener.mock.calls[0].arguments, [normalizedUris.FooA])
-					assert.deepEqual(addListener.mock.calls[1].arguments, [normalizedUris.FooBarA])
-					assert.deepEqual(addListener.mock.calls[2].arguments, [normalizedUris.FooBarB])
+					assert.deepEqual(
+						addListener.mock.calls.flatMap((c) => c.arguments).sort(),
+						[normalizedUris.FooA, normalizedUris.FooBarA, normalizedUris.FooBarB].sort(),
+					)
 					assert.equal(changeListener.mock.callCount(), 0)
 					assert.equal(unlinkListener.mock.callCount(), 0)
 				})
@@ -254,9 +277,10 @@ describe('LspFileWatcher', () => {
 					})
 
 					assert.equal(addListener.mock.callCount(), 3)
-					assert.deepEqual(addListener.mock.calls[0].arguments, [normalizedUris.FooA])
-					assert.deepEqual(addListener.mock.calls[1].arguments, [normalizedUris.FooBarA])
-					assert.deepEqual(addListener.mock.calls[2].arguments, [normalizedUris.FooBarB])
+					assert.deepEqual(
+						addListener.mock.calls.flatMap((c) => c.arguments).sort(),
+						[normalizedUris.FooA, normalizedUris.FooBarA, normalizedUris.FooBarB].sort(),
+					)
 					assert.equal(changeListener.mock.callCount(), 0)
 					assert.equal(unlinkListener.mock.callCount(), 0)
 				})
@@ -279,9 +303,10 @@ describe('LspFileWatcher', () => {
 					})
 
 					assert.equal(addListener.mock.callCount(), 3)
-					assert.deepEqual(addListener.mock.calls[0].arguments, [normalizedUris.FooA])
-					assert.deepEqual(addListener.mock.calls[1].arguments, [normalizedUris.FooBarA])
-					assert.deepEqual(addListener.mock.calls[2].arguments, [normalizedUris.FooBarB])
+					assert.deepEqual(
+						addListener.mock.calls.flatMap((c) => c.arguments).sort(),
+						[normalizedUris.FooA, normalizedUris.FooBarA, normalizedUris.FooBarB].sort(),
+					)
 					assert.equal(changeListener.mock.callCount(), 0)
 					assert.equal(unlinkListener.mock.callCount(), 0)
 				})
@@ -402,9 +427,10 @@ describe('LspFileWatcher', () => {
 					assert.equal(addListener.mock.callCount(), 0)
 					assert.equal(changeListener.mock.callCount(), 0)
 					assert.equal(unlinkListener.mock.callCount(), 3)
-					assert.deepEqual(unlinkListener.mock.calls[0].arguments, [normalizedUris.FooA])
-					assert.deepEqual(unlinkListener.mock.calls[1].arguments, [normalizedUris.FooBarA])
-					assert.deepEqual(unlinkListener.mock.calls[2].arguments, [normalizedUris.FooBarB])
+					assert.deepEqual(
+						unlinkListener.mock.calls.flatMap((c) => c.arguments).sort(),
+						[normalizedUris.FooA, normalizedUris.FooBarA, normalizedUris.FooBarB].sort(),
+					)
 				})
 
 				it('Should notify sub file deletions when LSP notifies directory deletion without ending slash', async () => {
@@ -424,9 +450,10 @@ describe('LspFileWatcher', () => {
 					assert.equal(addListener.mock.callCount(), 0)
 					assert.equal(changeListener.mock.callCount(), 0)
 					assert.equal(unlinkListener.mock.callCount(), 3)
-					assert.deepEqual(unlinkListener.mock.calls[0].arguments, [normalizedUris.FooA])
-					assert.deepEqual(unlinkListener.mock.calls[1].arguments, [normalizedUris.FooBarA])
-					assert.deepEqual(unlinkListener.mock.calls[2].arguments, [normalizedUris.FooBarB])
+					assert.deepEqual(
+						unlinkListener.mock.calls.flatMap((c) => c.arguments).sort(),
+						[normalizedUris.FooA, normalizedUris.FooBarA, normalizedUris.FooBarB].sort(),
+					)
 				})
 
 				it('Should handle change to unknown file as add', async () => {
@@ -459,9 +486,10 @@ describe('LspFileWatcher', () => {
 					})
 
 					assert.equal(addListener.mock.callCount(), 3)
-					assert.deepEqual(addListener.mock.calls[0].arguments, [normalizedUris.FooA])
-					assert.deepEqual(addListener.mock.calls[1].arguments, [normalizedUris.FooBarA])
-					assert.deepEqual(addListener.mock.calls[2].arguments, [normalizedUris.FooBarB])
+					assert.deepEqual(
+						addListener.mock.calls.flatMap((c) => c.arguments).sort(),
+						[normalizedUris.FooA, normalizedUris.FooBarA, normalizedUris.FooBarB].sort(),
+					)
 					assert.equal(changeListener.mock.callCount(), 0)
 					assert.equal(unlinkListener.mock.callCount(), 0)
 				})
@@ -480,9 +508,10 @@ describe('LspFileWatcher', () => {
 					})
 
 					assert.equal(addListener.mock.callCount(), 3)
-					assert.deepEqual(addListener.mock.calls[0].arguments, [normalizedUris.FooA])
-					assert.deepEqual(addListener.mock.calls[1].arguments, [normalizedUris.FooBarA])
-					assert.deepEqual(addListener.mock.calls[2].arguments, [normalizedUris.FooBarB])
+					assert.deepEqual(
+						addListener.mock.calls.flatMap((c) => c.arguments).sort(),
+						[normalizedUris.FooA, normalizedUris.FooBarA, normalizedUris.FooBarB].sort(),
+					)
 					assert.equal(changeListener.mock.callCount(), 0)
 					assert.equal(unlinkListener.mock.callCount(), 0)
 				})
@@ -526,7 +555,7 @@ describe('LspFileWatcher', () => {
 				beforeEach(() => {
 					connection = new MockLspConnection() as ls.Connection & MockLspConnection
 					externals = mockExternals({
-						nodeFsp: getMockNodeFsp(normalizedUris.RootName),
+						nodeFsp: getMockNodeFsp(normalizedUris.RootName, windows),
 					})
 					watcher = new LspFileWatcher({
 						capabilities: SupportedCapabilities,
@@ -615,8 +644,10 @@ describe('LspFileWatcher', () => {
 					assert.equal(addListener.mock.callCount(), 0)
 					assert.equal(changeListener.mock.callCount(), 0)
 					assert.equal(unlinkListener.mock.callCount(), 2)
-					assert.deepEqual(unlinkListener.mock.calls[0].arguments, [normalizedUris.FooBarA])
-					assert.deepEqual(unlinkListener.mock.calls[1].arguments, [normalizedUris.FooBarB])
+					assert.deepEqual(
+						unlinkListener.mock.calls.flatMap((c) => c.arguments).sort(),
+						[normalizedUris.FooBarA, normalizedUris.FooBarB].sort(),
+					)
 				})
 
 				it('Should add missing sub files of a directory to the store', async () => {
@@ -631,9 +662,10 @@ describe('LspFileWatcher', () => {
 					await watcher.reconcile(inputUris.Foo)
 
 					assert.equal(addListener.mock.callCount(), 3)
-					assert.deepEqual(addListener.mock.calls[0].arguments, [normalizedUris.FooB])
-					assert.deepEqual(addListener.mock.calls[1].arguments, [normalizedUris.FooBarA])
-					assert.deepEqual(addListener.mock.calls[2].arguments, [normalizedUris.FooBarB])
+					assert.deepEqual(
+						addListener.mock.calls.flatMap((c) => c.arguments).sort(),
+						[normalizedUris.FooB, normalizedUris.FooBarA, normalizedUris.FooBarB].sort(),
+					)
 					assert.equal(changeListener.mock.callCount(), 0)
 					assert.equal(unlinkListener.mock.callCount(), 0)
 				})
