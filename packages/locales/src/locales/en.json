@@ -149,6 +149,7 @@
   "mcfunction.parser.range.span-too-small": "The range size %0% is smaller than the minimum %1%",
   "mcfunction.parser.score_holder.fake-name.too-long": "Fake names cannot be longer than %0% characters",
   "mcfunction.parser.sep": "a space (%0%)",
+  "mcfunction.parser.time.below-min": "The time cannot be less than %0% tick(s)",
   "mcfunction.parser.trailing": "Trailing data encountered: %0%",
   "mcfunction.parser.unknown-parser": "Parser %0% hasn't been supported yet",
   "mcfunction.parser.uuid.invalid": "Invalid UUID format",
