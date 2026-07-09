@@ -22,6 +22,81 @@ exports[`mcfunction argument parser > minecraft:time > Parse '0' 1`] = `
 }
 `;
 
+exports[`mcfunction argument parser > minecraft:time > Parse '0.05s' with {\"min\":2} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:time",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "children": [
+      {
+        "type": "float",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "value": 0.05
+      },
+      {
+        "type": "literal",
+        "range": {
+          "start": 4,
+          "end": 5
+        },
+        "value": "s"
+      }
+    ],
+    "value": 0.05,
+    "unit": "s"
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "message": "The time cannot be less than 2 tick(s)",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:time > Parse '0.1s' with {\"min\":2} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:time",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "children": [
+      {
+        "type": "float",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "value": 0.1
+      },
+      {
+        "type": "literal",
+        "range": {
+          "start": 3,
+          "end": 4
+        },
+        "value": "s"
+      }
+    ],
+    "value": 0.1,
+    "unit": "s"
+  },
+  "errors": []
+}
+`;
+
 exports[`mcfunction argument parser > minecraft:time > Parse '0d' 1`] = `
 {
   "node": {
@@ -140,6 +215,171 @@ exports[`mcfunction argument parser > minecraft:time > Parse '0t' 1`] = `
     ],
     "value": 0,
     "unit": "t"
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:time > Parse '1' with {\"min\":2} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:time",
+    "range": {
+      "start": 0,
+      "end": 1
+    },
+    "children": [
+      {
+        "type": "float",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": 1
+      }
+    ],
+    "value": 1
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 1
+      },
+      "message": "The time cannot be less than 2 tick(s)",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:time > Parse '1d' with {\"min\":2} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:time",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "children": [
+      {
+        "type": "float",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": 1
+      },
+      {
+        "type": "literal",
+        "range": {
+          "start": 1,
+          "end": 2
+        },
+        "value": "d"
+      }
+    ],
+    "value": 1,
+    "unit": "d"
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:time > Parse '1s' with {\"min\":2} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:time",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "children": [
+      {
+        "type": "float",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": 1
+      },
+      {
+        "type": "literal",
+        "range": {
+          "start": 1,
+          "end": 2
+        },
+        "value": "s"
+      }
+    ],
+    "value": 1,
+    "unit": "s"
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:time > Parse '1t' with {\"min\":2} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:time",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "children": [
+      {
+        "type": "float",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": 1
+      },
+      {
+        "type": "literal",
+        "range": {
+          "start": 1,
+          "end": 2
+        },
+        "value": "t"
+      }
+    ],
+    "value": 1,
+    "unit": "t"
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "message": "The time cannot be less than 2 tick(s)",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:time > Parse '2' with {\"min\":2} 1`] = `
+{
+  "node": {
+    "type": "mcfunction:time",
+    "range": {
+      "start": 0,
+      "end": 1
+    },
+    "children": [
+      {
+        "type": "float",
+        "range": {
+          "start": 0,
+          "end": 1
+        },
+        "value": 2
+      }
+    ],
+    "value": 2
   },
   "errors": []
 }
