@@ -192,7 +192,7 @@ const Suites: Partial<
 	'minecraft:team_color': [{ content: ['red', 'green', 'reset'] }],
 	'minecraft:time': [
 		{ content: ['0d', '0s', '0t', '0', '0foo'] },
-		{ properties: { min: 2 }, content: ['1d', '1s', '1t', '1', '2', '0.1s', '0.05s'] }
+		{ properties: { min: 2 }, content: ['1d', '1s', '1t', '1', '2', '0.1s', '0.05s'] },
 	],
 	'minecraft:uuid': [{
 		content: [
