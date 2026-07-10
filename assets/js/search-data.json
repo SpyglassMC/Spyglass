@@ -90,100 +90,100 @@
     
     "relUrl": "/user/config.html"
   },"13": {
-    "doc": "Developer Guides",
-    "title": "Developer Guides",
-    "content": " ",
-    "url": "/developer/",
-    
-    "relUrl": "/developer/"
-  },"14": {
-    "doc": "Maintainer Guides",
-    "title": "Maintainer Guides",
-    "content": " ",
-    "url": "/maintainer/",
-    
-    "relUrl": "/maintainer/"
-  },"15": {
     "doc": "Runbook",
     "title": "Get Extension Log on VS Code/VSCodium",
     "content": "Extension log can be helpful for troubleshooting if the extension is not behaving as expected. To get the extension log: . | Open the Command Palette (default keybind is Ctrl+Shift+P on Linux/Windows, Cmd+Shift+P on macOS). | Type or paste in workbench.action.showOutputChannels and press Enter. | Type or paste in Spyglass Language Server and press Enter. | The log output panel should now be open. You can select all and copy the log to share it with others. | . | | The log may contain file paths that include your username or other personal information. If you prefer not to share this information, please review the log and redact any sensitive details before sharing it with others. | . ",
     "url": "/user/runbook/#get-log",
     
     "relUrl": "/user/runbook/#get-log"
-  },"16": {
+  },"14": {
     "doc": "Runbook",
     "title": "Reset Extension Cache on VS Code/VSCodium",
     "content": "The extension uses cache to accelerate various operations. Occasionally the cache may get outdated or corrupted and cause issues. To do a quick cache reset: . | Open the Command Palette (default keybind is Ctrl+Shift+P on Linux/Windows, Cmd+Shift+P on macOS). | Type or paste in spyglassmc.resetProjectCache and press Enter. | Restart the editor. | . If that did not work, you may also try a full cache reset: . | Open the Command Palette (default keybind is Ctrl+Shift+P on Linux/Windows, Cmd+Shift+P on macOS). | Type or paste in spyglassmc.showCacheRoot and press Enter. | The extension&#8217;s cache folder should now be shown in your OS&#8217;s file explorer. You may see folders named downloader, http, symbols, and/or virtual-uris in it. The default location of the cache folder is: . | Linux: $XDG_CACHE_HOME/spyglassmc-nodejs or ~/.cache/spyglassmc-nodejs . | macOS: ~/Library/Caches/spyglassmc-nodejs . | Windows: %LOCALAPPDATA%\\spyglassmc-nodejs\\Cache (e.g. C:\\Users\\&lt;USER&gt;\\AppData\\Local\\spyglassmc-nodejs\\Cache) . | . | Close the editor. | This step is important as otherwise the extension may write bad data from memory to disk right after you&#8217;ve deleted them. | . | Delete all contents inside the cache folder. | Restart the editor. | . ",
     "url": "/user/runbook/#reset-cache",
     
     "relUrl": "/user/runbook/#reset-cache"
-  },"17": {
+  },"15": {
     "doc": "Runbook",
     "title": "Support Modded Commands",
     "content": ". | Create a spyglass.json config file in the root of your workspace. { \"env\": { \"mcmetaSummaryOverrides\": { \"commands\": { \"path\": \"./commands.json\", \"replace\": false } } } } . | Create a commands.json file to define the structure of the custom commands. You can either generate this file with a mod like Command Extractor, or write the file manually. Here is the vanilla command tree for reference. | Spyglass should be smart enough to ignore any modded arguments it cannot understand. You may create an issue if you&#8217;d like certain modded arguments to be supported. | . ",
     "url": "/user/runbook/#custom-commands",
     
     "relUrl": "/user/runbook/#custom-commands"
-  },"18": {
+  },"16": {
     "doc": "Runbook",
     "title": "Runbook",
     "content": "Table of Contents . | Get Extension Log on VS Code/VSCodium | Reset Extension Cache on VS Code/VSCodium | Support Modded Commands | . ",
     "url": "/user/runbook/",
     
     "relUrl": "/user/runbook/"
-  },"19": {
+  },"17": {
     "doc": "Mcdoc",
     "title": "Writing Your Own",
     "content": "Any file with the .mcdoc extension will be picked up by Spyglass. If you start having multiple mcdoc files, it can be helpful to organize them in a mcdoc/ folder in your pack root, but this is not required. Defining an mcdoc type is pretty straightforward: . use ::java::util::text::Text use ::java::world::item::ItemStack struct MyQuest { type: string, prompt: Text, /// The item given to the player when completing the quest. reward_item?: ItemStack, } . The above example describes a type MyQuest, which is an object or compound (in mcdoc this is called a struct). The struct has 3 fields. Two required fields type and prompt. One optional field reward_item (indicated by the ?: field separator). Fields can have doc comments. These are comments above the field starting with /// and will be shown as a description of fields during autocomplete and hover interactions. At the top of the file you can see use statements. These can import types from other files. The example imports types from vanilla-mcdoc using the absolute path of the struct. If the above file was placed in quests.mcdoc, the absolute path of the struct type would be ::quests::MyQuest. ",
     "url": "/user/mcdoc/#writing-your-own",
     
     "relUrl": "/user/mcdoc/#writing-your-own"
-  },"20": {
+  },"18": {
     "doc": "Mcdoc",
     "title": "Dispatching Types",
     "content": "A type on its own isn&#8217;t very useful. We need to tell Spyglass where this type is used in the data pack. This is where dispatchers are used. dispatch minecraft:storage[example:quests] to struct QuestsStorage { available?: [MyQuest], } . This dispatch statement tells Spyglass that the storage example:quests should have the type QuestsStorage, which in turn can reference other types in the file. Writing the following line in function file, you will notice that Spyglass suggests fields and gives errors for missing required fields: . data merge storage example:quests {available:[{ }]} . ",
     "url": "/user/mcdoc/#dispatching-types",
     
     "relUrl": "/user/mcdoc/#dispatching-types"
-  },"21": {
+  },"19": {
     "doc": "Mcdoc",
     "title": "Mcdoc",
     "content": "Table of Contents . | Writing Your Own | Dispatching Types | . Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs. It is a custom language that is interpreted by the Spyglass language server. The entirety of vanilla Minecraft is documented at the vanilla-mcdoc repository. This is a great place to look to learn about the syntax beyond this documentation! . ",
     "url": "/user/mcdoc/",
     
     "relUrl": "/user/mcdoc/"
-  },"22": {
+  },"20": {
     "doc": "Home",
     "title": "User Testimonials",
     "content": "By far, by a huge margin, the best extension I&#8217;ve found for it. &#8212; slicedlime during his Twitch stream ",
     "url": "/#user-testimonials",
     
     "relUrl": "/#user-testimonials"
-  },"23": {
+  },"21": {
     "doc": "Home",
     "title": "Getting Started",
-    "content": "You can enjoy features provided by Spyglass on various text editors. VS Code . Install from the Marketplace. VSCodium . Install from the Open VSX Registry. Sublime Text . Planned. Zed Editor . Planned. ",
+    "content": "You can enjoy features provided by Spyglass on various text editors. VS Code . Install from the Marketplace. VSCodium . Install from the Open VSX Registry. Sublime Text . Official package planned. A WIP package exists at https://github.com/SpyglassMC/LSP-Spyglass that may or may not work. Any feedback would be appreciated. Zed . Official extension planned. Generic LSP Client . Any software implementing the Language Server Protocol (LSP) as a client can be configured to use the Spyglass Language Server. Note that support for these clients are not guaranteed at the moment, but you are welcome to create an issue for any problems encountered. | Ensure you have the latest LTS version of Node.js installed . | Install the language server from the command line: npm install --global @spyglassmc/language-server . | Configure your LSP client following their documentation. Some information you may need: . | Command for running the LSP server: spyglassmc-language-server --stdio . | Initialization options: This is mostly optional. See Initialization Options for possible values . | Supported documents: .mcdoc files, .mcfunction files, .mcmeta files, .snbt files, and data pack/resource pack .json files. | . | . Example configs for some LSP clients that you may find helpful: . Helix Helix documentation . # This only adds support for mcfunction. Contribution welcomed for config to enable support for `.mcdoc`, `.mcmeta`, `.snbt`, and pack `.json` files. [[language]] name = \"mcfunction\" scope = \"source.mcfunction\" file-types = [\"mcfunction\"] roots = [\"pack.mcmeta\"] comment-tokens = [\"#\"] language-servers = [\"spyglassmc\"] [language-server.spyglassmc] command = \"spyglassmc-language-server\" args = [\"--stdio\"] . ",
     "url": "/#getting-started",
     
     "relUrl": "/#getting-started"
-  },"24": {
+  },"22": {
     "doc": "Home",
     "title": "Contributing",
     "content": ". | Create an issue . | GitHub Repository . | Localization . | . ",
     "url": "/#contributing",
     
     "relUrl": "/#contributing"
-  },"25": {
+  },"23": {
     "doc": "Home",
     "title": "Home",
     "content": "Welcome to the documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real-time diagnostics, semantic coloring and such. It is planned to support multiple text editors, but for now, the only officially supported release is our vscode extension. ",
     "url": "/",
     
     "relUrl": "/"
+  },"24": {
+    "doc": "Maintainer Guides",
+    "title": "Maintainer Guides",
+    "content": " ",
+    "url": "/maintainer/",
+    
+    "relUrl": "/maintainer/"
+  },"25": {
+    "doc": "Developer Guides",
+    "title": "Developer Guides",
+    "content": " ",
+    "url": "/developer/",
+    
+    "relUrl": "/developer/"
   },"26": {
     "doc": "Initialization Options",
     "title": "Initialization Options",
-    "content": "The extension may provide optional initialization options to the language server on the initialize request. | (object) The initializationOptions . | inDevelopmentMode: (boolean) If the language server is launched under development mode. If set to true, a few seconds of delay will be introduced on the serverside when initializing to give NodeJS debugger time to attach to the server process. | . | . ",
+    "content": "The extension may provide optional initialization options to the language server on the initialize request. | (object) The initializationOptions . | inDevelopmentMode?: (boolean) If the language server is launched under development mode. If set to true, a few seconds of delay will be introduced on the serverside when initializing to give NodeJS debugger time to attach to the server process. | defaultConfig?: (PartialConfig) If set, the provided config will be used as a default config. Any missing values will fall back to the built-in config values in the language server. | . | . ",
     "url": "/developer/language-server/initialization-options.html",
     
     "relUrl": "/developer/language-server/initialization-options.html"
