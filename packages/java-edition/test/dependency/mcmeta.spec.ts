@@ -5,8 +5,12 @@ import { describe, it } from 'node:test'
 import * as path from 'path'
 import url from 'url'
 import type { PackInfo } from '../../lib/dependency/common.js'
-import type { McmetaRegistries, McmetaStates, McmetaVersions } from '../../lib/dependency/mcmeta.js'
 import { Fluids, resolveConfiguredVersion, symbolRegistrar } from '../../lib/dependency/mcmeta.js'
+import type {
+	McmetaRegistries,
+	McmetaStates,
+	McmetaVersions,
+} from '../../lib/dependency/mcmeta/index.js'
 
 function readJsonSync(path: string): unknown {
 	return JSON.parse(fs.readFileSync(path, 'utf-8'))

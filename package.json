@@ -10,6 +10,7 @@
 	"scripts": {
 		"ansible:prod": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml",
 		"ansible:prod:verbose": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml -vvv",
+		"bench": "node packages/benchmarks/lib/index.js",
 		"build": "wireit",
 		"build:dev": "wireit",
 		"build:tsc6": "tsc -b packages",
@@ -30,8 +31,7 @@
 		"start-web-api-server": "npm start --workspace=packages/web-api-server",
 		"test": "node --import=./packages/core/test/snapshot-setup.ts --test --test-isolation none",
 		"test:update-snapshots": "npm test -- --test-update-snapshots",
-		"test:watch": "npm test -- --watch",
-		"bench": "node packages/benchmarks/lib/index.js"
+		"test:watch": "npm test -- --watch"
 	},
 	"wireit": {
 		"build": {
@@ -48,6 +48,12 @@
 		},
 		"build:packages": {
 			"$comment": "This script is used as a dependency by ./packages/playground:build and ./packages/vscode-extension:build",
+			"dependencies": [
+				"build:tsc",
+				"./packages/java-edition:build"
+			]
+		},
+		"build:tsc": {
 			"command": "tsgo -b packages",
 			"files": [
 				"packages/*/src/**/*.*",

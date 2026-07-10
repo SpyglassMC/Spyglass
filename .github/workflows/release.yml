@@ -31,6 +31,8 @@ jobs:
       - run: npm ci
 
       - run: npm run build
+        env:
+          FETCH_BUNDLED_META_RESOURCES: true
 
       - run: npm test
 
