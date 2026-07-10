@@ -37,6 +37,7 @@ import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
 import type { FileWatcher } from './FileWatcher.js'
 import { MetaRegistry } from './MetaRegistry.js'
+import type { Profiler } from './Profiler.js'
 import { ProfilerFactory } from './Profiler.js'
 
 const CacheAutoSaveInterval = 600_000 // 10 Minutes.
@@ -49,6 +50,7 @@ export type ProjectInitializerContext = Pick<
 	| 'isDebugging'
 	| 'logger'
 	| 'meta'
+	| 'profilers'
 	| 'projectRoots'
 >
 export type SyncProjectInitializer = (
@@ -380,6 +382,7 @@ export class Project extends EventDispatcher<{
 				isDebugging: this.isDebugging,
 				logger: this.logger,
 				meta: this.meta,
+				profilers: this.profilers,
 				projectRoots: this.projectRoots,
 			}
 			const results = await Promise.allSettled(this.#initializers.map((init) => init(initCtx)))
@@ -566,11 +569,12 @@ export class Project extends EventDispatcher<{
 			this.logger.info(`[Project#ready] File extension ${ext}: ${count}`)
 		}
 
+		const __parseProfiler = this.profilers.get('project#ready#parse', 'top-n', 50)
 		const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
 		for (const uri of files) {
-			await this.ensureBindingStarted(uri)
-			__bindProfiler.task(uri)
+			await this.#parseAndBindForReady(uri, __parseProfiler, __bindProfiler)
 		}
+		__parseProfiler.finalize()
 		__bindProfiler.finalize()
 		__profiler.task('Bind Files')
 
@@ -745,6 +749,8 @@ export class Project extends EventDispatcher<{
 		if (node.checkerErrors) {
 			return
 		}
+		const __checkProfiler = this.profilers.get('project#check', 'top-n', 50)
+		const __lintProfiler = this.profilers.get('project#lint', 'top-n', 50)
 		try {
 			const checker = this.meta.getChecker(node.type)
 			const ctx = CheckerContext.create(this, { doc })
@@ -752,10 +758,15 @@ export class Project extends EventDispatcher<{
 			await ctx.symbols.contributeAsAsync('checker', async () => {
 				await checker(StateProxy.create(node), ctx)
 				node.checkerErrors = ctx.err.dump()
+				__checkProfiler.task(doc.uri)
 				this.lint(doc, node)
+				__lintProfiler.task(doc.uri)
 			})
 		} catch (e) {
 			this.logger.error(`[Project] [check] Failed for ${doc.uri} # ${doc.version}`, e)
+		} finally {
+			__checkProfiler.finalize()
+			__lintProfiler.finalize()
 		}
 	}
 
@@ -816,6 +827,30 @@ export class Project extends EventDispatcher<{
 
 		const node = this.parse(doc)
 		await this.bind(doc, node)
+		this.emit('documentUpdated', { doc, node })
+	}
+
+	async #parseAndBindForReady(
+		uri: string,
+		parseProfiler: Profiler,
+		bindProfiler: Profiler,
+	): Promise<void> {
+		uri = this.normalizeUri(uri)
+		if (this.#symbolUpToDateUris.has(uri) || this.#bindingInProgressUris.has(uri)) {
+			return
+		}
+
+		this.#bindingInProgressUris.add(uri)
+
+		const doc = await this.read(uri)
+		if (!doc || !(await this.cacheService.hasFileChangedSinceCache(doc))) {
+			return
+		}
+
+		const node = this.parse(doc)
+		parseProfiler.task(uri)
+		await this.bind(doc, node)
+		bindProfiler.task(uri)
 		this.emit('documentUpdated', { doc, node })
 	}
 
