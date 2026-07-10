@@ -61,7 +61,8 @@
 			"core",
 			"java-edition",
 			"locales",
-			"mcdoc"
+			"mcdoc",
+			"tsb-imp-doc"
 		],
 		"released": {
 			"commit": "0738f3238b066087dbd3464b6c831f2a337759f9",
@@ -125,6 +126,23 @@
 		"released": {
 			"commit": "3e5c5f38b051918dd2f797b81c7717dc3f587d98",
 			"version": "0.2.65"
+		}
+	},
+	"tsb-imp-doc": {
+		"dependencies": [
+			"core"
+		],
+		"released": {
+			"private": true
+		}
+	},
+	"tsb-imp-doc-cli": {
+		"dependencies": [
+			"core",
+			"tsb-imp-doc"
+		],
+		"released": {
+			"private": true
 		}
 	},
 	"vscode-extension": {

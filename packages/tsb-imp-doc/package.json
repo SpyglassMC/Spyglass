@@ -1,0 +1,27 @@
+{
+  "name": "@spyglassmc/tsb-imp-doc",
+  "version": "0.0.1-SPIKE",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "ELLA",
+  "license": "MIT",
+  "private": true,
+  "directories": {
+    "test": "test/"
+  },
+  "scripts": {},
+  "dependencies": {
+    "@spyglassmc/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SpyglassMC/Spyglass.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SpyglassMC/Spyglass/issues"
+  }
+}

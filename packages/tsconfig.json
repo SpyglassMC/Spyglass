@@ -38,6 +38,12 @@
 			"path": "playground"
 		},
 		{
+			"path": "tsb-imp-doc"
+		},
+		{
+			"path": "tsb-imp-doc-cli"
+		},
+		{
 			"path": "vscode-extension"
 		},
 		{

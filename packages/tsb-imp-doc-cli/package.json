@@ -1,0 +1,32 @@
+{
+  "name": "@spyglassmc/tsb-imp-doc-cli",
+  "version": "0.0.1-SPIKE",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "ELLA",
+  "license": "MIT",
+  "private": true,
+  "directories": {
+    "test": "test/"
+  },
+  "bin": {
+    "tsb-lint-imp-doc": "lib/index.js"
+  },
+  "scripts": {},
+  "dependencies": {
+    "@spyglassmc/core": "workspace:*",
+    "@spyglassmc/tsb-imp-doc": "workspace:*",
+    "vscode-languageserver-textdocument": "^1.0.11"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SpyglassMC/Spyglass.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SpyglassMC/Spyglass/issues"
+  }
+}

@@ -1,0 +1,11 @@
+{
+	"extends": "../../tsconfig-base",
+	"compilerOptions": {
+		"outDir": "../lib"
+	},
+	"references": [
+		{
+			"path": "../../core/src"
+		}
+	]
+}

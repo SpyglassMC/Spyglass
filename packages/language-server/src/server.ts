@@ -4,6 +4,7 @@ import { getNodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as locales from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
+import * as impDoc from '@spyglassmc/tsb-imp-doc'
 import envPaths from 'env-paths'
 import url from 'url'
 import * as util from 'util'
@@ -33,6 +34,11 @@ let capabilities!: ls.ClientCapabilities
 let workspaceFolders!: ls.WorkspaceFolder[]
 let projectRoots!: core.RootUriString[]
 let hasShutdown = false
+
+const initializeJavaEditionAndImpDoc: core.ProjectInitializer = async (ctx) => {
+	await je.initialize(ctx)
+	await impDoc.initialize(ctx)
+}
 
 const logger: core.Logger = {
 	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
@@ -109,7 +115,7 @@ connection.onInitialize(async (params) => {
 				),
 				cacheRoot,
 				externals,
-				initializers: [mcdoc.initialize, je.initialize],
+				initializers: [mcdoc.initialize, initializeJavaEditionAndImpDoc],
 				projectRoots,
 			},
 		})

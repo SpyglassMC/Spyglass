@@ -8,15 +8,6 @@
 			"path": "../../core/src"
 		},
 		{
-			"path": "../../java-edition/src"
-		},
-		{
-			"path": "../../locales/src"
-		},
-		{
-			"path": "../../mcdoc/src"
-		},
-		{
 			"path": "../../tsb-imp-doc/src"
 		}
 	]
