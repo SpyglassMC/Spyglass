@@ -6,7 +6,7 @@ import { runImpDocLint } from '../lib/runner.js'
 import { scanMcfunctionFiles } from '../lib/scanner.js'
 
 const FixtureDir = fileURLToPath(
-	new URL('../../../../../spikes/A3-fixtures/', import.meta.url),
+	new URL('../../tsb-imp-doc/test/fixtures/', import.meta.url),
 )
 
 describe('tsb-imp-doc CLI smoke test', () => {
