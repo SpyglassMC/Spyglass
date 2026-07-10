@@ -17,7 +17,9 @@ describe('IMP-Doc parser', () => {
 		const ctx = { err } as Parameters<typeof impDoc>[1]
 
 		const functionDoc = impDoc(src, ctx)
-		assert.notEqual(functionDoc, Failure)
+		if (functionDoc === Failure) {
+			assert.fail('functionDoc should not be Failure')
+		}
 		assert.equal(functionDoc.type, 'impDoc')
 		assert.equal(functionDoc.functionID?.raw, 'api:_index.d')
 		assert.deepEqual(
@@ -28,7 +30,9 @@ describe('IMP-Doc parser', () => {
 
 		src.skipWhitespace()
 		const declarationDoc = impDoc(src, ctx)
-		assert.notEqual(declarationDoc, Failure)
+		if (declarationDoc === Failure) {
+			assert.fail('declarationDoc should not be Failure')
+		}
 		assert.equal(declarationDoc.type, 'impDoc')
 		assert.equal(declarationDoc.plainText, 'Public\n')
 		assert.deepEqual(
