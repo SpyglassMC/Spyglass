@@ -16,7 +16,9 @@
     "release": "npm publish",
     "release:dry": "npm publish --tag latest --dry-run"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@spyglassmc/locales": "workspace:*"
+  },
   "devDependencies": {},
   "publishConfig": {
     "access": "public"

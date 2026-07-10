@@ -93,6 +93,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@spyglassmc/locales':
+        specifier: workspace:*
+        version: link:../locales
       base64-arraybuffer:
         specifier: ^1.0.2
         version: 1.0.2
@@ -143,12 +146,19 @@ importers:
         specifier: ^14.16.3
         version: 14.26.5
 
-  packages/java-edition: {}
+  packages/java-edition:
+    dependencies:
+      '@spyglassmc/locales':
+        specifier: workspace:*
+        version: link:../locales
 
   packages/json: {}
 
   packages/language-server:
     dependencies:
+      '@spyglassmc/locales':
+        specifier: workspace:*
+        version: link:../locales
       '@spyglassmc/tsb-imp-doc':
         specifier: workspace:*
         version: link:../tsb-imp-doc
@@ -164,7 +174,11 @@ importers:
 
   packages/locales: {}
 
-  packages/mcdoc: {}
+  packages/mcdoc:
+    dependencies:
+      '@spyglassmc/locales':
+        specifier: workspace:*
+        version: link:../locales
 
   packages/mcdoc-cli:
     dependencies:
@@ -197,9 +211,17 @@ importers:
         specifier: 17.0.17
         version: 17.0.17
 
-  packages/mcfunction: {}
+  packages/mcfunction:
+    dependencies:
+      '@spyglassmc/locales':
+        specifier: workspace:*
+        version: link:../locales
 
-  packages/nbt: {}
+  packages/nbt:
+    dependencies:
+      '@spyglassmc/locales':
+        specifier: workspace:*
+        version: link:../locales
 
   packages/playground:
     devDependencies:
