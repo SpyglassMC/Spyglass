@@ -5,7 +5,7 @@ import { describe, it } from 'node:test'
 import { ImpDocNode, impDoc } from '../lib/index.js'
 
 const Fixture = new URL(
-	'../../../../../spikes/A3-fixtures/01-index-d-private.mcfunction',
+	'./fixtures/01-index-d-private.mcfunction',
 	import.meta.url,
 )
 
