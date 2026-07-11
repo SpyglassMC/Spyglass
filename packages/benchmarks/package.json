@@ -19,9 +19,9 @@
     "url": "https://github.com/SpyglassMC/Spyglass/issues"
   },
   "dependencies": {
-    "@spyglassmc/core": "*",
-    "@spyglassmc/java-edition": "*",
-    "@spyglassmc/json": "*",
-    "@spyglassmc/mcdoc": "*"
+    "@spyglassmc/core": "workspace:*",
+    "@spyglassmc/java-edition": "workspace:*",
+    "@spyglassmc/json": "workspace:*",
+    "@spyglassmc/mcdoc": "workspace:*"
   }
 }

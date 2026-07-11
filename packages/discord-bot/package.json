@@ -13,10 +13,10 @@
     "test": "test/"
   },
   "dependencies": {
-    "@spyglassmc/core": "*",
-    "@spyglassmc/java-edition": "*",
-    "@spyglassmc/locales": "*",
-    "@spyglassmc/mcdoc": "*",
+    "@spyglassmc/core": "workspace:*",
+    "@spyglassmc/java-edition": "workspace:*",
+    "@spyglassmc/locales": "workspace:*",
+    "@spyglassmc/mcdoc": "workspace:*",
     "discord.js": "^14.16.3"
   },
   "scripts": {

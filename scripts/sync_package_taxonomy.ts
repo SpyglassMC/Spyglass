@@ -95,14 +95,13 @@ for (const key of packageNames) {
 	}
 	const workspaceDeps: Record<string, string> = {}
 	if (dependencies?.length) {
-		// fork-local packages resolve against workspace source (registry には
-		// 同名で古い version があるため、 npm workspaces の hoisting が効かない
-		// pnpm では `"*"` が registry lookup に落ちる)。 upstream 由来 package
-		// は `"*"` を維持し `.packages.json` の SoT 契約と互換を保つ。
-		const isForkLocal = key === 'tsb-imp-doc' || key === 'tsb-imp-doc-cli'
-		const specifier = isForkLocal ? 'workspace:*' : '*'
+		// 全 workspace package で `workspace:*` protocol を使う (fork ローカル
+		// 前提)。 registry には同名で古い version があるため、 npm workspaces
+		// の hoisting が効かない pnpm では `"*"` が registry lookup に落ち、
+		// 一部 package だけ workspace 版に切り替えると型が 2 種類に分裂する
+		// (例: fork の tsb-imp-doc が使う java-edition の core が registry 版)。
 		for (const dep of dependencies) {
-			workspaceDeps[`@spyglassmc/${dep}`] = specifier
+			workspaceDeps[`@spyglassmc/${dep}`] = 'workspace:*'
 		}
 	}
 	const merged = { ...workspaceDeps, ...externalDeps }

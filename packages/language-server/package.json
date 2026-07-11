@@ -32,11 +32,11 @@
     }
   },
   "dependencies": {
-    "@spyglassmc/core": "*",
-    "@spyglassmc/java-edition": "*",
-    "@spyglassmc/locales": "*",
-    "@spyglassmc/mcdoc": "*",
-    "@spyglassmc/tsb-imp-doc": "*",
+    "@spyglassmc/core": "workspace:*",
+    "@spyglassmc/java-edition": "workspace:*",
+    "@spyglassmc/locales": "workspace:*",
+    "@spyglassmc/mcdoc": "workspace:*",
+    "@spyglassmc/tsb-imp-doc": "workspace:*",
     "env-paths": "^2.2.1",
     "vscode-languageserver": "^9.0.1",
     "vscode-languageserver-textdocument": "^1.0.11"
