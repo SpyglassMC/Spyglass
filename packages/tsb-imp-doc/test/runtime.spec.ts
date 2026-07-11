@@ -273,6 +273,28 @@ describe('IMP-Doc private visibility runtime', () => {
 		)
 	})
 
+	it('currently un-stamps the header @private when a following @public declaration doc for the same file is checked', () => {
+		// _index.d.mcfunction の layout (@private header + @public declaration
+		// doc) では、 checker が doc2 (@public) 処理時に doc1 (@private) の
+		// stamp を un-stamp する (checker/impDoc.ts の else 分岐)。 TSB corpus
+		// の `_index.d` は全部この layout なので、 currently owner:_index.d は
+		// 最終的に Public に戻る。
+		// TODO: P1b で checker の un-stamp 条件を refine 後、
+		// assertion を SymbolVisibility.Restricted + privateOwner に反転する。
+		assert.ok(project)
+		const indexSymbol = project.symbols
+			.lookup('function', ['owner:_index.d'])
+			.symbol
+		assert.ok(indexSymbol)
+		// SymbolVisibility.Public = 2 (const enum、 strip-types loader では
+		// inline されないため runtime に enum object が存在しない、 数値で照合)。
+		assert.equal(indexSymbol.visibility, 2)
+		assert.equal(
+			getImpDocSymbolData(indexSymbol.data)?.privateOwner,
+			undefined,
+		)
+	})
+
 	it('allows the private function to call itself', () => {
 		assertNoViolation(getState(states, 'helper'))
 	})
