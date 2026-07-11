@@ -324,20 +324,20 @@ importers:
   packages/tsb-imp-doc:
     dependencies:
       '@spyglassmc/core':
-        specifier: '*'
-        version: 0.4.52
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
       '@spyglassmc/java-edition':
-        specifier: '*'
-        version: 0.3.65
+        specifier: workspace:*
+        version: link:../java-edition
 
   packages/tsb-imp-doc-cli:
     dependencies:
       '@spyglassmc/core':
-        specifier: '*'
-        version: 0.4.52
+        specifier: workspace:*
+        version: link:../core
       '@spyglassmc/tsb-imp-doc':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../tsb-imp-doc
       vscode-languageserver-textdocument:
         specifier: ^1.0.11

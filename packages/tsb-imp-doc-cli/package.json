@@ -15,8 +15,8 @@
   },
   "scripts": {},
   "dependencies": {
-    "@spyglassmc/core": "*",
-    "@spyglassmc/tsb-imp-doc": "*",
+    "@spyglassmc/core": "workspace:*",
+    "@spyglassmc/tsb-imp-doc": "workspace:*",
     "vscode-languageserver-textdocument": "^1.0.11"
   },
   "publishConfig": {

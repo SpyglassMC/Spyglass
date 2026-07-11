@@ -1,6 +1,8 @@
 packages:
   - "packages/**"
 
+linkWorkspacePackages: true
+
 overrides:
   eslint-config-prettier: "^10.0.0"
   pino: "^10.0.0"
