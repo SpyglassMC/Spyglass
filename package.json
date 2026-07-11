@@ -28,7 +28,7 @@
 		"sync-package-taxonomy": "node scripts/sync_package_taxonomy.ts",
 		"start-discord-bot": "node packages/discord-bot/lib/index.js",
 		"start-web-api-server": "npm start --workspace=packages/web-api-server",
-		"test": "node --import=./packages/core/test/snapshot-setup.ts --test --test-isolation none",
+		"test": "node --import=./packages/core/test/snapshot-setup.ts --test --experimental-test-isolation=none",
 		"test:update-snapshots": "npm test -- --test-update-snapshots",
 		"test:watch": "npm test -- --watch",
 		"bench": "node packages/benchmarks/lib/index.js"
