@@ -1579,23 +1579,30 @@ function unquotableSymbol(
 }
 
 function time(minimum = 0): core.InfallibleParser<TimeNode> {
-	return core.map(
-		core.sequence([
-			float(minimum, undefined),
-			core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
-		]),
+	return core.validate(
+		core.map(
+			core.sequence([
+				float(),
+				core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
+			]),
+			(res) => {
+				const valueNode = res.children.find(core.FloatNode.is)!
+				const unitNode = res.children.find(core.LiteralNode.is)
+				const ans: TimeNode = {
+					type: 'mcfunction:time',
+					range: res.range,
+					children: res.children,
+					value: valueNode.value,
+					unit: unitNode?.value,
+				}
+				return ans
+			},
+		),
 		(res) => {
-			const valueNode = res.children.find(core.FloatNode.is)!
-			const unitNode = res.children.find(core.LiteralNode.is)
-			const ans: TimeNode = {
-				type: 'mcfunction:time',
-				range: res.range,
-				children: res.children,
-				value: valueNode.value,
-				unit: unitNode?.value,
-			}
-			return ans
+			const scale = TimeNode.UnitToTicks.get(res.unit ?? '')!
+			return Math.round(res.value * scale) >= minimum
 		},
+		localize('mcfunction.parser.time.below-min', minimum),
 	)
 }
 
