@@ -23,5 +23,10 @@
   "homepage": "https://spyglassmc.com",
   "bugs": {
     "url": "https://github.com/SpyglassMC/Spyglass/issues"
+  },
+  "dependencies": {
+    "@spyglassmc/core": "*",
+    "@spyglassmc/locales": "*",
+    "@spyglassmc/mcdoc": "*"
   }
 }
