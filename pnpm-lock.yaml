@@ -86,6 +86,19 @@ importers:
         version: 0.9.5
 
   packages/benchmarks:
+    dependencies:
+      '@spyglassmc/core':
+        specifier: '*'
+        version: 0.4.52
+      '@spyglassmc/java-edition':
+        specifier: '*'
+        version: 0.3.65
+      '@spyglassmc/json':
+        specifier: '*'
+        version: 0.3.56
+      '@spyglassmc/mcdoc':
+        specifier: '*'
+        version: 0.3.56
     devDependencies:
       tinybench:
         specifier: ^2.8.0
@@ -94,8 +107,8 @@ importers:
   packages/core:
     dependencies:
       '@spyglassmc/locales':
-        specifier: workspace:*
-        version: link:../locales
+        specifier: '*'
+        version: 0.3.26
       base64-arraybuffer:
         specifier: ^1.0.2
         version: 1.0.2
@@ -142,25 +155,71 @@ importers:
 
   packages/discord-bot:
     dependencies:
+      '@spyglassmc/core':
+        specifier: '*'
+        version: 0.4.52
+      '@spyglassmc/java-edition':
+        specifier: '*'
+        version: 0.3.65
+      '@spyglassmc/locales':
+        specifier: '*'
+        version: 0.3.26
+      '@spyglassmc/mcdoc':
+        specifier: '*'
+        version: 0.3.56
       discord.js:
         specifier: ^14.16.3
         version: 14.26.5
 
   packages/java-edition:
     dependencies:
+      '@spyglassmc/core':
+        specifier: '*'
+        version: 0.4.52
+      '@spyglassmc/json':
+        specifier: '*'
+        version: 0.3.56
       '@spyglassmc/locales':
-        specifier: workspace:*
-        version: link:../locales
+        specifier: '*'
+        version: 0.3.26
+      '@spyglassmc/mcdoc':
+        specifier: '*'
+        version: 0.3.56
+      '@spyglassmc/mcfunction':
+        specifier: '*'
+        version: 0.2.55
+      '@spyglassmc/nbt':
+        specifier: '*'
+        version: 0.3.58
 
-  packages/json: {}
+  packages/json:
+    dependencies:
+      '@spyglassmc/core':
+        specifier: '*'
+        version: 0.4.52
+      '@spyglassmc/locales':
+        specifier: '*'
+        version: 0.3.26
+      '@spyglassmc/mcdoc':
+        specifier: '*'
+        version: 0.3.56
 
   packages/language-server:
     dependencies:
+      '@spyglassmc/core':
+        specifier: '*'
+        version: 0.4.52
+      '@spyglassmc/java-edition':
+        specifier: '*'
+        version: 0.3.65
       '@spyglassmc/locales':
-        specifier: workspace:*
-        version: link:../locales
+        specifier: '*'
+        version: 0.3.26
+      '@spyglassmc/mcdoc':
+        specifier: '*'
+        version: 0.3.56
       '@spyglassmc/tsb-imp-doc':
-        specifier: workspace:*
+        specifier: '*'
         version: link:../tsb-imp-doc
       env-paths:
         specifier: ^2.2.1
@@ -176,12 +235,21 @@ importers:
 
   packages/mcdoc:
     dependencies:
+      '@spyglassmc/core':
+        specifier: '*'
+        version: 0.4.52
       '@spyglassmc/locales':
-        specifier: workspace:*
-        version: link:../locales
+        specifier: '*'
+        version: 0.3.26
 
   packages/mcdoc-cli:
     dependencies:
+      '@spyglassmc/core':
+        specifier: '*'
+        version: 0.4.52
+      '@spyglassmc/mcdoc':
+        specifier: '*'
+        version: 0.3.56
       fs-extra:
         specifier: ^11.1.1
         version: 11.3.6
@@ -213,15 +281,24 @@ importers:
 
   packages/mcfunction:
     dependencies:
+      '@spyglassmc/core':
+        specifier: '*'
+        version: 0.4.52
       '@spyglassmc/locales':
-        specifier: workspace:*
-        version: link:../locales
+        specifier: '*'
+        version: 0.3.26
 
   packages/nbt:
     dependencies:
+      '@spyglassmc/core':
+        specifier: '*'
+        version: 0.4.52
       '@spyglassmc/locales':
-        specifier: workspace:*
-        version: link:../locales
+        specifier: '*'
+        version: 0.3.26
+      '@spyglassmc/mcdoc':
+        specifier: '*'
+        version: 0.3.56
 
   packages/playground:
     devDependencies:
@@ -247,16 +324,16 @@ importers:
   packages/tsb-imp-doc:
     dependencies:
       '@spyglassmc/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: '*'
+        version: 0.4.52
 
   packages/tsb-imp-doc-cli:
     dependencies:
       '@spyglassmc/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: '*'
+        version: 0.4.52
       '@spyglassmc/tsb-imp-doc':
-        specifier: workspace:*
+        specifier: '*'
         version: link:../tsb-imp-doc
       vscode-languageserver-textdocument:
         specifier: ^1.0.11
@@ -964,6 +1041,27 @@ packages:
   '@sindresorhus/merge-streams@2.3.0':
     resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
     engines: {node: '>=18'}
+
+  '@spyglassmc/core@0.4.52':
+    resolution: {integrity: sha512-kt+DL8FaxT3RqTIsrUeD8R/Qs96fqEVQ4CD5DnVOEGtxq9kBGpp5dN4Xk0Zz+7d2o+RoN578GBWbF5Bg0tQOLA==}
+
+  '@spyglassmc/java-edition@0.3.65':
+    resolution: {integrity: sha512-B9B8bD2vcHRmsjuB8GsF3zgZBYAutyOilPD+r+8gPi4JOZ5+GOJyc5YRwBwy2erLjXYP/9tv9IEkq+utrKhaHw==}
+
+  '@spyglassmc/json@0.3.56':
+    resolution: {integrity: sha512-4xa6DuWeHBjVx9f0smFqXHdyCblYhH7lBvcVrNoQBTzNVG9cwvRSX8uHqyZ5jsUzPbBUAyjA0rHyur0zwhX7FQ==}
+
+  '@spyglassmc/locales@0.3.26':
+    resolution: {integrity: sha512-t/kTD3NVmObTkOSSivE3/bsn8Ck+YQ2bx8eCnb2sxR6hniMtnBulmqJ9B3lr95Z2F0zVUc9sOC7pUFd3G350GQ==}
+
+  '@spyglassmc/mcdoc@0.3.56':
+    resolution: {integrity: sha512-H/CvBI0PMIlGUKYjPsiG1n78peIAoAfRVizW5z3AQwrvXpg6DJJ1vCGmDvx6asUcNoxZNTro4h+kSEq1GT58Ew==}
+
+  '@spyglassmc/mcfunction@0.2.55':
+    resolution: {integrity: sha512-77XN5p0UmZd5w+f6dIoyj7VDBA9ffpcD8LSZfN4ldXe9ogZdWFS4v0fY6oaDR66gZ6XIiBvtmMjEVMmykvQBFQ==}
+
+  '@spyglassmc/nbt@0.3.58':
+    resolution: {integrity: sha512-cpzWDXIZA0lfVXDjKApsbQ+ROypLapYYLetQRy3c8EJuI4XTHykFrKOOSA5d/E90xyXbs14hTqbpv8euDUoEGA==}
 
   '@szmarczak/http-timer@5.0.1':
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
@@ -5260,6 +5358,63 @@ snapshots:
   '@sindresorhus/is@5.6.0': {}
 
   '@sindresorhus/merge-streams@2.3.0': {}
+
+  '@spyglassmc/core@0.4.52':
+    dependencies:
+      '@spyglassmc/locales': 0.3.26
+      base64-arraybuffer: 1.0.2
+      binary-search: 1.3.6
+      decompress: 4.2.1
+      follow-redirects: 1.16.0
+      picomatch: 4.0.5
+      rfdc: 1.4.1
+      vscode-languageserver-textdocument: 1.0.12
+      whatwg-url: 14.2.0
+    transitivePeerDependencies:
+      - debug
+
+  '@spyglassmc/java-edition@0.3.65':
+    dependencies:
+      '@spyglassmc/core': 0.4.52
+      '@spyglassmc/json': 0.3.56
+      '@spyglassmc/locales': 0.3.26
+      '@spyglassmc/mcdoc': 0.3.56
+      '@spyglassmc/mcfunction': 0.2.55
+      '@spyglassmc/nbt': 0.3.58
+    transitivePeerDependencies:
+      - debug
+
+  '@spyglassmc/json@0.3.56':
+    dependencies:
+      '@spyglassmc/core': 0.4.52
+      '@spyglassmc/locales': 0.3.26
+      '@spyglassmc/mcdoc': 0.3.56
+    transitivePeerDependencies:
+      - debug
+
+  '@spyglassmc/locales@0.3.26': {}
+
+  '@spyglassmc/mcdoc@0.3.56':
+    dependencies:
+      '@spyglassmc/core': 0.4.52
+      '@spyglassmc/locales': 0.3.26
+    transitivePeerDependencies:
+      - debug
+
+  '@spyglassmc/mcfunction@0.2.55':
+    dependencies:
+      '@spyglassmc/core': 0.4.52
+      '@spyglassmc/locales': 0.3.26
+    transitivePeerDependencies:
+      - debug
+
+  '@spyglassmc/nbt@0.3.58':
+    dependencies:
+      '@spyglassmc/core': 0.4.52
+      '@spyglassmc/locales': 0.3.26
+      '@spyglassmc/mcdoc': 0.3.56
+    transitivePeerDependencies:
+      - debug
 
   '@szmarczak/http-timer@5.0.1':
     dependencies:

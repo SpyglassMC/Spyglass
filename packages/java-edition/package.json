@@ -17,7 +17,12 @@
     "release:dry": "npm publish --tag latest --dry-run"
   },
   "dependencies": {
-    "@spyglassmc/locales": "workspace:*"
+    "@spyglassmc/core": "*",
+    "@spyglassmc/json": "*",
+    "@spyglassmc/locales": "*",
+    "@spyglassmc/mcfunction": "*",
+    "@spyglassmc/mcdoc": "*",
+    "@spyglassmc/nbt": "*"
   },
   "devDependencies": {},
   "publishConfig": {

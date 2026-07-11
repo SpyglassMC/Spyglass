@@ -32,8 +32,11 @@
     }
   },
   "dependencies": {
-    "@spyglassmc/locales": "workspace:*",
-    "@spyglassmc/tsb-imp-doc": "workspace:*",
+    "@spyglassmc/core": "*",
+    "@spyglassmc/java-edition": "*",
+    "@spyglassmc/locales": "*",
+    "@spyglassmc/mcdoc": "*",
+    "@spyglassmc/tsb-imp-doc": "*",
     "env-paths": "^2.2.1",
     "vscode-languageserver": "^9.0.1",
     "vscode-languageserver-textdocument": "^1.0.11"

@@ -25,7 +25,7 @@
 		"lint:fix": "eslint --cache --max-warnings=0 --fix",
 		"release": "node scripts/release.ts",
 		"release:dry": "node scripts/release.ts --dry-run",
-		"set-tsconfig-references": "node scripts/set_tsconfig_references",
+		"sync-package-taxonomy": "node scripts/sync_package_taxonomy.ts",
 		"start-discord-bot": "node packages/discord-bot/lib/index.js",
 		"start-web-api-server": "npm start --workspace=packages/web-api-server",
 		"test": "node --import=./packages/core/test/snapshot-setup.ts --test --test-isolation none",
