@@ -18,7 +18,7 @@ const $editorContainer = document.getElementById('editor-container') as HTMLDivE
 const $uri = document.getElementById('uri') as HTMLInputElement
 
 const initialContent = 'execute as @a run say hello world'
-const getLanguage = () => $language.selectedOptions[0]?.dataset?.language ?? $language.value
+const getLanguage = () => $language.selectedOptions[0]?.dataset?.['language'] ?? $language.value
 const getContent = (state: EditorState) => view.state.sliceDoc(0)
 let version = 0
 

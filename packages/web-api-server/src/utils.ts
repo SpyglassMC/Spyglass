@@ -294,7 +294,7 @@ export const getVersionValidator =
 	(cache: MemCache) => async (req: Request, res: Response, next: NextFunction) => {
 		const { version } = req.params
 		const versions = await cache.getVersions()
-		const entry = versions.find((v: any) => v.id === req.params.version)
+		const entry = versions.find((v: any) => v.id === req.params['version'])
 		if (entry) {
 			next()
 		} else {

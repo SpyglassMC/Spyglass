@@ -459,9 +459,10 @@ export namespace Symbol {
 			}
 			return undefined
 		}
-		const map = table[category]
-		for (const p of path) {
-		}
+		// TODO
+		// const map = table[category]
+		// for (const p of path) {
+		// }
 		return undefined
 	}
 }

@@ -236,8 +236,8 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:objective':
 			return wrap(
 				objective(
-					core.SymbolUsageType.is(treeNode.properties?.usageType)
-						? treeNode.properties?.usageType
+					core.SymbolUsageType.is(treeNode.properties?.['usageType'])
+						? treeNode.properties?.['usageType']
 						: undefined,
 				),
 			)
@@ -284,8 +284,8 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:team':
 			return wrap(
 				team(
-					core.SymbolUsageType.is(treeNode.properties?.usageType)
-						? treeNode.properties?.usageType
+					core.SymbolUsageType.is(treeNode.properties?.['usageType'])
+						? treeNode.properties?.['usageType']
 						: undefined,
 				),
 			)
@@ -320,16 +320,16 @@ export const argument: mcf.ArgumentParserGetter = (
 			if (core.ResourceLocationNode.is(advancementNode)) {
 				return wrap(criterion(
 					core.ResourceLocationNode.toString(advancementNode, 'full'),
-					core.SymbolUsageType.is(treeNode.properties?.usageType)
-						? treeNode.properties?.usageType
+					core.SymbolUsageType.is(treeNode.properties?.['usageType'])
+						? treeNode.properties?.['usageType']
 						: undefined,
 				))
 			}
 			return wrap(greedyString)
 		case 'spyglassmc:tag':
 			return wrap(tag(
-				core.SymbolUsageType.is(treeNode.properties?.usageType)
-					? treeNode.properties?.usageType
+				core.SymbolUsageType.is(treeNode.properties?.['usageType'])
+					? treeNode.properties?.['usageType']
 					: undefined,
 			))
 		default:

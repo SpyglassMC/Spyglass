@@ -251,7 +251,6 @@ export function failOnEmpty<T extends Returnable>(parser: Parser<T>): Parser<T> 
  */
 export function failOnError<T extends Returnable>(parser: Parser<T>): Parser<T> {
 	return (src, ctx) => {
-		const start = src.cursor
 		const { errorAmount, updateSrcAndCtx, result } = attempt(parser, src, ctx)
 		if (!errorAmount) {
 			updateSrcAndCtx()

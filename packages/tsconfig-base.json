@@ -11,16 +11,17 @@
 			"ES2025.Iterator",
 			"DOM"
 		],
-
-		"alwaysStrict": true,
 		"experimentalDecorators": true,
+
+		"strict": true,
 		"forceConsistentCasingInFileNames": true,
-		"noErrorTruncation": true,
-		"noImplicitAny": true,
+		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,
 		"noImplicitReturns": true,
-		"noImplicitThis": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noUnusedLocals": true,
 
+		"noErrorTruncation": true,
 		"pretty": true,
 		"declaration": true,
 		"declarationMap": true,

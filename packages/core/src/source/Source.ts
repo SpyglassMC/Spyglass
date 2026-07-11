@@ -75,7 +75,7 @@ export class ReadonlySource {
 	canRead(length = 1) {
 		const needed = this.innerCursor + length
 		const available = this.string.length
-		return this.innerCursor + length <= this.string.length
+		return needed <= available
 	}
 
 	canReadInLine() {

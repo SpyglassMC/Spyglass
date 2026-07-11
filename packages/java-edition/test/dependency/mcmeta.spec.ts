@@ -1,5 +1,4 @@
 import { Logger, SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
-import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as fs from 'fs'
 import { describe, it } from 'node:test'
 import * as path from 'path'
