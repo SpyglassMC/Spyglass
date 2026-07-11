@@ -44,7 +44,9 @@ function parseDeclarationLine(
 		return undefined
 	}
 	if (!core.Source.isSpace(lineSrc.peek())) {
-		ctx.err.report('Malformed #declare line', line.range)
+		// `#declared behavior is ...` 等の `#declare` 前方一致コメントを
+		// 誤って diagnostic 化しないよう、 続きが space/newline でなければ
+		// silent に non-declaration として扱う。
 		return undefined
 	}
 
