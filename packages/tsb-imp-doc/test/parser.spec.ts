@@ -13,18 +13,29 @@ async function loadFixture(name: string): Promise<string> {
 	return await readFile(fixtureUrl(name), 'utf8')
 }
 
+function createParserContext(
+	err: ErrorReporter,
+): Parameters<typeof impDoc>[1] {
+	return { err } as Parameters<typeof impDoc>[1]
+}
+
 function parseAll(content: string): { docs: ImpDocNode[]; err: ErrorReporter } {
 	const src = new Source(content)
 	const err = new ErrorReporter()
-	const ctx = { err } as Parameters<typeof impDoc>[1]
+	const ctx = createParserContext(err)
 	const docs: ImpDocNode[] = []
 
 	while (src.canRead()) {
 		src.skipWhitespace()
 		if (!src.canRead()) break
+		const prevCursor = src.cursor
 		const result = impDoc(src, ctx)
 		if (result === Failure) assert.fail('IMP-Doc component expected')
 		docs.push(result)
+		assert.ok(
+			src.cursor > prevCursor,
+			'parser must advance the cursor to prevent an infinite loop',
+		)
 	}
 	return { docs, err }
 }
@@ -60,7 +71,7 @@ describe('IMP-Doc parser', () => {
 		const content = await loadFixture('01-index-d-private.mcfunction')
 		const src = new Source(content)
 		const err = new ErrorReporter()
-		const ctx = { err } as Parameters<typeof impDoc>[1]
+		const ctx = createParserContext(err)
 
 		const functionDoc = impDoc(src, ctx)
 		if (functionDoc === Failure) {
@@ -199,6 +210,7 @@ describe('IMP-Doc parser', () => {
 		const { docs, err } = parseAll(content)
 
 		assert.deepEqual(declarationsOf(docs), [])
+		assert.equal(err.errors.length, 1)
 		const [diagnostic] = err.errors
 		assert.ok(diagnostic)
 		assert.equal(diagnostic.severity, ErrorSeverity.Error)
