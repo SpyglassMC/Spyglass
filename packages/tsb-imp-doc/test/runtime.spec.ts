@@ -299,3 +299,69 @@ describe('IMP-Doc private visibility runtime', () => {
 		)
 	})
 })
+
+describe('IMP-Doc private visibility runtime — open-order dependency (P1a characterization)', () => {
+	let project: core.Project | undefined
+	let cacheDir: string | undefined
+	let externalState: RuntimeState | undefined
+
+	before(async () => {
+		cacheDir = await mkdtemp(join(tmpdir(), 'spyglass-imp-doc-order-'))
+		const packMcmeta = new URL(
+			'./runtime/private-project/pack.mcmeta',
+			import.meta.url,
+		).toString()
+		const watcher = new FixtureWatcher([
+			packMcmeta,
+			...Object.values(RuntimeFiles),
+		])
+
+		project = new core.Project({
+			cacheRoot: core.fileUtil.ensureEndingSlash(
+				pathToFileURL(cacheDir).toString(),
+			),
+			defaultConfig: createConfig(),
+			externals: NodeJsExternals,
+			initializers: [initializeRuntime],
+			logger: {
+				error: () => {},
+				info: () => {},
+				log: () => {},
+				warn: () => {},
+			},
+			projectRoots: [FixtureRoot],
+		})
+
+		await project.init()
+		await project.ready({ projectRootsWatcher: watcher })
+
+		// Open the caller BEFORE the private helper. Checker stamps
+		// `privateOwner` metadata only when helper is checked; no re-lint
+		// pass is triggered when helper is opened later, so the external
+		// caller may silent-skip the private violation. This describe
+		// characterizes the current behavior. P1b で checker/linter に
+		// order-independent stamp path を実装後、 assertion を反転する。
+		for (const file of ['index', 'external', 'helper'] as const) {
+			const uri = RuntimeFiles[file]
+			const content = await readFile(fileURLToPath(uri), 'utf8')
+			await project.onDidOpen(uri, 'mcfunction', 1, content)
+			if (file === 'external') {
+				const result = project.getClientManaged(uri)
+				assert.ok(result)
+				externalState = { ...result, content }
+			}
+		}
+	})
+
+	after(async () => {
+		await project?.close()
+		if (cacheDir) {
+			await rm(cacheDir, { recursive: true, force: true })
+		}
+	})
+
+	it('currently silent-skips the external caller when helper is opened after', () => {
+		assert.ok(externalState)
+		assertNoViolation(externalState)
+	})
+})
