@@ -326,6 +326,10 @@ importers:
       '@spyglassmc/core':
         specifier: '*'
         version: 0.4.52
+    devDependencies:
+      '@spyglassmc/java-edition':
+        specifier: '*'
+        version: 0.3.65
 
   packages/tsb-imp-doc-cli:
     dependencies:

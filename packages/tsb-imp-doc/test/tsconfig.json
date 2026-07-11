@@ -3,6 +3,9 @@
 	"references": [
 		{
 			"path": "../src"
+		},
+		{
+			"path": "../../java-edition/src"
 		}
 	]
 }

@@ -132,6 +132,9 @@
 		"dependencies": [
 			"core"
 		],
+		"devDependencies": [
+			"java-edition"
+		],
 		"released": {
 			"private": true
 		}
