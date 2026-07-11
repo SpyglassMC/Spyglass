@@ -14,7 +14,7 @@
     "release:dry": "npm publish --tag latest --dry-run"
   },
   "dependencies": {
-    "@spyglassmc/locales": "workspace:*",
+    "@spyglassmc/locales": "*",
     "base64-arraybuffer": "^1.0.2",
     "binary-search": "^1.3.6",
     "decompress": "^4.2.1",

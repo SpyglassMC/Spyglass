@@ -12,7 +12,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "@spyglassmc/core": "workspace:*"
+    "@spyglassmc/core": "*"
   },
   "publishConfig": {
     "access": "restricted"
