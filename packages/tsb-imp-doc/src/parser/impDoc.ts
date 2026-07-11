@@ -329,11 +329,11 @@ export function extendMcfunctionParser(
 					attachedNodes.push(candidate)
 				}
 			}
-			component.children = [
-				...component.annotations,
+			const bodyNodes = [
 				...(component.declaration?.declarations ?? []),
 				...attachedNodes,
-			]
+			].sort((a, b) => a.range.start - b.range.start)
+			component.children = [...component.annotations, ...bodyNodes]
 			children.push(component)
 		}
 
