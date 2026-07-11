@@ -17,7 +17,17 @@ export interface ImpDocDeclarationLine {
 	raw: string
 }
 
+export type ImpDocDeclarationCategory = 'tag' | 'storage' | 'score_holder'
+
+export interface ImpDocDeclarationNode extends AstNode {
+	type: 'impDoc:declaration'
+	category: ImpDocDeclarationCategory
+	categoryRange: AstNode['range']
+	name: ImpDocValue
+}
+
 export interface ImpDocDeclarationBlock {
+	declarations: ImpDocDeclarationNode[]
 	lines: ImpDocDeclarationLine[]
 	range: AstNode['range']
 }
