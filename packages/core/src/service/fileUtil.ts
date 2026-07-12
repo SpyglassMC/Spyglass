@@ -27,14 +27,14 @@ export namespace fileUtil {
 			return undefined
 		}
 
-		const baseComponents = baseUri.pathname.split('/').filter((v) => !!v)
-		const targetComponents = targetUri.pathname.split('/').filter((v) => !!v)
+		const baseComponents = baseUri.pathname.split('/').filter((v) => !!v).map(decodeURIComponent)
+		const targetComponents = targetUri.pathname.split('/').filter((v) => !!v).map(
+			decodeURIComponent,
+		)
 
 		if (
 			baseComponents.length > targetComponents.length
-			|| baseComponents.some((bc, i) =>
-				decodeURIComponent(bc) !== decodeURIComponent(targetComponents[i])
-			)
+			|| baseComponents.some((bc, i) => bc !== targetComponents[i])
 		) {
 			return undefined
 		}
@@ -112,8 +112,19 @@ export namespace fileUtil {
 		return isRootUri(uri) ? uri.slice(0, -1) : uri
 	}
 
-	export function join(fromUri: string, toUri: string): string {
-		return (ensureEndingSlash(fromUri) + (toUri.startsWith('/') ? toUri.slice(1) : toUri))
+	/**
+	 * @param encodedPath A properly encoded URI path with potentially many segments.
+	 */
+	export function joinEncodedPath(baseUri: string, encodedPath: string): string {
+		return (ensureEndingSlash(baseUri)
+			+ (encodedPath.startsWith('/') ? encodedPath.slice(1) : encodedPath))
+	}
+
+	/**
+	 * @param rawSegment A single unencoded URI path segment. Will be percent-encoded and appended to the base URI.
+	 */
+	export function joinRawSegment(baseUri: string, rawSegment: string): string {
+		return joinEncodedPath(baseUri, encodeURIComponent(rawSegment))
 	}
 
 	export function isFileUri(uri: string): boolean {
@@ -218,7 +229,7 @@ export namespace fileUtil {
 
 			const entries = await externals.fs.readdir(path)
 			return (await Promise.all(entries.map(async (e) => {
-				const entryPath = fileUtil.join(path.toString(), e.name)
+				const entryPath = fileUtil.joinRawSegment(path.toString(), e.name)
 				if (e.isDirectory()) {
 					return await walk(entryPath, level + 1)
 				} else if (e.isFile()) {
