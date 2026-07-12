@@ -1,6 +1,8 @@
+import { memfs } from 'memfs'
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { fileUtil } from '../../lib/index.js'
+import { mockExternals } from '../utils.ts'
 
 describe('fileUtil', () => {
 	describe('getRelativeUriFromBase()', () => {
@@ -101,5 +103,14 @@ describe('fileUtil', () => {
 				assert.strictEqual(fileUtil.isFileUri(uri), expected)
 			})
 		}
+	})
+	describe('getAllFiles()', () => {
+		it('Should handle locations with special characters properly', async () => {
+			const externals = mockExternals({
+				nodeFsp: memfs({ 'root': { '#foo': { 'bar.mcdoc': '' } } }, '/').fs.promises,
+			})
+			const allFiles = await fileUtil.getAllFiles(externals, 'file:///root', 3)
+			assert.deepEqual(allFiles, ['file:///root/%23foo/bar.mcdoc'])
+		})
 	})
 })
