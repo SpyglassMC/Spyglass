@@ -1,4 +1,9 @@
-import type { UriBinder, UriBinderContext, UriSorterRegistration } from '@spyglassmc/core'
+import type {
+	PlainPath,
+	UriBinder,
+	UriBinderContext,
+	UriSorterRegistration,
+} from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
 import { segToIdentifier } from './common.js'
 
@@ -15,7 +20,8 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 		if (!rel) {
 			continue
 		}
-		rel = rel.slice(0, -Extension.length).replace(/(^|\/)mod$/, '')
+		// Simple string manipulation done on a PlainPath, so result is still a PlainPath
+		rel = rel.slice(0, -Extension.length).replace(/(^|\/)mod$/, '') as PlainPath
 		urisAndRels.push([uri, rel])
 	}
 	// Now the value of `urisAndRels`:

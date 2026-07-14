@@ -3,6 +3,8 @@ import type {
 	Config,
 	FileCategory,
 	MetaRegistry,
+	PercentEncodedPath,
+	PlainPath,
 	RootUriString,
 	TaggableResourceLocationCategory,
 	UriBinder,
@@ -203,13 +205,16 @@ export function* getResources() {
 export function* getRels(
 	uri: string,
 	rootUris: readonly RootUriString[],
-): Generator<string, undefined, unknown> {
+): Generator<PlainPath, undefined, unknown> {
 	yield* fileUtil.getRels(uri, rootUris)
 
 	const parts = uri.split('/')
 	for (let i = parts.length - 2; i >= 0; i--) {
 		if (parts[i] === 'data' || parts[i] === 'assets') {
-			yield parts.slice(i).join('/')
+			// `parts` comes from `uri`, which is percent-encoded. It's still percent-encoded after
+			// split, slice, and join.
+			const nextParts = parts.slice(i).join('/') as PercentEncodedPath
+			yield fileUtil.convertPercentEncodedPathToPlain(nextParts)
 		}
 	}
 
@@ -237,8 +242,8 @@ interface ResourceInstance extends Resource {
 	identifier: string
 }
 
-function getCandidateResourcesForRel(rel: string): ResourceInstance[] {
-	const parts = rel.split('/').map(decodeURIComponent)
+function getCandidateResourcesForRel(rel: PlainPath): ResourceInstance[] {
+	const parts = rel.split('/')
 	if (parts.length < 3) {
 		return []
 	}

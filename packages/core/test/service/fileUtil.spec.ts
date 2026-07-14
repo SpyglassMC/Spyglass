@@ -1,7 +1,7 @@
 import { memfs } from 'memfs'
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { fileUtil } from '../../lib/index.js'
+import { fileUtil, type PercentEncodedPath, type PlainPath } from '../../lib/index.js'
 import { mockExternals } from '../utils.ts'
 
 describe('fileUtil', () => {
@@ -98,31 +98,34 @@ describe('fileUtil', () => {
 		}]
 		for (const { baseUri, encodedPath, expected } of suites) {
 			it(`Should join '${baseUri}' and '${encodedPath}' to '${expected}'`, () => {
-				assert.strictEqual(fileUtil.joinEncodedPath(baseUri, encodedPath), expected)
+				assert.strictEqual(
+					fileUtil.joinEncodedPath(baseUri, encodedPath as PercentEncodedPath),
+					expected,
+				)
 			})
 		}
 	})
-	describe('joinRawSegment()', () => {
-		const suites: { baseUri: string; rawSegment: string; expected: string }[] = [{
+	describe('joinPlainPath()', () => {
+		const suites: { baseUri: string; plainPath: string; expected: string }[] = [{
 			baseUri: 'file:///root1/foo',
-			rawSegment: 'bar.mcdoc',
+			plainPath: 'bar.mcdoc',
 			expected: 'file:///root1/foo/bar.mcdoc',
 		}, {
 			baseUri: 'file:///root1/foo/',
-			rawSegment: 'bar.mcdoc',
+			plainPath: 'bar.mcdoc',
 			expected: 'file:///root1/foo/bar.mcdoc',
 		}, {
 			baseUri: 'file:///root1/foo',
-			rawSegment: '#bar/qux.mcdoc',
-			expected: 'file:///root1/foo/%23bar%2Fqux.mcdoc',
+			plainPath: '#bar/qux.mcdoc',
+			expected: 'file:///root1/foo/%23bar/qux.mcdoc',
 		}, {
 			baseUri: 'file:///root1/foo/',
-			rawSegment: '#bar/qux.mcdoc',
-			expected: 'file:///root1/foo/%23bar%2Fqux.mcdoc',
+			plainPath: '#bar/qux.mcdoc',
+			expected: 'file:///root1/foo/%23bar/qux.mcdoc',
 		}]
-		for (const { baseUri, rawSegment, expected } of suites) {
-			it(`Should join '${baseUri}' and '${rawSegment}' to '${expected}'`, () => {
-				assert.strictEqual(fileUtil.joinRawSegment(baseUri, rawSegment), expected)
+		for (const { baseUri, plainPath, expected } of suites) {
+			it(`Should join '${baseUri}' and '${plainPath}' to '${expected}'`, () => {
+				assert.strictEqual(fileUtil.joinPlainPath(baseUri, plainPath as PlainPath), expected)
 			})
 		}
 	})
