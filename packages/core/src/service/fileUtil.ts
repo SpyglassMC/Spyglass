@@ -12,13 +12,27 @@ export type RootUriString = `${string}/`
 
 export type FileExtension = `.${string}`
 
+/**
+ * A URI percent-encoded path.
+ * e.g. `file`, `foo/file`, `foo/%23file`
+ */
+export type PercentEncodedPath = string & { __percentEncodedPath: never }
+/**
+ * A plain file path without URI percent-encoding.
+ * e.g. `file`, `foo/file`, `foo/#file`
+ */
+export type PlainPath = string & { __plainPath: never }
+
 export namespace fileUtil {
 	/**
 	 * Get the relative URI of `target` based from `base`.
 	 *
-	 * @returns The relative URI, or `undefined` if `target` is not under `base`.
+	 * @returns The relative URI path, or `undefined` if `target` is not under `base`.
 	 */
-	export function getRelativeUriFromBase(target: string, base: string): string | undefined {
+	export function getRelativeUriFromBase(
+		target: string,
+		base: string,
+	): PercentEncodedPath | undefined {
 		const baseUri = new Uri(base)
 		const targetUri = new Uri(target)
 
@@ -39,11 +53,21 @@ export namespace fileUtil {
 			return undefined
 		}
 
-		return targetComponents.slice(baseComponents.length).map(encodeURIComponent).join('/')
+		return targetComponents.slice(baseComponents.length).map(encodeURIComponent).join(
+			'/',
+		) as PercentEncodedPath
 	}
 
 	export function isSubUriOf(uri: string, base: string): boolean {
 		return getRelativeUriFromBase(uri, base) !== undefined
+	}
+
+	export function convertPercentEncodedPathToPlain(path: PercentEncodedPath): PlainPath {
+		return path.split('/').map(decodeURIComponent).join('/') as PlainPath
+	}
+
+	export function convertPlainPathToPercentEncoded(path: PlainPath): PercentEncodedPath {
+		return path.split('/').map(encodeURIComponent).join('/') as PercentEncodedPath
 	}
 
 	/**
@@ -63,11 +87,11 @@ export namespace fileUtil {
 	export function* getRels(
 		uri: string,
 		rootUris: readonly RootUriString[],
-	): Generator<string, undefined, unknown> {
+	): Generator<PlainPath, undefined, unknown> {
 		for (const root of rootUris) {
 			const rel = getRelativeUriFromBase(uri, root)
 			if (rel !== undefined) {
-				yield rel
+				yield convertPercentEncodedPathToPlain(rel)
 			}
 		}
 		return undefined
@@ -79,7 +103,7 @@ export namespace fileUtil {
 	 * getRel(['file:///root/foo/', 'file:///root/'], 'file:///root/foo/bar/qux.json') // -> 'bar/qux.json'
 	 * getRel(['file:///root/foo/', 'file:///root/'], 'file:///outsider.json') // -> undefined
 	 */
-	export function getRel(uri: string, rootUris: readonly RootUriString[]): string | undefined {
+	export function getRel(uri: string, rootUris: readonly RootUriString[]): PlainPath | undefined {
 		return getRels(uri, rootUris).next().value
 	}
 
@@ -96,7 +120,10 @@ export namespace fileUtil {
 		return undefined
 	}
 
-	export function getRoot(uri: string, rootUris: readonly RootUriString[]): string | undefined {
+	export function getRoot(
+		uri: string,
+		rootUris: readonly RootUriString[],
+	): RootUriString | undefined {
 		return getRoots(uri, rootUris).next().value
 	}
 
@@ -115,16 +142,16 @@ export namespace fileUtil {
 	/**
 	 * @param encodedPath A properly encoded URI path with potentially many segments.
 	 */
-	export function joinEncodedPath(baseUri: string, encodedPath: string): string {
+	export function joinEncodedPath(baseUri: string, encodedPath: PercentEncodedPath): string {
 		return (ensureEndingSlash(baseUri)
 			+ (encodedPath.startsWith('/') ? encodedPath.slice(1) : encodedPath))
 	}
 
 	/**
-	 * @param rawSegment A single unencoded URI path segment. Will be percent-encoded and appended to the base URI.
+	 * @param plainPath A single unencoded URI path segment. Will be percent-encoded and appended to the base URI.
 	 */
-	export function joinRawSegment(baseUri: string, rawSegment: string): string {
-		return joinEncodedPath(baseUri, encodeURIComponent(rawSegment))
+	export function joinPlainPath(baseUri: string, plainPath: PlainPath): string {
+		return joinEncodedPath(baseUri, convertPlainPathToPercentEncoded(plainPath))
 	}
 
 	export function isFileUri(uri: string): boolean {
@@ -229,7 +256,7 @@ export namespace fileUtil {
 
 			const entries = await externals.fs.readdir(path)
 			return (await Promise.all(entries.map(async (e) => {
-				const entryPath = fileUtil.joinRawSegment(path.toString(), e.name)
+				const entryPath = fileUtil.joinPlainPath(path.toString(), e.name as PlainPath)
 				if (e.isDirectory()) {
 					return await walk(entryPath, level + 1)
 				} else if (e.isFile()) {
