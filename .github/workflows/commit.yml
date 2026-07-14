@@ -13,8 +13,8 @@ on:
 permissions:
   contents: write
 jobs:
-  lint:
-    name: Lint
+  test-ubuntu:
+    name: Test (Ubuntu)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -22,22 +22,12 @@ jobs:
         with:
           node-version-file: "package.json"
           cache: "npm"
+
       - run: npm ci
 
       - run: npm run lint
 
       - run: npm run fmt:check
-
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: "lts/*"
-          cache: "npm"
-      - run: npm ci
 
       - run: npm run build
 
@@ -49,12 +39,32 @@ jobs:
           name: build-artifact
           path: build-artifact.tar
 
+  test-windows:
+    name: Test (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: "package.json"
+          cache: "npm"
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run fmt:check
+
+      - run: npm run build
+
+      - run: npm test
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
     needs:
-      - lint
-      - test
+      - test-ubuntu
+      - test-windows
     steps:
       - uses: actions/checkout@v6
         with:
@@ -62,7 +72,7 @@ jobs:
       # - run: git pull origin gh-pages:gh-pages --ff-only
       - uses: actions/setup-node@v6
         with:
-          node-version: "lts/*"
+          node-version-file: "package.json"
           cache: "npm"
       - run: npm ci
 
