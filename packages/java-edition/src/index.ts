@@ -45,19 +45,28 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		const packs: PackInfo[] = []
 		for (let depth = 0; depth <= 2; depth += 1) {
 			for (const projectRoot of projectRoots) {
-				const files = await core.fileUtil.getAllFiles(externals, projectRoot, depth + 1)
-				for (const uri of files.filter(uri => uri.endsWith('/pack.mcmeta'))) {
-					if (searchedUris.has(uri)) {
-						continue
+				try {
+					const files = await core.fileUtil.getAllFiles(externals, projectRoot, depth + 1)
+					for (const uri of files.filter(uri => uri.endsWith('/pack.mcmeta'))) {
+						if (searchedUris.has(uri)) {
+							continue
+						}
+						searchedUris.add(uri)
+						const packRoot = core.fileUtil.dirname(uri)
+						const [format, type] = await Promise.all([
+							readPackFormat(uri),
+							PackMcmeta.getType(packRoot, externals),
+						])
+						if (format !== undefined) {
+							packs.push({ type, packRoot, format })
+						}
 					}
-					searchedUris.add(uri)
-					const packRoot = core.fileUtil.dirname(uri)
-					const [format, type] = await Promise.all([
-						readPackFormat(uri),
-						PackMcmeta.getType(packRoot, externals),
-					])
-					if (format !== undefined) {
-						packs.push({ type, packRoot, format })
+				} catch (e) {
+					if (!externals.error.isKind(e, 'ENOENT')) {
+						// Ignore ENOENT errors as missing files should not affect us finding the
+						// pack.mcmeta files.
+						// https://github.com/SpyglassMC/Spyglass/issues/2034
+						throw e
 					}
 				}
 			}

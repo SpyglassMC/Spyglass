@@ -68,9 +68,19 @@ export class LspFileWatcher extends core.EventDispatcher<core.FileWatcherEventMa
 			]
 
 			for (const location of this.#locations) {
-				for (const uri of await core.fileUtil.getAllFiles(this.#externals, location)) {
-					if (this.#predicate(uri)) {
-						this.#watchedFiles.add(uri)
+				try {
+					for (const uri of await core.fileUtil.getAllFiles(this.#externals, location)) {
+						if (this.#predicate(uri)) {
+							this.#watchedFiles.add(uri)
+						}
+					}
+				} catch (e) {
+					if (this.#externals.error.isKind(e, 'ENOENT')) {
+						// Missing files here should not cause file watcher initialization failure.
+						// https://github.com/SpyglassMC/Spyglass/issues/2034
+						this.#logger.warn('[LspFileWatcher#ready]', e)
+					} else {
+						throw e
 					}
 				}
 			}
