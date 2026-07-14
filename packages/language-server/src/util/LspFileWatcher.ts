@@ -229,13 +229,16 @@ export class LspFileWatcher extends core.EventDispatcher<core.FileWatcherEventMa
 				const diskEntryNames = new Set<string>()
 				for (const diskEntry of diskEntries) {
 					diskEntryNames.add(diskEntry.name)
-					await this.#reconcile(core.fileUtil.join(dirUri, diskEntry.name), diskEntry)
+					await this.#reconcile(
+						core.fileUtil.joinRawSegment(dirUri, diskEntry.name),
+						diskEntry,
+					)
 				}
 				// Remove extra entries of this directory, if any, from the internal URI store.
 				const storeEntryNames = this.#watchedFiles.getChildrenNames(dirUri)
 				for (const storeEntryName of storeEntryNames) {
 					if (!diskEntryNames.has(storeEntryName)) {
-						this.#handleDelete(core.fileUtil.join(dirUri, storeEntryName))
+						this.#handleDelete(core.fileUtil.joinRawSegment(dirUri, storeEntryName))
 					}
 				}
 			} else if (stat.isFile()) {

@@ -1,6 +1,8 @@
+import { memfs } from 'memfs'
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { fileUtil } from '../../lib/index.js'
+import { mockExternals } from '../utils.ts'
 
 describe('fileUtil', () => {
 	describe('getRelativeUriFromBase()', () => {
@@ -18,6 +20,11 @@ describe('fileUtil', () => {
 			},
 			{ uri: 'file:///c:/Users/admin/foo/bar.mcdoc', expected: 'foo/bar.mcdoc' },
 			{ uri: 'file:///qux.mcdoc', expected: undefined },
+			{
+				// Should not double-escape if the input contains special characters
+				uri: 'file:///c:/Users/admin/%23hashtag%2Fslash',
+				expected: '%23hashtag%2Fslash',
+			},
 		]
 		for (const { uri, expected } of suites) {
 			for (const base of bases) {
@@ -67,27 +74,55 @@ describe('fileUtil', () => {
 			})
 		}
 	})
-	describe('join()', () => {
-		const suites: { fromUri: string; toUri: string; expected: string }[] = [{
-			fromUri: 'file:///root1/foo',
-			toUri: 'bar.mcdoc',
+	describe('joinEncodedPath()', () => {
+		const suites: { baseUri: string; encodedPath: string; expected: string }[] = [{
+			baseUri: 'file:///root1/foo',
+			encodedPath: 'bar.mcdoc',
 			expected: 'file:///root1/foo/bar.mcdoc',
 		}, {
-			fromUri: 'file:///root1/foo/',
-			toUri: 'bar.mcdoc',
+			baseUri: 'file:///root1/foo/',
+			encodedPath: 'bar.mcdoc',
 			expected: 'file:///root1/foo/bar.mcdoc',
 		}, {
-			fromUri: 'file:///root1/foo',
-			toUri: '/bar.mcdoc',
+			baseUri: 'file:///root1/foo',
+			encodedPath: '/bar.mcdoc',
 			expected: 'file:///root1/foo/bar.mcdoc',
 		}, {
-			fromUri: 'file:///root1/foo/',
-			toUri: '/bar.mcdoc',
+			baseUri: 'file:///root1/foo/',
+			encodedPath: '/bar.mcdoc',
 			expected: 'file:///root1/foo/bar.mcdoc',
+		}, {
+			baseUri: 'file:///root1/foo/',
+			encodedPath: '/bar/qux.mcdoc',
+			expected: 'file:///root1/foo/bar/qux.mcdoc',
 		}]
-		for (const { fromUri, toUri, expected } of suites) {
-			it(`Should join '${fromUri}' and '${toUri}' to '${expected}'`, () => {
-				assert.strictEqual(fileUtil.join(fromUri, toUri), expected)
+		for (const { baseUri, encodedPath, expected } of suites) {
+			it(`Should join '${baseUri}' and '${encodedPath}' to '${expected}'`, () => {
+				assert.strictEqual(fileUtil.joinEncodedPath(baseUri, encodedPath), expected)
+			})
+		}
+	})
+	describe('joinRawSegment()', () => {
+		const suites: { baseUri: string; rawSegment: string; expected: string }[] = [{
+			baseUri: 'file:///root1/foo',
+			rawSegment: 'bar.mcdoc',
+			expected: 'file:///root1/foo/bar.mcdoc',
+		}, {
+			baseUri: 'file:///root1/foo/',
+			rawSegment: 'bar.mcdoc',
+			expected: 'file:///root1/foo/bar.mcdoc',
+		}, {
+			baseUri: 'file:///root1/foo',
+			rawSegment: '#bar/qux.mcdoc',
+			expected: 'file:///root1/foo/%23bar%2Fqux.mcdoc',
+		}, {
+			baseUri: 'file:///root1/foo/',
+			rawSegment: '#bar/qux.mcdoc',
+			expected: 'file:///root1/foo/%23bar%2Fqux.mcdoc',
+		}]
+		for (const { baseUri, rawSegment, expected } of suites) {
+			it(`Should join '${baseUri}' and '${rawSegment}' to '${expected}'`, () => {
+				assert.strictEqual(fileUtil.joinRawSegment(baseUri, rawSegment), expected)
 			})
 		}
 	})
@@ -101,5 +136,14 @@ describe('fileUtil', () => {
 				assert.strictEqual(fileUtil.isFileUri(uri), expected)
 			})
 		}
+	})
+	describe('getAllFiles()', () => {
+		it('Should handle locations with special characters properly', async () => {
+			const externals = mockExternals({
+				nodeFsp: memfs({ 'root': { '#foo': { 'bar.mcdoc': '' } } }, '/').fs.promises,
+			})
+			const allFiles = await fileUtil.getAllFiles(externals, 'file:///root', 3)
+			assert.deepEqual(allFiles, ['file:///root/%23foo/bar.mcdoc'])
+		})
 	})
 })

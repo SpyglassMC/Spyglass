@@ -238,7 +238,7 @@ interface ResourceInstance extends Resource {
 }
 
 function getCandidateResourcesForRel(rel: string): ResourceInstance[] {
-	const parts = rel.split('/')
+	const parts = rel.split('/').map(decodeURIComponent)
 	if (parts.length < 3) {
 		return []
 	}
