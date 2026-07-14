@@ -5,17 +5,20 @@ import {
 	bufferToString,
 	EventDispatcher,
 	merge,
+	normalizeUri,
 	TypePredicates,
+	Uri,
 } from '../common/index.js'
 import { ErrorSeverity } from '../source/index.js'
 import { DataFileCategories, RegistryCategories } from '../symbol/index.js'
+import type { PlainPath, RootUriString } from './fileUtil.js'
+import { fileUtil } from './fileUtil.js'
 import type { Project } from './Project.js'
 /* eslint-disable no-restricted-syntax */
 
 export interface Config {
 	/**
-	 * Environment settings. Unlike other configs, all involved root folders must have the same `env` settings. It is undocumented
-	 * what would happen if two roots have conflicting `env` settings.
+	 * Environment settings.
 	 */
 	env: EnvConfig
 	/**
@@ -57,7 +60,7 @@ export interface CustomResourceConfig {
 
 export interface EnvConfig {
 	/**
-	 * A list of data packs the current project depends on. Each value in this array can be either an absolute file path
+	 * A list of data packs the current project depends on. Each value in this array can be either a path-like input
 	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@vanilla-mcdoc`.
 	 */
 	dependencies: string[]
@@ -100,8 +103,6 @@ export interface EnvConfig {
 	gameVersion: string
 	/**
 	 * Use custom files as mcmeta summaries.
-	 *
-	 * // TODO: Support file paths relative to the project root.
 	 */
 	mcmetaSummaryOverrides: Partial<
 		Record<'blocks' | 'commands' | 'fluids' | 'registries', { path: string; replace?: boolean }>
@@ -533,11 +534,28 @@ export class ConfigService extends EventDispatcher<{ changed: ConfigEvent; error
 	static readonly ConfigFileNames = Object.freeze(
 		['spyglass.json', '.spyglassrc', '.spyglassrc.json'] as const,
 	)
+	static readonly #GlobSpecialChars = Object.freeze(
+		['?', '*', '[', ']'] as const,
+	)
+	static readonly #GlobSpecialCharMap = new Map(
+		this.#GlobSpecialChars.map((v) => [encodeURIComponent(v), v]),
+	)
 
 	private currentEditorConfiguration: PartialConfig = {}
+	#firstProjectRoot: RootUriString
+	#roots: readonly RootUriString[]
 
 	constructor(private readonly project: Project, private readonly defaultConfig = VanillaConfig) {
 		super()
+
+		this.#firstProjectRoot = project.projectRoots[0]
+		this.#roots = project.roots
+		project.on('rootsUpdated', async ({ roots }) => {
+			this.#firstProjectRoot = project.projectRoots[0]
+			this.#roots = roots
+			this.emit('changed', { config: await this.load() })
+		})
+
 		const handler = async ({ uri }: { uri: string }) => {
 			if (ConfigService.isConfigFile(uri)) {
 				this.emit('changed', { config: await this.load() })
@@ -554,13 +572,14 @@ export class ConfigService extends EventDispatcher<{ changed: ConfigEvent; error
 	}
 
 	async load(): Promise<Config> {
-		const overrides = []
-		for (const projectRoot of this.project.projectRoots) {
+		const overrides: PartialConfig[] = []
+		for (const root of this.#roots) {
 			for (const name of ConfigService.ConfigFileNames) {
-				const uri = projectRoot + name
+				const uri = root + name
 				try {
 					const contents = await this.project.externals.fs.readFile(uri)
-					overrides.push(JSON.parse(bufferToString(contents)))
+					const partial = JSON.parse(bufferToString(contents))
+					overrides.push(ConfigService.resolvePathInputsInConfig(partial, uri))
 				} catch (e) {
 					if (this.project.externals.error.isKind(e, 'ENOENT')) {
 						// File doesn't exist.
@@ -568,10 +587,16 @@ export class ConfigService extends EventDispatcher<{ changed: ConfigEvent; error
 					}
 					this.emit('error', { error: e, uri })
 				}
-				break
 			}
 		}
-		return ConfigService.merge(this.defaultConfig, this.currentEditorConfiguration, ...overrides)
+		return ConfigService.merge(
+			this.defaultConfig,
+			ConfigService.resolvePathInputsInConfig(
+				this.currentEditorConfiguration,
+				this.#firstProjectRoot,
+			),
+			...overrides,
+		)
 	}
 
 	public static isConfigFile(this: void, uri: string): boolean {
@@ -580,5 +605,73 @@ export class ConfigService extends EventDispatcher<{ changed: ConfigEvent; error
 
 	public static merge(base: Config, ...overrides: any[]): Config {
 		return overrides.reduce(merge, rfdc()(base))
+	}
+
+	/**
+	 * Return a copy of the config where all paths are resolved into absolute file URIs.
+	 *
+	 * Supported path inputs:
+	 *
+	 * * Absolute file URIs
+	 * * Absolute file paths (Unix-like and Windows)
+	 * * Relative file paths (Unix-like and Windows)
+	 */
+	static resolvePathInputsInConfig(config: PartialConfig, baseUri: string): PartialConfig {
+		const ans = rfdc()(config)
+		if (ans.env) {
+			if (ans.env.dependencies) {
+				ans.env.dependencies = ans.env.dependencies.map((d) => {
+					if (!d || d.startsWith('@')) {
+						return d
+					} else {
+						return this.resolvePathInput(d, baseUri)
+					}
+				})
+			}
+			if (ans.env.exclude) {
+				ans.env.exclude = ans.env.exclude.map((v) => this.resolvePathInput(v!, baseUri, true))
+			}
+			if (ans.env.mcmetaSummaryOverrides) {
+				ans.env.mcmetaSummaryOverrides = Object.fromEntries(
+					Object.entries(ans.env.mcmetaSummaryOverrides)
+						.map(([k, v]) => [k, {
+							...v,
+							path: v.path ? this.resolvePathInput(v.path, baseUri) : undefined,
+						}]),
+				)
+			}
+		}
+		return ans
+	}
+
+	static resolvePathInput(path: string, baseUri: string, isGlobPattern?: boolean): string {
+		let ans: string
+		if (fileUtil.isFileUri(path)) {
+			ans = path
+		} else if (path.match(/^([a-z]:)?[\/\\]/i)) {
+			// Absolute file path
+			ans = fileUtil.joinEncodedPath(
+				'file:///',
+				fileUtil.convertPlainPathToPercentEncoded(path.replaceAll('\\', '/') as PlainPath),
+			)
+		} else {
+			// Relative file path
+			ans = new Uri(
+				fileUtil.convertPlainPathToPercentEncoded(path.replaceAll('\\', '/') as PlainPath),
+				baseUri,
+			).toString()
+		}
+		ans = normalizeUri(ans)
+		if (isGlobPattern) {
+			ans = this.#unfuckGlobPattern(ans)
+		}
+		return ans
+	}
+
+	static #unfuckGlobPattern(path: string): string {
+		for (const [escaped, raw] of this.#GlobSpecialCharMap) {
+			path = path.replaceAll(escaped, raw)
+		}
+		return path
 	}
 }

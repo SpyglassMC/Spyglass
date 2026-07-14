@@ -148,7 +148,7 @@ export namespace fileUtil {
 	}
 
 	/**
-	 * @param plainPath A single unencoded URI path segment. Will be percent-encoded and appended to the base URI.
+	 * @param plainPath A non-percent encoded path. Will be percent-encoded and appended to the base URI.
 	 */
 	export function joinPlainPath(baseUri: string, plainPath: PlainPath): string {
 		return joinEncodedPath(baseUri, convertPlainPathToPercentEncoded(plainPath))

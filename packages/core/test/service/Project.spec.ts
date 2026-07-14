@@ -162,53 +162,40 @@ describe('Project', () => {
 	describe('isUserExcluded()', () => {
 		const cases: readonly {
 			name: string
-			roots: RootUriString[]
 			exclude: string[]
 			uri: string
 			shouldExclude: boolean
 		}[] = [
 			{
-				name: 'Should exclude if the glob pattern matches the relative path of the file',
-				roots: ['file:///root/'],
-				exclude: ['.gitignore/**'],
+				name: 'Should exclude if the glob pattern matches the file URI',
+				exclude: ['file:///root/.gitignore/**'],
 				uri: 'file:///root/.gitignore/foo',
 				shouldExclude: true,
 			},
 			{
 				name:
-					'Should not exclude if the glob pattern is only a partial prefix match of the relative path of the file',
-				roots: ['file:///root/'],
-				exclude: ['.gitignore'],
+					'Should not exclude if the glob pattern is only a partial prefix match of the file URI',
+				exclude: ['file:///root/.gitignore'],
 				uri: 'file:///root/.gitignore/foo',
 				shouldExclude: false,
 			},
 			{
 				name:
-					'Should not exclude if the glob pattern is only a partial suffix match of the relative path of the file',
-				roots: ['file:///root/'],
-				exclude: ['.gitignore/**'],
+					'Should not exclude if the glob pattern is only a partial suffix match of the file URI',
+				exclude: ['file:///pack1/.gitignore/**'],
 				uri: 'file:///root/pack1/.gitignore/foo',
 				shouldExclude: false,
-			},
-			{
-				name:
-					'Should exclude if the glob pattern matches one of the relative paths of the file for a multi-root scenario',
-				roots: ['file:///root/', 'file:///root/pack1/'],
-				exclude: ['.gitignore/**'],
-				uri: 'file:///root/pack1/.gitignore/foo',
-				shouldExclude: true,
 			},
 			{
 				name: 'Should exclude paths with special characters',
-				roots: ['file:///root/'],
-				exclude: ['测试'],
+				exclude: ['file:///root/测试'],
 				uri: 'file:///root/测试',
 				shouldExclude: true,
 			},
 		]
-		for (const { name, roots, exclude, uri, shouldExclude } of cases) {
+		for (const { name, exclude, uri, shouldExclude } of cases) {
 			it(name, () => {
-				const actualResult = Project.isUserExcluded(roots, exclude, uri)
+				const actualResult = Project.isUserExcluded(exclude, uri)
 				assert.equal(actualResult, shouldExclude)
 			})
 		}

@@ -1040,7 +1040,7 @@ export class Project extends EventDispatcher<{
 	 */
 	public shouldExclude(uri: string, language?: string): boolean {
 		return (!this.isSupportedLanguage(uri, language) && !ConfigService.isConfigFile(uri))
-			|| Project.isUserExcluded(this.projectRoots, this.config.env.exclude, uri)
+			|| Project.isUserExcluded(this.config.env.exclude, uri)
 	}
 
 	private isSupportedLanguage(uri: string, language?: string): boolean {
@@ -1064,18 +1064,18 @@ export class Project extends EventDispatcher<{
 		return this.meta.getLanguageID(ext) ?? ext.slice(1)
 	}
 
+	/**
+	 * @param exclude An array of file URI glob patterns to exclude
+	 */
 	public static isUserExcluded(
-		projectRoots: readonly RootUriString[],
 		exclude: string[],
 		uri: string,
 	): boolean {
 		if (exclude.length === 0) {
 			return false
 		}
-		for (const rel of fileUtil.getRels(uri, projectRoots)) {
-			if (picomatch(exclude, { dot: true, posixSlashes: false })(rel)) {
-				return true
-			}
+		if (picomatch(exclude, { dot: true })(uri)) {
+			return true
 		}
 		return false
 	}
