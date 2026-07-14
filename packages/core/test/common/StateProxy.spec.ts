@@ -59,10 +59,10 @@ describe('StateProxy', () => {
 		t.assert.snapshot(proxy)
 
 		const barSymbol = { category: 'advancement', data: 1 }
-		proxy.symbols.advancement.bar = barSymbol
-		proxy.node.children[0].symbol = barSymbol
-		proxy.symbols.advancement.bar.data = 42
-		proxy.node.children[0].type = 'modified_symbol'
+		proxy['symbols'].advancement.bar = barSymbol
+		proxy['node'].children[0].symbol = barSymbol
+		proxy['symbols'].advancement.bar.data = 42
+		proxy['node'].children[0].type = 'modified_symbol'
 		t.assert.snapshot(proxy)
 		assert.strictEqual(testObj.symbols.advancement.bar, barSymbol)
 		assert.strictEqual(testObj.node.children[0].symbol, barSymbol)

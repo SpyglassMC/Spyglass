@@ -1,6 +1,5 @@
 import type { FsPromisesApi } from '@jsonjoy.com/fs-node-utils'
 import * as core from '@spyglassmc/core'
-import { Uri } from '@spyglassmc/core'
 import { mockExternals } from '@spyglassmc/core/test/utils.ts'
 import { memfs } from 'memfs'
 import assert, { fail } from 'node:assert/strict'

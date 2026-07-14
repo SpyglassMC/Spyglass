@@ -263,7 +263,7 @@ export function getStates(
 		ctx.symbols.query(ctx.doc, category, id).forEachMember((state, stateQuery) => {
 			const values = Object.keys(stateQuery.visibleMembers)
 			const set = (ans[state] ??= new Set())
-			const defaultValue = stateQuery.symbol?.relations?.default
+			const defaultValue = stateQuery.symbol?.relations?.['default']
 			if (defaultValue) {
 				set.add(defaultValue.path[defaultValue.path.length - 1])
 			}

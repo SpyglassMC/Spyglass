@@ -1,5 +1,3 @@
-import type * as core from '@spyglassmc/core'
-
 export type Segments = readonly string[]
 
 export function identifierToSeg(identifier: string): Segments {

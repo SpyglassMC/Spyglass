@@ -31,7 +31,6 @@ import {
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
-import type * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
 import { ReleaseVersion } from '../../dependency/common.js'
 import {

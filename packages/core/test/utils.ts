@@ -29,7 +29,7 @@ import {
 	VanillaConfig,
 } from '@spyglassmc/core'
 import { getNodeJsExternals, NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
-import assert, { fail } from 'node:assert/strict'
+import { fail } from 'node:assert/strict'
 import type fsp from 'node:fs/promises'
 import type { TestContext } from 'node:test'
 import type { URL } from 'node:url'

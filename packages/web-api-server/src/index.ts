@@ -162,12 +162,12 @@ const app = express()
 
 app.listen(port, () => {
 	logger.info({ port, rootDir }, 'Spyglass API server started')
-	if (process.env.NOTIFY_SOCKET) {
+	if (process.env['NOTIFY_SOCKET']) {
 		systemdNotify('READY').catch((e) => logger.error(e, 'systemd-notify error'))
 	}
 })
 
-if (process.env.NOTIFY_SOCKET) {
+if (process.env['NOTIFY_SOCKET']) {
 	setInterval(async () => {
 		try {
 			const data = await (await fetch(`http://localhost:${port}/mcje/versions`)).json()

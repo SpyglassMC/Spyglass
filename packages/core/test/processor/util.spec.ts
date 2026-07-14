@@ -19,19 +19,6 @@ const TestNode: AstNode = {
 	}],
 }
 
-const DiscontinuousTestNode: AstNode = {
-	type: 'not_leaf_1',
-	range: Range.create(0, 10),
-	children: [{
-		type: 'not_leaf_2',
-		range: Range.create(0, 6),
-		children: [{ type: 'leaf_1', range: Range.create(0, 2) }, {
-			type: 'leaf_2',
-			range: Range.create(4, 6),
-		}],
-	}, { type: 'not_leaf_4', range: Range.create(9, 10) }],
-}
-
 describe('processor/util.ts', () => {
 	describe('traversePreOrder()', () => {
 		it('Should traverse nodes that match the predicates', (t) => {

@@ -84,7 +84,6 @@ import type {
 	LiteralIntSuffix,
 	LiteralNumberCaseInsensitiveSuffix,
 } from '../parser/index.js'
-import { number } from '../runtime/attribute/validator.js'
 import type { SimplifiedMcdocType } from '../runtime/checker/index.js'
 import type {
 	Attribute,
@@ -571,7 +570,7 @@ async function bindStructBlock(
 }
 
 async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Promise<void> {
-	const { identifier, rhs, typeParams } = TypeAliasNode.destruct(node)
+	const { identifier, rhs } = TypeAliasNode.destruct(node)
 	if (!identifier?.value) {
 		return
 	}
@@ -817,13 +816,6 @@ function convertAttributeTree(node: AttributeTreeNode, ctx: McdocBinderContext):
 	}
 
 	return ans
-}
-
-function convertIndexBodies(
-	nodes: IndexBodyNode[],
-	ctx: McdocBinderContext,
-): ParallelIndices[] | undefined {
-	return undefineEmptyArray(nodes.map((n) => convertIndexBody(n, ctx)))
 }
 
 function convertIndexBody(node: IndexBodyNode, ctx: McdocBinderContext): ParallelIndices {

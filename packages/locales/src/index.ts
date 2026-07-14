@@ -24,7 +24,7 @@ type Parameter =
  * string by the `arrayToMessage` method with `quoted=true, conjunction='or'` arguments.
  */
 export function localize(key: string, ...params: Parameter[]): string {
-	const value: string | undefined = Locales[language][key] ?? Locales.en[key]
+	const value: string | undefined = Locales[language][key] ?? Locales['en'][key]
 
 	return _resolveLocalePlaceholders(value, params) ?? key
 }

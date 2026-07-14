@@ -5,8 +5,8 @@ import type { AstNode } from '../../../node/index.js'
 import type { LinterContext } from '../../../service/index.js'
 import { LinterSeverity, SymbolLinterConfig as Config } from '../../../service/index.js'
 import type { LanguageErrorInfo } from '../../../source/LanguageError.js'
-import type { FileCategory, Symbol } from '../../../symbol/index.js'
-import { FileCategories, SymbolUtil, SymbolVisibility } from '../../../symbol/index.js'
+import type { Symbol } from '../../../symbol/index.js'
+import { SymbolUtil, SymbolVisibility } from '../../../symbol/index.js'
 import type { Linter } from '../Linter.js'
 
 export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
