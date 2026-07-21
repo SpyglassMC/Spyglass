@@ -4,6 +4,12 @@
 
 == Commands
 
+=== `spyglassmc.analyzeProject`
+
+Check and lint every file in the current project and publish the results to the editor's diagnostics panel (e.g. the Problems view in VS Code).
+
+Spyglass normally only checks files that are open in the editor. Use this command to see the problems of the whole project, e.g. after migrating a pack to a new game version. The analysis may take a while on large projects and can be cancelled from the progress notification.
+
 === `spyglassmc.dataHackPubify`
 
 Data Hack Pubify a string.

@@ -198,6 +198,12 @@
     ],
     "commands": [
       {
+        "command": "spyglassmc.analyzeProject",
+        "title": "%spyglassmc.commands.analyzeProject.title%",
+        "category": "Spyglass",
+        "enablement": "workspaceFolderCount != 0"
+      },
+      {
         "command": "spyglassmc.dataHackPubify",
         "title": "%spyglassmc.commands.dataHackPubify.title%",
         "category": "Spyglass"
@@ -221,6 +227,10 @@
     ],
     "menus": {
       "commandPalette": [
+        {
+          "command": "spyglassmc.analyzeProject",
+          "when": "workspaceFolderCount != 0"
+        },
         {
           "command": "spyglassmc.dataHackPubify"
         },
