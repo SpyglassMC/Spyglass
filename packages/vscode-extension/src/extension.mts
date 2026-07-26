@@ -85,6 +85,32 @@ export async function activate(context: vsc.ExtensionContext) {
 		const customCapabilities: server.CustomServerCapabilities | undefined = client
 			.initializeResult?.capabilities.experimental?.spyglassmc
 
+		if (customCapabilities?.analyzeProject) {
+			context.subscriptions.push(
+				vsc.commands.registerCommand('spyglassmc.analyzeProject', async () => {
+					try {
+						const result: server.MyLspAnalyzeProjectResult | undefined = await client
+							.sendRequest('spyglassmc/analyzeProject')
+						if (!result) {
+							return
+						}
+
+						const message = result.cancelled
+							? localize(
+								'analyze-project.cancelled',
+								result.analyzedFiles,
+								result.totalFiles,
+							)
+							: localize('analyze-project.done', result.analyzedFiles)
+
+						await vsc.window.showInformationMessage(message)
+					} catch (e) {
+						console.error('[client#analyzeProject]', e)
+					}
+				}),
+			)
+		}
+
 		if (customCapabilities?.dataHackPubify) {
 			context.subscriptions.push(
 				vsc.commands.registerCommand('spyglassmc.dataHackPubify', async () => {

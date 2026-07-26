@@ -11,6 +11,7 @@ import * as ls from 'vscode-languageserver/node.js'
 import type {
 	CustomInitializationOptions,
 	CustomServerCapabilities,
+	MyLspAnalyzeProjectResult,
 	MyLspDataHackPubifyRequestParams,
 } from './util/index.js'
 import { toCore, toLS } from './util/index.js'
@@ -98,6 +99,7 @@ connection.onInitialize(async (params) => {
 			profilers: new core.ProfilerFactory(logger, [
 				'cache#load',
 				'cache#save',
+				'project#analyzeProject',
 				'project#init',
 				'project#ready',
 				'project#ready#bind',
@@ -144,6 +146,7 @@ connection.onInitialize(async (params) => {
 	}
 
 	const customCapabilities: CustomServerCapabilities = {
+		analyzeProject: true,
 		dataHackPubify: true,
 		resetProjectCache: true,
 		showCacheRoot: true,
@@ -516,6 +519,49 @@ connection.languages.inlayHint.on(async ({ textDocument: { uri }, range }) => {
 	const hints = service.getInlayHints(node, doc, toCore.range(range, doc))
 	return toLS.inlayHints(hints, doc)
 })
+
+let isAnalyzingProject = false
+connection.onRequest(
+	'spyglassmc/analyzeProject',
+	async (token: ls.CancellationToken): Promise<MyLspAnalyzeProjectResult | undefined> => {
+		if (isAnalyzingProject) {
+			return undefined
+		}
+		isAnalyzingProject = true
+
+		const abortController = new AbortController()
+		token.onCancellationRequested(() => abortController.abort())
+
+		let reporter: ls.WorkDoneProgressServerReporter | undefined
+		if (capabilities.window?.workDoneProgress) {
+			reporter = await connection.window.createWorkDoneProgress()
+			reporter.token.onCancellationRequested(() => abortController.abort())
+			reporter.begin(
+				locales.localize('server.progress.analyze-project.title'),
+				0,
+				undefined,
+				true,
+			)
+		}
+
+		let lastPercentage = 0
+		try {
+			return await service.project.analyzeProject({
+				onProgress: (done, total) => {
+					const percentage = Math.floor(done / total * 100)
+					if (percentage > lastPercentage) {
+						lastPercentage = percentage
+						reporter?.report(percentage, `${done}/${total}`)
+					}
+				},
+				signal: abortController.signal,
+			})
+		} finally {
+			reporter?.done()
+			isAnalyzingProject = false
+		}
+	},
+)
 
 connection.onRequest('spyglassmc/resetProjectCache', async (): Promise<void> => {
 	return service.project.resetCache()

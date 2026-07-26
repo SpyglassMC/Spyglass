@@ -1,4 +1,6 @@
 {
+  "analyze-project.cancelled": "Project analysis cancelled after analyzing %0% of %1% files.",
+  "analyze-project.done": "Analyzed %0% files.",
   "array": "an array",
   "boolean": "a boolean",
   "bug-of-mc": "Due to a bug of Minecraft (%0%), %1%. Please Mojang, fix your game",
@@ -230,6 +232,7 @@
   "scoreholder-not-following-convention": "Invalid score_holder %0% which doesn't follow %1% convention",
   "selector": "a selector",
   "server.new-version": "The Data-pack Language Server has been updated to a newer version: %0%",
+  "server.progress.analyze-project.title": "Analyzing project…",
   "server.progress.fixing-workspace.begin": "Fixing all auto-fixable problems in the workspace",
   "server.progress.fixing-workspace.report": "fixing %0%",
   "server.progress.preparing.title": "Preparing Spyglass language features",
