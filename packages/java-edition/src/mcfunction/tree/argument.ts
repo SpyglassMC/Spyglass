@@ -62,6 +62,9 @@ export interface MinecraftEntityAnchorArgumentTreeNode extends mcf.ArgumentTreeN
 export interface MinecraftEntitySummonArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:entity_summon'
 }
+export interface MinecraftFeatureArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:feature'
+}
 export interface RangeProperties extends Record<string, unknown> {
 	min: number
 	max: number
@@ -225,6 +228,9 @@ export interface MinecraftScoreHolderArgumentTreeNode extends mcf.ArgumentTreeNo
 export interface MinecraftScoreboardSlotArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:scoreboard_slot'
 }
+export interface MinecraftSlotSourceArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:slot_source'
+}
 export interface MinecraftStyleArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:style'
 }
@@ -245,6 +251,9 @@ export interface MinecraftTemplateRotationArgumentTreeNode extends mcf.ArgumentT
 }
 export interface MinecraftTimeArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:time'
+	properties?: {
+		min: number
+	}
 }
 export interface MinecraftUuidArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:uuid'
@@ -283,6 +292,7 @@ export type ArgumentTreeNode =
 	| MinecraftEntityArgumentTreeNode
 	| MinecraftEntityAnchorArgumentTreeNode
 	| MinecraftEntitySummonArgumentTreeNode
+	| MinecraftFeatureArgumentTreeNode
 	| MinecraftFloatRangeArgumentTreeNode
 	| MinecraftFunctionArgumentTreeNode
 	| MinecraftGamemodeArgumentTreeNode
@@ -315,6 +325,7 @@ export type ArgumentTreeNode =
 	| MinecraftRotationArgumentTreeNode
 	| MinecraftScoreHolderArgumentTreeNode
 	| MinecraftScoreboardSlotArgumentTreeNode
+	| MinecraftSlotSourceArgumentTreeNode
 	| MinecraftStyleArgumentTreeNode
 	| MinecraftSwizzleArgumentTreeNode
 	| MinecraftTeamArgumentTreeNode

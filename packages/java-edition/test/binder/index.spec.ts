@@ -1,5 +1,6 @@
 import { UriBinderContext, VanillaConfig } from '@spyglassmc/core'
 import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
+import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { dissectUri, registerCustomResources } from '../../lib/binder/index.js'
 
@@ -25,6 +26,17 @@ describe('dissectUri()', () => {
 			t.assert.snapshot(dissectUri(uri, ctx) ?? 'undefined')
 		})
 	}
+
+	it('Should decode percent-encoding', () => {
+		// Even though special characters are illegal in resource locations, we should not show them
+		// as percent-encodings when the user uses them.
+		const ctx = UriBinderContext.create(
+			mockProjectData({ roots: ['file:///'], ctx: { loadedVersion: '1.21' } }),
+		)
+		const result = dissectUri('file:///data/%23foo/function/%23bar.mcfunction', ctx)
+		assert.equal(result?.namespace, '#foo')
+		assert.equal(result?.identifier, '#bar')
+	})
 })
 
 describe('dissectUri() with customResources', () => {

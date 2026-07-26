@@ -190,7 +190,10 @@ const Suites: Partial<
 	'minecraft:swizzle': [{ content: ['xyz', 'x'] }],
 	'minecraft:team': [{ content: ['foo', '123'] }],
 	'minecraft:team_color': [{ content: ['red', 'green', 'reset'] }],
-	'minecraft:time': [{ content: ['0d', '0s', '0t', '0', '0foo'] }],
+	'minecraft:time': [
+		{ content: ['0d', '0s', '0t', '0', '0foo'] },
+		{ properties: { min: 2 }, content: ['1d', '1s', '1t', '1', '2', '0.1s', '0.05s'] },
+	],
 	'minecraft:uuid': [{
 		content: [
 			'dd12be42-52a9-4a91-a8a1-11c01849e498',

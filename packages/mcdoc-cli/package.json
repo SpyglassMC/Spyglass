@@ -28,6 +28,8 @@
     "test": "rm -rf out/generated/module/* && cd vanilla-mcdoc && git pull && cd .. && tsgo -b && node lib/index.js generate vanilla-mcdoc/ -l -m -p"
   },
   "dependencies": {
+    "@spyglassmc/core": "*",
+    "@spyglassmc/mcdoc": "*",
     "fs-extra": "^11.1.1",
     "klaw": "^4.1.0",
     "line-column": "^1.0.2",

@@ -18,7 +18,6 @@ import {
 	CodeActionProviderContext,
 	ColorizerContext,
 	CompleterContext,
-	ContextBase,
 	FormatterContext,
 	ProcessorContext,
 	SignatureHelpProviderContext,

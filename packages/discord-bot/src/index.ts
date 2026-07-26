@@ -43,7 +43,7 @@ const ProfilerId = 'discord-bot#startup'
 const profilers = new ProfilerFactory(console, [ProfilerId])
 const __profiler = profilers.get(ProfilerId)
 
-const rootPath = env.SPYGLASSMC_DISCORD_BOT_DIR
+const rootPath = env['SPYGLASSMC_DISCORD_BOT_DIR']
 if (!rootPath) {
 	throw new Error('Environment variable SPYGLASSMC_DISCORD_BOT_DIR expected.')
 }

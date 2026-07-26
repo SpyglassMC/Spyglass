@@ -1,6 +1,6 @@
-import type { FileEntry } from '@spgoding/zip.js'
-import { HttpReader, TextWriter, ZipReader } from '@spgoding/zip.js'
 import * as core from '@spyglassmc/core'
+import type { FileEntry } from '@zip.js/zip.js'
+import { HttpReader, TextWriter, ZipReader } from '@zip.js/zip.js'
 import type { McmetaVersion, MojangVersionManifestEntry } from './types.js'
 import {
 	McmetaVersions,
@@ -245,7 +245,7 @@ async function fetchMojangVersionJsonFromClientJar(
 			new HttpReader(clientJarUri, {
 				forceRangeRequests: true,
 				combineSizeEocd: true,
-				customFetch: (input, init) => core.fetchWithCache(externals, logger, input, init),
+				fetch: (input, init) => core.fetchWithCache(externals, logger, input, init),
 			}),
 		)
 		let versionJsonEntry: FileEntry | undefined

@@ -10,7 +10,7 @@ const GITHUB_API_URI =
 	'https://raw.githubusercontent.com/misode/mcmeta/refs/heads/summary/versions/data.min.json'
 
 async function main() {
-	if (!process.env.FETCH_BUNDLED_META_RESOURCES) {
+	if (!process.env['FETCH_BUNDLED_META_RESOURCES']) {
 		return
 	}
 

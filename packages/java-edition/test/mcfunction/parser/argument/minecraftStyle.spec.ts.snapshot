@@ -195,7 +195,7 @@ exports[`mcfunction argument parser > minecraft:style > Parse '{ \"color\": \"re
     ],
     "targetType": {
       "kind": "reference",
-      "path": "::java::server::util::text::TextStyle"
+      "path": "::java::util::text::TextStyle"
     }
   },
   "errors": []
@@ -298,7 +298,7 @@ exports[`mcfunction argument parser > minecraft:style > Parse '{\"bold\": true}'
     ],
     "targetType": {
       "kind": "reference",
-      "path": "::java::server::util::text::TextStyle"
+      "path": "::java::util::text::TextStyle"
     }
   },
   "errors": []

@@ -4,7 +4,6 @@ import cp from 'node:child_process'
 import { createHash, randomUUID } from 'node:crypto'
 import type fs from 'node:fs'
 import fsp from 'node:fs/promises'
-import os from 'node:os'
 import process from 'node:process'
 import stream from 'node:stream'
 import { pipeline } from 'node:stream/promises'
@@ -322,7 +321,7 @@ class HttpCache implements Cache {
 			Dev.assertDefined(this.#index)
 			const tempUri = new URL(`index.${randomUUID()}.tmp`, tempRoot)
 			await this.#fsp.mkdir(new URL(tempRoot), { recursive: true, mode: 0o755 })
-			await this.#fsp.writeFile(tempUri, `${JSON.stringify(this.#index)}${os.EOL}`, {
+			await this.#fsp.writeFile(tempUri, `${JSON.stringify(this.#index)}\n`, {
 				mode: 0o644,
 			})
 			await this.#fsp.rename(tempUri, new URL(indexUri))

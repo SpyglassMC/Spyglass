@@ -81,6 +81,31 @@ export interface ProjectReadyOptions {
 	projectRootsWatcher?: FileWatcher
 }
 
+export interface AnalyzeProjectOptions {
+	/**
+	 * Called after each file has been analyzed.
+	 *
+	 * @param done The amount of files that have been analyzed so far.
+	 * @param total The total amount of files to analyze.
+	 */
+	onProgress?: (this: void, done: number, total: number) => void
+	/**
+	 * A signal that can be used to cancel the analysis between two files. Files that have already
+	 * been analyzed keep their diagnostics.
+	 */
+	signal?: AbortSignal
+}
+
+export interface AnalyzeProjectResult {
+	/**
+	 * The amount of files that were analyzed. Equal to `totalFiles` unless the analysis was
+	 * cancelled.
+	 */
+	analyzedFiles: number
+	cancelled: boolean
+	totalFiles: number
+}
+
 export interface DocAndNode {
 	doc: TextDocument
 	node: FileNode<AstNode>
@@ -830,6 +855,77 @@ export class Project extends EventDispatcher<{
 				binder(uris, ctx)
 			}
 		})
+	}
+
+	private static readonly AnalysisYieldInterval = 100
+
+	/**
+	 * Run all four stages of document processing (`read`, `parse`, `bind`, and `check`, which
+	 * includes `lint`) on every supported file under {@link projectRoots} and emit the results as
+	 * `documentUpdated`/`documentErrored` events, regardless of whether the files are currently
+	 * managed by the client.
+	 *
+	 * The analysis only starts after the READY process is complete, which guarantees that the
+	 * global symbol table is fully populated before any file is checked.
+	 *
+	 * Dependency files are not analyzed.
+	 *
+	 * If an analysis is already in progress, the Promise of that analysis is returned instead and
+	 * the passed-in `options` are ignored.
+	 */
+	@SingletonPromise(() => 'analyzeProject')
+	async analyzeProject(options: AnalyzeProjectOptions = {}): Promise<AnalyzeProjectResult> {
+		await this.ready()
+
+		const files = [...new Set(this.getTrackedFiles().map((uri) => this.normalizeUri(uri)))]
+			.filter((uri) =>
+				this.projectRoots.some((root) => fileUtil.isSubUriOf(uri, root))
+				&& !this.shouldExclude(uri)
+			)
+			.sort(this.meta.uriSorter)
+		this.logger.info(`[Project#analyzeProject] Analyzing ${files.length} files`)
+
+		const __profiler = this.profilers.get('project#analyzeProject')
+		let done = 0
+		let cancelled = false
+		for (const uri of files) {
+			if (options.signal?.aborted) {
+				cancelled = true
+				this.logger.info(
+					`[Project#analyzeProject] Cancelled after ${done}/${files.length} files`,
+				)
+				break
+			}
+
+			try {
+				if (this.#clientManagedUris.has(uri)) {
+					await this.ensureClientManagedChecked(uri)
+				} else {
+					this.removeCachedTextDocument(uri)
+					const doc = await this.read(uri)
+					if (doc) {
+						const node = this.parse(doc)
+						await this.bind(doc, node)
+						await this.check(doc, node)
+						this.emit('documentUpdated', { doc, node })
+					}
+				}
+			} catch (e) {
+				this.logger.error(`[Project#analyzeProject] Failed for ${uri}`, e)
+			}
+
+			done += 1
+			options.onProgress?.(done, files.length)
+			if (done % Project.AnalysisYieldInterval === 0) {
+				await new Promise((resolve) => setTimeout(resolve, 0))
+			}
+		}
+		__profiler.task('Analyze Files')
+
+		await this.cacheService.save()
+		__profiler.task('Save Cache').finalize()
+
+		return { analyzedFiles: done, cancelled, totalFiles: files.length }
 	}
 
 	/**

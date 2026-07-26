@@ -2374,6 +2374,14 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ distance = .
   "errors": [
     {
       "range": {
+        "start": 17,
+        "end": 19
+      },
+      "message": "Expected a float between 0 and 3.4028234663852886e+38",
+      "severity": 3
+    },
+    {
+      "range": {
         "start": 33,
         "end": 37
       },

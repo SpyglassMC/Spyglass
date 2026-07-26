@@ -26,7 +26,13 @@
     }
   },
   "dependencies": {
-    "@spgoding/zip.js": "^2.8.26-customfetch.1"
+    "@spyglassmc/core": "*",
+    "@spyglassmc/json": "*",
+    "@spyglassmc/locales": "*",
+    "@spyglassmc/mcfunction": "*",
+    "@spyglassmc/mcdoc": "*",
+    "@spyglassmc/nbt": "*",
+    "@zip.js/zip.js": "^2.8.34"
   },
   "devDependencies": {},
   "publishConfig": {
