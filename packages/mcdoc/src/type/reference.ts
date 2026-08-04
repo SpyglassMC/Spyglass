@@ -1,6 +1,7 @@
-import type { McdocType } from './index.js'
+import type { ReferenceType } from './index.js'
 
 const TypeReferences = {
+	'item_count_predicate': '::java::world::component::predicate::ItemCountPredicate',
 	'pack_meta': '::java::pack::Pack',
 	'tag': '::java::data::tag::Tag',
 	'text_component': '::java::util::text::Text',
@@ -12,6 +13,6 @@ export function typeRefPath(key: TypeReferenceKey): `::${string}::${string}` {
 	return TypeReferences[key]
 }
 
-export function typeRef(key: TypeReferenceKey): McdocType {
+export function typeRef(key: TypeReferenceKey): ReferenceType {
 	return { kind: 'reference', path: TypeReferences[key] }
 }

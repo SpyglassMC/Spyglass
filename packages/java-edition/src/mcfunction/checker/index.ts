@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localize } from '@spyglassmc/locales'
-import type * as mcdoc from '@spyglassmc/mcdoc'
+import * as mcdoc from '@spyglassmc/mcdoc'
 import type * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { dissectUri, reportDissectError } from '../../binder/index.js'
@@ -122,20 +122,7 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 			// count is a special case that's only valid in item predicate arguments, not json
 			// note: basically all errors checked here are otherwise accepted by vanilla, but it's good to report them
 			if (key === 'minecraft:count' && !ComponentTestExistsNode.is(test) && test.value) {
-				const validInt: mcdoc.McdocType = { kind: 'int', valueRange: { kind: 0b00, min: 0 } }
-				const type: mcdoc.McdocType = {
-					kind: 'union',
-					members: [
-						validInt,
-						{
-							kind: 'struct',
-							fields: [
-								{ kind: 'pair', key: 'min', optional: true, type: validInt },
-								{ kind: 'pair', key: 'max', optional: true, type: validInt },
-							],
-						},
-					],
-				}
+				const type: mcdoc.McdocType = mcdoc.typeRef('item_count_predicate')
 				nbt.checker.typeDefinition(type)(test.value, ctx)
 			} else if (ComponentTestExactNode.is(test) && test.value) {
 				nbt.checker.index('minecraft:data_component', key)(test.value, ctx)
