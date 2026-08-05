@@ -1,7 +1,7 @@
 import type { ReferenceType } from './index.js'
 
 const TypeReferences = {
-	'item_count_predicate': '::java::world::component::ItemCountPseudoPredicate',
+	'item_count_predicate': '::java::world::component::predicate::ItemCountPseudoPredicate',
 	'pack_meta': '::java::pack::Pack',
 	'tag': '::java::data::tag::Tag',
 	'text_component': '::java::util::text::Text',
