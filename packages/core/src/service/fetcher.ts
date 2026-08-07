@@ -37,7 +37,7 @@ export async function fetchWithCache(
 		const response = await fetchWithRetries(request, options)
 		if (response.status === 304) {
 			Dev.assertDefined(cachedResponse)
-			logger.info(`[fetchWithCache] reusing cache for ${request.url}`)
+			logger.info(`[fetchWithCache] ${request.url} reusing cache`)
 			return cachedResponse
 		} else if (!response.ok) {
 			let message = response.statusText
@@ -48,21 +48,24 @@ export async function fetchWithCache(
 		} else {
 			try {
 				await cache.put(request, response.clone())
-				logger.info(`[fetchWithCache] updated cache for ${request.url}`)
+				logger.info(`[fetchWithCache] ${request.url} updated cache`)
 			} catch (e) {
-				logger.warn('[fetchWithCache] put cache', e)
+				logger.warn(`[fetchWithCache] ${request.url} put cache failure`, e)
 			}
 			try {
 				await cachedResponse?.body?.cancel()
 			} catch (e) {
-				logger.warn('[fetchWithCache] failed cancelling cachedResponse body stream', e)
+				logger.warn(
+					`[fetchWithCache] ${request.url} failed cancelling cachedResponse body stream`,
+					e,
+				)
 			}
 			return response
 		}
 	} catch (e) {
-		logger.warn('[fetchWithCache] fetch', e)
+		logger.warn(`[fetchWithCache] ${request.url} fetch failure`, e)
 		if (cachedResponse) {
-			logger.info(`[fetchWithCache] falling back to cache for ${request.url}`)
+			logger.info(`[fetchWithCache] ${request.url} falling back to stale cache`)
 			// Set the stale header when fallback is used
 			const newHeaders = new Headers(cachedResponse.headers)
 			newHeaders.set(STALE_HEADER, '1')
@@ -117,6 +120,38 @@ async function fetchWithRetries(
 		return lastResult
 	}
 	throw lastResult!
+}
+
+export async function fetchJson<T>(
+	{
+		externals,
+		logger,
+		input,
+		init,
+		typeAsserter,
+	}: {
+		externals: Externals
+		logger: Logger
+		input: RequestInfo | URL
+		init?: RequestInit
+		typeAsserter: (val: unknown) => asserts val is T
+	},
+): Promise<T | undefined> {
+	let data: unknown
+	try {
+		const response = await fetchWithCache(externals, logger, input, init)
+		data = await response.json()
+
+		// TS2775: Assertions require every name in the call target to be declared with an explicit type annotation
+		// https://github.com/microsoft/TypeScript/pull/33622
+		const asserter: (val: unknown) => asserts val is T = typeAsserter
+		asserter(data)
+
+		return data
+	} catch (e) {
+		logger.warn(`Fetch as JSON failed: ${input}`, e, data)
+	}
+	return undefined
 }
 
 // Fetchr? I hardly know her: https://github.com/NeunEinser/bingo

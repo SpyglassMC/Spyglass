@@ -13,8 +13,17 @@
     "test": "test/"
   },
   "scripts": {
+    "build": "wireit",
     "release": "npm publish",
     "release:dry": "npm publish --tag latest --dry-run"
+  },
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "../..:build:tsc"
+      ],
+      "command": "node ./scripts/fetch_bundled_meta_resources.ts"
+    }
   },
   "dependencies": {
     "@spyglassmc/core": "*",
@@ -22,7 +31,8 @@
     "@spyglassmc/locales": "*",
     "@spyglassmc/mcfunction": "*",
     "@spyglassmc/mcdoc": "*",
-    "@spyglassmc/nbt": "*"
+    "@spyglassmc/nbt": "*",
+    "@zip.js/zip.js": "^2.8.34"
   },
   "devDependencies": {},
   "publishConfig": {
