@@ -267,6 +267,11 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 		}))
 	}
 
+	const unicodeNameItem = tryGetUnicodeNameCompletion(node, ctx)
+	if (unicodeNameItem) {
+		return unicodeNameItem
+	}
+
 	if (node.options.quotes && node.value === '') {
 		return node.options.quotes.map((q) =>
 			CompletionItem.create(`${q}${q}`, node, {
@@ -277,6 +282,43 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 	}
 
 	return []
+}
+
+/**
+ * Returns completion items for Unicode character names when the cursor is
+ * inside an `\N{…}` escape in `node`. Returns `undefined` otherwise so the
+ * caller can fall through to other completers.
+ *
+ * Mirrors the {@link resourceLocation} pattern: returns *every* declared
+ * `unicode-name` symbol. The LSP client (e.g. VS Code) does the
+ * case-insensitive prefix match against each item's `label` and drops the
+ * non-matches.
+ */
+function tryGetUnicodeNameCompletion(
+	node: DeepReadonly<StringBaseNode>,
+	ctx: CompleterContext,
+): CompletionItem[] | undefined {
+	const before = ctx.src.slice(node.range.start, ctx.offset)
+	const match = before.match(/\\N\{([^\}]*)$/)
+	if (!match) {
+		return undefined
+	}
+	const partial = match[1]!
+	const replaceRange = Range.create(ctx.offset - partial.length, ctx.offset)
+
+	const map = ctx.symbols.getVisibleSymbols('unicode-name')
+	const items: CompletionItem[] = []
+	for (const [identifier, symbol] of Object.entries(map)) {
+		if (!SymbolUtil.isDeclared(symbol)) {
+			continue
+		}
+		items.push(
+			CompletionItem.create(identifier, replaceRange, {
+				kind: CompletionKind.Constant,
+			}),
+		)
+	}
+	return items
 }
 
 export function escapeString(value: string, quote?: Quote) {

@@ -16,3 +16,10 @@
 /packages/*/test-out
 
 /packages/vscode-extension/**/*.vsix
+
+/.agents
+/.claude
+/CLAUDE.md
+/AGENTS.md
+/.temp
+/scripts/unicode

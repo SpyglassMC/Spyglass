@@ -75,11 +75,11 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 
 const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	const insideRange = core.Range.contains(node, ctx.offset, true)
-	if (node.type === 'nbt:string' && node.children?.length && insideRange) {
-		const childItems = core.completer.string(node, ctx)
-		if (childItems.length > 0) {
-			return childItems
-		}
+	if (node.type === 'nbt:string' && insideRange) {
+		// Delegate to core's string completer so it can handle the
+		// `\N{…}` named-Unicode-escape completion. Works whether or not
+		// the nbt:string has a child string-parser result.
+		return core.completer.string(node, ctx)
 	}
 	if (!node.typeDef) {
 		return []

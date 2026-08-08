@@ -5,6 +5,7 @@
 	},
 	"include": [
 		"**/*.ts",
-		"parser/unicode-lookup-table.json"
+		"parser/unicode-lookup-table.json",
+		"dependency/unicode-lookup-table.json"
 	]
 }

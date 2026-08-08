@@ -106,7 +106,7 @@ connection.onInitialize(async (params) => {
 				),
 				cacheRoot,
 				externals,
-				initializers: [mcdoc.initialize, je.initialize],
+				initializers: [core.initialize, mcdoc.initialize, je.initialize],
 				projectRoots: workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri)),
 			},
 		})
