@@ -63,14 +63,12 @@ const index: PartParser = (children, src, ctx) => {
 			`NBT path index parser called at illegal position: “${src.peek()}” at ${src.cursor}`,
 		)
 	}
-	src.skipSpace()
 	const c = src.peek()
 	if (c === '{') {
 		node.children = [compound(src, ctx)]
 	} else if (c !== ']') {
 		node.children = [core.integer({ pattern: /^-?\d+$/ })(src, ctx)]
 	}
-	src.skipSpace()
 	if (!src.trySkip(']')) {
 		ctx.err.report(localize('expected-got', localeQuote(']'), localeQuote(src.peek())), src)
 	}

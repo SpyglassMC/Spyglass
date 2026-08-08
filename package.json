@@ -5,36 +5,38 @@
 	"license": "MIT",
 	"type": "module",
 	"engines": {
-		"node": ">=22.14.0"
+		"node": ">=22.15.0"
 	},
 	"scripts": {
 		"ansible:prod": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml",
 		"ansible:prod:verbose": "ansible-playbook -i ansible/inventory-prod.yml --extra-vars \"@ansible/secrets.yml.vault\" --ask-vault-pass ansible/playbook.yml -vvv",
+		"bench": "node packages/benchmarks/lib/index.js",
 		"build": "wireit",
 		"build:dev": "wireit",
+		"build:tsc6": "tsc -b packages",
 		"watch": "npm run build:dev --watch",
-		"clean": "tsc -b packages --clean",
+		"clean": "tsgo -b packages --clean",
 		"clean:full": "rm -rf packages/*/lib packages/*/out packages/*/dist packages/*/test-out packages/*/*.tsbuildinfo .wireit packages/*/.wireit",
 		"commit": "gitmoji -c",
 		"docs:install": "cd docs && (bundle || true) && cd ..",
 		"docs:start": "cd docs && (bundle exec jekyll serve --incremental || true) && cd ..",
 		"fmt": "dprint fmt",
 		"fmt:check": "dprint check",
-		"lint": "eslint --cache --max-warnings=0 \"packages/*/{src,test}/**/*.{cts,mts,ts}\"",
-		"lint:fix": "eslint --cache --max-warnings=0 --fix \"packages/*/{src,test}/**/*.{cts,mts,ts}\"",
-		"release": "node scripts/release.ts",
-		"release:dry": "node scripts/release.ts --dry-run",
 		"refresh-unicode-data": "node scripts/refresh_unicode_data.ts",
 		"refresh-unicode-data:force": "node scripts/refresh_unicode_data.ts --force",
 		"refresh-unicode-data:write-lookup": "node scripts/refresh_unicode_data.ts --write-lookup",
 		"refresh-unicode-data:force-write-lookup": "node scripts/refresh_unicode_data.ts --force --write-lookup",
 		"set-tsconfig-references": "node scripts/set_tsconfig_references",
+		"lint": "eslint --cache --max-warnings=0",
+		"lint:fix": "eslint --cache --max-warnings=0 --fix",
+		"release": "node scripts/release.ts",
+		"release:dry": "node scripts/release.ts --dry-run",
+		"sync-package-taxonomy": "node scripts/sync_package_taxonomy.ts",
 		"start-discord-bot": "node packages/discord-bot/lib/index.js",
 		"start-web-api-server": "npm start --workspace=packages/web-api-server",
 		"test": "node --import=./packages/core/test/snapshot-setup.ts --test --test-isolation none",
 		"test:update-snapshots": "npm test -- --test-update-snapshots",
-		"test:watch": "npm test -- --watch",
-		"bench": "node packages/benchmarks/lib/index.js"
+		"test:watch": "npm test -- --watch"
 	},
 	"wireit": {
 		"build": {
@@ -51,7 +53,13 @@
 		},
 		"build:packages": {
 			"$comment": "This script is used as a dependency by ./packages/playground:build and ./packages/vscode-extension:build",
-			"command": "tsc -b packages",
+			"dependencies": [
+				"build:tsc",
+				"./packages/java-edition:build"
+			]
+		},
+		"build:tsc": {
+			"command": "tsgo -b packages",
 			"files": [
 				"packages/*/src/**/*.*",
 				"packages/*/test/**/*.*"
@@ -59,21 +67,27 @@
 		}
 	},
 	"devDependencies": {
+		"@eslint/compat": "^2.1.0",
+		"@eslint/eslintrc": "^3.3.5",
+		"@eslint/js": "^9.39.4",
 		"@types/benchmark": "^2.1.2",
-		"@types/node": "^24.10.1",
+		"@types/node": "^22.15.35",
 		"@types/webpack": "^5.28.1",
-		"@typescript-eslint/eslint-plugin": "^8.46.4",
-		"@typescript-eslint/parser": "^8.46.4",
+		"@typescript-eslint/eslint-plugin": "^8.59.2",
+		"@typescript-eslint/parser": "^8.59.2",
+		"@typescript/native-preview": "^7.0.0-dev.20260511.1",
 		"benchmark": "^2.1.4",
 		"circular-dependency-plugin": "^5.2.2",
 		"dprint": "^0.45.1",
-		"eslint": "^8.57.1",
-		"eslint-config-prettier": "^8.8.0",
-		"eslint-import-resolver-typescript": "^3.6.1",
-		"eslint-plugin-import": "^2.29.1",
+		"eslint": "^9.39.4",
+		"eslint-config-prettier": "^9.1.2",
+		"eslint-import-resolver-typescript": "^4.4.4",
+		"eslint-plugin-import": "^2.32.0",
 		"gitmoji-cli": "^8.1.1",
+		"globals": "^17.6.0",
 		"ts-loader": "^9.4.2",
-		"typescript": "^5.9.3",
+		"typescript": "^6.0.3",
+		"undici": "^7.25.0",
 		"webpack": "^5.95.0",
 		"webpack-cli": "^5.0.2",
 		"wireit": "^0.9.5"

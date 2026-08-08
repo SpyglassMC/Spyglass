@@ -1,14 +1,16 @@
 import type * as core from '@spyglassmc/core'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import type {
+	EnumType,
 	LiteralType,
+	LongType,
 	McdocType,
 	NumericType,
 	StringType,
 	StructTypePairField,
 } from '../../type/index.js'
 import { handleAttributes, shouldKeepAccordingToAttributeFilters } from '../attribute/index.js'
-import type { SimplifiedEnum, SimplifiedMcdocType } from '../checker/index.js'
+import type { SimplifiedMcdocType } from '../checker/index.js'
 
 export type SimpleCompletionField = { key: string; field: core.DeepReadonly<StructTypePairField> }
 
@@ -138,7 +140,7 @@ export function getValues(
 }
 
 function getStringCompletions(
-	typeDef: core.DeepReadonly<StringType | SimplifiedEnum | LiteralType>,
+	typeDef: core.DeepReadonly<StringType | EnumType | LiteralType>,
 	ctx: McdocCompleterContext,
 ) {
 	const ans: SimpleCompletionValue[] = []
@@ -167,7 +169,7 @@ function getStringCompletions(
 }
 
 function getNumericCompletions(
-	typeDef: core.DeepReadonly<NumericType>,
+	typeDef: core.DeepReadonly<NumericType | LongType>,
 	ctx: McdocCompleterContext,
 ) {
 	const ans: SimpleCompletionValue[] = []

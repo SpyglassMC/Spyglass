@@ -2,6 +2,13 @@ import * as core from '@spyglassmc/core'
 import type { TypeDefSymbolData } from '@spyglassmc/mcdoc/lib/binder/index.js'
 import type { PackInfo, VersionInfo } from './common.js'
 import { ReleaseVersion } from './common.js'
+import type {
+	McmetaRegistries,
+	McmetaStates,
+	McmetaSummary,
+	McmetaVersion,
+	McmetaVersions,
+} from './mcmeta/types.js'
 
 // Matches development versions with the release version in its name
 const DevelopmentVersionPattern = /^(\d\d\.\d(?:\.\d?\d)?)\-\w+\-\d+$/
@@ -321,62 +328,3 @@ export const Fluids: McmetaStates = {
 	lava: [{ falling: ['false', 'true'] }, { falling: 'false' }],
 	water: [{ falling: ['false', 'true'] }, { falling: 'false' }],
 }
-
-// #region Types
-export interface McmetaVersion {
-	id: string
-	name: string
-	release_target: string | undefined
-	type: 'release' | 'snapshot'
-	stable: boolean
-	data_version: number
-	protocol_version: number
-	data_pack_version: number
-	resource_pack_version: number
-	build_time: string
-	release_time: string
-	sha1: string
-}
-export type McmetaVersions = McmetaVersion[]
-
-export interface McmetaSummary {
-	blocks: McmetaStates
-	commands: McmetaCommands
-	fluids: McmetaStates
-	registries: McmetaRegistries
-}
-
-export interface McmetaStates {
-	[id: string]: [{ [name: string]: string[] }, { [name: string]: string }]
-}
-
-export type McmetaCommands = RootTreeNode
-
-interface BaseTreeNode {
-	type: string
-	children?: { [name: string]: CommandTreeNode }
-	executable?: boolean
-	redirect?: [string]
-}
-
-export interface ArgumentTreeNode extends BaseTreeNode {
-	type: 'argument'
-	parser: string
-	properties?: { [name: string]: any }
-}
-
-export interface LiteralTreeNode extends BaseTreeNode {
-	type: 'literal'
-}
-
-export interface RootTreeNode extends BaseTreeNode {
-	type: 'root'
-	children: { [command: string]: LiteralTreeNode }
-}
-
-export type CommandTreeNode = ArgumentTreeNode | LiteralTreeNode | RootTreeNode
-
-export interface McmetaRegistries {
-	[id: string]: string[]
-}
-// #endregion

@@ -33,7 +33,7 @@ const Suites: Partial<
 	'minecraft:block_state': [{
 		content: ['stone', 'minecraft:stone', 'stone[foo=bar]', 'foo{bar:baz}'],
 	}],
-	'minecraft:color': [{ content: ['red', 'green'] }],
+	'minecraft:color': [{ content: ['red', 'green', 'reset'] }],
 	'minecraft:column_pos': [{ content: ['0 0', '~ ~', '~1 ~-2'] }],
 	'minecraft:component': [{ content: ['"hello world"', '""', '{"text":"hello world"}', '[""]'] }],
 	'minecraft:dialog': [{ content: ['minecraft:custom_options', '{type:"notice",title:"Hello"}'] }],
@@ -189,7 +189,11 @@ const Suites: Partial<
 	'minecraft:style': [{ content: ['{"bold": true}', '{ "color": "red", "italic": true }'] }],
 	'minecraft:swizzle': [{ content: ['xyz', 'x'] }],
 	'minecraft:team': [{ content: ['foo', '123'] }],
-	'minecraft:time': [{ content: ['0d', '0s', '0t', '0', '0foo'] }],
+	'minecraft:team_color': [{ content: ['red', 'green', 'reset'] }],
+	'minecraft:time': [
+		{ content: ['0d', '0s', '0t', '0', '0foo'] },
+		{ properties: { min: 2 }, content: ['1d', '1s', '1t', '1', '2', '0.1s', '0.05s'] },
+	],
 	'minecraft:uuid': [{
 		content: [
 			'dd12be42-52a9-4a91-a8a1-11c01849e498',

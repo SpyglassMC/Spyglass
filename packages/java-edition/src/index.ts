@@ -2,14 +2,14 @@ import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
-import { jsonUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
+import { jeFileUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
 import type { McmetaSummary, PackInfo } from './dependency/index.js'
 import {
+	fetchMcmetaVersions,
 	getMcmetaSummary,
 	getVanillaDatapack,
 	getVanillaMcdoc,
 	getVanillaResourcepack,
-	getVersions,
 	PackMcmeta,
 	resolveConfiguredVersion,
 	symbolRegistrar,
@@ -45,19 +45,28 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		const packs: PackInfo[] = []
 		for (let depth = 0; depth <= 2; depth += 1) {
 			for (const projectRoot of projectRoots) {
-				const files = await core.fileUtil.getAllFiles(externals, projectRoot, depth + 1)
-				for (const uri of files.filter(uri => uri.endsWith('/pack.mcmeta'))) {
-					if (searchedUris.has(uri)) {
-						continue
+				try {
+					const files = await core.fileUtil.getAllFiles(externals, projectRoot, depth + 1)
+					for (const uri of files.filter(uri => uri.endsWith('/pack.mcmeta'))) {
+						if (searchedUris.has(uri)) {
+							continue
+						}
+						searchedUris.add(uri)
+						const packRoot = core.fileUtil.dirname(uri)
+						const [format, type] = await Promise.all([
+							readPackFormat(uri),
+							PackMcmeta.getType(packRoot, externals),
+						])
+						if (format !== undefined) {
+							packs.push({ type, packRoot, format })
+						}
 					}
-					searchedUris.add(uri)
-					const packRoot = core.fileUtil.dirname(uri)
-					const [format, type] = await Promise.all([
-						readPackFormat(uri),
-						PackMcmeta.getType(packRoot, externals),
-					])
-					if (format !== undefined) {
-						packs.push({ type, packRoot, format })
+				} catch (e) {
+					if (!externals.error.isKind(e, 'ENOENT')) {
+						// Ignore ENOENT errors as missing files should not affect us finding the
+						// pack.mcmeta files.
+						// https://github.com/SpyglassMC/Spyglass/issues/2034
+						throw e
 					}
 				}
 			}
@@ -69,7 +78,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	registerUriBuilders(meta)
 
 	const [versions, packs] = await Promise.all([
-		getVersions(externals, logger),
+		fetchMcmetaVersions(externals, logger),
 		findPackMcmetas(),
 	])
 	if (!versions) {
@@ -131,15 +140,15 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	registerMcdocAttributes(meta, summary.commands, release)
 	registerPackFormatAttribute(meta, versions, packs)
 
-	meta.registerLanguage('zip', { extensions: ['.zip'] })
-	meta.registerLanguage('png', { extensions: ['.png'] })
-	meta.registerLanguage('ogg', { extensions: ['.ogg'] })
-	meta.registerLanguage('ttf', { extensions: ['.ttf'] })
-	meta.registerLanguage('otf', { extensions: ['.otf'] })
-	meta.registerLanguage('fsh', { extensions: ['.fsh'] })
-	meta.registerLanguage('vsh', { extensions: ['.vsh'] })
+	meta.registerLanguage('zip', { extensions: ['.zip'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('png', { extensions: ['.png'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('ogg', { extensions: ['.ogg'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('ttf', { extensions: ['.ttf'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('otf', { extensions: ['.otf'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('fsh', { extensions: ['.fsh'], uriPredicate: jeFileUriPredicate })
+	meta.registerLanguage('vsh', { extensions: ['.vsh'], uriPredicate: jeFileUriPredicate })
 
-	json.getInitializer(jsonUriPredicate)(ctx)
+	json.getInitializer(jeFileUriPredicate)(ctx)
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)

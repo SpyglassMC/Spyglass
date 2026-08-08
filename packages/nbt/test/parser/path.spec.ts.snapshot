@@ -73,15 +73,72 @@ exports[`nbt path() > Parse '[ ]' 1`] = `
     "children": [
       {
         "type": "nbt:path/index",
+        "children": [
+          {
+            "type": "integer",
+            "range": {
+              "start": 1,
+              "end": 1
+            },
+            "value": 0
+          }
+        ],
         "range": {
           "start": 0,
-          "end": 3
+          "end": 1
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 3
+      "end": 1
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected a compound filter or a key but got an index",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "message": "Expected an integer",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 1,
+        "end": 1
+      },
+      "message": "Expected “]” but got “ ”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt path() > Parse '[]' 1`] = `
+{
+  "node": {
+    "type": "nbt:path",
+    "children": [
+      {
+        "type": "nbt:path/index",
+        "range": {
+          "start": 0,
+          "end": 2
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 2
     }
   },
   "errors": [
@@ -186,7 +243,7 @@ exports[`nbt path() > Parse 'foo' 1`] = `
 }
 `;
 
-exports[`nbt path() > Parse 'foo.[ ]' 1`] = `
+exports[`nbt path() > Parse 'foo.[]' 1`] = `
 {
   "node": {
     "type": "nbt:path",
@@ -224,13 +281,13 @@ exports[`nbt path() > Parse 'foo.[ ]' 1`] = `
         "type": "nbt:path/index",
         "range": {
           "start": 4,
-          "end": 7
+          "end": 6
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 7
+      "end": 6
     }
   },
   "errors": []
@@ -424,271 +481,41 @@ exports[`nbt path() > Parse 'foo[ 0 ]' 1`] = `
           {
             "type": "integer",
             "range": {
-              "start": 5,
-              "end": 6
+              "start": 4,
+              "end": 4
             },
             "value": 0
           }
         ],
         "range": {
           "start": 3,
-          "end": 8
+          "end": 4
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 8
+      "end": 4
     }
   },
-  "errors": []
-}
-`;
-
-exports[`nbt path() > Parse 'foo[ ]' 1`] = `
-{
-  "node": {
-    "type": "nbt:path",
-    "children": [
-      {
-        "type": "nbt:path/key",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "children": [
-          {
-            "type": "nbt:string",
-            "range": {
-              "start": 0,
-              "end": 3
-            },
-            "value": "foo",
-            "valueMap": [
-              {
-                "inner": {
-                  "start": 0,
-                  "end": 0
-                },
-                "outer": {
-                  "start": 0,
-                  "end": 0
-                }
-              }
-            ]
-          }
-        ]
+  "errors": [
+    {
+      "range": {
+        "start": 4,
+        "end": 4
       },
-      {
-        "type": "nbt:path/index",
-        "range": {
-          "start": 3,
-          "end": 6
-        }
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 6
+      "message": "Expected an integer",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 4,
+        "end": 4
+      },
+      "message": "Expected “]” but got “ ”",
+      "severity": 3
     }
-  },
-  "errors": []
-}
-`;
-
-exports[`nbt path() > Parse 'foo[ ].[ ]' 1`] = `
-{
-  "node": {
-    "type": "nbt:path",
-    "children": [
-      {
-        "type": "nbt:path/key",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "children": [
-          {
-            "type": "nbt:string",
-            "range": {
-              "start": 0,
-              "end": 3
-            },
-            "value": "foo",
-            "valueMap": [
-              {
-                "inner": {
-                  "start": 0,
-                  "end": 0
-                },
-                "outer": {
-                  "start": 0,
-                  "end": 0
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "nbt:path/index",
-        "range": {
-          "start": 3,
-          "end": 6
-        }
-      },
-      {
-        "type": "nbt:path/index",
-        "range": {
-          "start": 7,
-          "end": 10
-        }
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 10
-    }
-  },
-  "errors": []
-}
-`;
-
-exports[`nbt path() > Parse 'foo[ ].bar' 1`] = `
-{
-  "node": {
-    "type": "nbt:path",
-    "children": [
-      {
-        "type": "nbt:path/key",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "children": [
-          {
-            "type": "nbt:string",
-            "range": {
-              "start": 0,
-              "end": 3
-            },
-            "value": "foo",
-            "valueMap": [
-              {
-                "inner": {
-                  "start": 0,
-                  "end": 0
-                },
-                "outer": {
-                  "start": 0,
-                  "end": 0
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "nbt:path/index",
-        "range": {
-          "start": 3,
-          "end": 6
-        }
-      },
-      {
-        "type": "nbt:path/key",
-        "range": {
-          "start": 7,
-          "end": 10
-        },
-        "children": [
-          {
-            "type": "nbt:string",
-            "range": {
-              "start": 7,
-              "end": 10
-            },
-            "value": "bar",
-            "valueMap": [
-              {
-                "inner": {
-                  "start": 0,
-                  "end": 0
-                },
-                "outer": {
-                  "start": 7,
-                  "end": 7
-                }
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 10
-    }
-  },
-  "errors": []
-}
-`;
-
-exports[`nbt path() > Parse 'foo[ ][ ]' 1`] = `
-{
-  "node": {
-    "type": "nbt:path",
-    "children": [
-      {
-        "type": "nbt:path/key",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "children": [
-          {
-            "type": "nbt:string",
-            "range": {
-              "start": 0,
-              "end": 3
-            },
-            "value": "foo",
-            "valueMap": [
-              {
-                "inner": {
-                  "start": 0,
-                  "end": 0
-                },
-                "outer": {
-                  "start": 0,
-                  "end": 0
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "nbt:path/index",
-        "range": {
-          "start": 3,
-          "end": 6
-        }
-      },
-      {
-        "type": "nbt:path/index",
-        "range": {
-          "start": 6,
-          "end": 9
-        }
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 9
-    }
-  },
-  "errors": []
+  ]
 }
 `;
 
@@ -730,27 +557,413 @@ exports[`nbt path() > Parse 'foo[ { } ]' 1`] = `
         "type": "nbt:path/index",
         "children": [
           {
-            "type": "nbt:compound",
+            "type": "integer",
             "range": {
-              "start": 5,
-              "end": 8
+              "start": 4,
+              "end": 4
             },
-            "children": [],
-            "innerRange": {
-              "start": 6,
-              "end": 7
-            }
+            "value": 0
           }
         ],
         "range": {
           "start": 3,
-          "end": 10
+          "end": 4
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 10
+      "end": 4
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 4,
+        "end": 4
+      },
+      "message": "Expected an integer",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 4,
+        "end": 4
+      },
+      "message": "Expected “]” but got “ ”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt path() > Parse 'foo[0]' 1`] = `
+{
+  "node": {
+    "type": "nbt:path",
+    "children": [
+      {
+        "type": "nbt:path/key",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "children": [
+          {
+            "type": "nbt:string",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "nbt:path/index",
+        "children": [
+          {
+            "type": "integer",
+            "range": {
+              "start": 4,
+              "end": 5
+            },
+            "value": 0
+          }
+        ],
+        "range": {
+          "start": 3,
+          "end": 6
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 6
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt path() > Parse 'foo[]' 1`] = `
+{
+  "node": {
+    "type": "nbt:path",
+    "children": [
+      {
+        "type": "nbt:path/key",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "children": [
+          {
+            "type": "nbt:string",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "nbt:path/index",
+        "range": {
+          "start": 3,
+          "end": 5
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 5
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt path() > Parse 'foo[].[]' 1`] = `
+{
+  "node": {
+    "type": "nbt:path",
+    "children": [
+      {
+        "type": "nbt:path/key",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "children": [
+          {
+            "type": "nbt:string",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "nbt:path/index",
+        "range": {
+          "start": 3,
+          "end": 5
+        }
+      },
+      {
+        "type": "nbt:path/index",
+        "range": {
+          "start": 6,
+          "end": 8
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 8
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt path() > Parse 'foo[].bar' 1`] = `
+{
+  "node": {
+    "type": "nbt:path",
+    "children": [
+      {
+        "type": "nbt:path/key",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "children": [
+          {
+            "type": "nbt:string",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "nbt:path/index",
+        "range": {
+          "start": 3,
+          "end": 5
+        }
+      },
+      {
+        "type": "nbt:path/key",
+        "range": {
+          "start": 6,
+          "end": 9
+        },
+        "children": [
+          {
+            "type": "nbt:string",
+            "range": {
+              "start": 6,
+              "end": 9
+            },
+            "value": "bar",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 6,
+                  "end": 6
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 9
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt path() > Parse 'foo[][]' 1`] = `
+{
+  "node": {
+    "type": "nbt:path",
+    "children": [
+      {
+        "type": "nbt:path/key",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "children": [
+          {
+            "type": "nbt:string",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "nbt:path/index",
+        "range": {
+          "start": 3,
+          "end": 5
+        }
+      },
+      {
+        "type": "nbt:path/index",
+        "range": {
+          "start": 5,
+          "end": 7
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 7
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt path() > Parse 'foo[{ }]' 1`] = `
+{
+  "node": {
+    "type": "nbt:path",
+    "children": [
+      {
+        "type": "nbt:path/key",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "children": [
+          {
+            "type": "nbt:string",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "nbt:path/index",
+        "children": [
+          {
+            "type": "nbt:compound",
+            "range": {
+              "start": 4,
+              "end": 7
+            },
+            "children": [],
+            "innerRange": {
+              "start": 5,
+              "end": 6
+            }
+          }
+        ],
+        "range": {
+          "start": 3,
+          "end": 8
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 8
     }
   },
   "errors": []

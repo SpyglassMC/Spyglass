@@ -2,6 +2,7 @@ import * as core from '@spyglassmc/core'
 import { sequence } from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
+import * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../../dependency/index.js'
@@ -161,7 +162,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:column_pos':
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
-			return wrap(typeRefParser('::java::server::util::text::Text'))
+			return wrap(typeRefParser(mcdoc.typeRefPath('text_component')))
 		case 'minecraft:dialog':
 			return wrap(resourceOrInline('dialog'))
 		case 'minecraft:dimension':
@@ -172,6 +173,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(commandLiteral({ pool: EntityAnchorArgumentValues }))
 		case 'minecraft:entity_summon':
 			return wrap(core.resourceLocation({ category: 'entity_type' }))
+		case 'minecraft:feature':
+			return wrap(resourceOrInline('worldgen/feature'))
 		case 'minecraft:float_range':
 			return wrap(
 				range(
@@ -233,8 +236,8 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:objective':
 			return wrap(
 				objective(
-					core.SymbolUsageType.is(treeNode.properties?.usageType)
-						? treeNode.properties?.usageType
+					core.SymbolUsageType.is(treeNode.properties?.['usageType'])
+						? treeNode.properties?.['usageType']
 						: undefined,
 				),
 			)
@@ -272,16 +275,30 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap((src, ctx) => {
 				return commandLiteral({ pool: getScoreboardSlotArgumentValues(ctx) })(src, ctx)
 			})
+		case 'minecraft:slot_source':
+			return wrap(slotSource)
 		case 'minecraft:style':
-			return wrap(typeRefParser('::java::server::util::text::TextStyle'))
+			return wrap(typeRefParser(mcdoc.typeRefPath('text_style')))
 		case 'minecraft:swizzle':
 			return wrap(commandLiteral({ pool: SwizzleArgumentValues }))
 		case 'minecraft:team':
 			return wrap(
 				team(
-					core.SymbolUsageType.is(treeNode.properties?.usageType)
-						? treeNode.properties?.usageType
+					core.SymbolUsageType.is(treeNode.properties?.['usageType'])
+						? treeNode.properties?.['usageType']
 						: undefined,
+				),
+			)
+		case 'minecraft:team_color':
+			return wrap(
+				core.map(
+					commandLiteral({ pool: core.Color.ColorNames }),
+					(res) => ({
+						...res,
+						color: core.Color.NamedColors.has(res.value)
+							? core.Color.fromCompositeRGB(core.Color.NamedColors.get(res.value)!)
+							: undefined,
+					}),
 				),
 			)
 		case 'minecraft:template_mirror':
@@ -289,7 +306,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:template_rotation':
 			return wrap(commandLiteral({ pool: RotationValues }))
 		case 'minecraft:time':
-			return wrap(time)
+			return wrap(time(treeNode.properties?.min))
 		case 'minecraft:uuid':
 			return wrap(uuid)
 		case 'minecraft:vec2':
@@ -303,16 +320,16 @@ export const argument: mcf.ArgumentParserGetter = (
 			if (core.ResourceLocationNode.is(advancementNode)) {
 				return wrap(criterion(
 					core.ResourceLocationNode.toString(advancementNode, 'full'),
-					core.SymbolUsageType.is(treeNode.properties?.usageType)
-						? treeNode.properties?.usageType
+					core.SymbolUsageType.is(treeNode.properties?.['usageType'])
+						? treeNode.properties?.['usageType']
 						: undefined,
 				))
 			}
 			return wrap(greedyString)
 		case 'spyglassmc:tag':
 			return wrap(tag(
-				core.SymbolUsageType.is(treeNode.properties?.usageType)
-					? treeNode.properties?.usageType
+				core.SymbolUsageType.is(treeNode.properties?.['usageType'])
+					? treeNode.properties?.['usageType']
 					: undefined,
 			))
 		default:
@@ -1479,6 +1496,14 @@ export function scoreHolder(
 	)
 }
 
+const slotSource: core.Parser<core.LiteralNode | NbtResourceNode | core.ResourceLocationNode> = core
+	.any([
+		(src, ctx) => {
+			return commandLiteral({ pool: getItemSlotsArgumentValues(ctx) })(src, ctx)
+		},
+		resourceOrInline('slot_source'),
+	])
+
 function symbol(
 	options: core.AllCategory | core.SymbolOptions,
 	terminators: string[] = [],
@@ -1553,24 +1578,33 @@ function unquotableSymbol(
 	return validateUnquotable(symbol(options, terminators))
 }
 
-const time: core.InfallibleParser<TimeNode> = core.map(
-	core.sequence([
-		float(0, undefined),
-		core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
-	]),
-	(res) => {
-		const valueNode = res.children.find(core.FloatNode.is)!
-		const unitNode = res.children.find(core.LiteralNode.is)
-		const ans: TimeNode = {
-			type: 'mcfunction:time',
-			range: res.range,
-			children: res.children,
-			value: valueNode.value,
-			unit: unitNode?.value,
-		}
-		return ans
-	},
-)
+function time(minimum = 0): core.InfallibleParser<TimeNode> {
+	return core.validate(
+		core.map(
+			core.sequence([
+				float(),
+				core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
+			]),
+			(res) => {
+				const valueNode = res.children.find(core.FloatNode.is)!
+				const unitNode = res.children.find(core.LiteralNode.is)
+				const ans: TimeNode = {
+					type: 'mcfunction:time',
+					range: res.range,
+					children: res.children,
+					value: valueNode.value,
+					unit: unitNode?.value,
+				}
+				return ans
+			},
+		),
+		(res) => {
+			const scale = TimeNode.UnitToTicks.get(res.unit ?? '')!
+			return Math.round(res.value * scale) >= minimum
+		},
+		localize('mcfunction.parser.time.below-min', minimum),
+	)
+}
 
 const unquotedString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: core.BrigadierUnquotableOption,

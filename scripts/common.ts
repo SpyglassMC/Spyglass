@@ -9,8 +9,11 @@ export interface PackageInfo {
 	dependencies?: string[]
 	devDependencies?: string[]
 	released?: {
+		private?: false
 		commit: string
 		version: PackageVersion
+	} | {
+		private: true
 	}
 }
 

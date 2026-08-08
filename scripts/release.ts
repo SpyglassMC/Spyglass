@@ -3,6 +3,8 @@
 // - BOT_EMAIL
 // - BOT_NAME
 // - GITHUB_TOKEN
+// - WORKFLOW_ACTOR (optional)
+// - WORKFLOW_ACTOR_ID (optional)
 
 import cp from 'child_process'
 import fs from 'fs'
@@ -133,9 +135,14 @@ async function shell(
 	file: string,
 	args: readonly string[],
 	cwd: string,
-	env?: Record<string, string>,
+	{ env, redactArgs }: {
+		env?: Record<string, string>
+		redactArgs?: boolean
+	} = {},
 ) {
-	console.log(`Running ${file} with ${JSON.stringify(args)} at ${cwd}...`)
+	console.log(
+		`Running ${file} with ${redactArgs ? '[REDACTED]' : JSON.stringify(args)} at ${cwd}...`,
+	)
 	const result = await execFile(file, args, { cwd, env })
 	console.log(result.stdout.split(/\r?\n/).map(v => `\t${v}`).join('\n'))
 	if (result.stderr) {
@@ -149,12 +156,19 @@ async function dryRunableShell(
 	file: string,
 	args: readonly string[],
 	cwd: string,
-	env?: Record<string, string>,
+	{ env, redactArgs }: {
+		env?: Record<string, string>
+		redactArgs?: boolean
+	} = {},
 ): Promise<unknown> {
 	if (isDryRun) {
-		console.log(`[Dry run mode] Would have run ${file} with ${JSON.stringify(args)} at ${cwd}.`)
+		console.log(
+			`[Dry run mode] Would have run ${file} with ${
+				redactArgs ? '[REDACTED]' : JSON.stringify(args)
+			} at ${cwd}.`,
+		)
 	} else {
-		return shell(file, args, cwd, env)
+		return shell(file, args, cwd, { env, redactArgs })
 	}
 	return
 }
@@ -174,7 +188,13 @@ async function main(): Promise<void> {
 		console.log('Start releasing...')
 	}
 
-	const { BOT_EMAIL: botEmail, BOT_NAME: botName, GITHUB_TOKEN: githubToken } = process.env
+	const {
+		BOT_EMAIL: botEmail,
+		BOT_NAME: botName,
+		GITHUB_TOKEN: githubToken,
+		WORKFLOW_ACTOR: workflowActor,
+		WORKFLOW_ACTOR_ID: workflowActorId,
+	} = process.env
 	if (!isDryRun && !(botEmail && botName && githubToken)) {
 		throw new Error('BOT_EMAIL, BOT_NAME, GITHUB_TOKEN environment variables required.')
 	}
@@ -193,7 +213,9 @@ async function main(): Promise<void> {
 			packagesToBump.set(name, type)
 			for (const [key, info] of Object.entries(packagesInfo)) {
 				const dependencies = [...info.dependencies ?? [], ...info.devDependencies ?? []]
-				if (dependencies.includes(name) && !packagesToBump.has(key)) {
+				if (
+					dependencies.includes(name) && !packagesToBump.has(key) && !info.released?.private
+				) {
 					console.log(`${key}: patch bump due to its dependency on ${name}`)
 					addPackageToBump(key, BumpType.Patch)
 				}
@@ -203,6 +225,10 @@ async function main(): Promise<void> {
 
 	for (const [key, info] of Object.entries(packagesInfo)) {
 		maxPackageNameLength = Math.max(maxPackageNameLength, key.length)
+		if (info.released?.private) {
+			console.log(`${key}: skip analyzing commits for private package`)
+			continue
+		}
 		const commits = await getPackageCommits(key)
 		console.log(`${key}: analyzing commits...`)
 		if (!info.released) {
@@ -234,12 +260,16 @@ async function main(): Promise<void> {
 	const versionSummaries: string[] = []
 	for (const [key, info] of Object.entries(packagesInfo)) {
 		const displayableKey = key + ':' + ' '.repeat(maxPackageNameLength - key.length)
+		if (info.released?.private) {
+			versionSummaries.push(`${displayableKey} (private)`)
+			continue
+		}
 		const type = packagesToBump.get(key)
 		if (type === undefined) {
 			versionSummaries.push(`${displayableKey} ${info.released!.version} (unchanged)`)
 		} else {
 			const oldVersion = info.released!.version
-			info.released!.version = bumpVersion(packagesInfo[key].released!.version, type)
+			info.released!.version = bumpVersion(oldVersion, type)
 			versionSummaries.push(
 				`${displayableKey} ${oldVersion} -> ${info.released!.version} (${
 					bumpTypeToString(type)
@@ -271,8 +301,10 @@ async function main(): Promise<void> {
 		console.log('Committing changes...')
 		const commitMessage = `🔖 v${rootVersion} [ci skip]`
 		const commitEnvVariables = isDryRun ? undefined : {
-			GIT_AUTHOR_NAME: botName!,
-			GIT_AUTHOR_EMAIL: botEmail!,
+			GIT_AUTHOR_NAME: workflowActor ?? botName!,
+			GIT_AUTHOR_EMAIL: ((workflowActor && workflowActorId)
+				? `${workflowActorId}+${workflowActor}@users.noreply.github.com`
+				: undefined) ?? botEmail!,
 			GIT_COMMITTER_NAME: botName!,
 			GIT_COMMITTER_EMAIL: botEmail!,
 		} as const
@@ -283,16 +315,28 @@ async function main(): Promise<void> {
 			'git',
 			['commit', `-m ${commitMessage}\n\n${versionSummary}`],
 			RepoRoot,
-			commitEnvVariables,
+			{ env: commitEnvVariables },
 		)
 		await dryRunableShell(isDryRun, 'git', ['tag', `v${rootVersion}`], RepoRoot)
-		await dryRunableShell(isDryRun, 'git', [
-			'remote',
-			'set-url',
-			'origin',
-			`https://${botName}:${githubToken}@github.com/SpyglassMC/Spyglass.git`,
-		], RepoRoot)
-		await dryRunableShell(isDryRun, 'git', ['pull', '--rebase'], RepoRoot, commitEnvVariables)
+		await dryRunableShell(
+			isDryRun,
+			'git',
+			[
+				'remote',
+				'set-url',
+				'origin',
+				`https://${botName}:${githubToken}@github.com/SpyglassMC/Spyglass.git`,
+			],
+			RepoRoot,
+			{ redactArgs: true },
+		)
+		await dryRunableShell(
+			isDryRun,
+			'git',
+			['pull', '--rebase'],
+			RepoRoot,
+			{ env: commitEnvVariables },
+		)
 		await dryRunableShell(isDryRun, 'git', ['push'], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['push', '--tags'], RepoRoot)
 	} else {

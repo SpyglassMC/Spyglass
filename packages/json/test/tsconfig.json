@@ -2,6 +2,9 @@
 	"extends": "../../tsconfig-type-strip",
 	"references": [
 		{
+			"path": "../../core/test"
+		},
+		{
 			"path": "../src"
 		}
 	]

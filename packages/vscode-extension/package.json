@@ -48,11 +48,11 @@
   ],
   "devDependencies": {
     "@types/vscode": "1.67.0",
-    "@vscode/vsce": "^2.29.0",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.7.1",
     "esbuild": "^0.25.2",
     "ovsx": "^0.9.1",
-    "vscode-languageclient": "^9.0.1",
-    "vscode-test": "^1.5.2"
+    "vscode-languageclient": "^9.0.1"
   },
   "repository": {
     "type": "git",
@@ -63,7 +63,7 @@
     "url": "https://github.com/SpyglassMC/Spyglass/issues"
   },
   "engines": {
-    "vscode": "^1.82.0"
+    "vscode": "^1.101.0"
   },
   "displayName": "%spyglassmc.displayName%",
   "description": "%spyglassmc.description%",
@@ -98,11 +98,15 @@
           "data/*/advancement/**/*.json",
           "data/*/advancements/**/*.json",
           "data/*/banner_pattern/**/*.json",
+          "data/*/cat_sound_variant/**/*.json",
           "data/*/cat_variant/**/*.json",
           "data/*/chat_type/**/*.json",
+          "data/*/chicken_sound_variant/**/*.json",
           "data/*/chicken_variant/**/*.json",
+          "data/*/cow_sound_variant/**/*.json",
           "data/*/cow_variant/**/*.json",
           "data/*/damage_type/**/*.json",
+          "data/*/decorated_pot_pattern/**/*.json",
           "data/*/dialog/**/*.json",
           "data/*/dimension/**/*.json",
           "data/*/dimension_type/**/*.json",
@@ -114,12 +118,16 @@
           "data/*/jukebox_song/**/*.json",
           "data/*/loot_table/**/*.json",
           "data/*/loot_tables/**/*.json",
+          "data/*/number_provider/**/*.json",
           "data/*/painting_variant/**/*.json",
+          "data/*/pig_sound_variant/**/*.json",
           "data/*/pig_variant/**/*.json",
           "data/*/predicate/**/*.json",
           "data/*/predicates/**/*.json",
           "data/*/recipe/**/*.json",
           "data/*/recipes/**/*.json",
+          "data/*/sulfur_cube_archetype/**/*.json",
+          "data/*/slot_source/**/*.json",
           "data/*/tags/**/*.json",
           "data/*/test_instance/**/*.json",
           "data/*/test_environment/**/*.json",
@@ -131,6 +139,7 @@
           "data/*/villager_trade/**/*.json",
           "data/*/wolf_sound_variant/**/*.json",
           "data/*/wolf_variant/**/*.json",
+          "data/*/world_clock/**/*.json",
           "data/*/zombie_nautilus_variant/**/*.json",
           "data/*/worldgen/**/*.json",
           "data/minecraft/**/*.json"
@@ -189,6 +198,12 @@
     ],
     "commands": [
       {
+        "command": "spyglassmc.analyzeProject",
+        "title": "%spyglassmc.commands.analyzeProject.title%",
+        "category": "Spyglass",
+        "enablement": "workspaceFolderCount != 0"
+      },
+      {
         "command": "spyglassmc.dataHackPubify",
         "title": "%spyglassmc.commands.dataHackPubify.title%",
         "category": "Spyglass"
@@ -212,6 +227,10 @@
     ],
     "menus": {
       "commandPalette": [
+        {
+          "command": "spyglassmc.analyzeProject",
+          "when": "workspaceFolderCount != 0"
+        },
         {
           "command": "spyglassmc.dataHackPubify"
         },
@@ -294,7 +313,9 @@
         },
         "spyglassmc.env.feature.inlayHint.enabledNodes": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [
             "boolean",
             "double",
@@ -308,8 +329,10 @@
         },
         "spyglassmc.env.feature.semanticColoring.disabledLanguages": {
           "type": "array",
-          "items": { "type": "string" },
-          "default": [ ]
+          "items": {
+            "type": "string"
+          },
+          "default": []
         },
         "spyglassmc.env.feature.signatures": {
           "type": "boolean",

@@ -128,7 +128,8 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 			const value = typeDef.value.value
 			return (node, ctx) => {
-				if (value % config !== 0) {
+				const moduloResult = typeof value === 'number' ? value % config : value % BigInt(config)
+				if (moduloResult !== 0 && moduloResult !== 0n) {
 					ctx.err.report(
 						localize('not-divisible-by', value, config),
 						node,

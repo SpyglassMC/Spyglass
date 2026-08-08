@@ -49,7 +49,7 @@ exports[`JSON number parser > number() > Parse '-1' 1`] = `
           "start": 0,
           "end": 2
         },
-        "value": "-1"
+        "value": -1
       }
     ],
     "value": {
@@ -58,7 +58,7 @@ exports[`JSON number parser > number() > Parse '-1' 1`] = `
         "start": 0,
         "end": 2
       },
-      "value": "-1"
+      "value": -1
     },
     "range": {
       "start": 0,
@@ -80,7 +80,7 @@ exports[`JSON number parser > number() > Parse '0' 1`] = `
           "start": 0,
           "end": 1
         },
-        "value": "0"
+        "value": 0
       }
     ],
     "value": {
@@ -89,7 +89,7 @@ exports[`JSON number parser > number() > Parse '0' 1`] = `
         "start": 0,
         "end": 1
       },
-      "value": "0"
+      "value": 0
     },
     "range": {
       "start": 0,
@@ -142,7 +142,7 @@ exports[`JSON number parser > number() > Parse '1' 1`] = `
           "start": 0,
           "end": 1
         },
-        "value": "1"
+        "value": 1
       }
     ],
     "value": {
@@ -151,7 +151,7 @@ exports[`JSON number parser > number() > Parse '1' 1`] = `
         "start": 0,
         "end": 1
       },
-      "value": "1"
+      "value": 1
     },
     "range": {
       "start": 0,

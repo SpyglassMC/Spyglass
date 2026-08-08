@@ -1,9 +1,9 @@
 import cors from 'cors'
 import express, { type Request } from 'express'
 import assert from 'node:assert/strict'
-import path from 'node:path'
 import pino from 'pino'
 import { pinoHttp } from 'pino-http'
+import { createUnicodeApp } from './unicode.js'
 import {
 	assertRootDir,
 	errorHandler,
@@ -19,7 +19,6 @@ import {
 	userAgentEnforcer,
 	verifySignature,
 } from './utils.js'
-import { createUnicodeApp } from './unicode.js'
 
 const { bunnyCdnApiKey, bunnyCdnPullZoneId, dir: rootDir, discordLogWebhook, port, webhookSecret } =
 	loadConfig()
@@ -168,12 +167,12 @@ const app = express()
 
 app.listen(port, () => {
 	logger.info({ port, rootDir }, 'Spyglass API server started')
-	if (process.env.NOTIFY_SOCKET) {
+	if (process.env['NOTIFY_SOCKET']) {
 		systemdNotify('READY').catch((e) => logger.error(e, 'systemd-notify error'))
 	}
 })
 
-if (process.env.NOTIFY_SOCKET) {
+if (process.env['NOTIFY_SOCKET']) {
 	setInterval(async () => {
 		try {
 			const data = await (await fetch(`http://localhost:${port}/mcje/versions`)).json()

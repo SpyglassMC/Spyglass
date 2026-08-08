@@ -1,5 +1,7 @@
+import type { FsPromisesApi } from '@jsonjoy.com/fs-node-utils'
 import type {
 	ColorToken,
+	Externals,
 	FileNode,
 	LanguageError,
 	Parser,
@@ -26,8 +28,9 @@ import {
 	UriBinderContext,
 	VanillaConfig,
 } from '@spyglassmc/core'
-import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
+import { getNodeJsExternals, NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import { fail } from 'node:assert/strict'
+import type fsp from 'node:fs/promises'
 import type { TestContext } from 'node:test'
 import type { URL } from 'node:url'
 import { fileURLToPath } from 'node:url'
@@ -51,7 +54,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 		profilers: data.profilers ?? ProfilerFactory.noop(),
 		projectRoots: data.projectRoots ?? ['file:///'],
 		roots: data.roots ?? [],
-		symbols: data.symbols ?? new SymbolUtil({}, externals.event.EventEmitter),
+		symbols: data.symbols ?? new SymbolUtil({}),
 	}
 }
 
@@ -194,7 +197,7 @@ export class SimpleProject {
 	readonly #global: SymbolTable = Object.create(null)
 	#nodes: Record<string, FileNode<AstNode>> = Object.create(null)
 
-	readonly #symbols = new SymbolUtil(this.#global, NodeJsExternals.event.EventEmitter)
+	readonly #symbols = new SymbolUtil(this.#global)
 
 	readonly #meta: MetaRegistry
 	readonly #files: readonly { uri: string; content: string }[]
@@ -314,6 +317,36 @@ export class SimpleProject {
 			...(keys.includes('colorTokens') && { colorTokens: this.#colorTokens }),
 			...(keys.includes('global') && { global: SymbolTable.unlink(this.#global) }),
 			...(keys.includes('nodes') && { nodes: this.#nodes }),
+		}
+	}
+}
+
+/**
+ * - `nodeFsp`: use `memfs()` to create a Node.js `fs/promises` compatible API for testing.
+ */
+export function mockExternals(
+	{ nodeFsp }: { nodeFsp: FsPromisesApi },
+): Externals {
+	return getNodeJsExternals({
+		nodeFsp: nodeFsp as unknown as typeof fsp,
+	})
+}
+
+export async function assertUriExists(nodeFsp: typeof fsp, uri: string) {
+	try {
+		await nodeFsp.access(uri)
+	} catch (e) {
+		fail(e as Error)
+	}
+}
+
+export async function assertUriNotExists(nodeFsp: typeof fsp, uri: string) {
+	try {
+		await nodeFsp.access(uri)
+		fail(`Expected ${uri} to not exist`)
+	} catch (e) {
+		if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
+			fail(e as Error)
 		}
 	}
 }

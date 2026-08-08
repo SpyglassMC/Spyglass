@@ -1,12 +1,15 @@
 import { Logger, SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
-import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as fs from 'fs'
 import { describe, it } from 'node:test'
 import * as path from 'path'
 import url from 'url'
 import type { PackInfo } from '../../lib/dependency/common.js'
-import type { McmetaRegistries, McmetaStates, McmetaVersions } from '../../lib/dependency/mcmeta.js'
 import { Fluids, resolveConfiguredVersion, symbolRegistrar } from '../../lib/dependency/mcmeta.js'
+import type {
+	McmetaRegistries,
+	McmetaStates,
+	McmetaVersions,
+} from '../../lib/dependency/mcmeta/index.js'
 
 function readJsonSync(path: string): unknown {
 	return JSON.parse(fs.readFileSync(path, 'utf-8'))
@@ -66,7 +69,7 @@ describe('mcmeta', () => {
 				fluids: Fluids,
 				registries: Fixtures.Registries,
 			}, '1.18.2')
-			const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
+			const symbols = new SymbolUtil({})
 			registrar(symbols, {})
 			t.assert.snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})

@@ -1,11 +1,22 @@
 {
+	"benchmarks": {
+		"dependencies": [
+			"core",
+			"java-edition",
+			"json",
+			"mcdoc"
+		],
+		"released": {
+			"private": true
+		}
+	},
 	"core": {
 		"dependencies": [
 			"locales"
 		],
 		"released": {
-			"commit": "4b52f89f94ac9c1ef246a172f69ca8e2c9ce010c",
-			"version": "0.4.43"
+			"commit": "9be667a92236ad5ae7ba90bba8af7f25e617d041",
+			"version": "0.4.53"
 		}
 	},
 	"discord-bot": {
@@ -16,8 +27,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "9fe3c6e06655352c42ef953e39b1590fcac9baae",
-			"version": "0.3.57"
+			"commit": "45875a8e9155d22daab6145407f555b094ca4a1e",
+			"version": "0.3.68"
 		}
 	},
 	"java-edition": {
@@ -30,8 +41,8 @@
 			"nbt"
 		],
 		"released": {
-			"commit": "9c63e26621c7504a29d897e62933687bb34206b0",
-			"version": "0.3.55"
+			"commit": "7afca8f147fffebcb48981654a910ff84bed698e",
+			"version": "0.3.66"
 		}
 	},
 	"json": {
@@ -41,8 +52,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "fd1c75c0f4716cd541e90d94ac73a13dd4d9e35b",
-			"version": "0.3.47"
+			"commit": "31b817702c30ce728406fe1545c6384a211a260d",
+			"version": "0.3.57"
 		}
 	},
 	"language-server": {
@@ -53,14 +64,14 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "50c62e4a7fb030a7e267aea70739475e3db3c66a",
-			"version": "0.4.55"
+			"commit": "9be667a92236ad5ae7ba90bba8af7f25e617d041",
+			"version": "0.4.66"
 		}
 	},
 	"locales": {
 		"released": {
-			"commit": "2a3d47e55358b8b0ac6f788c333e8b272649c0d4",
-			"version": "0.3.22"
+			"commit": "9be667a92236ad5ae7ba90bba8af7f25e617d041",
+			"version": "0.3.27"
 		}
 	},
 	"mcdoc": {
@@ -69,8 +80,8 @@
 			"locales"
 		],
 		"released": {
-			"commit": "90610b5aa04f9f9687a2ceb4f3793e7f63e1e347",
-			"version": "0.3.47"
+			"commit": "45875a8e9155d22daab6145407f555b094ca4a1e",
+			"version": "0.3.57"
 		}
 	},
 	"mcdoc-cli": {
@@ -79,8 +90,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "fd1c75c0f4716cd541e90d94ac73a13dd4d9e35b",
-			"version": "0.1.48"
+			"commit": "31b817702c30ce728406fe1545c6384a211a260d",
+			"version": "0.1.59"
 		}
 	},
 	"mcfunction": {
@@ -89,8 +100,8 @@
 			"locales"
 		],
 		"released": {
-			"commit": "fd1c75c0f4716cd541e90d94ac73a13dd4d9e35b",
-			"version": "0.2.46"
+			"commit": "45875a8e9155d22daab6145407f555b094ca4a1e",
+			"version": "0.2.56"
 		}
 	},
 	"nbt": {
@@ -100,8 +111,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "ad85406bddf04b81ea1f13672da563e5c0f9006d",
-			"version": "0.3.49"
+			"commit": "31b817702c30ce728406fe1545c6384a211a260d",
+			"version": "0.3.59"
 		}
 	},
 	"playground": {
@@ -112,8 +123,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "10b6a34f43f193d15bd258a36a65f0d3e6d74598",
-			"version": "0.2.55"
+			"commit": "45875a8e9155d22daab6145407f555b094ca4a1e",
+			"version": "0.2.66"
 		}
 	},
 	"vscode-extension": {
@@ -121,14 +132,14 @@
 			"language-server"
 		],
 		"released": {
-			"commit": "f633a099f25a88286d2d0d8a6ce04493d421e362",
-			"version": "4.6.1"
+			"commit": "9be667a92236ad5ae7ba90bba8af7f25e617d041",
+			"version": "4.10.0"
 		}
 	},
 	"web-api-server": {
 		"released": {
-			"commit": "fd1c75c0f4716cd541e90d94ac73a13dd4d9e35b",
-			"version": "0.1.12"
+			"commit": "45875a8e9155d22daab6145407f555b094ca4a1e",
+			"version": "0.1.14"
 		}
 	}
 }

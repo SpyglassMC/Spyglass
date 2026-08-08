@@ -1,23 +1,25 @@
 import externalBinarySearch from 'binary-search'
 import rfdc from 'rfdc'
-import { URL } from 'whatwg-url'
+import { URL as WhatwgURL } from 'whatwg-url'
 import type { AstNode } from '../node/index.js'
 import type { ProcessorContext } from '../service/index.js'
-import type { Externals } from './externals/index.js'
 import type { DeepReadonly, ReadWrite } from './ReadonlyProxy.js'
 
-// Spyglass uses the URL class provided by the
-// [spec](https://url.spec.whatwg.org/)-compliant `whatwg-url` package instead
-// of the broken one shipped with browsers that do not parse non-special scheme
-// URLs with hosts properly.
+// We try to use the `URL` class built-in to the JavaScript runtime if possible, but falls back to
+// use the `URL` class from the `whatwg-url` package if a certain bug exists.
+// See more at https://github.com/SpyglassMC/Spyglass/issues/1763.
 //
-// * [Chromium bug](https://issues.chromium.org/issues/40587286)
-// * [FireFox bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1374505)
-//
-// We use the name "URI" instead of "URL" when possible, since it is what
-// LSP has chosen to use for the string that uniquely identifies a file.
-export const Uri = URL
+// The name "URI" instead of "URL" is used to align with LSP terminology.
+export const Uri = isBuiltInURLGood() ? URL : (WhatwgURL as never)
 export type Uri = URL
+
+function isBuiltInURLGood() {
+	try {
+		return new URL('archive://mcdoc.tar.gz/foo.mcdoc').host === 'mcdoc.tar.gz'
+	} catch {
+		return false
+	}
+}
 
 /**
  * `NodeJS.Timeout` on Node.js and `number` on browser.
@@ -189,11 +191,8 @@ export function promisifyAsyncIterable<T, U>(
 	})()
 }
 
-export async function parseGzippedJson(
-	externals: Externals,
-	buffer: Uint8Array<ArrayBuffer>,
-): Promise<unknown> {
-	return JSON.parse(bufferToString(await externals.archive.gunzip(buffer)))
+export async function parseGzippedJson(bytes: Uint8Array<ArrayBuffer>): Promise<unknown> {
+	return JSON.parse(bufferToString(await decompressBytes(bytes, 'gzip')))
 }
 
 /**
@@ -264,7 +263,7 @@ export function getStates(
 		ctx.symbols.query(ctx.doc, category, id).forEachMember((state, stateQuery) => {
 			const values = Object.keys(stateQuery.visibleMembers)
 			const set = (ans[state] ??= new Set())
-			const defaultValue = stateQuery.symbol?.relations?.default
+			const defaultValue = stateQuery.symbol?.relations?.['default']
 			if (defaultValue) {
 				set.add(defaultValue.path[defaultValue.path.length - 1])
 			}
@@ -283,32 +282,38 @@ export function isIterable(value: unknown): value is Iterable<unknown> {
 }
 
 // #region ESNext functions polyfill
-export function atArray<T>(array: readonly T[] | undefined, index: number): T | undefined {
-	return index >= 0 ? array?.[index] : array?.[array.length + index]
+export function getOrInsert<K, V>(map: Map<K, V>, key: K, defaultValue: V): V {
+	if (!map.has(key)) {
+		map.set(key, defaultValue)
+	}
+	return map.get(key)!
 }
 
-export function emplaceMap<K, V>(
+export function getOrInsertComputed<K, V>(
 	map: Map<K, V>,
 	key: K,
-	handler: {
-		insert?: (key: K, map: Map<K, V>) => V
-		update?: (existing: V, key: K, map: Map<K, V>) => V
-	},
+	callbackFunction: (key: K) => V,
 ): V {
-	if (map.has(key)) {
-		let value: V = map.get(key)!
-		if (handler.update) {
-			value = handler.update(value, key, map)
-			map.set(key, value)
-		}
-		return value
-	} else if (handler.insert) {
-		const value = handler.insert(key, map)
-		map.set(key, value)
-		return value
-	} else {
-		throw new Error(`No key ${key} in map and no insert handler provided`)
+	if (!map.has(key)) {
+		map.set(key, callbackFunction(key))
 	}
+	return map.get(key)!
+}
+
+/**
+ * TODO: replace with ESNext Uint8Array.prototype.toHex once it's widely supported
+ */
+export function bytesToHex(bytes: Uint8Array): string {
+	if ('Buffer' in globalThis && bytes instanceof Buffer) {
+		return bytes.toString('hex')
+	} else if ('toHex' in Uint8Array.prototype && typeof Uint8Array.prototype.toHex === 'function') {
+		return Uint8Array.prototype.toHex.call(bytes)
+	}
+	let ans = ''
+	for (const v of bytes) {
+		ans += v.toString(16).padStart(2, '0')
+	}
+	return ans
 }
 // #endregion
 
@@ -319,10 +324,79 @@ export function isObject(val: unknown): val is object {
 	return typeof val === 'function' || (!!val && typeof val === 'object')
 }
 
+export function normalizeUriPathname(pathname: string): string {
+	// Normalize drive letters on Windows to use lowercase letters, and ensure all colons are not encoded.
+	// See also LSP spec text, quoted below.
+	//
+	// > Care should be taken to handle encoding in URIs. For example, some clients (such as VS Code) may
+	// > encode colons in drive letters while others do not. The URIs below are both valid, but clients and
+	// > servers should be consistent with the form they use themselves to ensure the other party doesn’t
+	// > interpret them as distinct URIs. Clients and servers should not assume that each other are encoding
+	// > the same way (for example a client encoding colons in drive letters cannot assume server responses
+	// > will have encoded colons). The same applies to casing of drive letters - one party should not assume
+	// > the other party will return paths with drive letters cased the same as itself.
+	// > -- https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#uri
+	return pathname
+		.replace(/%3A/gi, ':')
+		.replace(/^\/[A-Z]:\//, (match) => match.toLowerCase())
+}
+
 export function normalizeUri(uri: string): string {
 	const obj = new Uri(uri)
-	obj.pathname = obj.pathname.replace(/%3A/gi, ':')
+	obj.pathname = normalizeUriPathname(obj.pathname)
 	return obj.toString()
+}
+
+export async function getSha1(data: string | Uint8Array<ArrayBuffer>): Promise<string> {
+	if (typeof data === 'string') {
+		data = new TextEncoder().encode(data)
+	}
+	const hash = await crypto.subtle.digest('SHA-1', data.buffer)
+	return bytesToHex(new Uint8Array(hash))
+}
+
+export function compressBytes(
+	bytes: Uint8Array<ArrayBuffer>,
+	algorithm: CompressionFormat,
+): Promise<Uint8Array<ArrayBuffer>> {
+	return streamToBytes(compressStream(bytesToStream(bytes), algorithm))
+}
+
+export function compressStream(
+	stream: ReadableStream<Uint8Array<ArrayBuffer>>,
+	algorithm: CompressionFormat,
+): ReadableStream<Uint8Array<ArrayBuffer>> {
+	return stream.pipeThrough(new CompressionStream(algorithm))
+}
+
+export function decompressBytes(
+	bytes: Uint8Array<ArrayBuffer>,
+	algorithm: CompressionFormat,
+): Promise<Uint8Array<ArrayBuffer>> {
+	return streamToBytes(decompressStream(bytesToStream(bytes), algorithm))
+}
+
+export function decompressStream(
+	stream: ReadableStream<Uint8Array<ArrayBuffer>>,
+	algorithm: CompressionFormat,
+): ReadableStream<Uint8Array<ArrayBuffer>> {
+	return stream.pipeThrough(new DecompressionStream(algorithm))
+}
+
+export function bytesToStream(
+	bytes: Uint8Array<ArrayBuffer>,
+): ReadableStream<Uint8Array<ArrayBuffer>> {
+	return new Blob([bytes]).stream()
+}
+
+export function streamToBytes(
+	stream: ReadableStream<Uint8Array<ArrayBuffer>>,
+): Promise<Uint8Array<ArrayBuffer>> {
+	return new Response(stream).bytes()
+}
+
+export function sleep(delayMs: number): Promise<void> {
+	return new Promise(resolve => setTimeout(resolve, delayMs))
 }
 
 /**
@@ -348,3 +422,53 @@ export type InheritReadonly<
 	TARGET extends AstNode,
 	INPUT extends DeepReadonly<AstNode> | undefined,
 > = INPUT & (INPUT extends ReadWrite<AstNode> ? TARGET : DeepReadonly<TARGET>)
+
+/**
+ * Checks if the numeric value of a number or bigint is the same. Undefined is **not** the same as
+ * 0 for this function.
+ * @param a The first number to compare
+ * @param b The second number to compare
+ * @returns True if the numeric falue is equal, false otherwise.
+ */
+export function numericEquals(a: bigint | number | undefined, b: bigint | number | undefined) {
+	return tryConvertToNumberWithoutPrecisionLoss(a) === tryConvertToNumberWithoutPrecisionLoss(b)
+}
+
+/**
+ * Tries to convert a numeric type to number if that is possible without precision loss.
+ * Undefined stays untouched.
+ * @param n The numeric value
+ * @returns The numeric value converted to a number if there was no precision loss, the given value
+ * otherwise
+ */
+export function tryConvertToNumberWithoutPrecisionLoss<T extends (number | bigint | undefined)>(
+	n: T,
+) {
+	if (typeof n === 'bigint') {
+		const num = Number(n)
+		if (BigInt(num) === n) {
+			return num
+		}
+	}
+	return n
+}
+
+/**
+ * Compares two numeric types and finds the smallest
+ * @param a The first value
+ * @param b The second value
+ * @returns The smaller value of `a` and `b`
+ */
+export function min<T extends (number | bigint)>(a: T, b: T) {
+	return a < b ? a : b
+}
+
+/**
+ * Compares two numeric types and finds the biggest
+ * @param a The first value
+ * @param b The second value
+ * @returns The bigger value of `a` and `b`
+ */
+export function max<T extends (number | bigint)>(a: T, b: T) {
+	return a > b ? a : b
+}

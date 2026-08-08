@@ -1,8 +1,80 @@
+exports[`NumericRange > equals() > .. & .. 1`] = `
+true
+`;
+
+exports[`NumericRange > equals() > .. & <.. 1`] = `
+false
+`;
+
+exports[`NumericRange > equals() > ..4 & ..4 1`] = `
+true
+`;
+
+exports[`NumericRange > equals() > ..4 & ..4 2`] = `
+true
+`;
+
+exports[`NumericRange > equals() > ..4 & ..5 1`] = `
+false
+`;
+
+exports[`NumericRange > equals() > ..4 & ..<4 1`] = `
+false
+`;
+
+exports[`NumericRange > equals() > 2.. & 2.. 1`] = `
+true
+`;
+
+exports[`NumericRange > equals() > 2.. & 2.. 2`] = `
+true
+`;
+
+exports[`NumericRange > equals() > 2.. & 2<.. 1`] = `
+false
+`;
+
+exports[`NumericRange > equals() > 2.. & 3.. 1`] = `
+false
+`;
+
+exports[`NumericRange > equals() > 2..3 & 2..5 1`] = `
+false
+`;
+
+exports[`NumericRange > equals() > 2..3 & 2<..4 1`] = `
+false
+`;
+
+exports[`NumericRange > equals() > 2..3 & 3..4 1`] = `
+false
+`;
+
+exports[`NumericRange > equals() > 2..4 & ..4 1`] = `
+false
+`;
+
+exports[`NumericRange > equals() > 2..4 & 2.. 1`] = `
+false
+`;
+
+exports[`NumericRange > equals() > 2..4 & 2..4 1`] = `
+true
+`;
+
+exports[`NumericRange > equals() > 2..4 & 2..4 2`] = `
+true
+`;
+
 exports[`NumericRange > intersect() > .. & .. 1`] = `
 ..
 `;
 
 exports[`NumericRange > intersect() > .. & 2<.. 1`] = `
+2<..
+`;
+
+exports[`NumericRange > intersect() > .. & 2<.. 2`] = `
 2<..
 `;
 
@@ -30,6 +102,14 @@ exports[`NumericRange > intersect() > 2..5 & 4..<5 1`] = `
 4..<5
 `;
 
+exports[`NumericRange > intersect() > 2..9 & 2<..<9 1`] = `
+2<..<9
+`;
+
+exports[`NumericRange > intersect() > 2..9 & 2<..<9 2`] = `
+2<..<9
+`;
+
 exports[`NumericRange > intersect() > 2..9 & 4<..5 1`] = `
 4<..5
 `;
@@ -40,4 +120,12 @@ exports[`NumericRange > intersect() > 2<..7 & 3..<5 1`] = `
 
 exports[`NumericRange > intersect() > 2<..<5 & 5<..6 1`] = `
 5<..<5
+`;
+
+exports[`NumericRange > intersect() > 2<..<9 & 2..9 1`] = `
+2<..<9
+`;
+
+exports[`NumericRange > intersect() > 2<..<9 & 2..9 2`] = `
+2<..<9
 `;

@@ -25,9 +25,11 @@
     "release": "npm publish",
     "release:dry": "npm publish --tag latest --dry-run",
     "setup": "git clone https://github.com/SpyglassMC/vanilla-mcdoc",
-    "test": "rm -rf out/generated/module/* && cd vanilla-mcdoc && git pull && cd .. && tsc -b && node lib/index.js generate vanilla-mcdoc/ -l -m -p"
+    "test": "rm -rf out/generated/module/* && cd vanilla-mcdoc && git pull && cd .. && tsgo -b && node lib/index.js generate vanilla-mcdoc/ -l -m -p"
   },
   "dependencies": {
+    "@spyglassmc/core": "*",
+    "@spyglassmc/mcdoc": "*",
     "fs-extra": "^11.1.1",
     "klaw": "^4.1.0",
     "line-column": "^1.0.2",
@@ -38,8 +40,7 @@
     "@types/fs-extra": "^11.0.2",
     "@types/klaw": "^3.0.4",
     "@types/line-column": "^1.0.0",
-    "@types/yargs": "17.0.17",
-    "typescript": "^5.4.5"
+    "@types/yargs": "17.0.17"
   },
   "publishConfig": {
     "access": "public"

@@ -1,13 +1,15 @@
 import picomatch from 'picomatch'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
+import type { Externals, IntervalId } from '../common/index.js'
 import {
 	bufferToString,
+	EventDispatcher,
 	Logger,
 	normalizeUri,
 	SingletonPromise,
 	StateProxy,
+	UriStore,
 } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import { FileNode } from '../node/index.js'
@@ -33,6 +35,7 @@ import { LinterErrorReporter } from './ErrorReporter.js'
 import { ArchiveUriSupporter, FileService, FileUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
+import type { FileWatcher } from './FileWatcher.js'
 import { MetaRegistry } from './MetaRegistry.js'
 import { ProfilerFactory } from './Profiler.js'
 
@@ -72,6 +75,35 @@ export interface ProjectOptions {
 	 */
 	projectRoots: RootUriString[]
 	symbols?: SymbolUtil
+}
+
+export interface ProjectReadyOptions {
+	projectRootsWatcher?: FileWatcher
+}
+
+export interface AnalyzeProjectOptions {
+	/**
+	 * Called after each file has been analyzed.
+	 *
+	 * @param done The amount of files that have been analyzed so far.
+	 * @param total The total amount of files to analyze.
+	 */
+	onProgress?: (this: void, done: number, total: number) => void
+	/**
+	 * A signal that can be used to cancel the analysis between two files. Files that have already
+	 * been analyzed keep their diagnostics.
+	 */
+	signal?: AbortSignal
+}
+
+export interface AnalyzeProjectResult {
+	/**
+	 * The amount of files that were analyzed. Equal to `totalFiles` unless the analysis was
+	 * cancelled.
+	 */
+	analyzedFiles: number
+	cancelled: boolean
+	totalFiles: number
 }
 
 export interface DocAndNode {
@@ -156,7 +188,18 @@ export type ProjectData = Pick<
  *
  * After the READY process is complete, editing text documents as signaled by the client or the file watcher results in the file being re-processed.
  */
-export class Project implements ExternalEventEmitter {
+export class Project extends EventDispatcher<{
+	documentErrored: DocumentErrorEvent
+	documentUpdated: DocumentEvent
+	documentRemoved: FileEvent
+	fileCreated: FileEvent
+	fileModified: FileEvent
+	fileDeleted: FileEvent
+	ready: EmptyEvent
+	rootsUpdated: RootsEvent
+	symbolRegistrarExecuted: SymbolRegistrarEvent
+	configChanged: ConfigChangeEvent
+}> {
 	private static readonly RootSuffix = '/pack.mcmeta'
 
 	/** Prevent circular binding. */
@@ -168,14 +211,15 @@ export class Project implements ExternalEventEmitter {
 	readonly #clientManagedDocAndNodes = new Map<string, DocAndNode>()
 	readonly #configService: ConfigService
 	readonly #symbolUpToDateUris = new Set<string>()
-	readonly #eventEmitter: ExternalEventEmitter
 	readonly #initializers: readonly ProjectInitializer[]
-	#initPromise!: Promise<void>
-	#readyPromise!: Promise<void>
-	readonly #watchedFiles = new Set<string>()
-	#watcher!: FsWatcher
-	#watcherReady = false
+	#watcher: FileWatcher | undefined
+	get watchedFiles() {
+		return this.#watcher?.watchedFiles ?? new UriStore()
+	}
 
+	#initPromise: Promise<this> | undefined
+	#readyPromise: Promise<this> | undefined
+	#isInitialized = false
 	#isReady = false
 	get isReady(): boolean {
 		return this.#isReady
@@ -237,52 +281,6 @@ export class Project implements ExternalEventEmitter {
 		this.emit('rootsUpdated', { roots: this.#roots })
 	}
 
-	on(event: 'documentErrored', callbackFn: (data: DocumentErrorEvent) => void): this
-	on(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
-	// `documentRemoved` uses a `FileEvent` instead of `DocumentEvent`, as it doesn't have access to
-	// the document anymore.
-	on(event: 'documentRemoved', callbackFn: (data: FileEvent) => void): this
-	on(
-		event: `file${'Created' | 'Modified' | 'Deleted'}`,
-		callbackFn: (data: FileEvent) => void,
-	): this
-	on(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
-	on(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
-	on(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
-	on(event: 'configChanged', callbackFn: (data: ConfigChangeEvent) => void): this
-	on(event: string, callbackFn: (...args: any[]) => unknown): this {
-		this.#eventEmitter.on(event, callbackFn)
-		return this
-	}
-
-	once(event: 'documentErrored', callbackFn: (data: DocumentErrorEvent) => void): this
-	once(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
-	once(event: 'documentRemoved', callbackFn: (data: FileEvent) => void): this
-	once(
-		event: `file${'Created' | 'Modified' | 'Deleted'}`,
-		callbackFn: (data: FileEvent) => void,
-	): this
-	once(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
-	once(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
-	once(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
-	once(event: 'configChanged', callbackFn: (data: ConfigChangeEvent) => void): this
-	once(event: string, callbackFn: (...args: any[]) => unknown): this {
-		this.#eventEmitter.once(event, callbackFn)
-		return this
-	}
-
-	emit(event: 'documentErrored', data: DocumentErrorEvent): boolean
-	emit(event: 'documentUpdated', data: DocumentEvent): boolean
-	emit(event: 'documentRemoved', data: FileEvent): boolean
-	emit(event: `file${'Created' | 'Modified' | 'Deleted'}`, data: FileEvent): boolean
-	emit(event: 'ready', data: EmptyEvent): boolean
-	emit(event: 'rootsUpdated', data: RootsEvent): boolean
-	emit(event: 'symbolRegistrarExecuted', data: SymbolRegistrarEvent): boolean
-	emit(event: 'configChanged', data: ConfigChangeEvent): boolean
-	emit(event: string, ...args: unknown[]): boolean {
-		return this.#eventEmitter.emit(event, ...args)
-	}
-
 	/**
 	 * Get all files that are tracked and supported.
 	 *
@@ -290,7 +288,7 @@ export class Project implements ExternalEventEmitter {
 	 * are not loaded into the memory.
 	 */
 	getTrackedFiles(): string[] {
-		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.#watchedFiles]
+		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.watchedFiles]
 		this.logger.info(
 			`[Project#getTrackedFiles] Listed ${supportedFiles.length} supported files`,
 		)
@@ -310,8 +308,8 @@ export class Project implements ExternalEventEmitter {
 			projectRoots,
 		}: ProjectOptions,
 	) {
+		super()
 		this.#cacheRoot = cacheRoot
-		this.#eventEmitter = new externals.event.EventEmitter()
 		this.externals = externals
 		this.fs = fs
 		this.#initializers = initializers
@@ -322,7 +320,7 @@ export class Project implements ExternalEventEmitter {
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
-		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
+		this.symbols = new SymbolUtil({})
 
 		this.#ctx = {}
 
@@ -339,8 +337,6 @@ export class Project implements ExternalEventEmitter {
 			({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading ${uri}`, error),
 		)
 
-		this.setInitPromise()
-		this.setReadyPromise()
 		this.#cacheSaverIntervalId = setInterval(
 			() => this.cacheService.save(),
 			CacheAutoSaveInterval,
@@ -391,7 +387,16 @@ export class Project implements ExternalEventEmitter {
 		})
 	}
 
-	private setInitPromise(): void {
+	/**
+	 * Load the config file and initialize parsers and processors.
+	 */
+	async init(): Promise<this> {
+		return (this.#initPromise ??= this.#init())
+	}
+
+	async #init(): Promise<this> {
+		this.#isInitialized = false
+
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
@@ -416,24 +421,41 @@ export class Project implements ExternalEventEmitter {
 			})
 			this.#ctx = ctx
 		}
-		const init = async () => {
-			const __profiler = this.profilers.get('project#init')
 
-			const { symbols } = await this.cacheService.load()
-			this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
-			this.symbols.buildCache()
-			__profiler.task('Load Cache')
+		const __profiler = this.profilers.get('project#init')
 
-			this.config = await this.#configService.load()
-			__profiler.task('Load Config')
+		const { symbols } = await this.cacheService.load()
+		this.symbols = new SymbolUtil(symbols)
+		this.symbols.buildCache()
+		__profiler.task('Load Cache')
 
-			await callIntializers()
-			__profiler.task('Initialize').finalize()
-		}
-		this.#initPromise = init()
+		this.config = await this.#configService.load()
+		__profiler.task('Load Config')
+
+		await callIntializers()
+		__profiler.task('Initialize').finalize()
+
+		this.#isInitialized = true
+
+		return this
 	}
 
-	private setReadyPromise(): void {
+	/**
+	 * Finish the initial run of parsing, binding, and checking the entire project.
+	 */
+	async ready(options: ProjectReadyOptions = {}): Promise<this> {
+		return (this.#readyPromise ??= this.#ready(options))
+	}
+
+	async #ready({ projectRootsWatcher }: ProjectReadyOptions = {}): Promise<this> {
+		if (!this.#isInitialized) {
+			throw new Error('Project.ready() must be called after Project.init() resolves')
+		}
+
+		this.#isReady = false
+
+		this.#watcher = projectRootsWatcher
+
 		const getDependencies = async () => {
 			const dependencies: Dependency[] = []
 			for (const input of this.config.env.dependencies) {
@@ -479,133 +501,109 @@ export class Project implements ExternalEventEmitter {
 			this.fs.register('file:', fileUriSupporter, true)
 			this.fs.register(ArchiveUriSupporter.Protocol, archiveUriSupporter, true)
 		}
-		const listProjectFiles = () =>
-			new Promise<void>((resolve) => {
-				if (this.projectRoots.length === 0) {
-					resolve()
-					return
-				}
-				this.#watchedFiles.clear()
-				this.#watcherReady = false
-				this.#watcher = this.externals.fs.watch(this.projectRoots, {
-					usePolling: this.config.env.useFilePolling,
-				}).once('ready', () => {
-					this.#watcherReady = true
-					resolve()
-				}).on('add', (uri) => {
+		const listProjectFiles = async () => {
+			if (!this.#watcher) {
+				return
+			}
+
+			this.#watcher
+				.on('add', (uri) => {
 					if (this.shouldExclude(uri)) {
 						return
 					}
-					this.#watchedFiles.add(uri)
-					if (this.#watcherReady) {
-						this.emit('fileCreated', { uri })
-					}
-				}).on('change', (uri) => {
-					if (this.shouldExclude(uri)) {
-						return
-					}
-					if (this.#watcherReady) {
-						this.emit('fileModified', { uri })
-					}
-				}).on('unlink', (uri) => {
-					if (this.shouldExclude(uri)) {
-						return
-					}
-					this.#watchedFiles.delete(uri)
-					if (this.#watcherReady) {
-						this.emit('fileDeleted', { uri })
-					}
-				}).on('error', (e) => {
-					this.logger.error('[Project] [chokidar]', e)
+					this.emit('fileCreated', { uri })
 				})
-			})
-		const ready = async () => {
-			await this.init()
+				.on('change', (uri) => {
+					if (this.shouldExclude(uri)) {
+						return
+					}
+					this.emit('fileModified', { uri })
+				})
+				.on('unlink', (uri) => {
+					// No `this.shouldExclude(uri)` check here as `unlink` events may be sent for
+					// hot-reload file exclusions. We want to be able to clean up the symbols for these
+					// excluded files.
+					this.emit('fileDeleted', { uri })
+				})
+				.on('error', (e) => {
+					this.logger.error('[Project#watcher]', e)
+				})
 
-			const __profiler = this.profilers.get('project#ready')
-
-			await Promise.all([listDependencyFiles(), listProjectFiles()])
-
-			this.#dependencyFiles = new Set([...this.fs.listFiles()]
-				.filter((uri) => !this.shouldExclude(uri)))
-			this.#dependencyRoots = new Set(this.fs.listRoots())
-
-			this.updateRoots()
-			__profiler.task('List URIs')
-
-			for (const [id, { checksum, registrar }] of this.meta.symbolRegistrars) {
-				const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
-				if (cacheChecksum === undefined || checksum !== cacheChecksum) {
-					this.symbols.clear({ contributor: `symbol_registrar/${id}` })
-					this.symbols.contributeAs(`symbol_registrar/${id}`, () => {
-						registrar(this.symbols, { logger: this.logger })
-					})
-					this.emit('symbolRegistrarExecuted', { id, checksum })
-				} else {
-					this.logger.info(`[SymbolRegistrar] Skipped “${id}” thanks to cache ${checksum}`)
-				}
-			}
-			__profiler.task('Register Symbols')
-
-			for (const [uri, values] of Object.entries(this.cacheService.errors)) {
-				this.emit('documentErrored', { errors: values, uri })
-			}
-			__profiler.task('Pop Errors')
-
-			const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
-			for (const uri of removedFiles) {
-				this.emit('fileDeleted', { uri })
-			}
-			__profiler.task('Validate Cache')
-
-			if (addedFiles.length > 0) {
-				this.bindUri(addedFiles)
-			}
-			__profiler.task('Bind URIs')
-
-			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
-			__profiler.task('Sort URIs')
-
-			const fileCountByExtension = new Map<string, number>()
-			for (const file of files) {
-				const ext = fileUtil.extname(file)?.replace(/^\./, '')
-				if (ext) {
-					fileCountByExtension.set(ext, (fileCountByExtension.get(ext) ?? 0) + 1)
-				}
-			}
-			this.logger.info(`[Project#ready] == Files to bind ==`)
-			for (const [ext, count] of fileCountByExtension.entries()) {
-				this.logger.info(`[Project#ready] File extension ${ext}: ${count}`)
-			}
-
-			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
-			for (const uri of files) {
-				await this.ensureBindingStarted(uri)
-				__bindProfiler.task(uri)
-			}
-			__bindProfiler.finalize()
-			__profiler.task('Bind Files')
-
-			__profiler.finalize()
-			this.emit('ready', {})
+			await this.#watcher.ready()
 		}
-		this.#isReady = false
-		this.#readyPromise = ready()
-	}
 
-	/**
-	 * Load the config file and initialize parsers and processors.
-	 */
-	async init(): Promise<this> {
-		await this.#initPromise
-		return this
-	}
+		const __profiler = this.profilers.get('project#ready')
 
-	/**
-	 * Finish the initial run of parsing, binding, and checking the entire project.
-	 */
-	async ready(): Promise<this> {
-		await this.#readyPromise
+		await Promise.all([listDependencyFiles(), listProjectFiles()])
+
+		this.#dependencyFiles = new Set([...this.fs.listFiles()]
+			.filter((uri) => !this.shouldExclude(uri)))
+		this.#dependencyRoots = new Set(this.fs.listRoots())
+
+		this.updateRoots()
+		__profiler.task('List URIs')
+
+		for (const [id, { checksum, registrar }] of this.meta.symbolRegistrars) {
+			const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
+			if (cacheChecksum === undefined || checksum !== cacheChecksum) {
+				this.symbols.clear({ contributor: `symbol_registrar/${id}` })
+				this.symbols.contributeAs(`symbol_registrar/${id}`, () => {
+					registrar(this.symbols, { logger: this.logger })
+				})
+				this.emit('symbolRegistrarExecuted', { id, checksum })
+			} else {
+				this.logger.info(`[SymbolRegistrar] Skipped “${id}” thanks to cache ${checksum}`)
+			}
+		}
+		__profiler.task('Register Symbols')
+
+		for (const [uri, values] of Object.entries(this.cacheService.errors)) {
+			this.emit('documentErrored', { errors: values, uri })
+		}
+		__profiler.task('Pop Errors')
+
+		const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
+		this.logger.info(
+			`[Project#ready] Files added/changed/removed: ${addedFiles.length}/${changedFiles.length}/${removedFiles.length}`,
+		)
+		for (const uri of removedFiles) {
+			this.emit('fileDeleted', { uri })
+		}
+		__profiler.task('Validate Cache')
+
+		if (addedFiles.length > 0) {
+			this.bindUri(addedFiles)
+		}
+		__profiler.task('Bind URIs')
+
+		const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
+		__profiler.task('Sort URIs')
+
+		const fileCountByExtension = new Map<string, number>()
+		for (const file of files) {
+			const ext = fileUtil.extname(file)?.replace(/^\./, '')
+			if (ext) {
+				fileCountByExtension.set(ext, (fileCountByExtension.get(ext) ?? 0) + 1)
+			}
+		}
+		this.logger.info(`[Project#ready] == Files to bind ==`)
+		for (const [ext, count] of fileCountByExtension.entries()) {
+			this.logger.info(`[Project#ready] File extension ${ext}: ${count}`)
+		}
+
+		const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
+		for (const uri of files) {
+			await this.ensureBindingStarted(uri)
+			__bindProfiler.task(uri)
+		}
+		__bindProfiler.finalize()
+		__profiler.task('Bind Files')
+
+		__profiler.finalize()
+		this.emit('ready', {})
+
+		this.#isReady = true
+
 		return this
 	}
 
@@ -614,16 +612,15 @@ export class Project implements ExternalEventEmitter {
 	 */
 	async close(): Promise<void> {
 		clearInterval(this.#cacheSaverIntervalId)
-		await this.#watcher.close()
+		await this.#watcher?.close()
 		await this.cacheService.save()
 	}
 
 	async restart(): Promise<void> {
 		try {
-			await this.#watcher.close()
 			this.#bindingInProgressUris.clear()
 			this.#symbolUpToDateUris.clear()
-			this.setReadyPromise()
+			this.#readyPromise = undefined
 			await this.ready()
 		} catch (e) {
 			this.logger.error('[Project#reset]', e)
@@ -640,7 +637,7 @@ export class Project implements ExternalEventEmitter {
 
 		// Reset cache.
 		const { symbols } = this.cacheService.reset()
-		this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
+		this.symbols = new SymbolUtil(symbols)
 		this.symbols.buildCache()
 
 		return this.restart()
@@ -860,6 +857,77 @@ export class Project implements ExternalEventEmitter {
 		})
 	}
 
+	private static readonly AnalysisYieldInterval = 100
+
+	/**
+	 * Run all four stages of document processing (`read`, `parse`, `bind`, and `check`, which
+	 * includes `lint`) on every supported file under {@link projectRoots} and emit the results as
+	 * `documentUpdated`/`documentErrored` events, regardless of whether the files are currently
+	 * managed by the client.
+	 *
+	 * The analysis only starts after the READY process is complete, which guarantees that the
+	 * global symbol table is fully populated before any file is checked.
+	 *
+	 * Dependency files are not analyzed.
+	 *
+	 * If an analysis is already in progress, the Promise of that analysis is returned instead and
+	 * the passed-in `options` are ignored.
+	 */
+	@SingletonPromise(() => 'analyzeProject')
+	async analyzeProject(options: AnalyzeProjectOptions = {}): Promise<AnalyzeProjectResult> {
+		await this.ready()
+
+		const files = [...new Set(this.getTrackedFiles().map((uri) => this.normalizeUri(uri)))]
+			.filter((uri) =>
+				this.projectRoots.some((root) => fileUtil.isSubUriOf(uri, root))
+				&& !this.shouldExclude(uri)
+			)
+			.sort(this.meta.uriSorter)
+		this.logger.info(`[Project#analyzeProject] Analyzing ${files.length} files`)
+
+		const __profiler = this.profilers.get('project#analyzeProject')
+		let done = 0
+		let cancelled = false
+		for (const uri of files) {
+			if (options.signal?.aborted) {
+				cancelled = true
+				this.logger.info(
+					`[Project#analyzeProject] Cancelled after ${done}/${files.length} files`,
+				)
+				break
+			}
+
+			try {
+				if (this.#clientManagedUris.has(uri)) {
+					await this.ensureClientManagedChecked(uri)
+				} else {
+					this.removeCachedTextDocument(uri)
+					const doc = await this.read(uri)
+					if (doc) {
+						const node = this.parse(doc)
+						await this.bind(doc, node)
+						await this.check(doc, node)
+						this.emit('documentUpdated', { doc, node })
+					}
+				}
+			} catch (e) {
+				this.logger.error(`[Project#analyzeProject] Failed for ${uri}`, e)
+			}
+
+			done += 1
+			options.onProgress?.(done, files.length)
+			if (done % Project.AnalysisYieldInterval === 0) {
+				await new Promise((resolve) => setTimeout(resolve, 0))
+			}
+		}
+		__profiler.task('Analyze Files')
+
+		await this.cacheService.save()
+		__profiler.task('Save Cache').finalize()
+
+		return { analyzedFiles: done, cancelled, totalFiles: files.length }
+	}
+
 	/**
 	 * Notify that a new document was opened in the editor.
 	 */
@@ -1018,11 +1086,11 @@ export class Project implements ExternalEventEmitter {
 	private shouldRemove(uri: string): boolean {
 		return (!this.#clientManagedUris.has(uri)
 			&& !this.#dependencyFiles?.has(uri)
-			&& !this.#watchedFiles.has(uri))
+			&& !this.watchedFiles.has(uri))
 	}
 
 	private isOnlyWatched(uri: string): boolean {
-		return (this.#watchedFiles.has(uri)
+		return (this.watchedFiles.has(uri)
 			&& !this.#clientManagedUris.has(uri)
 			&& !this.#dependencyFiles?.has(uri))
 	}

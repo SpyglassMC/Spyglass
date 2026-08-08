@@ -1,6 +1,6 @@
 import type * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
-import type * as mcdoc from '@spyglassmc/mcdoc'
+import * as mcdoc from '@spyglassmc/mcdoc'
 import { dissectUri, reportDissectError } from '../../binder/index.js'
 
 function createTagDefinition(registry: string): mcdoc.McdocType {
@@ -13,7 +13,7 @@ function createTagDefinition(registry: string): mcdoc.McdocType {
 	}
 	return {
 		kind: 'concrete',
-		child: { kind: 'reference', path: '::java::data::tag::Tag' },
+		child: mcdoc.typeRef('tag'),
 		typeArgs: [{ kind: 'string', attributes: [{ name: 'id', value: id }] }],
 	}
 }
@@ -21,7 +21,7 @@ function createTagDefinition(registry: string): mcdoc.McdocType {
 export const file: core.Checker<json.JsonFileNode> = (node, ctx) => {
 	const child = node.children[0]
 	if (ctx.doc.uri.endsWith('/pack.mcmeta')) {
-		const type: mcdoc.McdocType = { kind: 'reference', path: '::java::pack::Pack' }
+		const type: mcdoc.McdocType = mcdoc.typeRef('pack_meta')
 		return json.checker.index(type)(child, ctx)
 	}
 	const parts = dissectUri(ctx.doc.uri, ctx)

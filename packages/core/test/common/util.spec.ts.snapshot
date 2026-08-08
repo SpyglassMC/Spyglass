@@ -1,0 +1,91 @@
+exports[`common util > max() > 1 & 9 1`] = `
+9
+`;
+
+exports[`common util > max() > 9 & 1 1`] = `
+9
+`;
+
+exports[`common util > max() > 9 & 1n 1`] = `
+9
+`;
+
+exports[`common util > max() > 91 & 91 1`] = `
+91
+`;
+
+exports[`common util > max() > 9n & 1 1`] = `
+9n
+`;
+
+exports[`common util > min() > 1 & 9 1`] = `
+1
+`;
+
+exports[`common util > min() > 9 & 1 1`] = `
+1
+`;
+
+exports[`common util > min() > 9 & 1n 1`] = `
+1n
+`;
+
+exports[`common util > min() > 91 & 91 1`] = `
+91
+`;
+
+exports[`common util > min() > 9n & 1 1`] = `
+1
+`;
+
+exports[`common util > numericEquals() > 0 & undefined 1`] = `
+false
+`;
+
+exports[`common util > numericEquals() > 9 & 1 1`] = `
+false
+`;
+
+exports[`common util > numericEquals() > 9 & 1n 1`] = `
+false
+`;
+
+exports[`common util > numericEquals() > 9.191919191919191e+23 & 919191919191919127691264n 1`] = `
+true
+`;
+
+exports[`common util > numericEquals() > 9.191919191919191e+23 & 919191919191919191919191n 1`] = `
+false
+`;
+
+exports[`common util > numericEquals() > 91 & 91 1`] = `
+true
+`;
+
+exports[`common util > numericEquals() > 91 & 91n 1`] = `
+true
+`;
+
+exports[`common util > numericEquals() > 91n & 91n 1`] = `
+true
+`;
+
+exports[`common util > tryConvertToNumberWithoutPrecisionLoss() > 9.191919191919191e+23 1`] = `
+9.191919191919191e+23
+`;
+
+exports[`common util > tryConvertToNumberWithoutPrecisionLoss() > 91 1`] = `
+91
+`;
+
+exports[`common util > tryConvertToNumberWithoutPrecisionLoss() > 919191919191919191919191n 1`] = `
+919191919191919191919191n
+`;
+
+exports[`common util > tryConvertToNumberWithoutPrecisionLoss() > 91n 1`] = `
+91
+`;
+
+exports[`common util > tryConvertToNumberWithoutPrecisionLoss() > undefined 1`] = `
+undefined
+`;

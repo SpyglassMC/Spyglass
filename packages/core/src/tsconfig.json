@@ -3,9 +3,9 @@
 	"compilerOptions": {
 		"outDir": "../lib"
 	},
-	"include": [
-		"**/*.ts",
-		"parser/unicode-lookup-table.json",
-		"dependency/unicode-lookup-table.json"
+	"references": [
+		{
+			"path": "../../locales/src"
+		}
 	]
 }

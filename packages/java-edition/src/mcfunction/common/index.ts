@@ -15,7 +15,6 @@ export function getItemSlotArgumentValues(ctx: core.ContextBase) {
 		...[...Array(15).keys()].map((n) => `horse.${n}`),
 		...[...Array(9).keys()].map((n) => `hotbar.${n}`),
 		...[...Array(27).keys()].map((n) => `inventory.${n}`),
-		...[...Array(8).keys()].map((n) => `villager.${n}`),
 		'armor.chest',
 		'armor.feet',
 		'armor.head',
@@ -40,12 +39,22 @@ export function getItemSlotArgumentValues(ctx: core.ContextBase) {
 	} else {
 		output.push('horse.saddle')
 	}
+	if (ReleaseVersion.cmp(release, '26.1') >= 0) {
+		output.push(
+			...[...Array(8).keys()].map((n) => `mob.inventory.${n}`),
+		)
+	} else {
+		output.push(
+			...[...Array(8).keys()].map((n) => `villager.${n}`),
+		)
+	}
 	return output
 }
 
 // Only exists since 1.20.5
 export function getItemSlotsArgumentValues(ctx: core.ContextBase) {
-	return [
+	const release = ctx.project['loadedVersion'] as ReleaseVersion
+	const output = [
 		...getItemSlotArgumentValues(ctx),
 		'armor.*',
 		'container.*',
@@ -54,9 +63,14 @@ export function getItemSlotsArgumentValues(ctx: core.ContextBase) {
 		'hotbar.*',
 		'inventory.*',
 		'player.crafting.*',
-		'villager.*',
 		'weapon.*',
 	]
+	if (ReleaseVersion.cmp(release, '26.1') >= 0) {
+		output.push('mob.inventory.*')
+	} else {
+		output.push('villager.*')
+	}
+	return output
 }
 
 export const OperationArgumentValues = ['=', '+=', '-=', '*=', '/=', '%=', '<', '>', '><']

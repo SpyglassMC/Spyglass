@@ -36,6 +36,7 @@ export async function createProject(
 		projectRoots: [core.fileUtil.ensureEndingSlash(pathToFileURL(projectRoot).toString())],
 	})
 
+	await project.init()
 	await project.ready()
 	await project.cacheService.save()
 
@@ -54,7 +55,7 @@ export function sortMaps(data: unknown): unknown {
 }
 
 export async function writeJson(path: string, data: unknown, gzip: boolean) {
-	const contents = JSON.stringify(data, undefined, '\t') + '\n'
+	const contents = JSON.stringify(data, core.bigintJsonNumberReplacer, '\t') + '\n'
 	await core.fileUtil.writeFile(NodeJsExternals, path, contents)
 	if (gzip) {
 		await core.fileUtil.writeGzippedJson(NodeJsExternals, `${path}.gz`, data)

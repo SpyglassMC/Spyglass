@@ -139,6 +139,8 @@
 	"number.between": "%0% ~ %1%の範囲の数値",
 	"objective": "オブジェクト名",
 	"objective-not-following-convention": "オブジェクト%0%は命名規則に従い%1%である必要があります",
+	"progress.initializing.title": "Spyglassを初期化しています…",
+	"progress.reset-project-cache.title": "プロジェクトのキャッシュをリセットしています…",
 	"punc.period": "。",
 	"punc.quote": "「%0%」",
 	"quote": "引用符 (‘'’ か ‘\"’)",

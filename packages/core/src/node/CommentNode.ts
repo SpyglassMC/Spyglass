@@ -1,4 +1,4 @@
-import type { DeepReadonly, InheritReadonly, ReadWrite } from '../common/index.js'
+import type { DeepReadonly, InheritReadonly } from '../common/index.js'
 import type { AstNode } from './AstNode.js'
 
 export interface CommentNode extends AstNode {

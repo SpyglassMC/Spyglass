@@ -1,0 +1,19 @@
+exports[`NodeJsExternals HttpCache > match() > Should clean up entry on object miss 1`] = `
+{"index":{"https://example.com/":{"":{"status":200,"statusText":"OK","headers":{"etag":"67"},"sha1":"c46a0660b3f0dc24e58eaf5c017082bd9488aeea","cacheTime":1000213391729}}}}
+
+`;
+
+exports[`NodeJsExternals HttpCache > match() > Should clean up entry on object miss 2`] = `
+{"index":{}}
+
+`;
+
+exports[`NodeJsExternals HttpCache > put() > Should discard corrupted index 1`] = `
+{"index":{"https://example.com/":{"":{"status":200,"statusText":"OK","headers":{"etag":"67"},"sha1":"c46a0660b3f0dc24e58eaf5c017082bd9488aeea","cacheTime":1000213391729}}}}
+
+`;
+
+exports[`NodeJsExternals HttpCache > put() > Should save index properly 1`] = `
+{"index":{"https://example.com/":{"":{"status":200,"statusText":"OK","headers":{"etag":"67"},"sha1":"c46a0660b3f0dc24e58eaf5c017082bd9488aeea","cacheTime":1000213391729}}}}
+
+`;

@@ -4,22 +4,24 @@
 		"esModuleInterop": true,
 		"module": "node20",
 		"moduleResolution": "node16",
-		"target": "ES2022",
+		"target": "ES2024",
 		"lib": [
-			"ES2023",
+			"ES2024",
+			"ES2025.Collection",
+			"ES2025.Iterator",
 			"DOM"
 		],
-
-		"alwaysStrict": true,
 		"experimentalDecorators": true,
+
+		"strict": true,
 		"forceConsistentCasingInFileNames": true,
-		"noErrorTruncation": true,
-		"noImplicitAny": true,
+		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,
 		"noImplicitReturns": true,
-		"noImplicitThis": true,
-		"strict": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noUnusedLocals": true,
 
+		"noErrorTruncation": true,
 		"pretty": true,
 		"declaration": true,
 		"declarationMap": true,
@@ -27,6 +29,8 @@
 		"composite": true,
 		"incremental": true,
 		"newLine": "LF",
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"stableTypeOrdering": true,
+		"types": ["node"]
 	}
 }

@@ -3,6 +3,7 @@ import rfdc from 'rfdc'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { DeepReadonly } from '../common/index.js'
 import { isIterable } from '../common/index.js'
+import { bigintJsonLosslessReplacer, bigintJsonLosslessReviver } from '../common/json.js'
 import type { RangeLike } from '../source/index.js'
 import { Location, PositionRange, Range } from '../source/index.js'
 
@@ -22,7 +23,7 @@ export const RegistryCategories = Object.freeze(
 		'block',
 		'block_entity_type',
 		'block_predicate_type',
-		'block_type',
+		'block_type', // Removed
 		'chunk_status',
 		'command_argument_type',
 		'consume_effect_type',
@@ -31,7 +32,7 @@ export const RegistryCategories = Object.freeze(
 		'data_component_predicate_type',
 		'data_component_type',
 		'debug_subscription',
-		'decorated_pot_pattern',
+		'decorated_pot_pattern', // Removed as registry
 		'decorated_pot_patterns', // Removed
 		'dialog_action_type',
 		'dialog_body_type',
@@ -99,15 +100,19 @@ export const RegistryCategories = Object.freeze(
 		'worldgen/biome_source',
 		'worldgen/block_placer_type', // Removed
 		'worldgen/block_state_provider_type',
-		'worldgen/carver',
+		'worldgen/carver', // Removed as registry
+		'worldgen/carver_type',
 		'worldgen/chunk_generator',
 		'worldgen/decorator', // Removed
 		'worldgen/density_function_type',
-		'worldgen/feature',
+		'worldgen/feature', // Removed as registry
 		'worldgen/feature_size_type',
+		'worldgen/feature_type',
 		'worldgen/foliage_placer_type',
-		'worldgen/material_condition',
-		'worldgen/material_rule',
+		'worldgen/material_condition', // Removed as registry
+		'worldgen/material_condition_type',
+		'worldgen/material_rule', // Removed as registry
+		'worldgen/material_rule_type',
 		'worldgen/placement_modifier_type',
 		'worldgen/pool_alias_binding',
 		'worldgen/root_placer_type',
@@ -130,11 +135,15 @@ export const NormalFileCategories = Object.freeze(
 	[
 		'advancement',
 		'banner_pattern',
+		'cat_sound_variant',
 		'cat_variant',
 		'chat_type',
+		'chicken_sound_variant',
 		'chicken_variant',
+		'cow_sound_variant',
 		'cow_variant',
 		'damage_type',
+		'decorated_pot_pattern',
 		'dialog',
 		'dimension',
 		'dimension_type',
@@ -146,11 +155,15 @@ export const NormalFileCategories = Object.freeze(
 		'item_modifier',
 		'jukebox_song',
 		'loot_table',
+		'number_provider',
 		'painting_variant',
+		'pig_sound_variant',
 		'pig_variant',
 		'predicate',
 		'recipe',
+		'slot_source',
 		'structure',
+		'sulfur_cube_archetype',
 		'test_environment',
 		'test_instance',
 		'timeline',
@@ -161,6 +174,7 @@ export const NormalFileCategories = Object.freeze(
 		'villager_trade',
 		'wolf_sound_variant',
 		'wolf_variant',
+		'world_clock',
 		'zombie_nautilus_variant',
 	] as const,
 )
@@ -169,12 +183,16 @@ export type NormalFileCategory = (typeof NormalFileCategories)[number]
 export const WorldgenFileCategories = Object.freeze(
 	[
 		'worldgen/biome',
-		'worldgen/configured_carver',
-		'worldgen/configured_feature',
-		'worldgen/configured_structure_feature',
-		'worldgen/configured_surface_builder',
+		'worldgen/carver',
+		'worldgen/configured_carver', // Removed
+		'worldgen/configured_feature', // Removed
+		'worldgen/configured_structure_feature', // Removed
+		'worldgen/configured_surface_builder', // Removed
 		'worldgen/density_function',
+		'worldgen/feature',
 		'worldgen/flat_level_generator_preset',
+		'worldgen/material_condition',
+		'worldgen/material_rule',
 		'worldgen/multi_noise_biome_source_parameter_list',
 		'worldgen/noise',
 		'worldgen/noise_settings',
@@ -441,9 +459,10 @@ export namespace Symbol {
 			}
 			return undefined
 		}
-		const map = table[category]
-		for (const p of path) {
-		}
+		// TODO
+		// const map = table[category]
+		// for (const p of path) {
+		// }
 		return undefined
 	}
 }
@@ -645,14 +664,14 @@ export namespace SymbolTable {
 	 * a symbol table through the {@link deserialize} method.
 	 */
 	export function serialize(table: SymbolTable): string {
-		return JSON.stringify(unlink(table))
+		return JSON.stringify(unlink(table), bigintJsonLosslessReplacer)
 	}
 
 	/**
 	 * @returns The symbol table represented by the string returned by the {@link serialize} method.
 	 */
 	export function deserialize(json: string): SymbolTable {
-		return link(JSON.parse(json))
+		return link(JSON.parse(json, bigintJsonLosslessReviver))
 	}
 }
 

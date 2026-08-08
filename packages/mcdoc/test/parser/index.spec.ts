@@ -154,6 +154,8 @@ const Suites: Record<
 					Boo = 4.2d,
 					/// Qux doc
 					Qux = 12e3,
+					Bad = 91bad,
+					String = "hi",
 				}`,
 			],
 		},
@@ -169,6 +171,7 @@ const Suites: Record<
 				'42',
 				'1.23e4',
 				'9.1f',
+				'7invalid',
 			],
 		},
 		numericType: {
@@ -180,6 +183,8 @@ const Suites: Record<
 				'int @ 4..',
 				'int @ ..4',
 				'int @ 0..1',
+				'int @ 10000000000000001',
+				'long @ 10000000000000001',
 				'double@4.2..5.5',
 				'double[]',
 			],
@@ -193,6 +198,7 @@ const Suites: Record<
 				'byte@0..1[]',
 				'int[] @ 4',
 				'byte @ 0..1 [] @ 0..',
+				'long @ 10000000000000001.. [] @ 0..',
 			],
 		},
 		referenceType: { content: ['', '#[uuid] UuidMostLeast', 'MinMaxBounds<float @ 1..2>'] },
@@ -211,6 +217,7 @@ const Suites: Record<
 					Bar: boolean,
 					Boo: struct Duh { Ha: any },
 					UUID: #[uuid] int[] @ 4,
+					EvilLiteral: 7Hi,
 					#[meh]
 					Qux: enum (int) {},
 					#[since=1.17]

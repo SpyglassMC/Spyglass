@@ -88,7 +88,7 @@ export async function localeCommand(args: Args) {
 
 	if (args.upgrade) {
 		const oldLocale = await readLocale(outputFile)
-		const outputDir = fileUtil.getParentOfFile(NodeJsExternals, outputFile).toString()
+		const outputDir = fileUtil.getParentOfUri(outputFile).toString()
 		const entries = await NodeJsExternals.fs.readdir(outputDir)
 		const others = entries.filter(e => e.isFile() && e.name.endsWith('.json'))
 			.map(e => e.name.slice(0, e.name.length - '.json'.length))

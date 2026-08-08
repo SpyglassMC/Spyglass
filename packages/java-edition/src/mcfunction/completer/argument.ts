@@ -13,6 +13,7 @@ import {
 	binarySearch,
 	BooleanNode,
 	BrigadierStringOptions,
+	Color,
 	completer,
 	CompletionItem,
 	CompletionKind,
@@ -30,7 +31,6 @@ import {
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
-import type * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
 import { ReleaseVersion } from '../../dependency/common.js'
 import {
@@ -126,6 +126,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return LiteralNode.mock(range, { pool: EntityAnchorArgumentValues })
 		case 'minecraft:entity_summon':
 			return ResourceLocationNode.mock(range, { category: 'entity_type' })
+		case 'minecraft:feature':
+			return ResourceLocationNode.mock(range, { category: 'worldgen/feature' })
 		case 'minecraft:function':
 			return ResourceLocationNode.mock(range, { category: 'function' })
 		case 'minecraft:gamemode':
@@ -184,12 +186,19 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return LiteralNode.mock(range, { pool: getScoreboardSlotArgumentValues(ctx) })
 		case 'minecraft:score_holder':
 			return ScoreHolderNode.mock(range)
+		case 'minecraft:slot_source':
+			return [
+				LiteralNode.mock(range, { pool: getItemSlotsArgumentValues(ctx) }),
+				ResourceLocationNode.mock(range, { category: 'slot_source' }),
+			]
 		case 'minecraft:style':
 			return json.JsonObjectNode.mock(range)
 		case 'minecraft:swizzle':
 			return LiteralNode.mock(range, { pool: SwizzleArgumentValues })
 		case 'minecraft:team':
 			return SymbolNode.mock(range, { category: 'team' })
+		case 'minecraft:team_color':
+			return LiteralNode.mock(range, { pool: Color.ColorNames })
 		case 'minecraft:template_mirror':
 			return LiteralNode.mock(range, { pool: MirrorValues })
 		case 'minecraft:template_rotation':

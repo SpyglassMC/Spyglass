@@ -14,13 +14,12 @@
     "release:dry": "npm publish --tag latest --dry-run"
   },
   "dependencies": {
+    "@spyglassmc/locales": "*",
     "base64-arraybuffer": "^1.0.2",
     "binary-search": "^1.3.6",
-    "chokidar": "^3.5.2",
     "decompress": "^4.2.1",
     "follow-redirects": "^1.14.8",
     "picomatch": "^4.0.2",
-    "pako": "^2.0.4",
     "rfdc": "^1.3.0",
     "vscode-languageserver-textdocument": "^1.0.4",
     "whatwg-url": "^14.0.0"
@@ -29,8 +28,9 @@
     "@types/decompress": "^4.2.3",
     "@types/follow-redirects": "^1.14.1",
     "@types/picomatch": "^3.0.1",
-    "@types/pako": "^2.0.0",
-    "@types/whatwg-url": "^11.0.4"
+    "@types/whatwg-url": "^11.0.4",
+    "memfs": "^4.51.1",
+    "@jsonjoy.com/fs-node-utils": "^4.57.2"
   },
   "publishConfig": {
     "access": "public"

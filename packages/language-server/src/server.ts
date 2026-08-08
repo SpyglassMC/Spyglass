@@ -11,9 +11,11 @@ import * as ls from 'vscode-languageserver/node.js'
 import type {
 	CustomInitializationOptions,
 	CustomServerCapabilities,
+	MyLspAnalyzeProjectResult,
 	MyLspDataHackPubifyRequestParams,
 } from './util/index.js'
 import { toCore, toLS } from './util/index.js'
+import { LspFileWatcher } from './util/LspFileWatcher.js'
 
 export * from './util/types.js'
 
@@ -30,15 +32,16 @@ const cacheRoot = fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRootPath).to
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
 let workspaceFolders!: ls.WorkspaceFolder[]
+let projectRoots!: core.RootUriString[]
 let hasShutdown = false
 
-const externals = getNodeJsExternals({ cacheRoot })
 const logger: core.Logger = {
 	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
 	info: (msg: any, ...args: any[]): void => connection.console.info(util.format(msg, ...args)),
 	log: (msg: any, ...args: any[]): void => connection.console.log(util.format(msg, ...args)),
 	warn: (msg: any, ...args: any[]): void => connection.console.warn(util.format(msg, ...args)),
 }
+const externals = getNodeJsExternals({ cacheRoot, logger })
 let service!: core.Service
 
 function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensRegistrationOptions {
@@ -74,6 +77,7 @@ connection.onInitialize(async (params) => {
 
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
+	projectRoots = workspaceFolders.map(f => core.fileUtil.ensureEndingSlash(f.uri))
 
 	if (initializationOptions?.inDevelopmentMode) {
 		await new Promise((resolve) => setTimeout(resolve, 3000))
@@ -95,6 +99,7 @@ connection.onInitialize(async (params) => {
 			profilers: new core.ProfilerFactory(logger, [
 				'cache#load',
 				'cache#save',
+				'project#analyzeProject',
 				'project#init',
 				'project#ready',
 				'project#ready#bind',
@@ -141,6 +146,7 @@ connection.onInitialize(async (params) => {
 	}
 
 	const customCapabilities: CustomServerCapabilities = {
+		analyzeProject: true,
 		dataHackPubify: true,
 		resetProjectCache: true,
 		showCacheRoot: true,
@@ -197,7 +203,45 @@ connection.onInitialized(async () => {
 
 	startDynamicSemanticTokensRegistration()
 
-	await service.project.ready()
+	// Initializes LspFileWatcher only when client supports didChangeWatchedFiles notifications.
+	const fileWatcher = capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration
+		? new LspFileWatcher({
+			capabilities,
+			connection,
+			externals,
+			locations: projectRoots,
+			logger,
+			predicate: (uri) => !service.project.shouldExclude(uri),
+		})
+			.on('ready', () => logger.info('[FileWatcher] ready'))
+			.on('add', (uri) => logger.info('[FileWatcher] added', uri))
+			.on('change', (uri) => logger.info('[FileWatcher] changed', uri))
+			.on('unlink', (uri) => logger.info('[FileWatcher] unlinked', uri))
+			.on('error', (e) => logger.error('[FileWatcher]', e))
+		: undefined
+
+	if (fileWatcher) {
+		// Listen for config changes and reconcile the internal state of the file watcher if
+		// `env.exclude` has changed.
+		service.project.on('configChanged', async ({ oldConfig, newConfig }) => {
+			const oldExclude = new Set(oldConfig.env.exclude)
+			const newExclude = new Set(newConfig.env.exclude)
+			if (oldExclude.size === newExclude.size && oldExclude.isSubsetOf(newExclude)) {
+				// `env.exclude` has not changed. Skip.
+				return
+			}
+
+			logger.info('[FileWatcher] env.exclude config has changed. Reconciling...')
+			for (const root of projectRoots) {
+				await fileWatcher.reconcile(root)
+			}
+		})
+	}
+
+	await service.project.ready({
+		projectRootsWatcher: fileWatcher,
+	})
+
 	if (capabilities.workspace?.workspaceFolders) {
 		connection.workspace.onDidChangeWorkspaceFolders(async () => {
 			// FIXME
@@ -300,8 +344,6 @@ connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, versi
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	service.project.onDidClose(uri)
 })
-
-connection.workspace.onDidRenameFiles(({}) => {})
 
 connection.onCodeAction(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
@@ -477,6 +519,49 @@ connection.languages.inlayHint.on(async ({ textDocument: { uri }, range }) => {
 	const hints = service.getInlayHints(node, doc, toCore.range(range, doc))
 	return toLS.inlayHints(hints, doc)
 })
+
+let isAnalyzingProject = false
+connection.onRequest(
+	'spyglassmc/analyzeProject',
+	async (token: ls.CancellationToken): Promise<MyLspAnalyzeProjectResult | undefined> => {
+		if (isAnalyzingProject) {
+			return undefined
+		}
+		isAnalyzingProject = true
+
+		const abortController = new AbortController()
+		token.onCancellationRequested(() => abortController.abort())
+
+		let reporter: ls.WorkDoneProgressServerReporter | undefined
+		if (capabilities.window?.workDoneProgress) {
+			reporter = await connection.window.createWorkDoneProgress()
+			reporter.token.onCancellationRequested(() => abortController.abort())
+			reporter.begin(
+				locales.localize('server.progress.analyze-project.title'),
+				0,
+				undefined,
+				true,
+			)
+		}
+
+		let lastPercentage = 0
+		try {
+			return await service.project.analyzeProject({
+				onProgress: (done, total) => {
+					const percentage = Math.floor(done / total * 100)
+					if (percentage > lastPercentage) {
+						lastPercentage = percentage
+						reporter?.report(percentage, `${done}/${total}`)
+					}
+				},
+				signal: abortController.signal,
+			})
+		} finally {
+			reporter?.done()
+			isAnalyzingProject = false
+		}
+	},
+)
 
 connection.onRequest('spyglassmc/resetProjectCache', async (): Promise<void> => {
 	return service.project.resetCache()

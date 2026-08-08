@@ -82,7 +82,7 @@ exports[`mcfunction argument parser > minecraft:nbt_tag > Parse '0l' 1`] = `
           "start": 0,
           "end": 2
         },
-        "value": "0"
+        "value": 0
       }
     ]
   },
