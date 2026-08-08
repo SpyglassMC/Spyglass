@@ -42,6 +42,7 @@ export interface ParserContext extends ContextBase {
 	config: Config
 	doc: TextDocument
 	err: ErrorReporter
+	symbols: SymbolUtil
 }
 interface ParserContextOptions {
 	doc: TextDocument
@@ -54,6 +55,7 @@ export namespace ParserContext {
 			config: project.config,
 			doc: opts.doc,
 			err: opts.err ?? new ErrorReporter(project.ctx['errorSource']),
+			symbols: project.symbols,
 		}
 	}
 }
