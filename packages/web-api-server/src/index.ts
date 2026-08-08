@@ -1,6 +1,7 @@
 import cors from 'cors'
 import express, { type Request } from 'express'
 import assert from 'node:assert/strict'
+import path from 'node:path'
 import pino from 'pino'
 import { pinoHttp } from 'pino-http'
 import { createUnicodeApp } from './unicode.js'
