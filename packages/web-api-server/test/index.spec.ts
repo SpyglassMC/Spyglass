@@ -3,8 +3,8 @@ import fs from 'node:fs/promises'
 import http, { type Server } from 'node:http'
 import os from 'node:os'
 import path from 'node:path'
-import pino from 'pino'
 import { after, before, describe, it } from 'node:test'
+import pino from 'pino'
 
 import {
 	applyMaxCodepointCutoff,
@@ -62,17 +62,23 @@ describe('parseUnicodeDataEntries()', () => {
 		const entries = parseUnicodeDataEntries(text)
 		assert.equal(entries.length, 2)
 		assert.deepEqual(entries[0], { codepoint: 0, primary: '<control>', secondary: 'NULL' })
-		assert.deepEqual(entries[1], { codepoint: 9, primary: '<control>', secondary: 'CHARACTER TABULATION' })
+		assert.deepEqual(entries[1], {
+			codepoint: 9,
+			primary: '<control>',
+			secondary: 'CHARACTER TABULATION',
+		})
 	})
 
 	it('skips blank lines', () => {
-		const text = '0000;<control>;Cc;0;BN;;;;;N;NULL;;;;\n\n0001;<control>;Cc;0;BN;;;;;N;START OF HEADING;;;;\n'
+		const text =
+			'0000;<control>;Cc;0;BN;;;;;N;NULL;;;;\n\n0001;<control>;Cc;0;BN;;;;;N;START OF HEADING;;;;\n'
 		const entries = parseUnicodeDataEntries(text)
 		assert.equal(entries.length, 2)
 	})
 
 	it('parses surrogate range markers', () => {
-		const text = 'D800;<Non Private Use High Surrogate, First>;Cs;0;L;;;;;N;;;;;\nDB7F;<Non Private Use High Surrogate, Last>;Cs;0;L;;;;;N;;;;;\n'
+		const text =
+			'D800;<Non Private Use High Surrogate, First>;Cs;0;L;;;;;N;;;;;\nDB7F;<Non Private Use High Surrogate, Last>;Cs;0;L;;;;;N;;;;;\n'
 		const entries = parseUnicodeDataEntries(text)
 		assert.equal(entries[0]!.codepoint, 0xD800)
 		assert.equal(entries[1]!.codepoint, 0xDB7F)
@@ -251,13 +257,16 @@ describe('GET /unicode/data.json (E2E)', () => {
 
 	before(async () => {
 		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'unicode-e2e-'))
-		await fs.writeFile(path.join(tmpDir, 'data.json'), JSON.stringify({
-			version: '17.0.0',
-			names: { 'snowman': 0x2603 },
-			namesInverse: { '2603': ['SNOWMAN', ''] },
-			ranges: {},
-			blocks: { 'miscellaneous symbols': [0x2600, 0x26FF] },
-		}))
+		await fs.writeFile(
+			path.join(tmpDir, 'data.json'),
+			JSON.stringify({
+				version: '17.0.0',
+				names: { 'snowman': 0x2603 },
+				namesInverse: { '2603': ['SNOWMAN', ''] },
+				ranges: {},
+				blocks: { 'miscellaneous symbols': [0x2600, 0x26FF] },
+			}),
+		)
 
 		const { app } = await createUnicodeApp(tmpDir, logger)
 		await new Promise<void>((resolve) => {
