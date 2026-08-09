@@ -15,7 +15,7 @@ const FETCH_TIMEOUT_MS = 30_000
  * Minecraft's Java runtime caps the supported code point range at U+101759
  * (the last entry of the Tangut Supplement block); codepoints at or after
  * U+101760 (TANGUT COMPONENTS SUPPLEMENT) are dropped from `names`,
- * `namesInverse`, `blocks`, and `ranges`.
+ * `blocks`, and `ranges`.
  */
 export const MaxUnicodeCodepoint = 101759
 
@@ -24,8 +24,8 @@ export const MaxUnicodeCodepoint = 101759
  *
  * - `names`: lower-cased Unicode character name -> codepoint. Includes primary
  *   names from `UnicodeData.txt` field 1 (excluding `<…>` placeholders) and
- *   legacy Unicode 1.0 aliases from field 10.
- * - `namesInverse`: codepoint (hex string, no `0x`) -> `[primary, secondary]`.
+ *   legacy Unicode 1.0 aliases from field 10. Deduped by codepoint (first
+ *   name per codepoint wins).
  * - `ranges`: lower-cased `<…, First>`/`<…, Last>` pair name -> inclusive
  *   `[start, end]` codepoint range.
  * - `blocks`: lower-cased block name from `Blocks.txt` -> inclusive `[start, end]`.
@@ -33,7 +33,6 @@ export const MaxUnicodeCodepoint = 101759
 export interface UnicodeDataJson {
 	version: string
 	names: { [name: string]: number }
-	namesInverse: { [hex: string]: [string, string] }
 	ranges: { [name: string]: [number, number] }
 	blocks: { [name: string]: [number, number] }
 }
@@ -65,21 +64,59 @@ export function parseUnicodeDataEntries(text: string): ParsedEntry[] {
 }
 
 /**
- * Parses the contents of `Blocks.txt` into a `{ blockName: [start, end] }` map.
- * Comment lines (`#…`) are ignored.
+ * Parses the contents of `Blocks.txt`. Returns both a `{ blockName: [start,
+ * end] }` map (for the JSON output) and a flat list of `{ start, end, name }`
+ * entries (for resolving First/Last range pairs to their block name). Comment
+ * lines (`#…`) are ignored.
  */
-export function parseBlocks(text: string): { [name: string]: [number, number] } {
-	const out: { [name: string]: [number, number] } = {}
+export function parseBlocks(text: string): {
+	map: { [name: string]: [number, number] }
+	list: { start: number; end: number; name: string }[]
+} {
+	const map: { [name: string]: [number, number] } = {}
+	const list: { start: number; end: number; name: string }[] = []
 	for (const line of text.split('\n')) {
 		if (!line || line.startsWith('#')) {
 			continue
 		}
 		const m = line.match(/^([0-9A-F]+)\.\.([0-9A-F]+);\s*(.+)$/)
 		if (m) {
-			out[m[3]!.trim().toLowerCase()] = [parseInt(m[1]!, 16), parseInt(m[2]!, 16)]
+			const name = m[3]!.trim().toLowerCase()
+			const start = parseInt(m[1]!, 16)
+			const end = parseInt(m[2]!, 16)
+			map[name] = [start, end]
+			list.push({ start, end, name })
 		}
 	}
-	return out
+	return { map, list }
+}
+
+/**
+ * Maps a `<X, First>`/`<X, Last>` pair's range to its canonical `Blocks.txt`
+ * block name. Vanilla Minecraft's hex-suffix form uses block names (e.g.
+ * `Hangul Syllables`, plural) while `UnicodeData.txt` lists the First/Last
+ * pair name (e.g. `Hangul Syllable`, singular). Resolution:
+ *   1. Exact `[start, end]` match in Blocks.txt -> use that block name
+ *   2. Smallest containing block -> use that block name (range is a subset)
+ *   3. No match -> fall back to the original First/Last name
+ */
+function resolveBlockName(
+	start: number,
+	end: number,
+	fallback: string,
+	blocks: { start: number; end: number; name: string }[],
+): string {
+	const exact = blocks.find(b => b.start === start && b.end === end)
+	if (exact) {
+		return exact.name
+	}
+	const containing = blocks
+		.filter(b => b.start <= start && end <= b.end)
+		.sort((a, b) => (a.end - a.start) - (b.end - b.start))
+	if (containing.length) {
+		return containing[0]!.name
+	}
+	return fallback
 }
 
 /**
@@ -103,24 +140,23 @@ export function buildUnicodeDataJson(
 	const blocks = parseBlocks(blocksText)
 
 	const names: { [name: string]: number } = {}
-	const namesInverse: { [hex: string]: [string, string] } = {}
 	const rangeStarts = new Map<string, number>()
 	const ranges: { [name: string]: [number, number] } = {}
+	// Track which codepoints have already been assigned a name so we keep
+	// only the first (primary, then secondary alias) per codepoint.
+	const named = new Set<number>()
 
 	for (const e of entries) {
-		namesInverse[e.codepoint.toString(16)] = [e.primary, e.secondary]
-		// Real primary name (skip `<control>` / `<…, First>` / `<…, Last>`).
-		if (e.primary && !e.primary.startsWith('<')) {
-			const key = e.primary.toLowerCase()
-			if (!(key in names)) {
-				names[key] = e.codepoint
-			}
-		}
-		// Legacy Unicode 1.0 alias - populates `names` for old control chars.
-		if (e.secondary) {
-			const key = e.secondary.toLowerCase()
-			if (!(key in names)) {
-				names[key] = e.codepoint
+		if (!named.has(e.codepoint)) {
+			// Real primary name (skip `<control>` / `<…, First>` / `<…, Last>`).
+			if (e.primary && !e.primary.startsWith('<')) {
+				names[e.primary.toLowerCase()] = e.codepoint
+				named.add(e.codepoint)
+			} else if (e.secondary) {
+				// Legacy Unicode 1.0 alias - populates `names` for old
+				// control chars whose primary is `<control>`.
+				names[e.secondary.toLowerCase()] = e.codepoint
+				named.add(e.codepoint)
 			}
 		}
 		// First/Last range markers.
@@ -133,7 +169,13 @@ export function buildUnicodeDataJson(
 		if (lastMatch) {
 			const start = rangeStarts.get(lastMatch[1]!)
 			if (start !== undefined) {
-				ranges[lastMatch[1]!.toLowerCase()] = [start, e.codepoint]
+				const blockName = resolveBlockName(
+					start,
+					e.codepoint,
+					lastMatch[1]!.toLowerCase(),
+					blocks.list,
+				)
+				ranges[blockName] = [start, e.codepoint]
 				rangeStarts.delete(lastMatch[1]!)
 			}
 		}
@@ -142,16 +184,15 @@ export function buildUnicodeDataJson(
 	return {
 		version: parseUnicodeVersion(blocksText),
 		names,
-		namesInverse,
 		ranges,
-		blocks,
+		blocks: blocks.map,
 	}
 }
 
 /**
  * Removes all entries with codepoints at or above `MaxUnicodeCodepoint`.
  *
- * - `names` and `namesInverse`: entries with codepoint > `MaxUnicodeCodepoint` are dropped.
+ * - `names`: entries with codepoint > `MaxUnicodeCodepoint` are dropped.
  * - `blocks`: a block whose entire range exceeds the cutoff is dropped. Blocks
  *   whose start is at or below the cutoff but end is above are clamped to
  *   `[start, MaxUnicodeCodepoint]` (this case does not currently arise in
@@ -162,19 +203,12 @@ export function buildUnicodeDataJson(
 export function applyMaxCodepointCutoff(data: UnicodeDataJson): UnicodeDataJson {
 	const cutoff = MaxUnicodeCodepoint
 	const names: { [name: string]: number } = {}
-	const namesInverse: { [hex: string]: [string, string] } = {}
 	const ranges: { [name: string]: [number, number] } = {}
 	const blocks: { [name: string]: [number, number] } = {}
 
 	for (const [name, codepoint] of Object.entries(data.names)) {
 		if (codepoint <= cutoff) {
 			names[name] = codepoint
-		}
-	}
-	for (const [hex, entry] of Object.entries(data.namesInverse)) {
-		const cp = parseInt(hex, 16)
-		if (cp <= cutoff) {
-			namesInverse[hex] = entry
 		}
 	}
 	for (const [name, [start, end]] of Object.entries(data.ranges)) {
@@ -192,7 +226,6 @@ export function applyMaxCodepointCutoff(data: UnicodeDataJson): UnicodeDataJson 
 	return {
 		version: data.version,
 		names,
-		namesInverse,
 		ranges,
 		blocks,
 	}

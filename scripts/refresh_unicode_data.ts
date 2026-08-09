@@ -15,6 +15,7 @@
 import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const UNICODE_DATA_URL = 'https://www.unicode.org/Public/UNIDATA/UnicodeData.txt'
 const BLOCKS_URL = 'https://www.unicode.org/Public/UNIDATA/Blocks.txt'
@@ -27,7 +28,6 @@ const MaxUnicodeCodepoint = 101759
 interface UnicodeDataJson {
 	version: string
 	names: { [name: string]: number }
-	namesInverse: { [hex: string]: [string, string] }
 	ranges: { [name: string]: [number, number] }
 	blocks: { [name: string]: [number, number] }
 }
@@ -54,18 +54,60 @@ function parseUnicodeDataEntries(text: string): ParsedEntry[] {
 	return out
 }
 
-function parseBlocks(text: string): { [name: string]: [number, number] } {
-	const out: { [name: string]: [number, number] } = {}
+interface ParsedBlock {
+	start: number
+	end: number
+	name: string
+}
+
+function parseBlocks(text: string): {
+	map: { [name: string]: [number, number] }
+	list: ParsedBlock[]
+} {
+	const map: { [name: string]: [number, number] } = {}
+	const list: ParsedBlock[] = []
 	for (const line of text.split('\n')) {
 		if (!line || line.startsWith('#')) {
 			continue
 		}
 		const m = line.match(/^([0-9A-F]+)\.\.([0-9A-F]+);\s*(.+)$/)
 		if (m) {
-			out[m[3]!.trim().toLowerCase()] = [parseInt(m[1]!, 16), parseInt(m[2]!, 16)]
+			const name = m[3]!.trim().toLowerCase()
+			const start = parseInt(m[1]!, 16)
+			const end = parseInt(m[2]!, 16)
+			map[name] = [start, end]
+			list.push({ start, end, name })
 		}
 	}
-	return out
+	return { map, list }
+}
+
+/**
+ * Maps a `<X, First>`/`<X, Last>` pair's range to its canonical `Blocks.txt`
+ * block name. Vanilla Minecraft's hex-suffix form uses block names (e.g.
+ * `Hangul Syllables`, plural) while `UnicodeData.txt` lists the First/Last
+ * pair name (e.g. `Hangul Syllable`, singular). Resolution:
+ *   1. Exact `[start, end]` match in Blocks.txt -> use that block name
+ *   2. Smallest containing block -> use that block name (range is a subset)
+ *   3. No match -> fall back to the original First/Last name
+ */
+function resolveBlockName(
+	start: number,
+	end: number,
+	fallback: string,
+	blocks: ParsedBlock[],
+): string {
+	const exact = blocks.find(b => b.start === start && b.end === end)
+	if (exact) {
+		return exact.name
+	}
+	const containing = blocks
+		.filter(b => b.start <= start && end <= b.end)
+		.sort((a, b) => (a.end - a.start) - (b.end - b.start))
+	if (containing.length) {
+		return containing[0]!.name
+	}
+	return fallback
 }
 
 function parseUnicodeVersion(blocksText: string): string {
@@ -81,22 +123,20 @@ function buildUnicodeDataJson(
 	const blocks = parseBlocks(blocksText)
 
 	const names: { [name: string]: number } = {}
-	const namesInverse: { [hex: string]: [string, string] } = {}
 	const rangeStarts = new Map<string, number>()
 	const ranges: { [name: string]: [number, number] } = {}
+	// Track which codepoints have already been assigned a name so we keep
+	// only the first (primary, then secondary alias) per codepoint.
+	const named = new Set<number>()
 
 	for (const e of entries) {
-		namesInverse[e.codepoint.toString(16)] = [e.primary, e.secondary]
-		if (e.primary && !e.primary.startsWith('<')) {
-			const key = e.primary.toLowerCase()
-			if (!(key in names)) {
-				names[key] = e.codepoint
-			}
-		}
-		if (e.secondary) {
-			const key = e.secondary.toLowerCase()
-			if (!(key in names)) {
-				names[key] = e.codepoint
+		if (!named.has(e.codepoint)) {
+			if (e.primary && !e.primary.startsWith('<')) {
+				names[e.primary.toLowerCase()] = e.codepoint
+				named.add(e.codepoint)
+			} else if (e.secondary) {
+				names[e.secondary.toLowerCase()] = e.codepoint
+				named.add(e.codepoint)
 			}
 		}
 		const firstMatch = e.primary.match(/^<(.+), First>$/)
@@ -108,7 +148,13 @@ function buildUnicodeDataJson(
 		if (lastMatch) {
 			const start = rangeStarts.get(lastMatch[1]!)
 			if (start !== undefined) {
-				ranges[lastMatch[1]!.toLowerCase()] = [start, e.codepoint]
+				const blockName = resolveBlockName(
+					start,
+					e.codepoint,
+					lastMatch[1]!.toLowerCase(),
+					blocks.list,
+				)
+				ranges[blockName] = [start, e.codepoint]
 				rangeStarts.delete(lastMatch[1]!)
 			}
 		}
@@ -117,27 +163,20 @@ function buildUnicodeDataJson(
 	return {
 		version: parseUnicodeVersion(blocksText),
 		names,
-		namesInverse,
 		ranges,
-		blocks,
+		blocks: blocks.map,
 	}
 }
 
 function applyMaxCodepointCutoff(data: UnicodeDataJson): UnicodeDataJson {
 	const cutoff = MaxUnicodeCodepoint
 	const names: { [name: string]: number } = {}
-	const namesInverse: { [hex: string]: [string, string] } = {}
 	const ranges: { [name: string]: [number, number] } = {}
 	const blocks: { [name: string]: [number, number] } = {}
 
 	for (const [name, codepoint] of Object.entries(data.names)) {
 		if (codepoint <= cutoff) {
 			names[name] = codepoint
-		}
-	}
-	for (const [hex, entry] of Object.entries(data.namesInverse)) {
-		if (parseInt(hex, 16) <= cutoff) {
-			namesInverse[hex] = entry
 		}
 	}
 	for (const [name, [start, end]] of Object.entries(data.ranges)) {
@@ -152,7 +191,7 @@ function applyMaxCodepointCutoff(data: UnicodeDataJson): UnicodeDataJson {
 		blocks[name] = [start, Math.min(end, cutoff)]
 	}
 
-	return { version: data.version, names, namesInverse, ranges, blocks }
+	return { version: data.version, names, ranges, blocks }
 }
 
 function sha256(text: string): string {
@@ -222,7 +261,12 @@ async function main(): Promise<void> {
 	const force = args.has('--force')
 	const writeLookup = args.has('--write-lookup')
 
-	const cacheDir = path.resolve('scripts/unicode')
+	// Anchor paths to the script's location so the script works regardless of
+	// the caller's cwd. Resolve via import.meta.url -> repo root, then build
+	// absolute paths to the cache + vendored lookup table.
+	const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+
+	const cacheDir = path.join(repoRoot, 'scripts/unicode')
 	await mkdir(cacheDir, { recursive: true })
 
 	const unicodeDataPath = path.join(cacheDir, 'UnicodeData.txt')
@@ -255,23 +299,19 @@ async function main(): Promise<void> {
 	await writeFile(jsonPath, json, 'utf-8')
 
 	const droppedNames = Object.keys(unfiltered.names).length - Object.keys(data.names).length
-	const droppedInverse = Object.keys(unfiltered.namesInverse).length
-		- Object.keys(data.namesInverse).length
 	const droppedRanges = Object.keys(unfiltered.ranges).length - Object.keys(data.ranges).length
 	const droppedBlocks = Object.keys(unfiltered.blocks).length - Object.keys(data.blocks).length
 
 	console.log(`\nWrote ${jsonPath}`)
 	console.log(`  version:        ${data.version}`)
 	console.log(`  names:          ${Object.keys(data.names).length} (dropped ${droppedNames})`)
-	console.log(
-		`  namesInverse:   ${Object.keys(data.namesInverse).length} (dropped ${droppedInverse})`,
-	)
 	console.log(`  ranges:         ${Object.keys(data.ranges).length} (dropped ${droppedRanges})`)
 	console.log(`  blocks:         ${Object.keys(data.blocks).length} (dropped ${droppedBlocks})`)
 	console.log(`  cutoff:         ${MaxUnicodeCodepoint} (0x${MaxUnicodeCodepoint.toString(16)})`)
 
 	if (writeLookup) {
-		const lookupPath = path.resolve(
+		const lookupPath = path.join(
+			repoRoot,
 			'packages/core/src/dependency/unicode-lookup-table.json',
 		)
 		await mkdir(path.dirname(lookupPath), { recursive: true })
@@ -279,7 +319,8 @@ async function main(): Promise<void> {
 
 		// Also update the BUNDLE_CHECKSUM marker in unicode.ts so the bundled
 		// fallback's ETag stays in sync with the JSON contents.
-		const unicodeTsPath = path.resolve(
+		const unicodeTsPath = path.join(
+			repoRoot,
 			'packages/core/src/dependency/unicode.ts',
 		)
 		const checksum = sha256(json)

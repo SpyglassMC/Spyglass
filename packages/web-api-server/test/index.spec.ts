@@ -40,16 +40,21 @@ describe('parseBlocks()', () => {
 			'0080..00FF; Latin-1 Supplement',
 			'E0000..E007F; Tags',
 		].join('\n')
-		const blocks = parseBlocks(text)
-		assert.deepEqual(blocks['basic latin'], [0, 127])
-		assert.deepEqual(blocks['latin-1 supplement'], [128, 255])
-		assert.deepEqual(blocks['tags'], [0xE0000, 0xE007F])
-		assert.equal(Object.keys(blocks).length, 3)
+		const { map, list } = parseBlocks(text)
+		assert.deepEqual(map['basic latin'], [0, 127])
+		assert.deepEqual(map['latin-1 supplement'], [128, 255])
+		assert.deepEqual(map['tags'], [0xE0000, 0xE007F])
+		assert.equal(Object.keys(map).length, 3)
+		assert.deepEqual(list, [
+			{ start: 0, end: 127, name: 'basic latin' },
+			{ start: 128, end: 255, name: 'latin-1 supplement' },
+			{ start: 0xE0000, end: 0xE007F, name: 'tags' },
+		])
 	})
 
 	it('ignores comment and blank lines', () => {
 		const text = '# comment\n\n# more\n'
-		assert.deepEqual(parseBlocks(text), {})
+		assert.deepEqual(parseBlocks(text), { map: {}, list: [] })
 	})
 })
 
@@ -104,6 +109,7 @@ describe('buildUnicodeDataJson()', () => {
 		'0000..007F; Basic Latin',
 		'0080..00FF; Latin-1 Supplement',
 		'D800..DFFF; High Surrogates',
+		'AC00..D7AF; Hangul Syllables',
 	].join('\n')
 
 	it('extracts version from Blocks.txt header', () => {
@@ -129,19 +135,17 @@ describe('buildUnicodeDataJson()', () => {
 		assert.equal(data.names['<hangul syllable, first>'], undefined)
 	})
 
-	it('builds names-inverse map preserving raw placeholder values', () => {
+	it('pairs `<…, First>` with `<…, Last>` entries into ranges using block names', () => {
 		const data = buildUnicodeDataJson(unicodeData, blocks)
-		assert.deepEqual(data.namesInverse['0'], ['<control>', 'NULL'])
-		assert.deepEqual(data.namesInverse['9'], ['<control>', 'CHARACTER TABULATION'])
-		assert.deepEqual(data.namesInverse['61'], ['LATIN SMALL LETTER A', ''])
-		// Unassigned C1 control: empty secondary name.
-		assert.deepEqual(data.namesInverse['80'], ['<control>', ''])
-	})
-
-	it('pairs `<…, First>` with `<…, Last>` entries into ranges', () => {
-		const data = buildUnicodeDataJson(unicodeData, blocks)
-		assert.deepEqual(data.ranges['hangul syllable'], [0xAC00, 0xD7A3])
-		assert.deepEqual(data.ranges['non private use high surrogate'], [0xD800, 0xDB7F])
+		// Hangul Syllables block in the fixture (0xAC00..0xD7AF) contains
+		// the <Hangul Syllable> pair (0xAC00..0xD7A3) -> resolves to block name.
+		assert.deepEqual(data.ranges['hangul syllables'], [0xAC00, 0xD7A3])
+		// <Non Private Use High Surrogate> pair (0xD800..0xDB7F) is contained
+		// in High Surrogates block (0xD800..0xDFFF) -> resolves to block name.
+		assert.deepEqual(data.ranges['high surrogates'], [0xD800, 0xDB7F])
+		// Old First/Last keys are not registered.
+		assert.equal(data.ranges['hangul syllable'], undefined)
+		assert.equal(data.ranges['non private use high surrogate'], undefined)
 	})
 
 	it('builds a blocks map from Blocks.txt', () => {
@@ -174,7 +178,6 @@ describe('applyMaxCodepointCutoff()', () => {
 				'at cutoff': MaxUnicodeCodepoint,
 				'after cutoff': MaxUnicodeCodepoint + 1,
 			},
-			namesInverse: {},
 			ranges: {},
 			blocks: {},
 		}
@@ -184,39 +187,10 @@ describe('applyMaxCodepointCutoff()', () => {
 		assert.equal(trimmed.names['after cutoff'], undefined)
 	})
 
-	it('caps `namesInverse` at the cutoff codepoint', () => {
-		const data: UnicodeDataJson = {
-			version: 'test',
-			names: {},
-			namesInverse: {
-				'64': ['AT CUTOFF', ''],
-				[MaxUnicodeCodepoint.toString(16)]: ['AT CUTOFF', ''],
-				[MaxUnicodeCodepoint.toString(16).padStart(5, '0')]: [
-					// Wait, that's wrong, let me re-check.
-					'',
-					'',
-				],
-			},
-			ranges: {},
-			blocks: {},
-		}
-		// Re-build the inverse map correctly:
-		data.namesInverse = {
-			'64': ['AT CUTOFF', ''],
-			[MaxUnicodeCodepoint.toString(16)]: ['MAX', ''],
-			[(MaxUnicodeCodepoint + 1).toString(16)]: ['PAST', ''],
-		}
-		const trimmed = applyMaxCodepointCutoff(data)
-		assert.ok(trimmed.namesInverse['64'])
-		assert.ok(trimmed.namesInverse[MaxUnicodeCodepoint.toString(16)])
-		assert.equal(trimmed.namesInverse[(MaxUnicodeCodepoint + 1).toString(16)], undefined)
-	})
-
 	it('drops blocks whose start is at or above the cutoff', () => {
 		const data: UnicodeDataJson = {
 			version: 'test',
 			names: {},
-			namesInverse: {},
 			ranges: {},
 			blocks: {
 				'basic latin': [0, 127],
@@ -236,7 +210,6 @@ describe('applyMaxCodepointCutoff()', () => {
 		const data: UnicodeDataJson = {
 			version: 'test',
 			names: {},
-			namesInverse: {},
 			ranges: {
 				'tangut ideograph supplement': [101632, 101662],
 				'cjk ideograph extension b': [131072, 173791],
@@ -262,7 +235,6 @@ describe('GET /unicode/data.json (E2E)', () => {
 			JSON.stringify({
 				version: '17.0.0',
 				names: { 'snowman': 0x2603 },
-				namesInverse: { '2603': ['SNOWMAN', ''] },
 				ranges: {},
 				blocks: { 'miscellaneous symbols': [0x2600, 0x26FF] },
 			}),

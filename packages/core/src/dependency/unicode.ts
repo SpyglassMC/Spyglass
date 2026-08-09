@@ -19,7 +19,6 @@ export const BlocksUri = 'spyglass://unicode/Blocks.json'
  * {
  *   "version": "17.0.0",
  *   "names": { "latin small letter a": 97, ... },
- *   "namesInverse": { "61": ["LATIN SMALL LETTER A", ""], ... },
  *   "ranges": { "hangul syllable": [44032, 55203], ... },
  *   "blocks": { "basic latin": [0, 127], ... }
  * }
@@ -27,9 +26,8 @@ export const BlocksUri = 'spyglass://unicode/Blocks.json'
  *
  * - `names`: lower-cased Unicode character name -> codepoint. Includes both
  *   primary names (from `UnicodeData.txt` field 1) and legacy Unicode 1.0
- *   aliases (field 10) for early control characters.
- * - `namesInverse`: codepoint (as hex string) -> `[primary, secondary]` raw
- *   tuple as it appears in `UnicodeData.txt`.
+ *   aliases (field 10) for early control characters. Deduped by codepoint
+ *   (first name seen per codepoint wins).
  * - `ranges`: lower-cased `<..., First>`/`<..., Last>` pair name -> inclusive
  *   `[start, end]` codepoint range. Used to validate that a codepoint lies
  *   in a recognized contiguous range.
@@ -48,8 +46,9 @@ export const UnicodeBulkCategory = 'unicode-data'
  *
  * - `BulkNames`: lower-cased Unicode name -> codepoint. Used for fast O(1)
  *   case-insensitive name lookup from the parser.
- * - `BulkNamesInverse`: hex codepoint -> `[primary, secondary]` raw tuple.
- *   Used to validate that a codepoint is explicitly listed in UnicodeData.txt.
+ * - `BulkNamesInverse`: hex codepoint -> lower-cased name. Built at runtime
+ *   in {@link symbolRegistrar} by reversing `names`. Used to validate that a
+ *   codepoint is explicitly listed in UnicodeData.txt.
  * - `BulkRanges`: `<…, First>`/`<…, Last>` pair name -> inclusive `[start, end]`.
  * - `BulkBlocks`: block name from `Blocks.txt` -> inclusive `[start, end]`.
  */
@@ -60,10 +59,8 @@ export const BulkBlocks = 'blocks'
 
 export interface UnicodeData {
 	version: string
-	/** Lower-cased name -> codepoint. */
+	/** Lower-cased name -> codepoint. Deduped by codepoint (first name per codepoint wins). */
 	names: { [name: string]: number }
-	/** Hex codepoint (no leading `0x`) -> `[primary, secondary]` raw UnicodeData.txt fields. */
-	namesInverse: { [hex: string]: [string, string] }
 	/** Lower-cased `<…, First>`/`<…, Last>` range name -> inclusive `[start, end]`. */
 	ranges: { [name: string]: [number, number] }
 	/** Lower-cased block name from `Blocks.txt` -> inclusive `[start, end]`. */
@@ -149,11 +146,10 @@ function getUnicodeDataFromBundle(): UnicodeDataResult {
 	return {
 		version: data.version,
 		names: data.names,
-		namesInverse: data.namesInverse,
 		ranges: data.ranges,
 		blocks: data.blocks,
 		// BUNDLE_CHECKSUM - updated by scripts/refresh_unicode_data.ts --write-lookup
-		checksum: `bundle-7912693b2a919382662e46f22919e9ed9601d15879f33a03e2ff33f4c67b3df1`,
+		checksum: `bundle-078445a6a5a4b9f3621361797daf25c4b2e17a33dcc2125693d1fd8db7a5d592`,
 	}
 }
 
@@ -182,7 +178,8 @@ export function toTitleCase(name: string): string {
  *   lower-cased name used as the lookup key.
  * - Four bulk symbols under {@link UnicodeBulkCategory}:
  *   - `{@link BulkNames}` -> lower-cased name -> codepoint (for fast lookup)
- *   - `{@link BulkNamesInverse}` -> codepoint -> `[primary, secondary]` entry
+ *   - `{@link BulkNamesInverse}` -> hex codepoint -> lower-cased name (built
+ *     by reversing `names`)
  *   - `{@link BulkRanges}` -> `<…, First>`/`<…, Last>` pairs
  *   - `{@link BulkBlocks}` -> block name -> `[start, end]`
  *
@@ -234,6 +231,13 @@ export function symbolRegistrar(data: UnicodeData): SymbolRegistrar {
 						usage: { type: 'definition' },
 					})
 			}
+			// Build the codepoint -> name reverse map from `names`. Each codepoint
+			// already has exactly one entry in `names` (deduped at build time), so
+			// iterating once is sufficient.
+			const namesByCodepoint: UnicodeNamesByCodepointMap = {}
+			for (const [name, codepoint] of Object.entries(data.names)) {
+				namesByCodepoint[codepoint.toString(16)] = name
+			}
 			symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNames)
 				.enter({
 					data: { data: data.names },
@@ -245,7 +249,7 @@ export function symbolRegistrar(data: UnicodeData): SymbolRegistrar {
 				})
 			symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNamesInverse)
 				.enter({
-					data: { data: data.namesInverse },
+					data: { data: namesByCodepoint },
 					usage: { type: 'definition' },
 				})
 			symbols.query(BlocksUri, UnicodeBulkCategory, BulkRanges)
@@ -284,15 +288,17 @@ export function isUnicodeNameSymbolData(value: unknown): value is UnicodeNameSym
 }
 
 export type UnicodeNameLookupMap = { [lowerName: string]: number }
-export type UnicodeInverseMap = { [hex: string]: [string, string] }
+export type UnicodeNamesByCodepointMap = { [hex: string]: string }
 export type UnicodeRangeMap = { [name: string]: [number, number] }
 
 export function isUnicodeNameLookupMap(value: unknown): value is UnicodeNameLookupMap {
 	return typeof value === 'object' && value !== undefined
 }
 
-export function isUnicodeInverseMap(value: unknown): value is UnicodeInverseMap {
-	return typeof value === 'object' && value !== undefined
+export function isUnicodeNamesByCodepointMap(
+	value: unknown,
+): value is UnicodeNamesByCodepointMap {
+	return typeof value === 'object' && value !== undefined && !Array.isArray(value)
 }
 
 export function isUnicodeRangeMap(value: unknown): value is UnicodeRangeMap {

@@ -7,8 +7,8 @@ import {
 	BulkNamesInverse,
 	BulkRanges,
 	codepointInAnyRange,
-	isUnicodeInverseMap,
 	isUnicodeNameLookupMap,
+	isUnicodeNamesByCodepointMap,
 	isUnicodeRangeMap,
 	toTitleCase,
 	UnicodeBulkCategory,
@@ -61,17 +61,17 @@ function lookupName(name: string, ctx: ParserContext): number | undefined {
  *   legacy Unicode 1.0 aliases, or placeholder names like `<control>`).
  */
 function isValidUnicodeCodepoint(codepoint: number, ctx: ParserContext): boolean {
-	const inverse = ctx.symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNamesInverse)
-		.getData(isUnicodeInverseMap)
+	const byCodepoint = ctx.symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNamesInverse)
+		.getData(isUnicodeNamesByCodepointMap)
 	const ranges = ctx.symbols.query(BlocksUri, UnicodeBulkCategory, BulkRanges)
 		.getData(isUnicodeRangeMap)
-	if (!inverse || !ranges) {
+	if (!byCodepoint || !ranges) {
 		return false
 	}
 	if (codepointInAnyRange(codepoint, ranges)) {
 		return true
 	}
-	return inverse[codepoint.toString(16)] !== undefined
+	return Object.prototype.hasOwnProperty.call(byCodepoint, codepoint.toString(16))
 }
 
 /**
@@ -111,12 +111,9 @@ function resolveNamedEscape(escape: string, src: Source, ctx: ParserContext): nu
 		if (result !== undefined) {
 			return result
 		}
-		// If the hex-suffix function already emitted an error (e.g. out-of-
-		// range), don't double-report. Fall back to name-only only when the
-		// hex form was structurally invalid (unknown range name).
-		if (ctx.err.dump().length > 0) {
-			return undefined
-		}
+		// The hex-suffix form may have emitted a specific error (e.g. out-
+		// of-range). Fall through to the name-only path so additional
+		// errors can still be reported; multiple errors are acceptable.
 	}
 	// Detect a known range name with no hex codepoint provided, e.g.
 	// `\N{Hangul Syllable }`. Emit a clearer error than the generic
@@ -131,11 +128,54 @@ function resolveNamedEscape(escape: string, src: Source, ctx: ParserContext): nu
 			`${toTitleCase(rangeProbe[1]!)} `,
 		).symbol
 		if (rangeSymbol) {
+			const data = rangeSymbol.data as UnicodeRangeSymbolData | undefined
+			if (!data?.range) {
+				return undefined
+			}
+			const [start, end] = data.range
 			ctx.err.report(
-				localize('parser.string.hex-expected', rangeProbe[1]!),
+				localize(
+					'parser.string.hex-expected',
+					rangeProbe[1]!,
+					start.toString(16).toUpperCase(),
+					end.toString(16).toUpperCase(),
+				),
 				Range.create(src, src.getCharRange(rangeProbe[1]!.length - 1).end),
 			)
 			return undefined
+		}
+	}
+	// Detect a known range name with non-hex trailing content, e.g.
+	// `\N{Hangul Syllables 0xAC00}` - the user typed something that looks
+	// like a codepoint suffix but isn't valid hex. Suggest the first valid
+	// codepoint in the range.
+	const trailingMatch = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s+(.+?)\s*$/i.exec(escape)
+	// Skip when trailing is valid hex - the out-of-range check above already
+	// covers that case with a more specific message.
+	if (trailingMatch && !/^[a-f0-9]+$/i.test(trailingMatch[2]!)) {
+		const rangeSymbol = ctx.symbols.query(
+			UnicodeDataUri,
+			UnicodeNameCategory,
+			`${toTitleCase(trailingMatch[1]!)} `,
+		).symbol
+		if (rangeSymbol) {
+			const data = rangeSymbol.data as UnicodeRangeSymbolData | undefined
+			if (data?.range) {
+				const [start] = data.range
+				const garbage = trailingMatch[2]!
+				ctx.err.report(
+					localize(
+						'parser.string.invalid-codepoint-suffix',
+						garbage,
+						start.toString(16).toUpperCase(),
+					),
+					Range.create(
+						src,
+						src.getCharRange(trailingMatch[1]!.length + 1 + garbage.length - 1).end,
+					),
+				)
+				return undefined
+			}
 		}
 	}
 	const match = NamedEscapePattern.exec(escape)
@@ -203,11 +243,11 @@ function resolveHexSuffixedEscape(
 		ctx.err.report(
 			localize(
 				'parser.string.out-of-range',
-				data.lowercase,
+				toTitleCase(data.lowercase),
 				start.toString(16).toUpperCase(),
 				end.toString(16).toUpperCase(),
 			),
-			Range.create(src, src.getCharRange(hex.length - 1).end),
+			Range.create(src, src.getCharRange(name.length + 1 + hex.length - 1).end),
 		)
 		return undefined
 	}
@@ -297,15 +337,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						} else {
 							const codepoint = resolveNamedEscape(name, src, ctx)
 							if (codepoint === undefined) {
-								// Skip the generic error if a more specific one was
-								// already emitted (e.g. "Hex codepoint expected after
-								// hangul syllable").
-								if (ctx.err.dump().length === 0) {
-									ctx.err.report(
-										localize('parser.string.illegal-unicode-escape-name'),
-										Range.create(src, src.getCharRange(name.length - 1).end),
-									)
-								}
+								ctx.err.report(
+									localize('parser.string.illegal-unicode-escape-name'),
+									Range.create(src, src.getCharRange(name.length - 1).end),
+								)
 								ans.valueMap.push({
 									inner: Range.create(ans.value.length, ans.value.length + 1),
 									outer: Range.create(cStart, src),
