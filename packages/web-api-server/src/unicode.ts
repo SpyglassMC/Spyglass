@@ -192,13 +192,12 @@ export function buildUnicodeDataJson(
 /**
  * Removes all entries with codepoints at or above `MaxUnicodeCodepoint`.
  *
- * - `names`: entries with codepoint > `MaxUnicodeCodepoint` are dropped.
+ * - `names` and `ranges`: entries with codepoint > `MaxUnicodeCodepoint` are dropped.
  * - `blocks`: a block whose entire range exceeds the cutoff is dropped. Blocks
  *   whose start is at or below the cutoff but end is above are clamped to
  *   `[start, MaxUnicodeCodepoint]` (this case does not currently arise in
  *   practice - `Blocks.txt` defines non-overlapping ranges that align to the
  *   cutoff boundary - but the clamp is kept as a defensive measure).
- * - `ranges`: range entries whose start is above the cutoff are dropped.
  */
 export function applyMaxCodepointCutoff(data: UnicodeDataJson): UnicodeDataJson {
 	const cutoff = MaxUnicodeCodepoint

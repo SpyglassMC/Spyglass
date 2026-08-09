@@ -88,9 +88,8 @@ export const JdkNameOverrides: { [name: string]: number } = Object.freeze({
 	'backspace': 0x0008,
 	'escape': 0x001b,
 	'delete': 0x007f,
-	// `bell` is mapped to U+0007 by the JDK even though Unicode 6.0+
-	// repurposed the name for U+1F514 (🔔). The JDK entry wins.
-	'bell': 0x0007,
+	// `bel` is mapped to U+0007 by the JDK.
+	'bel': 0x0007,
 	// Java-only names for unassigned C1 control characters (U+0080, U+0081,
 	// U+0099). These codepoints have `<control>` as their only UnicodeData.txt
 	// entry - no secondary name - so the JDK names are the only way to address
