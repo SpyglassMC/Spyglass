@@ -80,20 +80,7 @@ export interface UnicodeDataResult extends UnicodeData {
  * Unicode entries on conflict (registered last -> `amendSymbol` replaces data).
  */
 export const JdkNameOverrides: { [name: string]: number } = Object.freeze({
-	// Common control-character aliases accepted by `Character.getName()`.
-	'null': 0x0000,
-	'tab': 0x0009,
-	'newline': 0x000a,
-	'carriage return': 0x000d,
-	'backspace': 0x0008,
-	'escape': 0x001b,
-	'delete': 0x007f,
-	// `bel` is mapped to U+0007 by the JDK.
 	'bel': 0x0007,
-	// Java-only names for unassigned C1 control characters (U+0080, U+0081,
-	// U+0099). These codepoints have `<control>` as their only UnicodeData.txt
-	// entry - no secondary name - so the JDK names are the only way to address
-	// them.
 	'padding character': 0x0080,
 	'high octet preset': 0x0081,
 	'single graphic character introducer': 0x0099,
@@ -186,14 +173,16 @@ export function toTitleCase(name: string): string {
  *   source, version, lowercase }` - the `lowercase` field is the original
  *   lower-cased name used as the lookup key.
  * - Four bulk symbols under {@link UnicodeBulkCategory}:
- *   - `{@link BulkNames}` -> lower-cased name -> codepoint (for fast lookup)
+ *   - `{@link BulkNames}` -> lower-cased name -> codepoint (Unicode names
+ *     merged with {@link JdkNameOverrides} so the parser can resolve
+ *     `\N{...}` for JDK-only aliases; JDK entries last, win on conflict)
  *   - `{@link BulkNamesInverse}` -> hex codepoint -> lower-cased name (built
- *     by reversing `names`)
+ *     by reversing the merged map, so JDK codepoints validate too)
  *   - `{@link BulkRanges}` -> `<…, First>`/`<…, Last>` pairs
  *   - `{@link BulkBlocks}` -> block name -> `[start, end]`
  *
- * JDK aliases (see {@link JdkNameOverrides}) are entered last under the name
- * category so they win on conflict (amend replaces `data`).
+ * JDK aliases (see {@link JdkNameOverrides}) are also entered last under
+ * the name category so they win on conflict (amend replaces `data`).
  */
 export function symbolRegistrar(data: UnicodeData): SymbolRegistrar {
 	return (symbols) => {
@@ -240,16 +229,25 @@ export function symbolRegistrar(data: UnicodeData): SymbolRegistrar {
 						usage: { type: 'definition' },
 					})
 			}
-			// Build the codepoint -> name reverse map from `names`. Each codepoint
-			// already has exactly one entry in `names` (deduped at build time), so
-			// iterating once is sufficient.
+			// Merge the JDK aliases into the name map so the parser's bulk
+			// lookup (`\N{...}`) can resolve control-character aliases like
+			// `tab`/`escape` that vanilla Minecraft's `Character.getName()`
+			// accepts but UnicodeData.txt does not list. JDK entries are
+			// spread last so they win on name collisions with UnicodeData
+			// entries (none currently collide, but the order matches the
+			// per-name symbol registration above).
+			const allNames: UnicodeNameLookupMap = { ...data.names, ...JdkNameOverrides }
+			// Build the codepoint -> name reverse map from the merged map.
+			// Each codepoint already has exactly one entry in `names`
+			// (deduped at build time); JDK entries are last in `allNames`,
+			// so a JDK alias wins on collision when one exists.
 			const namesByCodepoint: UnicodeNamesByCodepointMap = {}
-			for (const [name, codepoint] of Object.entries(data.names)) {
+			for (const [name, codepoint] of Object.entries(allNames)) {
 				namesByCodepoint[codepoint.toString(16)] = name
 			}
 			symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNames)
 				.enter({
-					data: { data: data.names },
+					data: { data: allNames },
 					// The bulk symbols have no per-file locations, but `clear()` +
 					// `trim()` removes trimmable symbols (no locations at all) on
 					// every binder pass. Adding a dummy definition keeps them
