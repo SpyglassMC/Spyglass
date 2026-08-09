@@ -19,6 +19,7 @@ exports[`mcfunction argument parser > brigadier:string > Parse '\"\"' with {\"ty
         }
       }
     ],
+    "children": [],
     "quote": "\\""
   },
   "errors": []
@@ -45,7 +46,8 @@ exports[`mcfunction argument parser > brigadier:string > Parse '\"and symbols\"'
           "end": 0
         }
       }
-    ]
+    ],
+    "children": []
   },
   "errors": []
 }
@@ -72,6 +74,7 @@ exports[`mcfunction argument parser > brigadier:string > Parse '\"quoted phrase\
         }
       }
     ],
+    "children": [],
     "quote": "\\""
   },
   "errors": []
@@ -98,7 +101,8 @@ exports[`mcfunction argument parser > brigadier:string > Parse 'word' with {\"ty
           "end": 0
         }
       }
-    ]
+    ],
+    "children": []
   },
   "errors": []
 }
@@ -124,7 +128,8 @@ exports[`mcfunction argument parser > brigadier:string > Parse 'word' with {\"ty
           "end": 0
         }
       }
-    ]
+    ],
+    "children": []
   },
   "errors": []
 }
@@ -150,7 +155,8 @@ exports[`mcfunction argument parser > brigadier:string > Parse 'word' with {\"ty
           "end": 0
         }
       }
-    ]
+    ],
+    "children": []
   },
   "errors": []
 }
@@ -176,7 +182,8 @@ exports[`mcfunction argument parser > brigadier:string > Parse 'word_with_unders
           "end": 0
         }
       }
-    ]
+    ],
+    "children": []
   },
   "errors": []
 }
@@ -202,7 +209,8 @@ exports[`mcfunction argument parser > brigadier:string > Parse 'words with space
           "end": 0
         }
       }
-    ]
+    ],
+    "children": []
   },
   "errors": []
 }

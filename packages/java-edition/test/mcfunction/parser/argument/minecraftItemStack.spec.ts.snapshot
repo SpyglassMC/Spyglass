@@ -282,7 +282,8 @@ exports[`mcfunction argument parser > minecraft:item_stack > Parse 'diamond_pick
                     "end": 38
                   }
                 }
-              ]
+              ],
+              "children": []
             }
           ],
           "key": {
@@ -313,7 +314,8 @@ exports[`mcfunction argument parser > minecraft:item_stack > Parse 'diamond_pick
                   "end": 38
                 }
               }
-            ]
+            ],
+            "children": []
           }
         }
       ],
@@ -536,7 +538,8 @@ exports[`mcfunction argument parser > minecraft:item_stack > Parse 'stick{foo:ba
                     "end": 6
                   }
                 }
-              ]
+              ],
+              "children": []
             },
             {
               "type": "nbt:string",
@@ -556,7 +559,8 @@ exports[`mcfunction argument parser > minecraft:item_stack > Parse 'stick{foo:ba
                     "end": 10
                   }
                 }
-              ]
+              ],
+              "children": []
             }
           ],
           "key": {
@@ -577,7 +581,8 @@ exports[`mcfunction argument parser > minecraft:item_stack > Parse 'stick{foo:ba
                   "end": 6
                 }
               }
-            ]
+            ],
+            "children": []
           },
           "sep": {
             "start": 9,
@@ -601,7 +606,8 @@ exports[`mcfunction argument parser > minecraft:item_stack > Parse 'stick{foo:ba
                   "end": 10
                 }
               }
-            ]
+            ],
+            "children": []
           }
         }
       ],

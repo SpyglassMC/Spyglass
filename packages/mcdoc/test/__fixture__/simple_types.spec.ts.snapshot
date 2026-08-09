@@ -1451,6 +1451,7 @@ exports[`mcdoc __fixture__ > simple types 1`] = `
                           }
                         }
                       ],
+                      "children": [],
                       "quote": "\\""
                     }
                   ],

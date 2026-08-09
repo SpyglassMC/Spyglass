@@ -148,7 +148,7 @@ function getUnicodeDataFromBundle(): UnicodeDataResult {
 		ranges: data.ranges,
 		blocks: data.blocks,
 		// BUNDLE_CHECKSUM - updated by scripts/refresh_unicode_data.ts --write-lookup
-		checksum: `bundle-078445a6a5a4b9f3621361797daf25c4b2e17a33dcc2125693d1fd8db7a5d592`,
+		checksum: `bundle-bb300b090da8dcdfa7c3563711150f1a8c3b4535e93331021a0fa87027809136`,
 	}
 }
 
@@ -156,12 +156,22 @@ function getUnicodeDataFromBundle(): UnicodeDataResult {
  * Capitalizes the first letter of every whitespace or hyphen-separated term
  * in `name`. Used to format symbol identifiers for completion items - e.g.
  * `"snowman"` -> `"Snowman"`, `"latin small letter a"` -> `"Latin Small Letter A"`,
- * `"khitan small script character-18cff"` -> `"Khitan Small Script Character-18Cff"`.
+ * `"khitan small script character-18cff"` -> `"Khitan Small Script Character-18cff"`.
+ *
+ * Only the first letter of each word is capitalized, and only when the
+ * word actually starts with a letter. Words that begin with a digit (e.g.
+ * `"18cff"`) or other non-letter stay untouched.
+ *
+ * Parenthesized abbreviations are kept uppercase so legacy aliases render
+ * naturally: `"line feed (lf)"` -> `"Line Feed (LF)"`.
  */
 export function toTitleCase(name: string): string {
 	return name.replace(
 		/(^|[\s-])([a-z])/g,
 		(_, prefix: string, letter: string) => prefix + letter.toUpperCase(),
+	).replace(
+		/\(([a-z]+)\)/g,
+		(_, abbr: string) => `(${abbr.toUpperCase()})`,
 	)
 }
 

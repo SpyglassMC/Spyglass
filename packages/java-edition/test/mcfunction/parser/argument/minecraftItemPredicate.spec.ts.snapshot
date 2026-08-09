@@ -73,7 +73,8 @@ exports[`mcfunction argument parser > minecraft:item_predicate > Parse '#stick{f
                     "end": 7
                   }
                 }
-              ]
+              ],
+              "children": []
             },
             {
               "type": "nbt:string",
@@ -93,7 +94,8 @@ exports[`mcfunction argument parser > minecraft:item_predicate > Parse '#stick{f
                     "end": 11
                   }
                 }
-              ]
+              ],
+              "children": []
             }
           ],
           "key": {
@@ -114,7 +116,8 @@ exports[`mcfunction argument parser > minecraft:item_predicate > Parse '#stick{f
                   "end": 7
                 }
               }
-            ]
+            ],
+            "children": []
           },
           "sep": {
             "start": 10,
@@ -138,7 +141,8 @@ exports[`mcfunction argument parser > minecraft:item_predicate > Parse '#stick{f
                   "end": 11
                 }
               }
-            ]
+            ],
+            "children": []
           }
         }
       ],

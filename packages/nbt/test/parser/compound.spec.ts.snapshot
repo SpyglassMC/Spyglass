@@ -78,7 +78,8 @@ exports[`nbt compound() > Parse '{ foo: true }' 1`] = `
                   "end": 2
                 }
               }
-            ]
+            ],
+            "children": []
           },
           {
             "type": "nbt:byte",
@@ -107,7 +108,8 @@ exports[`nbt compound() > Parse '{ foo: true }' 1`] = `
                 "end": 2
               }
             }
-          ]
+          ],
+          "children": []
         },
         "sep": {
           "start": 5,

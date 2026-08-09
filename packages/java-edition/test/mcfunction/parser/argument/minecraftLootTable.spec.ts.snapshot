@@ -57,7 +57,8 @@ exports[`mcfunction argument parser > minecraft:loot_table > Parse '{pools:[]}' 
                       "end": 1
                     }
                   }
-                ]
+                ],
+                "children": []
               },
               {
                 "type": "nbt:list",
@@ -86,7 +87,8 @@ exports[`mcfunction argument parser > minecraft:loot_table > Parse '{pools:[]}' 
                     "end": 1
                   }
                 }
-              ]
+              ],
+              "children": []
             },
             "sep": {
               "start": 6,

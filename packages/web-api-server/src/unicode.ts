@@ -11,15 +11,6 @@ const BLOCKS_URL = 'https://www.unicode.org/Public/UNIDATA/Blocks.txt'
 const FETCH_TIMEOUT_MS = 30_000
 
 /**
- * Highest codepoint (inclusive) served at `/unicode/data.json`. Vanilla
- * Minecraft's Java runtime caps the supported code point range at U+101759
- * (the last entry of the Tangut Supplement block); codepoints at or after
- * U+101760 (TANGUT COMPONENTS SUPPLEMENT) are dropped from `names`,
- * `blocks`, and `ranges`.
- */
-export const MaxUnicodeCodepoint = 101759
-
-/**
  * Shape of the JSON served at `/unicode/data.json`.
  *
  * - `names`: lower-cased Unicode character name -> codepoint. Includes primary
@@ -190,47 +181,6 @@ export function buildUnicodeDataJson(
 }
 
 /**
- * Removes all entries with codepoints at or above `MaxUnicodeCodepoint`.
- *
- * - `names` and `ranges`: entries with codepoint > `MaxUnicodeCodepoint` are dropped.
- * - `blocks`: a block whose entire range exceeds the cutoff is dropped. Blocks
- *   whose start is at or below the cutoff but end is above are clamped to
- *   `[start, MaxUnicodeCodepoint]` (this case does not currently arise in
- *   practice - `Blocks.txt` defines non-overlapping ranges that align to the
- *   cutoff boundary - but the clamp is kept as a defensive measure).
- */
-export function applyMaxCodepointCutoff(data: UnicodeDataJson): UnicodeDataJson {
-	const cutoff = MaxUnicodeCodepoint
-	const names: { [name: string]: number } = {}
-	const ranges: { [name: string]: [number, number] } = {}
-	const blocks: { [name: string]: [number, number] } = {}
-
-	for (const [name, codepoint] of Object.entries(data.names)) {
-		if (codepoint <= cutoff) {
-			names[name] = codepoint
-		}
-	}
-	for (const [name, [start, end]] of Object.entries(data.ranges)) {
-		if (start <= cutoff) {
-			ranges[name] = [start, Math.min(end, cutoff)]
-		}
-	}
-	for (const [name, [start, end]] of Object.entries(data.blocks)) {
-		if (start > cutoff) {
-			continue
-		}
-		blocks[name] = [start, Math.min(end, cutoff)]
-	}
-
-	return {
-		version: data.version,
-		names,
-		ranges,
-		blocks,
-	}
-}
-
-/**
  * SHA-256 hex digest of `text`, suitable for use as a strong ETag.
  */
 export function sha256(text: string): string {
@@ -262,7 +212,7 @@ export async function refreshUnicodeData(
 		fetchAndCache(BLOCKS_URL, path.join(cacheDir, 'Blocks.txt'), logger),
 	])
 
-	const data = applyMaxCodepointCutoff(buildUnicodeDataJson(unicodeDataText, blocksText))
+	const data = buildUnicodeDataJson(unicodeDataText, blocksText)
 	const json = JSON.stringify(data)
 	const etag = `"${sha256(json)}"`
 

@@ -7,16 +7,13 @@ import { after, before, describe, it } from 'node:test'
 import pino from 'pino'
 
 import {
-	applyMaxCodepointCutoff,
 	buildUnicodeDataJson,
 	createUnicodeApp,
-	MaxUnicodeCodepoint,
 	parseBlocks,
 	parseUnicodeDataEntries,
 	parseUnicodeVersion,
 	sha256,
 } from '../lib/unicode.js'
-import type { UnicodeDataJson } from '../lib/unicode.js'
 
 describe('parseUnicodeVersion()', () => {
 	it('extracts version from Blocks.txt header', () => {
@@ -166,59 +163,6 @@ describe('sha256()', () => {
 
 	it('produces a deterministic digest for the same input', () => {
 		assert.equal(sha256('test'), sha256('test'))
-	})
-})
-
-describe('applyMaxCodepointCutoff()', () => {
-	it('caps `names` at the cutoff codepoint', () => {
-		const data: UnicodeDataJson = {
-			version: 'test',
-			names: {
-				'before cutoff': 100,
-				'at cutoff': MaxUnicodeCodepoint,
-				'after cutoff': MaxUnicodeCodepoint + 1,
-			},
-			ranges: {},
-			blocks: {},
-		}
-		const trimmed = applyMaxCodepointCutoff(data)
-		assert.equal(trimmed.names['before cutoff'], 100)
-		assert.equal(trimmed.names['at cutoff'], MaxUnicodeCodepoint)
-		assert.equal(trimmed.names['after cutoff'], undefined)
-	})
-
-	it('drops blocks whose start is at or above the cutoff', () => {
-		const data: UnicodeDataJson = {
-			version: 'test',
-			names: {},
-			ranges: {},
-			blocks: {
-				'basic latin': [0, 127],
-				'tangut supplement': [101632, 101759],
-				'tangut components supplement': [101760, 101887],
-				'kana extended-a': [110848, 110895],
-			},
-		}
-		const trimmed = applyMaxCodepointCutoff(data)
-		assert.deepEqual(trimmed.blocks['basic latin'], [0, 127])
-		assert.deepEqual(trimmed.blocks['tangut supplement'], [101632, 101759])
-		assert.equal(trimmed.blocks['tangut components supplement'], undefined)
-		assert.equal(trimmed.blocks['kana extended-a'], undefined)
-	})
-
-	it('drops ranges whose start is above the cutoff', () => {
-		const data: UnicodeDataJson = {
-			version: 'test',
-			names: {},
-			ranges: {
-				'tangut ideograph supplement': [101632, 101662],
-				'cjk ideograph extension b': [131072, 173791],
-			},
-			blocks: {},
-		}
-		const trimmed = applyMaxCodepointCutoff(data)
-		assert.deepEqual(trimmed.ranges['tangut ideograph supplement'], [101632, 101662])
-		assert.equal(trimmed.ranges['cjk ideograph extension b'], undefined)
 	})
 })
 

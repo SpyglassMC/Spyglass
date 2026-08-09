@@ -56,7 +56,8 @@ exports[`mcfunction argument parser > minecraft:loot_predicate > Parse '{conditi
                       "end": 1
                     }
                   }
-                ]
+                ],
+                "children": []
               },
               {
                 "type": "nbt:string",
@@ -77,6 +78,7 @@ exports[`mcfunction argument parser > minecraft:loot_predicate > Parse '{conditi
                     }
                   }
                 ],
+                "children": [],
                 "quote": "\\""
               }
             ],
@@ -98,7 +100,8 @@ exports[`mcfunction argument parser > minecraft:loot_predicate > Parse '{conditi
                     "end": 1
                   }
                 }
-              ]
+              ],
+              "children": []
             },
             "sep": {
               "start": 10,
@@ -123,6 +126,7 @@ exports[`mcfunction argument parser > minecraft:loot_predicate > Parse '{conditi
                   }
                 }
               ],
+              "children": [],
               "quote": "\\""
             },
             "end": {
@@ -155,7 +159,8 @@ exports[`mcfunction argument parser > minecraft:loot_predicate > Parse '{conditi
                       "end": 27
                     }
                   }
-                ]
+                ],
+                "children": []
               },
               {
                 "type": "nbt:double",
@@ -184,7 +189,8 @@ exports[`mcfunction argument parser > minecraft:loot_predicate > Parse '{conditi
                     "end": 27
                   }
                 }
-              ]
+              ],
+              "children": []
             },
             "sep": {
               "start": 33,

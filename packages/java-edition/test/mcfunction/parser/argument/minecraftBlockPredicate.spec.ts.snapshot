@@ -74,7 +74,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse '#stone[
                     "end": 7
                   }
                 }
-              ]
+              ],
+              "children": []
             },
             {
               "type": "string",
@@ -94,7 +95,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse '#stone[
                     "end": 11
                   }
                 }
-              ]
+              ],
+              "children": []
             }
           ],
           "key": {
@@ -115,7 +117,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse '#stone[
                   "end": 7
                 }
               }
-            ]
+            ],
+            "children": []
           },
           "sep": {
             "start": 10,
@@ -139,7 +142,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse '#stone[
                   "end": 11
                 }
               }
-            ]
+            ],
+            "children": []
           }
         }
       ],
@@ -180,7 +184,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse '#stone[
                     "end": 16
                   }
                 }
-              ]
+              ],
+              "children": []
             },
             {
               "type": "nbt:string",
@@ -200,7 +205,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse '#stone[
                     "end": 20
                   }
                 }
-              ]
+              ],
+              "children": []
             }
           ],
           "key": {
@@ -221,7 +227,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse '#stone[
                   "end": 16
                 }
               }
-            ]
+            ],
+            "children": []
           },
           "sep": {
             "start": 19,
@@ -245,7 +252,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse '#stone[
                   "end": 20
                 }
               }
-            ]
+            ],
+            "children": []
           }
         }
       ],
@@ -359,7 +367,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse 'stone[f
                     "end": 6
                   }
                 }
-              ]
+              ],
+              "children": []
             },
             {
               "type": "string",
@@ -379,7 +388,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse 'stone[f
                     "end": 10
                   }
                 }
-              ]
+              ],
+              "children": []
             }
           ],
           "key": {
@@ -400,7 +410,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse 'stone[f
                   "end": 6
                 }
               }
-            ]
+            ],
+            "children": []
           },
           "sep": {
             "start": 9,
@@ -424,7 +435,8 @@ exports[`mcfunction argument parser > minecraft:block_predicate > Parse 'stone[f
                   "end": 10
                 }
               }
-            ]
+            ],
+            "children": []
           }
         }
       ],

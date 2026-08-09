@@ -750,6 +750,7 @@ exports[`mcdoc __fixture__ > attributed types 1`] = `
                                           }
                                         }
                                       ],
+                                      "children": [],
                                       "quote": "\\""
                                     }
                                   ],

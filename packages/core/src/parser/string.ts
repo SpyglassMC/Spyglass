@@ -15,7 +15,7 @@ import {
 	UnicodeDataUri,
 	UnicodeNameCategory,
 } from '../dependency/index.js'
-import type { Quote, StringNode, StringOptions } from '../node/index.js'
+import type { Quote, StringNode, StringOptions, UnicodeEscapeKind, UnicodeEscapeNode } from '../node/index.js'
 import { EscapeChar, EscapeTable, UnicodeEscapeChar, UnicodeEscapeLengths } from '../node/index.js'
 import type { InfallibleParser } from '../parser/index.js'
 import type { ParserContext } from '../service/index.js'
@@ -51,6 +51,109 @@ function lookupName(name: string, ctx: ParserContext): number | undefined {
 	const map = ctx.symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNames)
 		.getData(isUnicodeNameLookupMap)
 	return map?.[name.toLowerCase()]
+}
+
+/**
+ * Returns the canonical Unicode name for `codepoint`, if known. Looks up the
+ * codepoint → name reverse map populated by the Unicode dependency loader.
+ */
+function lookupNameByCodepoint(codepoint: number, ctx: ParserContext): string | undefined {
+	const map = ctx.symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNamesInverse)
+		.getData(isUnicodeNamesByCodepointMap)
+	return map?.[codepoint.toString(16)]
+}
+
+/**
+ * Renders a human-readable codepoint label, e.g. `U+1F514` or `U+0007`.
+ * Uses uppercase hex with a minimum width of 4 to match the canonical
+ * `\u`-escape format.
+ */
+function formatCodepoint(codepoint: number): string {
+	return `U+${codepoint.toString(16).toUpperCase().padStart(4, '0')}`
+}
+
+/**
+ * Returns a hover-friendly glyph for the resolved escape character.
+ *
+ * Non-printable controls (LF, CR, HT, etc.) would inject raw whitespace
+ * into the markdown source and break the inline `[ … ]` layout, so they
+ * are shown as their canonical C-style escape form instead. All other
+ * characters are passed through verbatim.
+ */
+function displayGlyph(codepoint: number): { text: string; isEscapeForm: boolean } {
+	switch (codepoint) {
+		case 0x09:
+			return { text: '\\t', isEscapeForm: true }
+		case 0x0a:
+			return { text: '\\n', isEscapeForm: true }
+		case 0x0d:
+			return { text: '\\r', isEscapeForm: true }
+		case 0x00:
+			return { text: '\\0', isEscapeForm: true }
+		case 0x08:
+			return { text: '\\b', isEscapeForm: true }
+		case 0x0b:
+			return { text: '\\v', isEscapeForm: true }
+		case 0x0c:
+			return { text: '\\f', isEscapeForm: true }
+		case 0x1b:
+			return { text: '\\e', isEscapeForm: true }
+		case 0x07:
+			return { text: '\\a', isEscapeForm: true }
+		default:
+			return { text: String.fromCodePoint(codepoint), isEscapeForm: false }
+	}
+}
+
+/**
+ * Builds the hover markdown shown when the cursor is over an escape
+ * sequence. Output is a single inline line of the form:
+ *
+ *     [ <glyph> ] 'Name' - `U+XXXX`
+ *
+ * `<glyph>` is the resolved character for printable codepoints and the
+ * C-style escape form (e.g. `\n`) for non-printable controls.
+ *
+ * The Unicode name is omitted when unknown.
+ */
+function buildEscapeHover(
+	codepoint: number,
+	name: string | undefined,
+): string {
+	const glyph = displayGlyph(codepoint)
+	// Wrap the C-style escape form in backticks so it's rendered as code
+	// (matching the visual treatment of the codepoint label) and so the
+	// literal backslash doesn't get mistaken for markdown syntax.
+	const glyphLabel = glyph.isEscapeForm ? `\`${glyph.text}\`` : glyph.text
+	const head = `[ ${glyphLabel} ]`
+	const codepointLabel = `\`${formatCodepoint(codepoint)}\``
+	return name
+		? `${head} '${toTitleCase(name)}' - ${codepointLabel}`
+		: `${head} - ${codepointLabel}`
+}
+
+/**
+ * Constructs a {@link UnicodeEscapeNode} for the source range
+ * `[start, end)`, with the `hover` field pre-filled with the markdown
+ * built from `resolved`/`codepoint`/`name`.
+ */
+function makeEscapeChild(
+	start: number,
+	end: number,
+	resolved: string,
+	codepoint: number,
+	name: string | undefined,
+	kind: UnicodeEscapeKind,
+): UnicodeEscapeNode {
+	return {
+		type: 'unicode_escape',
+		kind,
+		range: Range.create(start, end),
+		resolved,
+		codepoint,
+		name,
+		hover: buildEscapeHover(codepoint, name),
+	}
 }
 
 /**
@@ -262,6 +365,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			options,
 			value: '',
 			valueMap: [],
+			children: [],
 		}
 		let start: number
 
@@ -280,11 +384,22 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						|| c2 === currentQuote
 						|| EscapeChar.is(options.escapable.characters, c2)
 					) {
+						const resolved = EscapeTable.get(c2)!
 						ans.valueMap.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
 							outer: Range.create(cStart, src),
 						})
-						ans.value += EscapeTable.get(c2)
+						ans.value += resolved
+						ans.children!.push(
+							makeEscapeChild(
+								cStart,
+								src.cursor,
+								resolved,
+								resolved.codePointAt(0)!,
+								lookupNameByCodepoint(resolved.codePointAt(0)!, ctx),
+								c2 as UnicodeEscapeKind,
+							),
+						)
 					} else if (
 						options.escapable.unicode
 						&& (c2 === 'u' || (options.escapable.extendedUnicode && UnicodeEscapeChar.is(c2)))
@@ -293,15 +408,65 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						const hex = src.peek(sequenceLength)
 						if (new RegExp(`^[0-9a-f]{${sequenceLength}}$`, 'i').test(hex)) {
 							src.skip(sequenceLength)
+							const codepoint = parseInt(hex, 16)
+							// The hex regex matches any hex digits, so the
+							// resulting value can exceed the Unicode max
+							// (U+10FFFF). Treat out-of-range values as an
+							// illegal escape the same way non-hex chars are.
+							if (codepoint < 0 || codepoint > 0x10FFFF) {
+								ctx.err.report(
+									localize(
+										'parser.string.illegal-unicode-escape-out-of-range',
+										'0',
+										`0x${(0x10FFFF).toString(16).toUpperCase()}`,
+									),
+									Range.create(cStart + 2, src),
+								)
+								ans.valueMap.push({
+									inner: Range.create(ans.value.length, ans.value.length + 1),
+									outer: Range.create(cStart, src),
+								})
+								ans.value += c2
+								cStart = src.cursor
+								continue
+							}
+							// `fromCodePoint` (not `fromCharCode`) so codepoints
+							// outside the BMP — e.g. `\U0001F514` — survive intact.
+							const resolved = String.fromCodePoint(codepoint)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(cStart, src),
 							})
-							ans.value += String.fromCharCode(parseInt(hex, 16))
+							ans.value += resolved
+							ans.children!.push(
+								makeEscapeChild(
+									cStart,
+									src.cursor,
+									resolved,
+									codepoint,
+									lookupNameByCodepoint(codepoint, ctx),
+									c2 as UnicodeEscapeKind,
+								),
+							)
 						} else {
+							// Highlight whatever chars are available before the
+							// closing quote — the full hex slot when present
+							// (`u1z3` for `\u1z34`), the truncated slot
+							// (`kh` for `\ukh`), or the escape prefix
+							// (`\u`/`\x`/`\U`) when nothing follows it.
+							const closingQuote = src.string.indexOf(currentQuote, src.cursor)
+							const charsLeft = closingQuote === -1
+								? src.string.length - src.cursor
+								: closingQuote - src.cursor
+							const hexEnd = src.getCharRange(
+								Math.min(sequenceLength, Math.max(charsLeft, 1)) - 1,
+							).end
+							const range = charsLeft > 0
+								? Range.create(src, hexEnd)
+								: Range.create(cStart, cStart + 2)
 							ctx.err.report(
 								localize('parser.string.illegal-unicode-escape'),
-								Range.create(src, src.getCharRange(sequenceLength - 1).end),
+								range,
 							)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
@@ -327,7 +492,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						if (src.peek(1, name.length) !== '}') {
 							ctx.err.report(
 								localize('expected', localeQuote('}')),
-								Range.create(src, src.getCharRange(name.length - 1).end),
+								// Anchor on the full escape so the squiggle lands
+								// on `\N{...` (or wherever it terminates), not
+								// past the end of the string.
+								Range.create(cStart, src),
 							)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
@@ -339,7 +507,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							if (codepoint === undefined) {
 								ctx.err.report(
 									localize('parser.string.illegal-unicode-escape-name'),
-									Range.create(src, src.getCharRange(name.length - 1).end),
+									Range.create(cStart, src),
 								)
 								ans.valueMap.push({
 									inner: Range.create(ans.value.length, ans.value.length + 1),
@@ -348,11 +516,22 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								ans.value += c2
 							} else {
 								src.skip(name.length + 1)
+								const resolved = String.fromCodePoint(codepoint)
 								ans.valueMap.push({
 									inner: Range.create(ans.value.length, ans.value.length + 1),
 									outer: Range.create(cStart, src),
 								})
-								ans.value += String.fromCodePoint(codepoint)
+								ans.value += resolved
+								ans.children!.push(
+									makeEscapeChild(
+										cStart,
+										src.cursor,
+										resolved,
+										codepoint,
+										name,
+										'N',
+									),
+								)
 							}
 						}
 					} else {
@@ -409,7 +588,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			const valueResult = parseStringValue(options.value.parser, ans.value, ans.valueMap, ctx)
 			/* istanbul ignore else */
 			if (valueResult !== Failure) {
-				ans.children = [valueResult]
+				ans.children!.push(valueResult)
 			}
 		}
 

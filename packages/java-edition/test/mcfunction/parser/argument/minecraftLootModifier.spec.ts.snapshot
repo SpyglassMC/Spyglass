@@ -53,7 +53,8 @@ exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{functio
                               "end": 2
                             }
                           }
-                        ]
+                        ],
+                        "children": []
                       },
                       {
                         "type": "nbt:string",
@@ -74,6 +75,7 @@ exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{functio
                             }
                           }
                         ],
+                        "children": [],
                         "quote": "\\""
                       }
                     ],
@@ -95,7 +97,8 @@ exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{functio
                             "end": 2
                           }
                         }
-                      ]
+                      ],
+                      "children": []
                     },
                     "sep": {
                       "start": 10,
@@ -120,6 +123,7 @@ exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{functio
                           }
                         }
                       ],
+                      "children": [],
                       "quote": "\\""
                     }
                   }
@@ -162,7 +166,8 @@ exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{functio
                             "end": 2
                           }
                         }
-                      ]
+                      ],
+                      "children": []
                     },
                     {
                       "type": "nbt:string",
@@ -183,6 +188,7 @@ exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{functio
                           }
                         }
                       ],
+                      "children": [],
                       "quote": "\\""
                     }
                   ],
@@ -204,7 +210,8 @@ exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{functio
                           "end": 2
                         }
                       }
-                    ]
+                    ],
+                    "children": []
                   },
                   "sep": {
                     "start": 10,
@@ -229,6 +236,7 @@ exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{functio
                         }
                       }
                     ],
+                    "children": [],
                     "quote": "\\""
                   }
                 }

@@ -225,6 +225,7 @@ exports[`mcdoc parser > literalType > Parse '\"a literal string\"' 1`] = `
             }
           }
         ],
+        "children": [],
         "quote": "\\""
       }
     ],

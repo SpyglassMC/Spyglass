@@ -52,6 +52,7 @@ exports[`nbt path() > Parse ''foo'' 1`] = `
                 }
               }
             ],
+            "children": [],
             "quote": "'"
           }
         ]
@@ -185,6 +186,7 @@ exports[`nbt path() > Parse '\"foo\"' 1`] = `
                 }
               }
             ],
+            "children": [],
             "quote": "\\""
           }
         ]
@@ -229,7 +231,8 @@ exports[`nbt path() > Parse 'foo' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       }
@@ -273,7 +276,8 @@ exports[`nbt path() > Parse 'foo.[]' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -324,7 +328,8 @@ exports[`nbt path() > Parse 'foo.bar' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -353,7 +358,8 @@ exports[`nbt path() > Parse 'foo.bar' 1`] = `
                   "end": 4
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       }
@@ -397,7 +403,8 @@ exports[`nbt path() > Parse 'foo.{ }' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -471,7 +478,8 @@ exports[`nbt path() > Parse 'foo[ 0 ]' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -549,7 +557,8 @@ exports[`nbt path() > Parse 'foo[ { } ]' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -627,7 +636,8 @@ exports[`nbt path() > Parse 'foo[0]' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -688,7 +698,8 @@ exports[`nbt path() > Parse 'foo[]' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -739,7 +750,8 @@ exports[`nbt path() > Parse 'foo[].[]' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -797,7 +809,8 @@ exports[`nbt path() > Parse 'foo[].bar' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -833,7 +846,8 @@ exports[`nbt path() > Parse 'foo[].bar' 1`] = `
                   "end": 6
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       }
@@ -877,7 +891,8 @@ exports[`nbt path() > Parse 'foo[][]' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -935,7 +950,8 @@ exports[`nbt path() > Parse 'foo[{ }]' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -1000,7 +1016,8 @@ exports[`nbt path() > Parse 'foo{ }' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       },
@@ -1122,7 +1139,8 @@ exports[`nbt path() > Parse '{ }.foo' 1`] = `
                   "end": 4
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       }
@@ -1166,7 +1184,8 @@ exports[`nbt path() > Parse '文字' 1`] = `
                   "end": 0
                 }
               }
-            ]
+            ],
+            "children": []
           }
         ]
       }

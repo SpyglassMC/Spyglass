@@ -33,9 +33,14 @@ export const object: Colorizer<JsonObjectNode> = (node, ctx) => {
 
 export const string: Colorizer<JsonStringNode> = (node, ctx) => {
 	if (node.children && node.children?.length > 0) {
-		const child = node.children[0]
-		const colorizer = ctx.meta.getColorizer(child.type)
-		return colorizer(child, ctx)
+		// `children` may include `UnicodeEscapeNode` siblings used solely for
+		// hover diagnostics. Find the first child that actually owns a
+		// colorizer (i.e. the parsed value) and delegate to it.
+		const child = node.children.find((c) => ctx.meta.hasColorizer(c.type))
+		if (child) {
+			const colorizer = ctx.meta.getColorizer(child.type)
+			return colorizer(child, ctx)
+		}
 	}
 	return core.colorizer.string(node, ctx)
 }

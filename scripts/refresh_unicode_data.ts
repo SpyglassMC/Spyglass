@@ -22,9 +22,6 @@ const BLOCKS_URL = 'https://www.unicode.org/Public/UNIDATA/Blocks.txt'
 const FETCH_TIMEOUT_MS = 30_000
 const USER_AGENT = 'SpyglassMC (+https://spyglassmc.com)'
 
-// Mirror packages/web-api-server/src/unicode.ts -> MaxUnicodeCodepoint.
-const MaxUnicodeCodepoint = 101759
-
 interface UnicodeDataJson {
 	version: string
 	names: { [name: string]: number }
@@ -168,42 +165,6 @@ function buildUnicodeDataJson(
 	}
 }
 
-/**
- * Removes all entries with codepoints at or above `MaxUnicodeCodepoint`.
- *
- * - `names` and `ranges`: entries with codepoint > `MaxUnicodeCodepoint` are dropped.
- * - `blocks`: a block whose entire range exceeds the cutoff is dropped. Blocks
- *   whose start is at or below the cutoff but end is above are clamped to
- *   `[start, MaxUnicodeCodepoint]` (this case does not currently arise in
- *   practice - `Blocks.txt` defines non-overlapping ranges that align to the
- *   cutoff boundary - but the clamp is kept as a defensive measure).
- */
-function applyMaxCodepointCutoff(data: UnicodeDataJson): UnicodeDataJson {
-	const cutoff = MaxUnicodeCodepoint
-	const names: { [name: string]: number } = {}
-	const ranges: { [name: string]: [number, number] } = {}
-	const blocks: { [name: string]: [number, number] } = {}
-
-	for (const [name, codepoint] of Object.entries(data.names)) {
-		if (codepoint <= cutoff) {
-			names[name] = codepoint
-		}
-	}
-	for (const [name, [start, end]] of Object.entries(data.ranges)) {
-		if (start <= cutoff) {
-			ranges[name] = [start, Math.min(end, cutoff)]
-		}
-	}
-	for (const [name, [start, end]] of Object.entries(data.blocks)) {
-		if (start > cutoff) {
-			continue
-		}
-		blocks[name] = [start, Math.min(end, cutoff)]
-	}
-
-	return { version: data.version, names, ranges, blocks }
-}
-
 function sha256(text: string): string {
 	return createHash('sha256').update(text).digest('hex')
 }
@@ -301,23 +262,17 @@ async function main(): Promise<void> {
 		}…)`,
 	)
 
-	const unfiltered = buildUnicodeDataJson(unicodeData.text, blocks.text)
-	const data = applyMaxCodepointCutoff(unfiltered)
+	const data = buildUnicodeDataJson(unicodeData.text, blocks.text)
 
 	const jsonPath = path.join(cacheDir, 'data.json')
 	const json = JSON.stringify(data, null, '\t')
 	await writeFile(jsonPath, json, 'utf-8')
 
-	const droppedNames = Object.keys(unfiltered.names).length - Object.keys(data.names).length
-	const droppedRanges = Object.keys(unfiltered.ranges).length - Object.keys(data.ranges).length
-	const droppedBlocks = Object.keys(unfiltered.blocks).length - Object.keys(data.blocks).length
-
 	console.log(`\nWrote ${jsonPath}`)
 	console.log(`  version:        ${data.version}`)
-	console.log(`  names:          ${Object.keys(data.names).length} (dropped ${droppedNames})`)
-	console.log(`  ranges:         ${Object.keys(data.ranges).length} (dropped ${droppedRanges})`)
-	console.log(`  blocks:         ${Object.keys(data.blocks).length} (dropped ${droppedBlocks})`)
-	console.log(`  cutoff:         ${MaxUnicodeCodepoint} (0x${MaxUnicodeCodepoint.toString(16)})`)
+	console.log(`  names:          ${Object.keys(data.names).length}`)
+	console.log(`  ranges:         ${Object.keys(data.ranges).length}`)
+	console.log(`  blocks:         ${Object.keys(data.blocks).length}`)
 
 	if (writeLookup) {
 		const lookupPath = path.join(

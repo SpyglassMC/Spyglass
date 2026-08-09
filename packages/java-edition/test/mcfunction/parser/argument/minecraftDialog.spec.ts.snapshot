@@ -56,7 +56,8 @@ exports[`mcfunction argument parser > minecraft:dialog > Parse '{type:\"notice\"
                       "end": 1
                     }
                   }
-                ]
+                ],
+                "children": []
               },
               {
                 "type": "nbt:string",
@@ -77,6 +78,7 @@ exports[`mcfunction argument parser > minecraft:dialog > Parse '{type:\"notice\"
                     }
                   }
                 ],
+                "children": [],
                 "quote": "\\""
               }
             ],
@@ -98,7 +100,8 @@ exports[`mcfunction argument parser > minecraft:dialog > Parse '{type:\"notice\"
                     "end": 1
                   }
                 }
-              ]
+              ],
+              "children": []
             },
             "sep": {
               "start": 5,
@@ -123,6 +126,7 @@ exports[`mcfunction argument parser > minecraft:dialog > Parse '{type:\"notice\"
                   }
                 }
               ],
+              "children": [],
               "quote": "\\""
             },
             "end": {
@@ -155,7 +159,8 @@ exports[`mcfunction argument parser > minecraft:dialog > Parse '{type:\"notice\"
                       "end": 15
                     }
                   }
-                ]
+                ],
+                "children": []
               },
               {
                 "type": "nbt:string",
@@ -176,6 +181,7 @@ exports[`mcfunction argument parser > minecraft:dialog > Parse '{type:\"notice\"
                     }
                   }
                 ],
+                "children": [],
                 "quote": "\\""
               }
             ],
@@ -197,7 +203,8 @@ exports[`mcfunction argument parser > minecraft:dialog > Parse '{type:\"notice\"
                     "end": 15
                   }
                 }
-              ]
+              ],
+              "children": []
             },
             "sep": {
               "start": 20,
@@ -222,6 +229,7 @@ exports[`mcfunction argument parser > minecraft:dialog > Parse '{type:\"notice\"
                   }
                 }
               ],
+              "children": [],
               "quote": "\\""
             }
           }
