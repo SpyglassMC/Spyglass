@@ -14,8 +14,10 @@ describe('toTitleCase()', () => {
 	})
 
 	it('capitalizes the first letter after hyphens', () => {
-		assert.equal(toTitleCase('khitan small script character-18cff'),
-			'Khitan Small Script Character-18cff')
+		assert.equal(
+			toTitleCase('khitan small script character-18cff'),
+			'Khitan Small Script Character-18cff',
+		)
 	})
 
 	it('does not capitalize a word that starts with a digit', () => {

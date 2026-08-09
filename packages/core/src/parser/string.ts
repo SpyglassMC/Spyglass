@@ -15,7 +15,13 @@ import {
 	UnicodeDataUri,
 	UnicodeNameCategory,
 } from '../dependency/index.js'
-import type { Quote, StringNode, StringOptions, UnicodeEscapeKind, UnicodeEscapeNode } from '../node/index.js'
+import type {
+	Quote,
+	StringNode,
+	StringOptions,
+	UnicodeEscapeKind,
+	UnicodeEscapeNode,
+} from '../node/index.js'
 import { EscapeChar, EscapeTable, UnicodeEscapeChar, UnicodeEscapeLengths } from '../node/index.js'
 import type { InfallibleParser } from '../parser/index.js'
 import type { ParserContext } from '../service/index.js'
