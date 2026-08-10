@@ -196,9 +196,7 @@ export function typeDefinition(
 						if (uuidNode.value.length !== 4) {
 							return
 						}
-						uuidNode.hover = `\`\`\`mcdoc\n[I; ${
-							uuidNode.value.join(', ')
-						}]\n\`\`\``
+						uuidNode.hover = `\`\`\`mcdoc\n[I; ${uuidNode.value.join(', ')}]\n\`\`\``
 					}
 				},
 				nodeAttacher: (node, attacher) => attacher(node),

@@ -5,6 +5,7 @@ import type {
 	NbtBinNode,
 	NbtBoolNode,
 	NbtByteNode,
+	NbtCompoundNode,
 	NbtDoubleNode,
 	NbtFloatNode,
 	NbtHexNode,
@@ -25,18 +26,37 @@ const radix: core.Colorizer<NbtRadixNode> = (node) => {
 	]
 }
 
-// Shared colorizer for every SNBT function call (e.g. `bool(value)`). Colors
-// the function name (`bool`/`uuid`) as `function` and the surrounding parens
-// as `operator` (so they remain visible to users without rainbow-bracket
-// editor support). Children are colored by their own colorizers via the
-// fallback traversal. Add new SNBT function node types to `NbtSnbtFunctionNode`
-// and register them below - no new colorizer code needed.
 const snbtFunction: core.Colorizer<NbtSnbtFunctionNode> = (node) => {
 	return [
-		ColorToken.create(core.Range.create(node.prefixRange.start, node.prefixRange.start + 4), 'function'),
-		ColorToken.create(core.Range.create(node.prefixRange.start + 4, node.prefixRange.end), 'operator'),
+		ColorToken.create(
+			core.Range.create(node.prefixRange.start, node.prefixRange.start + 4),
+			'function',
+		),
+		ColorToken.create(
+			core.Range.create(node.prefixRange.start + 4, node.prefixRange.end),
+			'operator',
+		),
 		ColorToken.create(node.suffixRange, 'operator'),
 	]
+}
+
+const compound: core.Colorizer<NbtCompoundNode> = (node, ctx) => {
+	const tokens: ColorToken[] = []
+	for (const pair of node.children) {
+		if (pair.key) {
+			tokens.push(...ctx.meta.getColorizer(pair.key.type)(pair.key, ctx))
+		}
+		if (pair.sep) {
+			tokens.push(ColorToken.create(pair.sep, 'operator'))
+		}
+		if (pair.value) {
+			tokens.push(...ctx.meta.getColorizer(pair.value.type)(pair.value, ctx))
+		}
+		if (pair.end) {
+			tokens.push(ColorToken.create(pair.end, 'operator'))
+		}
+	}
+	return tokens
 }
 
 export function register(meta: MetaRegistry) {
@@ -51,4 +71,5 @@ export function register(meta: MetaRegistry) {
 	meta.registerColorizer<NbtBinNode>('nbt:bin', radix)
 	meta.registerColorizer<NbtBoolNode>('nbt:bool', snbtFunction)
 	meta.registerColorizer<NbtUuidNode>('nbt:uuid', snbtFunction)
+	meta.registerColorizer<NbtCompoundNode>('nbt:compound', compound)
 }

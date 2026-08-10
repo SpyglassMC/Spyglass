@@ -7,7 +7,7 @@ import * as nbt from '@spyglassmc/nbt'
 import { dissectUri, reportDissectError } from '../../binder/index.js'
 import { getTagValues } from '../../common/index.js'
 import { ReleaseVersion } from '../../dependency/common.js'
-import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
+import type { EntitySelectorInvertableArgumentValueNode, UuidNode } from '../node/index.js'
 import {
 	BlockNode,
 	ComponentTestExactNode,
@@ -20,7 +20,6 @@ import {
 	NbtPathNode,
 	NbtResourceNode,
 	ParticleNode,
-	UuidNode,
 } from '../node/index.js'
 
 const entry: core.Checker<mcf.McfunctionNode> = (node, ctx) => {

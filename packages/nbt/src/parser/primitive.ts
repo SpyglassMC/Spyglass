@@ -56,8 +56,19 @@ const NumeralPatterns:
 			min: -32768,
 			max: 32767,
 		},
+		// Explicit `i`/`I` int suffix (1.21.5+). Listed before the bare-int
+		// pattern so the suffix gets consumed (hasSuffix: true) instead of left
+		// in the source.
 		{
-			pattern: /^[-+]?(?:0|[1-9](?:_?[0-9])*)(?:[iI])?$/i,
+			pattern: /^[-+]?(?:0|[1-9](?:_?[0-9])*)[iI]$/i,
+			type: 'nbt:int',
+			hasSuffix: true,
+			group: Group.IntegerAlike,
+			min: -2147483648,
+			max: 2147483647,
+		},
+		{
+			pattern: /^[-+]?(?:0|[1-9](?:_?[0-9])*)$/i,
 			type: 'nbt:int',
 			hasSuffix: false,
 			group: Group.IntegerAlike,
