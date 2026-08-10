@@ -32,14 +32,14 @@ const NumeralPatterns:
 		type: NbtNumberNode['type']
 		hasSuffix: boolean
 		group: Group.LongAlike
-		// When set, the integer is parsed in the given radix (e.g. `0xFF` → 255n).
+		// When set, the integer is parsed in the given radix (e.g. `0xFF` -> 255n).
 		// The pattern must include the prefix (`0x` or `0b`) which is highlighted as an escape.
 		radix?: 'hex' | 'bin'
 		min: bigint
 		max: bigint
 	})[] = [
 		// Decimal integer patterns. `_` is allowed between digits (ES2021 numeric separators,
-		// only valid in new syntax 1.21.5+ — the parser rejects `_` in pre-1.21.5).
+		// only valid in new syntax 1.21.5+ - the parser rejects `_` in pre-1.21.5).
 		{
 			pattern: /^[-+]?(?:0|[1-9](?:_?[0-9])*)b$/i,
 			type: 'nbt:byte',
@@ -103,7 +103,7 @@ const NumeralPatterns:
 		// Hex/binary literals (1.21.5+). Negative hex/binary is not supported by the game
 		// (`+0x...` is allowed, but `-0x...` is not), so they only allow `+` or no sign.
 		// Hex/binary have no type suffix (`0b` is parsed as byte 0, where `b` is the suffix).
-		// Always parsed as BigInt — mcdoc/runtime figures out the actual integer type.
+		// Always parsed as BigInt - mcdoc/runtime figures out the actual integer type.
 		{
 			pattern: /^[+]?0x[0-9a-fA-F](?:_?[0-9a-fA-F])*$/i,
 			type: 'nbt:hex',

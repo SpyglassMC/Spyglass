@@ -28,7 +28,7 @@ const radix: core.Colorizer<NbtRadixNode> = (node) => {
 // Shared colorizer for every SNBT function call (e.g. `bool(value)`). Marks the
 // function name + opening paren and the closing paren as `escape`. Children are
 // colored by their own colorizers via the fallback traversal. Add new SNBT function
-// node types to `NbtSnbtFunctionNode` and register them below — no new colorizer
+// node types to `NbtSnbtFunctionNode` and register them below - no new colorizer
 // code needed.
 const snbtFunction: core.Colorizer<NbtSnbtFunctionNode> = (node) => {
 	return [

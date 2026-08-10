@@ -102,7 +102,7 @@ export namespace NbtLongNode {
 	}
 }
 
-// Hex/binary value nodes are parsed via 0x/0b prefixes. They're not just for integer values —
+// Hex/binary value nodes are parsed via 0x/0b prefixes. They're not just for integer values -
 // any NBT value can be represented in hex/binary. The `prefixRange` marks the location of the
 // prefix (`0x` or `0b`) so the colorizer can highlight it as an escape.
 interface NbtRadixPrefixRange {
