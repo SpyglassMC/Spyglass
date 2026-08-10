@@ -25,15 +25,17 @@ const radix: core.Colorizer<NbtRadixNode> = (node) => {
 	]
 }
 
-// Shared colorizer for every SNBT function call (e.g. `bool(value)`). Marks the
-// function name + opening paren and the closing paren as `escape`. Children are
-// colored by their own colorizers via the fallback traversal. Add new SNBT function
-// node types to `NbtSnbtFunctionNode` and register them below - no new colorizer
-// code needed.
+// Shared colorizer for every SNBT function call (e.g. `bool(value)`). Colors
+// the function name (`bool`/`uuid`) as `function` and the surrounding parens
+// as `operator` (so they remain visible to users without rainbow-bracket
+// editor support). Children are colored by their own colorizers via the
+// fallback traversal. Add new SNBT function node types to `NbtSnbtFunctionNode`
+// and register them below - no new colorizer code needed.
 const snbtFunction: core.Colorizer<NbtSnbtFunctionNode> = (node) => {
 	return [
-		ColorToken.create(node.prefixRange, 'escape'),
-		ColorToken.create(node.suffixRange, 'escape'),
+		ColorToken.create(core.Range.create(node.prefixRange.start, node.prefixRange.start + 4), 'function'),
+		ColorToken.create(core.Range.create(node.prefixRange.start + 4, node.prefixRange.end), 'operator'),
+		ColorToken.create(node.suffixRange, 'operator'),
 	]
 }
 

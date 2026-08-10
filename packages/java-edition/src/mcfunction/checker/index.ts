@@ -20,6 +20,7 @@ import {
 	NbtPathNode,
 	NbtResourceNode,
 	ParticleNode,
+	UuidNode,
 } from '../node/index.js'
 
 const entry: core.Checker<mcf.McfunctionNode> = (node, ctx) => {
@@ -357,6 +358,23 @@ function getTypesFromEntity(
 	return undefined
 }
 
+export const uuid: core.Checker<UuidNode> = (node) => {
+	// Unpack the two 64-bit halves of the UUID into the four 32-bit int values
+	// Minecraft uses internally. `bits` is only populated when the parser
+	// successfully matched a UUID-shaped string; otherwise leave hover unset
+	// so the parser-reported "Invalid UUID format" diagnostic is the only
+	// feedback.
+	if (node.bits[0] === 0n && node.bits[1] === 0n) {
+		return
+	}
+	const parts: number[] = []
+	for (const bits of node.bits) {
+		parts.push(Number(BigInt.asIntN(32, bits >> 32n)))
+		parts.push(Number(BigInt.asIntN(32, bits & 0xFFFFFFFFn)))
+	}
+	node.hover = `\`\`\`mcdoc\n[I; ${parts.join(', ')}]\n\`\`\``
+}
+
 export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<mcf.McfunctionNode>('mcfunction:entry', entry)
 	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
@@ -365,4 +383,5 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<ItemStackNode>('mcfunction:item_stack', itemStack)
 	meta.registerChecker<ItemPredicateNode>('mcfunction:item_predicate', itemPredicate)
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
+	meta.registerChecker<UuidNode>('mcfunction:uuid', uuid)
 }

@@ -153,7 +153,12 @@ const parseUuid = (
 	// Conversion method ported from https://github.com/AjaxGb/mc-uuid-converter/blob/master/convert.js
 	const value: number[] = []
 	const str = argResult?.type === 'nbt:string' ? argResult.value.trim() : ''
-	if (UUID_PATTERN.test(str)) {
+	if (argResult?.type === 'nbt:string' && !UUID_PATTERN.test(str)) {
+		ctx.err.report(
+			localize('nbt.parser.function.uuid.invalid', str),
+			argResult,
+		)
+	} else if (UUID_PATTERN.test(str)) {
 		const UUID_GROUP_SIZES = [8, 4, 4, 4, 12]
 		const UUIDData = new DataView(new Uint8Array(16).buffer)
 		const normalized = str

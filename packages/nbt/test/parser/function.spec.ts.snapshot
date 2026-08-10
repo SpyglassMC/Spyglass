@@ -760,7 +760,16 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
       }
     ]
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 17
+      },
+      "message": "Expected a valid UUID, received 'not-a-uuid'",
+      "severity": 3
+    }
+  ]
 }
 `;
 

@@ -190,14 +190,15 @@ export function typeDefinition(
 						}\n\`\`\`\n${desc}`
 					} else if (NbtUuidNode.is(node)) {
 						const uuidNode = node
-						const arrayString = uuidNode.value.length === 4
-							? `[I; ${uuidNode.value.join(', ')}]`
-							: localize('nbt.parser.function.uuid.invalid')
-						uuidNode.hover = `\`\`\`mcdoc\n${arrayString}\n\`\`\`\n${
-							uuidNode.value.length === 4
-								? localize('nbt.parser.function.uuid.parsed-into-4-ints')
-								: localize('nbt.parser.function.uuid.invalid')
-						}`
+						// Skip the hover when the UUID is invalid - the parser
+						// already reports the error on the string arg, and a
+						// hover here would be redundant noise.
+						if (uuidNode.value.length !== 4) {
+							return
+						}
+						uuidNode.hover = `\`\`\`mcdoc\n[I; ${
+							uuidNode.value.join(', ')
+						}]\n\`\`\``
 					}
 				},
 				nodeAttacher: (node, attacher) => attacher(node),
