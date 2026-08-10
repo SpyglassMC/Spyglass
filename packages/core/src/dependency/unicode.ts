@@ -1,5 +1,3 @@
-import type { Externals, Logger } from '../common/index.js'
-import { fetchWithCache } from '../service/fetcher.js'
 import type { SymbolRegistrar } from '../service/SymbolRegistrar.js'
 import unicodeLookupTable from './unicode-lookup-table.json' with { type: 'json' }
 
@@ -11,10 +9,14 @@ export const UnicodeDataUri = 'spyglass://unicode/UnicodeData.json'
 export const BlocksUri = 'spyglass://unicode/Blocks.json'
 
 /**
- * Endpoint served by `api.spyglassmc.com` that exposes pre-parsed Unicode
- * data fetched from `https://www.unicode.org/Public/UNIDATA/`.
+ * Pre-parsed Unicode data vendored from
+ * `https://www.unicode.org/Public/UNIDATA/` (`UnicodeData.txt` +
+ * `Blocks.txt`), bundled as `unicode-lookup-table.json`.
  *
- * Expected response shape:
+ * Regenerate with `npm run refresh-unicode-data`, which rewrites both the
+ * JSON file and the `BUNDLE_CHECKSUM` marker below.
+ *
+ * Shape:
  * ```json
  * {
  *   "version": "17.0.0",
@@ -33,7 +35,6 @@ export const BlocksUri = 'spyglass://unicode/Blocks.json'
  *   in a recognized contiguous range.
  * - `blocks`: lower-cased block name from `Blocks.txt` -> inclusive `[start, end]`.
  */
-export const UnicodeDataUrl = 'https://api.spyglassmc.com/unicode/data.json'
 
 /**
  * Symbol categories used by the {@link symbolRegistrar}.
@@ -87,54 +88,20 @@ export const JdkNameOverrides: { [name: string]: number } = Object.freeze({
 })
 
 /**
- * Fetches the combined Unicode data file from the `api.spyglassmc.com`
- * mirror, falling back to the vendored `unicode-lookup-table.json` bundle
- * when the network request fails.
+ * Reads the bundled Unicode data from `unicode-lookup-table.json`.
  *
- * The bundled fallback is a temporary stopgap so the parser can run offline
- * / before the API is deployed. To remove later:
- *   1. Delete the `import unicodeLookupTable from ...` line at the top.
- *   2. Delete `getUnicodeDataFromBundle` and the `catch` branch below.
- *   3. Optionally delete `packages/core/src/dependency/unicode-lookup-table.json`.
- *
- * @throws Only when both the API and the bundle are unavailable (which
- * shouldn't happen - the bundle is compiled into the package).
+ * The `checksum` is a build-time digest of the JSON file, used by
+ * `meta.registerSymbolRegistrar` to invalidate the cached symbol table
+ * whenever the bundled data is regenerated.
  */
-export async function getUnicodeData(
-	externals: Externals,
-	logger: Logger,
-): Promise<UnicodeDataResult> {
-	try {
-		return await getUnicodeDataFromApi(externals, logger)
-	} catch (e) {
-		logger.warn(
-			{ err: e },
-			'[unicode] Failed fetching from API; falling back to bundled data',
-		)
-		return getUnicodeDataFromBundle()
-	}
-}
-
-async function getUnicodeDataFromApi(
-	externals: Externals,
-	logger: Logger,
-): Promise<UnicodeDataResult> {
-	const response = await fetchWithCache(externals, logger, UnicodeDataUrl)
-	const data = (await response.json()) as UnicodeData
-	return {
-		...data,
-		checksum: `${response.headers.get('etag') ?? ''}-v1`,
-	}
-}
-
-function getUnicodeDataFromBundle(): UnicodeDataResult {
+export function getUnicodeData(): UnicodeDataResult {
 	const data = unicodeLookupTable as unknown as UnicodeData
 	return {
 		version: data.version,
 		names: data.names,
 		ranges: data.ranges,
 		blocks: data.blocks,
-		// BUNDLE_CHECKSUM - updated by scripts/refresh_unicode_data.ts --write-lookup
+		// BUNDLE_CHECKSUM - updated by scripts/refresh_unicode_data.ts
 		checksum: `bundle-bb300b090da8dcdfa7c3563711150f1a8c3b4535e93331021a0fa87027809136`,
 	}
 }

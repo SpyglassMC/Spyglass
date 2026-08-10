@@ -2,7 +2,6 @@ import { Mutex } from 'async-mutex'
 import type { NextFunction, Request, Response } from 'express'
 import { type ChildProcess, execFile as execFileCallback, spawn } from 'node:child_process'
 import { createHmac, timingSafeEqual } from 'node:crypto'
-import { createReadStream } from 'node:fs'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { Writable } from 'node:stream'
@@ -203,35 +202,6 @@ export async function sendGitFile(
 	)
 	pipeChildStdioToResponse(repoDir, child, res)
 	await childProcessExits(child)
-}
-
-/**
- * Serves a file from the local filesystem with a strong SHA-256 ETag for
- * conditional requests. Streams the file directly to the response (no full
- * read into memory).
- *
- * @param etag A strong ETag (typically `"<sha256-hex>"`).
- */
-export async function sendLocalFile(
-	req: Request,
-	res: Response,
-	filePath: string,
-	etag: string,
-) {
-	res.setHeader('ETag', etag)
-	if (req.headers['if-none-match'] === etag) {
-		res.status(304).end()
-		return
-	}
-
-	const stream = createReadStream(filePath)
-	stream.on('error', (e: Error) => {
-		req.log.error({ err: e, filePath }, 'Failed sending local file')
-		if (!res.headersSent) {
-			res.status(500).send(JSON.stringify({ message: 'Failed to send file' }))
-		}
-	})
-	stream.pipe(res)
 }
 
 export async function sendGitTarball(

@@ -1,10 +1,8 @@
 import cors from 'cors'
 import express, { type Request } from 'express'
 import assert from 'node:assert/strict'
-import path from 'node:path'
 import pino from 'pino'
 import { pinoHttp } from 'pino-http'
-import { createUnicodeApp } from './unicode.js'
 import {
 	assertRootDir,
 	errorHandler,
@@ -98,9 +96,6 @@ const versionRoute = express.Router({ mergeParams: true })
 		await sendGitTarball(req, res, repoDirs.mcmeta, `${version}-data`)
 	})
 
-const UNICODE_DIR = path.join(rootDir, 'unicode')
-const unicodeApp = await createUnicodeApp(UNICODE_DIR, logger, { refresh: true })
-
 const app = express()
 	.set('trust proxy', 2)
 	.use(pinoHttp({ logger, useLevel: 'debug' }))
@@ -119,7 +114,6 @@ const app = express()
 		next()
 	})
 	.use(userAgentEnforcer)
-	.use(unicodeApp.app)
 	.get('/mcje/versions', async (req, res) => {
 		await sendGitFile(req, res, repoDirs.mcmeta, 'summary', 'versions/data.json')
 	})
