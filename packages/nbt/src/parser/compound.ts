@@ -11,7 +11,7 @@ export const compound: core.InfallibleParser<NbtCompoundNode> = (src, ctx) => {
 				key: core.failOnEmpty(
 					core.setType(
 						'nbt:string',
-						core.string({ ...core.BrigadierStringOptions, colorTokenType: 'variable' }),
+						core.string({ ...core.BrigadierStringOptions, colorTokenType: 'property' }),
 					),
 				),
 				sep: ':',

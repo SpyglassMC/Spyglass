@@ -23,7 +23,7 @@ describe('nbt entry() with SNBT functions', () => {
 			{ content: 'uuid("12345678-1234-1234-1234-123456789012")' },
 			{ content: 'uuid("00000000-0000-0000-0000-000000000000")' },
 			{ content: 'uuid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")' },
-			{ content: 'uuid("12345678-1234-1234-1234-1234567890")' }, // too short
+			{ content: 'uuid("12345678-1234-1234-1234-1234567890")' },
 			{ content: 'uuid("not-a-uuid")' },
 			{ content: 'uuid(42)' }, // non-string
 			{ content: 'uuid(' }, // incomplete

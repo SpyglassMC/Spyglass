@@ -1,7 +1,7 @@
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 5
@@ -41,7 +41,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(-1)' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 8
@@ -73,7 +73,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(0)' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 7
@@ -105,7 +105,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(0.5)' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 9
@@ -137,7 +137,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(0xff)' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 10
@@ -162,7 +162,8 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
           "start": 5,
           "end": 7
         },
-        "value": 255
+        "value": 255,
+        "hover": "\`255\`"
       }
     ]
   },
@@ -173,7 +174,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(1)' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 7
@@ -205,7 +206,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(1b)' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 8
@@ -237,7 +238,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(23' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 7
@@ -278,7 +279,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(42)' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 8
@@ -310,7 +311,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool([])' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 8
@@ -351,7 +352,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(\"hello\")' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 13
@@ -405,7 +406,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool({})' 1`] = `
 {
   "node": {
-    "type": "nbt:bool",
+    "type": "nbt:bool_function",
     "range": {
       "start": 0,
       "end": 8
@@ -450,7 +451,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(' 1`] = `
 {
   "node": {
-    "type": "nbt:uuid",
+    "type": "nbt:uuid_function",
     "range": {
       "start": 0,
       "end": 5
@@ -599,7 +600,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(42)' 1`] = `
 {
   "node": {
-    "type": "nbt:uuid",
+    "type": "nbt:uuid_function",
     "range": {
       "start": 0,
       "end": 8
@@ -740,7 +741,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(\"00000000-0000-0000-0000-000000000000\")' 1`] = `
 {
   "node": {
-    "type": "nbt:uuid",
+    "type": "nbt:uuid_function",
     "range": {
       "start": 0,
       "end": 44
@@ -899,7 +900,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(\"12345678-1234-1234-1234-123456789012\")' 1`] = `
 {
   "node": {
-    "type": "nbt:uuid",
+    "type": "nbt:uuid_function",
     "range": {
       "start": 0,
       "end": 44
@@ -1058,7 +1059,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(\"12345678-1234-1234-1234-1234567890\")' 1`] = `
 {
   "node": {
-    "type": "nbt:uuid",
+    "type": "nbt:uuid_function",
     "range": {
       "start": 0,
       "end": 42
@@ -1217,7 +1218,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\")' 1`] = `
 {
   "node": {
-    "type": "nbt:uuid",
+    "type": "nbt:uuid_function",
     "range": {
       "start": 0,
       "end": 44
@@ -1376,7 +1377,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(\"not-a-uuid\")' 1`] = `
 {
   "node": {
-    "type": "nbt:uuid",
+    "type": "nbt:uuid_function",
     "range": {
       "start": 0,
       "end": 18
@@ -1545,7 +1546,7 @@ exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) >
         "start": 0,
         "end": 4
       },
-      "message": "SNBT Functions are only supported in pack format 71+ / minecraft 1.21.5",
+      "message": "SNBT Functions are only supported in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1561,7 +1562,7 @@ exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) >
         "start": 0,
         "end": 4
       },
-      "message": "SNBT Functions are only supported in pack format 71+ / minecraft 1.21.5",
+      "message": "SNBT Functions are only supported in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1577,7 +1578,7 @@ exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) >
         "start": 0,
         "end": 4
       },
-      "message": "SNBT Functions are only supported in pack format 71+ / minecraft 1.21.5",
+      "message": "SNBT Functions are only supported in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1619,7 +1620,7 @@ exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) >
         "start": 0,
         "end": 4
       },
-      "message": "SNBT Functions are only supported in pack format 71+ / minecraft 1.21.5",
+      "message": "SNBT Functions are only supported in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]

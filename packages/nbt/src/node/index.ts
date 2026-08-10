@@ -48,8 +48,8 @@ export type NbtIntegerAlikeNode =
 	| NbtShortNode
 	| NbtIntNode
 	| NbtLongNode
-	| NbtHexNode
-	| NbtBinNode
+	| NbtHexadecimalNode
+	| NbtBinaryNode
 export namespace NbtIntegerAlikeNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtIntegerAlikeNode {
@@ -57,8 +57,8 @@ export namespace NbtIntegerAlikeNode {
 			|| NbtShortNode.is(node)
 			|| NbtIntNode.is(node)
 			|| NbtLongNode.is(node)
-			|| NbtHexNode.is(node)
-			|| NbtBinNode.is(node))
+			|| NbtHexadecimalNode.is(node)
+			|| NbtBinaryNode.is(node))
 	}
 }
 
@@ -109,44 +109,44 @@ interface NbtRadixPrefixRange {
 	prefixRange: core.Range
 }
 
-export interface NbtHexNode extends core.LongBaseNode, NbtBaseNode, NbtRadixPrefixRange {
+export interface NbtHexadecimalNode extends core.LongBaseNode, NbtBaseNode, NbtRadixPrefixRange {
 	readonly type: 'nbt:hex'
 }
-export namespace NbtHexNode {
+export namespace NbtHexadecimalNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode | undefined): node is NbtHexNode {
-		return (node as NbtHexNode | undefined)?.type === 'nbt:hex'
+	export function is(node: core.AstNode | undefined): node is NbtHexadecimalNode {
+		return (node as NbtHexadecimalNode | undefined)?.type === 'nbt:hex'
 	}
 }
 
-export interface NbtBinNode extends core.LongBaseNode, NbtBaseNode, NbtRadixPrefixRange {
+export interface NbtBinaryNode extends core.LongBaseNode, NbtBaseNode, NbtRadixPrefixRange {
 	readonly type: 'nbt:bin'
 }
-export namespace NbtBinNode {
+export namespace NbtBinaryNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode | undefined): node is NbtBinNode {
-		return (node as NbtBinNode | undefined)?.type === 'nbt:bin'
+	export function is(node: core.AstNode | undefined): node is NbtBinaryNode {
+		return (node as NbtBinaryNode | undefined)?.type === 'nbt:bin'
 	}
 }
 // #endregion
 
 // #region NbtSnbtFunctionNode
 // Base type for SNBT function calls (e.g. `bool(value)`). Concrete function node types
-// (e.g. `nbt:bool`) extend this. `prefixRange` covers the function name and opening
+// (e.g. `nbt:bool_function`) extend this. `prefixRange` covers the function name and opening
 // parenthesis (e.g. `bool(`); `suffixRange` covers the closing parenthesis (`)`). The
 // argument(s) are stored as `children`. Colorizers color `prefixRange` and `suffixRange`
 // as `escape`.
-export type NbtSnbtFunctionNode = NbtBoolNode | NbtUuidNode
+export type NbtSnbtFunctionNode = NbtBoolFunctionNode | NbtUuidFunctionNode
 export namespace NbtSnbtFunctionNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtSnbtFunctionNode {
-		return NbtBoolNode.is(node) || NbtUuidNode.is(node)
+		return NbtBoolFunctionNode.is(node) || NbtUuidFunctionNode.is(node)
 	}
 }
 
 // `bool(value)` evaluates to `false` if `value` is the numeric literal 0, else `true`.
-export interface NbtBoolNode extends core.AstNode, NbtBaseNode {
-	readonly type: 'nbt:bool'
+export interface NbtBoolFunctionNode extends core.AstNode, NbtBaseNode {
+	readonly type: 'nbt:bool_function'
 	value: boolean
 	prefixRange: core.Range
 	suffixRange: core.Range
@@ -156,17 +156,17 @@ export interface NbtBoolNode extends core.AstNode, NbtBaseNode {
 	 */
 	children: NbtNode[]
 }
-export namespace NbtBoolNode {
+export namespace NbtBoolFunctionNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode | undefined): node is NbtBoolNode {
-		return (node as NbtBoolNode | undefined)?.type === 'nbt:bool'
+	export function is(node: core.AstNode | undefined): node is NbtBoolFunctionNode {
+		return (node as NbtBoolFunctionNode | undefined)?.type === 'nbt:bool_function'
 	}
 }
 
 // `uuid("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")` parses a UUID string into a
 // 4-element int array (each 32-bit group as an int).
-export interface NbtUuidNode extends core.AstNode, NbtBaseNode {
-	readonly type: 'nbt:uuid'
+export interface NbtUuidFunctionNode extends core.AstNode, NbtBaseNode {
+	readonly type: 'nbt:uuid_function'
 	value: number[]
 	prefixRange: core.Range
 	/**
@@ -187,10 +187,10 @@ export interface NbtUuidNode extends core.AstNode, NbtBaseNode {
 	 */
 	intArray: NbtIntArrayNode
 }
-export namespace NbtUuidNode {
+export namespace NbtUuidFunctionNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode | undefined): node is NbtUuidNode {
-		return (node as NbtUuidNode | undefined)?.type === 'nbt:uuid'
+	export function is(node: core.AstNode | undefined): node is NbtUuidFunctionNode {
+		return (node as NbtUuidFunctionNode | undefined)?.type === 'nbt:uuid_function'
 	}
 }
 // #endregion

@@ -358,11 +358,6 @@ function getTypesFromEntity(
 }
 
 export const uuid: core.Checker<UuidNode> = (node) => {
-	// Unpack the two 64-bit halves of the UUID into the four 32-bit int values
-	// Minecraft uses internally. `bits` is only populated when the parser
-	// successfully matched a UUID-shaped string; otherwise leave hover unset
-	// so the parser-reported "Invalid UUID format" diagnostic is the only
-	// feedback.
 	if (node.bits[0] === 0n && node.bits[1] === 0n) {
 		return
 	}

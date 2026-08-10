@@ -56,7 +56,7 @@ export function float(options: Options): Parser<FloatNode> {
 		if (src.peek() === '-' || src.peek() === '+') {
 			src.skip()
 		}
-		// Digit reader accepts `_` between digits as a separator (ES2021 numeric separators).
+		// Digit reader accepts `_` between digits as a separator (ES2021-style numeric separators).
 		while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 			src.skip()
 		}

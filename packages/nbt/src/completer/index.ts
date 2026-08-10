@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import type {
-	NbtBoolNode,
+	NbtBoolFunctionNode,
 	NbtCollectionNode,
 	NbtCompoundNode,
 	NbtNode,
@@ -9,7 +9,7 @@ import type {
 	NbtPathNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
-	NbtUuidNode,
+	NbtUuidFunctionNode,
 } from '../node/index.js'
 
 const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
@@ -112,8 +112,12 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	return values
 }
 
-const snbtFunction: core.Completer<NbtBoolNode | NbtUuidNode> = (node, ctx) => {
-	const keyword = node.type === 'nbt:bool' ? 'bool' : node.type === 'nbt:uuid' ? 'uuid' : ''
+const snbtFunction: core.Completer<NbtBoolFunctionNode | NbtUuidFunctionNode> = (node, ctx) => {
+	const keyword = node.type === 'nbt:bool_function'
+		? 'bool'
+		: node.type === 'nbt:uuid_function'
+		? 'uuid'
+		: ''
 	if (!keyword) {
 		return []
 	}
@@ -233,8 +237,8 @@ export function register(meta: core.MetaRegistry): void {
 	meta.registerCompleter('nbt:float', primitive)
 	meta.registerCompleter('nbt:hex', primitive)
 	meta.registerCompleter('nbt:bin', primitive)
-	meta.registerCompleter<NbtBoolNode>('nbt:bool', snbtFunction)
-	meta.registerCompleter<NbtUuidNode>('nbt:uuid', snbtFunction)
+	meta.registerCompleter<NbtBoolFunctionNode>('nbt:bool_function', snbtFunction)
+	meta.registerCompleter<NbtUuidFunctionNode>('nbt:uuid_function', snbtFunction)
 
 	meta.registerCompleter('nbt:path', path)
 	meta.registerCompleter('nbt:path/key', pathKey)

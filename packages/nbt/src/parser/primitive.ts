@@ -244,6 +244,7 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 					range,
 					prefixRange,
 					value,
+					hover: `\`${value}\``,
 				} as NbtNumberNode
 			}
 			let isOutOfRange = false

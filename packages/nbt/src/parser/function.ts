@@ -1,6 +1,11 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { NbtBoolNode, NbtIntArrayNode, NbtNode, NbtUuidNode } from '../node/index.js'
+import type {
+	NbtBoolFunctionNode,
+	NbtIntArrayNode,
+	NbtNode,
+	NbtUuidFunctionNode,
+} from '../node/index.js'
 import { NbtNumberNode } from '../node/index.js'
 import { newSyntax } from '../util.js'
 import { entry } from './entry.js'
@@ -47,7 +52,7 @@ export const snbtFunction = (
 const parseBool = (
 	src: core.Source,
 	ctx: core.ParserContext,
-): NbtBoolNode | typeof core.Failure => {
+): NbtBoolFunctionNode | typeof core.Failure => {
 	const prefixStart = src.cursor
 	src.skip(4)
 	if (!src.trySkip('(')) {
@@ -96,7 +101,7 @@ const parseBool = (
 
 	const range = core.Range.create(prefixStart, src.cursor)
 	return {
-		type: 'nbt:bool',
+		type: 'nbt:bool_function',
 		range,
 		value,
 		prefixRange,
@@ -110,7 +115,7 @@ const UUID_PATTERN = /^[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+$/i
 const parseUuid = (
 	src: core.Source,
 	ctx: core.ParserContext,
-): NbtUuidNode | typeof core.Failure => {
+): NbtUuidFunctionNode | typeof core.Failure => {
 	const prefixStart = src.cursor
 	src.skip(4) // skip 'uuid'
 	if (!src.trySkip('(')) {
@@ -197,7 +202,7 @@ const parseUuid = (
 	}
 
 	return {
-		type: 'nbt:uuid',
+		type: 'nbt:uuid_function',
 		range: core.Range.create(prefixStart, src.cursor),
 		value,
 		prefixRange,

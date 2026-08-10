@@ -16,7 +16,7 @@ import {
 	NbtPathKeyNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
-	NbtUuidNode,
+	NbtUuidFunctionNode,
 } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
@@ -141,16 +141,9 @@ export function typeDefinition(
 							n => [{ originalNode: n.value!, inferredType: inferType(n.value!) }],
 						)
 					}
-					if (type === 'nbt:uuid') {
-						// The parser synthesizes a real `nbt:int_array` with 4
-						// ints for every `uuid(...)` call. Delegate to its children
-						// so the checker descends into real nodes instead of
-						// recursing on the uuid node itself.
+					if (type === 'nbt:uuid_function') {
 						return node.intArray.children.filter(n => n.value).map(
-							n => [{
-								originalNode: n.value!,
-								inferredType: inferType(n.value!),
-							}],
+							n => [{ originalNode: n.value!, inferredType: inferType(n.value!) }],
 						)
 					}
 					if (type === 'nbt:compound') {
@@ -192,15 +185,28 @@ export function typeDefinition(
 								`\`\`\`typescript\n${keyString}: ${valueString}\n\`\`\`\n${desc}`
 
 							if (NbtPrimitiveNode.is(node.parent.value)) {
-								node.parent.value.hover =
-									`\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+								let valueHover = `\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+								// Preserve any hover set by the parser (e.g. the decimal
+								// value of a hex/binary literal) so it shows up alongside
+								// the mcdoc type info instead of being clobbered.
+								if (node.parent.value.hover) {
+									valueHover += `\n\n${node.parent.value.hover}`
+								}
+								node.parent.value.hover = valueHover
 							}
 						}
 					} else if (NbtPrimitiveNode.is(node)) {
-						node.hover = `\`\`\`typescript\n${
+						let hover = `\`\`\`typescript\n${
 							mcdoc.McdocType.toString(definition)
 						}\n\`\`\`\n${desc}`
-					} else if (NbtUuidNode.is(node)) {
+						// Preserve any hover set by the parser (e.g. the decimal
+						// value of a hex/binary literal) so it shows up alongside
+						// the mcdoc type info instead of being clobbered.
+						if (node.hover) {
+							hover += `\n\n${node.hover}`
+						}
+						node.hover = hover
+					} else if (NbtUuidFunctionNode.is(node)) {
 						const uuidNode = node
 						// Skip the hover when the UUID is invalid - the parser
 						// already reports the error on the string arg, and a
@@ -248,9 +254,9 @@ function inferType(node: NbtNode): SimplifiedMcdocTypeNoUnion {
 			return { kind: 'literal', value: { kind: 'long', value: node.value } }
 		case 'nbt:string':
 			return { kind: 'literal', value: { kind: 'string', value: node.value } }
-		case 'nbt:bool':
+		case 'nbt:bool_function':
 			return { kind: 'literal', value: { kind: 'boolean', value: node.value } }
-		case 'nbt:uuid':
+		case 'nbt:uuid_function':
 			// A `uuid(...)` call is semantically a 4-long int array. The
 			// runtime checker sees it as a ghost `int_array` so fields typed
 			// as `int[]` (or `int_array`) accept it without complaint.
