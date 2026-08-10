@@ -75,31 +75,64 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 	},
 })
 
+const SNBT_FUNCTIONS = ['bool', 'uuid'] as const
+
 const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	const insideRange = core.Range.contains(node, ctx.offset, true)
+	ctx.logger.info(`[nbt.completer.primitive] enter type=${node.type} offset=${ctx.offset} range=${node.range.start}-${node.range.end} value=${(node as { value?: unknown }).value !== undefined ? JSON.stringify((node as { value: unknown }).value) : 'n/a'} quote=${(node as { quote?: string }).quote ?? 'none'} children=${node.children?.length ?? 0} typeDef=${node.typeDef ? 'set' : 'unset'} insideRange=${insideRange} triggerCharacter=${ctx.triggerCharacter ?? 'none'}`)
 	if (node.type === 'nbt:string' && node.children?.length && insideRange) {
 		const childItems = core.completer.string(node, ctx)
 		if (childItems.length > 0) {
+			ctx.logger.info(`[nbt.completer.primitive] exit via string-children, ${childItems.length} items`)
 			return childItems
 		}
 	}
+	// The parser doesn't create an `nbt:bool`/`nbt:uuid` node until the
+	// opening paren is typed, so partial prefixes (`bo`, `u`, etc.) are
+	// parsed as unquoted strings. Detect them here and offer function
+	// completions, regardless of whether a typeDef is set (typed fields
+	// still benefit from these in many contexts).
+	if (
+		node.type === 'nbt:string' && !node.quote
+		&& SNBT_FUNCTIONS.some((name) => name.startsWith(node.value))
+	) {
+		const items = SNBT_FUNCTIONS.map((name) =>
+			core.CompletionItem.create(
+				name,
+				core.Range.create(node.range.start, ctx.offset),
+				{
+					kind: core.CompletionKind.Function,
+					filterText: name,
+					insertText: name,
+				},
+			)
+		)
+		ctx.logger.info(`[nbt.completer.primitive] exit via snbt-prefix, ${items.length} items`)
+		return items
+	}
 	if (!node.typeDef) {
+		ctx.logger.info(`[nbt.completer.primitive] exit empty (no typeDef, no snbt prefix)`)
 		return []
 	}
-	return getValues(node.typeDef, insideRange ? node : ctx.offset, {
+	const values = getValues(node.typeDef, insideRange ? node : ctx.offset, {
 		...ctx,
 		requireCanonical: node.requireCanonical,
 	})
+	ctx.logger.info(`[nbt.completer.primitive] exit via getValues, ${values.length} items`)
+	return values
 }
 
 const snbtFunction: core.Completer<NbtBoolNode | NbtUuidNode> = (node, ctx) => {
 	// Provide `bool` and `uuid` completions. Parens are auto-inserted by the
 	// language configuration's `autoClosingPairs`, so the snippets just insert
 	// the keyword.
+	ctx.logger.info(`[nbt.completer.snbtFunction] enter type=${node.type} offset=${ctx.offset} range=${node.range.start}-${node.range.end}`)
 	const keyword = node.type === 'nbt:bool' ? 'bool' : node.type === 'nbt:uuid' ? 'uuid' : ''
 	if (!keyword) {
+		ctx.logger.info(`[nbt.completer.snbtFunction] exit empty (unknown type)`)
 		return []
 	}
+	ctx.logger.info(`[nbt.completer.snbtFunction] exit with keyword=${keyword}`)
 	return [
 		core.CompletionItem.create(keyword, node.range, {
 			kind: core.CompletionKind.Function,

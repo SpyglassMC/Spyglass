@@ -1,6 +1,22 @@
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(' 1`] = `
 {
-  "node": "FAILURE",
+  "node": {
+    "type": "nbt:bool",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 5,
+      "end": 5
+    },
+    "children": []
+  },
   "errors": [
     {
       "range": {
@@ -8,6 +24,14 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
         "end": 5
       },
       "message": "Expected a tag",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected )",
       "severity": 3
     }
   ]
@@ -212,7 +236,32 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(23' 1`] = `
 {
-  "node": "FAILURE",
+  "node": {
+    "type": "nbt:bool",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "value": true,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "value": 23
+      }
+    ]
+  },
   "errors": [
     {
       "range": {
@@ -400,7 +449,23 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
 
 exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(' 1`] = `
 {
-  "node": "FAILURE",
+  "node": {
+    "type": "nbt:uuid",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 5,
+      "end": 5
+    },
+    "children": []
+  },
   "errors": [
     {
       "range": {
@@ -408,6 +473,14 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
         "end": 5
       },
       "message": "Expected a string tag",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected )",
       "severity": 3
     }
   ]
@@ -431,16 +504,7 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
       "start": 7,
       "end": 8
     },
-    "children": [
-      {
-        "type": "nbt:int",
-        "range": {
-          "start": 5,
-          "end": 7
-        },
-        "value": 42
-      }
-    ]
+    "children": []
   },
   "errors": [
     {

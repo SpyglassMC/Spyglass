@@ -150,7 +150,11 @@ export interface NbtBoolNode extends core.AstNode, NbtBaseNode {
 	value: boolean
 	prefixRange: core.Range
 	suffixRange: core.Range
-	children: [NbtNode]
+	/**
+	 * The argument to `bool(...)`. Empty when the argument is missing (e.g. `bool(`),
+	 * in which case an error is reported at the arg position.
+	 */
+	children: NbtNode[]
 }
 export namespace NbtBoolNode {
 	/* istanbul ignore next */
@@ -165,8 +169,16 @@ export interface NbtUuidNode extends core.AstNode, NbtBaseNode {
 	readonly type: 'nbt:uuid'
 	value: number[]
 	prefixRange: core.Range
+	/**
+	 * Zero-length when the closing `)` is missing. Otherwise covers the
+	 * closing `)` of `uuid(...)`.
+	 */
 	suffixRange: core.Range
-	children: [NbtStringNode]
+	/**
+	 * The string argument to `uuid(...)`. Empty when the argument is missing
+	 * (e.g. `uuid(`), in which case an error is reported at the arg position.
+	 */
+	children: NbtStringNode[]
 }
 export namespace NbtUuidNode {
 	/* istanbul ignore next */

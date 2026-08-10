@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { NbtBoolNode, NbtNode, NbtStringNode, NbtUuidNode } from '../node/index.js'
+import type { NbtBoolNode, NbtNode, NbtUuidNode } from '../node/index.js'
 import { NbtNumberNode } from '../node/index.js'
 import { newSyntax } from '../util.js'
 import { entry } from './entry.js'
@@ -55,35 +55,41 @@ const parseBool = (
 	}
 	const prefixRange = core.Range.create(prefixStart, src.cursor)
 
+	// Always produce the node so the completer/colorizer can attach to it even
+	// when the argument or closing paren is missing. Missing pieces are reported
+	// as errors.
 	const argAttempt = core.attempt(entry, src, ctx)
+	let argResult: NbtNode | undefined
 	if (argAttempt.result === undefined || argAttempt.result === core.Failure) {
 		ctx.err.report(
 			localize('expected', localize('nbt.node')),
 			core.Range.create(src.cursor, src.cursor),
 		)
-		return core.Failure
-	}
-	const argResult = argAttempt.result
-	argAttempt.updateSrcAndCtx()
+	} else {
+		argResult = argAttempt.result
+		argAttempt.updateSrcAndCtx()
 
-	if (!NbtNumberNode.is(argResult)) {
-		ctx.err.report(
-			localize('nbt.parser.function.bool-requires-number'),
-			argResult,
-		)
+		if (!NbtNumberNode.is(argResult)) {
+			ctx.err.report(
+				localize('nbt.parser.function.bool-requires-number'),
+				argResult,
+			)
+		}
 	}
 
+	let suffixRange: core.Range
 	if (!src.trySkip(')')) {
 		ctx.err.report(
 			localize('expected', ')'),
 			core.Range.create(src.cursor, src.cursor),
 		)
-		return core.Failure
+		suffixRange = core.Range.create(src.cursor, src.cursor)
+	} else {
+		suffixRange = core.Range.create(src.cursor - 1, src.cursor)
 	}
-	const suffixRange = core.Range.create(src.cursor - 1, src.cursor)
 
 	let value = false
-	if (NbtNumberNode.is(argResult)) {
+	if (argResult && NbtNumberNode.is(argResult)) {
 		const v = argResult.value
 		value = typeof v === 'bigint' ? v !== 0n : v !== 0
 	}
@@ -95,7 +101,7 @@ const parseBool = (
 		value,
 		prefixRange,
 		suffixRange,
-		children: [argResult],
+		children: argResult ? [argResult] : [],
 	}
 }
 
@@ -112,35 +118,41 @@ const parseUuid = (
 	}
 	const prefixRange = core.Range.create(prefixStart, src.cursor)
 
+	// Always produce the node so the completer/colorizer can attach to it even
+	// when the argument or closing paren is missing. Missing pieces are reported
+	// as errors.
 	const argAttempt = core.attempt(entry, src, ctx)
+	let argResult: NbtNode | undefined
 	if (argAttempt.result === undefined || argAttempt.result === core.Failure) {
 		ctx.err.report(
 			localize('expected', localize('nbt.node.string')),
 			core.Range.create(src.cursor, src.cursor),
 		)
-		return core.Failure
-	}
-	const argResult = argAttempt.result
-	argAttempt.updateSrcAndCtx()
-	if (argResult.type !== 'nbt:string') {
-		ctx.err.report(
-			localize('nbt.parser.function.uuid-requires-string'),
-			argResult,
-		)
+	} else {
+		argResult = argAttempt.result
+		argAttempt.updateSrcAndCtx()
+		if (argResult.type !== 'nbt:string') {
+			ctx.err.report(
+				localize('nbt.parser.function.uuid-requires-string'),
+				argResult,
+			)
+		}
 	}
 
+	let suffixRange: core.Range
 	if (!src.trySkip(')')) {
 		ctx.err.report(
 			localize('expected', ')'),
 			core.Range.create(src.cursor, src.cursor),
 		)
-		return core.Failure
+		suffixRange = core.Range.create(src.cursor, src.cursor)
+	} else {
+		suffixRange = core.Range.create(src.cursor - 1, src.cursor)
 	}
-	const suffixRange = core.Range.create(src.cursor - 1, src.cursor)
 
 	// Conversion method ported from https://github.com/AjaxGb/mc-uuid-converter/blob/master/convert.js
 	const value: number[] = []
-	const str = argResult.type === 'nbt:string' ? argResult.value.trim() : ''
+	const str = argResult?.type === 'nbt:string' ? argResult.value.trim() : ''
 	if (UUID_PATTERN.test(str)) {
 		const UUID_GROUP_SIZES = [8, 4, 4, 4, 12]
 		const UUIDData = new DataView(new Uint8Array(16).buffer)
@@ -161,6 +173,6 @@ const parseUuid = (
 		value,
 		prefixRange,
 		suffixRange,
-		children: [argResult as NbtStringNode],
+		children: argResult?.type === 'nbt:string' ? [argResult] : [],
 	}
 }
