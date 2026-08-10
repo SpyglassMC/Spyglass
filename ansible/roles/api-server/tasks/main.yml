@@ -79,10 +79,10 @@
     enabled: true
     state: started
 
-- name: Create nginx reverse proxy
+- name: Create Caddy reverse proxy
   become: true
   ansible.builtin.template:
-    src: api-server.conf
-    dest: /etc/nginx/conf.d/api-server.conf
+    src: api-server.caddy
+    dest: /etc/caddy/conf.d/api-server.caddy
     mode: '600'
-  notify: Reload nginx
+  notify: Reload Caddy
