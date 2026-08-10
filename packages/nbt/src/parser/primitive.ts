@@ -1,11 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type {
-	NbtByteNode,
-	NbtNumberNode,
-	NbtPrimitiveNode,
-	NbtStringNode,
-} from '../node/index.js'
+import type { NbtByteNode, NbtNumberNode, NbtPrimitiveNode, NbtStringNode } from '../node/index.js'
 import { localizeTag, newSyntax } from '../util.js'
 
 const enum Group {
@@ -79,7 +74,8 @@ const NumeralPatterns:
 		},
 		// Float/double patterns allow `_` between digits (same as ints).
 		{
-			pattern: /^[-+]?(?:(?:0|[1-9](?:_?[0-9])*)\.?|(?:[0-9](?:_?[0-9])*)?\.(?:[0-9](?:_?[0-9])*))(?:e[-+]?(?:0|[1-9](?:_?[0-9])*))?f$/i,
+			pattern:
+				/^[-+]?(?:(?:0|[1-9](?:_?[0-9])*)\.?|(?:[0-9](?:_?[0-9])*)?\.(?:[0-9](?:_?[0-9])*))(?:e[-+]?(?:0|[1-9](?:_?[0-9])*))?f$/i,
 			type: 'nbt:float',
 			hasSuffix: true,
 			group: Group.FloatAlike,
@@ -87,7 +83,8 @@ const NumeralPatterns:
 			max: FloatMaximum,
 		},
 		{
-			pattern: /^[-+]?(?:(?:0|[1-9](?:_?[0-9])*)\.?|(?:[0-9](?:_?[0-9])*)?\.(?:[0-9](?:_?[0-9])*))(?:e[-+]?(?:0|[1-9](?:_?[0-9])*))?d$/i,
+			pattern:
+				/^[-+]?(?:(?:0|[1-9](?:_?[0-9])*)\.?|(?:[0-9](?:_?[0-9])*)?\.(?:[0-9](?:_?[0-9])*))(?:e[-+]?(?:0|[1-9](?:_?[0-9])*))?d$/i,
 			type: 'nbt:double',
 			hasSuffix: true,
 			group: Group.FloatAlike,
@@ -95,7 +92,8 @@ const NumeralPatterns:
 			max: Number.MAX_VALUE,
 		},
 		{
-			pattern: /^[-+]?(?:(?:0|[1-9](?:_?[0-9])*)\.?|(?:[0-9](?:_?[0-9])*)?\.(?:[0-9](?:_?[0-9])*))(?:e[-+]?(?:0|[1-9](?:_?[0-9])*))?$/i,
+			pattern:
+				/^[-+]?(?:(?:0|[1-9](?:_?[0-9])*)\.?|(?:[0-9](?:_?[0-9])*)?\.(?:[0-9](?:_?[0-9])*))(?:e[-+]?(?:0|[1-9](?:_?[0-9])*))?$/i,
 			type: 'nbt:double',
 			hasSuffix: false,
 			group: Group.FloatAlike,

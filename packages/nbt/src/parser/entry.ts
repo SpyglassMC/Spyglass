@@ -19,9 +19,8 @@ export const entry: core.Parser<NbtNode> = (src, ctx) =>
 			{ predicate: (src) => src.tryPeek('['), parser: list },
 			{ predicate: (src) => src.tryPeek('{'), parser: compound },
 			{
-				predicate: (src) => SNBT_FUNCTIONS.some((name) =>
-					src.string.startsWith(`${name}(`, src.cursor)
-				),
+				predicate: (src) =>
+					SNBT_FUNCTIONS.some((name) => src.string.startsWith(`${name}(`, src.cursor)),
 				parser: snbtFunction(SNBT_FUNCTIONS),
 			},
 			{ parser: primitive },

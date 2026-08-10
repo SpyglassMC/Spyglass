@@ -43,8 +43,13 @@ export namespace NbtNumberNode {
 }
 
 // #region NbtIntegerAlikeNode
-export type NbtIntegerAlikeNode = NbtByteNode | NbtShortNode | NbtIntNode | NbtLongNode
-	| NbtHexNode | NbtBinNode
+export type NbtIntegerAlikeNode =
+	| NbtByteNode
+	| NbtShortNode
+	| NbtIntNode
+	| NbtLongNode
+	| NbtHexNode
+	| NbtBinNode
 export namespace NbtIntegerAlikeNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtIntegerAlikeNode {
