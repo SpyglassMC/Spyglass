@@ -33,11 +33,8 @@ export const snbtFunction = (
 		ctx.err.report(
 			localize('nbt.parser.function.snbt-functions-not-supported'),
 			core.Range.create(src.cursor, src.cursor + matched.length),
+			core.ErrorSeverity.Error,
 		)
-		// Advance past the function name so the surrounding `attempt` wrapper sees
-		// progress and absorbs the error.
-		src.skip(matched.length)
-		return core.Failure
 	}
 
 	if (matched === 'bool') {

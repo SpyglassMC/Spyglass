@@ -1497,6 +1497,62 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '_100' 1`] = `
 }
 `;
 
+exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '0b101' 1`] = `
+{
+  "node": {
+    "type": "nbt:bin",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "prefixRange": {
+      "start": 0,
+      "end": 2
+    },
+    "value": 5,
+    "hover": "\`5\`"
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '0x1d' 1`] = `
+{
+  "node": {
+    "type": "nbt:hex",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "prefixRange": {
+      "start": 0,
+      "end": 2
+    },
+    "value": 29,
+    "hover": "\`29\`"
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
 exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '0xFF_FF' 1`] = `
 {
   "node": {
@@ -1519,7 +1575,24 @@ exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '0xFF_FF' 1`
       }
     ]
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 7
+      },
+      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 0,
+        "end": 7
+      },
+      "message": "Underscore digit separators are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 1
+    }
+  ]
 }
 `;
 
@@ -1545,7 +1618,16 @@ exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '1_000' 1`] 
       }
     ]
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "message": "Underscore digit separators are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 1
+    }
+  ]
 }
 `;
 
@@ -1578,24 +1660,12 @@ exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '3iabc' 1`] 
 exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '42I' 1`] = `
 {
   "node": {
-    "type": "nbt:string",
+    "type": "nbt:int",
     "range": {
       "start": 0,
       "end": 3
     },
-    "value": "42I",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 0,
-          "end": 0
-        }
-      }
-    ]
+    "value": 42
   },
   "errors": [
     {
@@ -1613,24 +1683,12 @@ exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '42I' 1`] = 
 exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '42i' 1`] = `
 {
   "node": {
-    "type": "nbt:string",
+    "type": "nbt:int",
     "range": {
       "start": 0,
       "end": 3
     },
-    "value": "42i",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 0,
-          "end": 0
-        }
-      }
-    ]
+    "value": 42
   },
   "errors": [
     {

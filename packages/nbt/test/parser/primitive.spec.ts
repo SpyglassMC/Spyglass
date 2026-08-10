@@ -114,6 +114,9 @@ describe('nbt primitive() with pre-1.21.5 (no _ or i suffix)', () => {
 		{ content: 'abcI' },
 		{ content: 'ab3i' },
 		{ content: '3iabc' },
+		// Hex/binary literals are only valid in new syntax (1.21.5+).
+		{ content: '0x1d' },
+		{ content: '0b101' },
 	]
 	for (const { content } of suites) {
 		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {

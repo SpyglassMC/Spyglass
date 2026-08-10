@@ -162,19 +162,36 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 		ctx,
 	)
 	const isNewSyntax = newSyntax(ctx)
+	let underscoreNotified = false
 	for (const e of NumeralPatterns) {
 		if (e.pattern.test(unquotedResult.value)) {
 			// Hex/binary literals are only valid in new syntax (1.21.5+).
 			if (e.group === Group.LongAlike && e.radix && !isNewSyntax) {
-				continue
+				ctx.err.report(
+					localize('nbt.parser.number.radix-not-supported'),
+					unquotedResult,
+					core.ErrorSeverity.Error,
+				)
 			}
 			// Underscore digit separators are only valid in new syntax (1.21.5+).
 			if (e.group !== Group.Boolean && !isNewSyntax && unquotedResult.value.includes('_')) {
+				if (!underscoreNotified) {
+					ctx.err.report(
+						localize('nbt.parser.number.underscore-not-supported'),
+						unquotedResult,
+						core.ErrorSeverity.Information,
+					)
+					underscoreNotified = true
+				}
 				continue
 			}
 			// Explicit `i`/`I` int suffix is only valid in new syntax (1.21.5+).
 			if (e.group === Group.IntegerAlike && !isNewSyntax && /[iI]$/.test(unquotedResult.value)) {
-				continue
+				ctx.err.report(
+					localize('nbt.parser.number.explicit-int-suffix-not-supported'),
+					unquotedResult,
+					core.ErrorSeverity.Error,
+				)
 			}
 			if (e.group === Group.Boolean) {
 				const ans: NbtByteNode = {
@@ -308,13 +325,6 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 					core.ErrorSeverity.Error,
 				)
 			}
-		} else if (/^[-+]?(?:0|[1-9](?:_?[0-9])*)[iI]$/.test(unquotedResult.value)) {
-			// Explicit `i`/`I` int suffix is only valid in new syntax (1.21.5+).
-			ctx.err.report(
-				localize('nbt.parser.number.explicit-int-suffix-not-supported'),
-				unquotedResult,
-				core.ErrorSeverity.Error,
-			)
 		}
 	}
 
