@@ -295,11 +295,6 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
  * Returns completion items for Unicode character names when the cursor is
  * inside an `\N{…}` escape in `node`. Returns `undefined` otherwise so the
  * caller can fall through to other completers.
- *
- * Mirrors the {@link resourceLocation} pattern: returns *every* declared
- * `unicode-name` symbol. The LSP client (e.g. VS Code) does the
- * case-insensitive prefix match against each item's `label` and drops the
- * non-matches.
  */
 function tryGetUnicodeNameCompletion(
 	node: DeepReadonly<StringBaseNode>,

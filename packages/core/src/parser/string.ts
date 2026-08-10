@@ -30,28 +30,12 @@ import { Range, Source } from '../source/index.js'
 import type { Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
 
-/**
- * Matches the content of a `\N{…}` escape that ends in a hex codepoint
- * suffix - e.g. `\N{Hangul Syllables D7A2}`. Vanilla Minecraft accepts this
- * form for codepoint ranges that use the First/Last marker pair (Hangul
- * Syllables, CJK Ideographs, etc.). The hex must lie within the range
- * identified by `name`.
- */
 const NamedEscapeWithHexPattern = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s+([a-f0-9]+)\s*$/i
 
-/**
- * Matches the content of a `\N{…}` escape: a Unicode character name with
- * optional surrounding whitespace. Each term must be a single `[a-z0-9-]+`
- * chunk separated by exactly one space - multi-space between terms is
- * rejected (matching vanilla Minecraft's behavior).
- */
 const NamedEscapePattern = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s*$/i
 
 /**
  * Returns the codepoint that `name` (case-insensitive) maps to, if any.
- *
- * Performs an O(1) lookup against the bulk {@link BulkNames} symbol, which
- * stores a `{ lowercased -> codepoint }` map.
  */
 function lookupName(name: string, ctx: ParserContext): number | undefined {
 	const map = ctx.symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNames)
@@ -80,11 +64,6 @@ function formatCodepoint(codepoint: number): string {
 
 /**
  * Returns a hover-friendly glyph for the resolved escape character.
- *
- * Non-printable controls (LF, CR, HT, etc.) would inject raw whitespace
- * into the markdown source and break the inline `[ … ]` layout, so they
- * are shown as their canonical C-style escape form instead. All other
- * characters are passed through verbatim.
  */
 function displayGlyph(codepoint: number): { text: string; isEscapeForm: boolean } {
 	switch (codepoint) {
@@ -210,25 +189,13 @@ function isInDeclaredBlock(codepoint: number, ctx: ParserContext): boolean {
  * (vanilla accepts e.g. `\N{ snowman }`).
  */
 function resolveNamedEscape(escape: string, src: Source, ctx: ParserContext): number | undefined {
-	// Try the hex-suffix form first. If it matches but the resulting name
-	// is not a known block/range (e.g. `\N{latin small letter a}` greedy-
-	// matches as name="latin small letter", hex="a"), fall back to the
-	// name-only form below.
 	const hexMatch = NamedEscapeWithHexPattern.exec(escape)
 	if (hexMatch) {
 		const result = resolveHexSuffixedEscape(hexMatch[1]!, hexMatch[2]!, src, ctx)
 		if (result !== undefined) {
 			return result
 		}
-		// The hex-suffix form may have emitted a specific error (e.g. out-
-		// of-range). Fall through to the name-only path so additional
-		// errors can still be reported; multiple errors are acceptable.
 	}
-	// Detect a known range name with no hex codepoint provided, e.g.
-	// `\N{Hangul Syllable }`. Emit a clearer error than the generic
-	// "Unicode character name expected". Range symbols are registered with a
-	// trailing space in their identifier (so completion inserts the space
-	// automatically), so we probe both with and without.
 	const rangeProbe = NamedEscapePattern.exec(escape)
 	if (rangeProbe) {
 		const rangeSymbol = ctx.symbols.query(
@@ -254,13 +221,7 @@ function resolveNamedEscape(escape: string, src: Source, ctx: ParserContext): nu
 			return undefined
 		}
 	}
-	// Detect a known range name with non-hex trailing content, e.g.
-	// `\N{Hangul Syllables 0xAC00}` - the user typed something that looks
-	// like a codepoint suffix but isn't valid hex. Suggest the first valid
-	// codepoint in the range.
 	const trailingMatch = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s+(.+?)\s*$/i.exec(escape)
-	// Skip when trailing is valid hex - the out-of-range check above already
-	// covers that case with a more specific message.
 	if (trailingMatch && !/^[a-f0-9]+$/i.test(trailingMatch[2]!)) {
 		const rangeSymbol = ctx.symbols.query(
 			UnicodeDataUri,
@@ -312,24 +273,12 @@ interface UnicodeRangeSymbolData {
 	lowercase: string
 }
 
-/**
- * Resolves a `\N{Name HEX}` escape.
- *
- * Vanilla Minecraft only accepts the hex-suffix form for codepoint ranges
- * that are explicitly marked with `<X, First>` and `<X, Last>` entries in
- * `UnicodeData.txt` (e.g. Hangul Syllables, CJK Ideographs). The matching
- * range names are registered as per-name symbols (with `data.range`) by
- * {@link symbolRegistrar}, so we look them up here.
- */
 function resolveHexSuffixedEscape(
 	name: string,
 	hex: string,
 	src: Source,
 	ctx: ParserContext,
 ): number | undefined {
-	// Range symbols are registered with a trailing space in their identifier
-	// so completion inserts the space automatically. We probe both with and
-	// without the trailing space to handle both completion and direct lookup.
 	const query = ctx.symbols.query(
 		UnicodeDataUri,
 		UnicodeNameCategory,
@@ -415,10 +364,6 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						if (new RegExp(`^[0-9a-f]{${sequenceLength}}$`, 'i').test(hex)) {
 							src.skip(sequenceLength)
 							const codepoint = parseInt(hex, 16)
-							// The hex regex matches any hex digits, so the
-							// resulting value can exceed the Unicode max
-							// (U+10FFFF). Treat out-of-range values as an
-							// illegal escape the same way non-hex chars are.
 							if (codepoint < 0 || codepoint > 0x10FFFF) {
 								ctx.err.report(
 									localize(
@@ -436,8 +381,6 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								cStart = src.cursor
 								continue
 							}
-							// `fromCodePoint` (not `fromCharCode`) so codepoints
-							// outside the BMP — e.g. `\U0001F514` — survive intact.
 							const resolved = String.fromCodePoint(codepoint)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
@@ -455,11 +398,6 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								),
 							)
 						} else {
-							// Highlight whatever chars are available before the
-							// closing quote — the full hex slot when present
-							// (`u1z3` for `\u1z34`), the truncated slot
-							// (`kh` for `\ukh`), or the escape prefix
-							// (`\u`/`\x`/`\U`) when nothing follows it.
 							const closingQuote = src.string.indexOf(currentQuote, src.cursor)
 							const charsLeft = closingQuote === -1
 								? src.string.length - src.cursor

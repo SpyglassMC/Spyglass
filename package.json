@@ -24,7 +24,6 @@
 		"fmt:check": "dprint check",
 		"refresh-unicode-data": "node scripts/refresh_unicode_data.ts",
 		"refresh-unicode-data:force": "node scripts/refresh_unicode_data.ts --force",
-		"set-tsconfig-references": "node scripts/set_tsconfig_references",
 		"lint": "eslint --cache --max-warnings=0",
 		"lint:fix": "eslint --cache --max-warnings=0 --fix",
 		"release": "node scripts/release.ts",

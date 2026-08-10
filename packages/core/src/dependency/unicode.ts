@@ -180,8 +180,6 @@ export function symbolRegistrar(data: UnicodeData): SymbolRegistrar {
 			// so it appears in completion alongside individual character names.
 			// The identifier includes a trailing space so accepting the
 			// completion drops the user directly into the hex codepoint slot.
-			// Data is `{ range: [start, end] }` so the parser can validate
-			// `\N{Name HEX}` against the actual range and report it in errors.
 			for (const [name, range] of Object.entries(data.ranges)) {
 				symbols.query(UnicodeDataUri, UnicodeNameCategory, `${toTitleCase(name)} `)
 					.enter({
@@ -196,18 +194,8 @@ export function symbolRegistrar(data: UnicodeData): SymbolRegistrar {
 						usage: { type: 'definition' },
 					})
 			}
-			// Merge the JDK aliases into the name map so the parser's bulk
-			// lookup (`\N{...}`) can resolve control-character aliases like
-			// `tab`/`escape` that vanilla Minecraft's `Character.getName()`
-			// accepts but UnicodeData.txt does not list. JDK entries are
-			// spread last so they win on name collisions with UnicodeData
-			// entries (none currently collide, but the order matches the
-			// per-name symbol registration above).
 			const allNames: UnicodeNameLookupMap = { ...data.names, ...JdkNameOverrides }
-			// Build the codepoint -> name reverse map from the merged map.
-			// Each codepoint already has exactly one entry in `names`
-			// (deduped at build time); JDK entries are last in `allNames`,
-			// so a JDK alias wins on collision when one exists.
+
 			const namesByCodepoint: UnicodeNamesByCodepointMap = {}
 			for (const [name, codepoint] of Object.entries(allNames)) {
 				namesByCodepoint[codepoint.toString(16)] = name
@@ -215,10 +203,6 @@ export function symbolRegistrar(data: UnicodeData): SymbolRegistrar {
 			symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNames)
 				.enter({
 					data: { data: allNames },
-					// The bulk symbols have no per-file locations, but `clear()` +
-					// `trim()` removes trimmable symbols (no locations at all) on
-					// every binder pass. Adding a dummy definition keeps them
-					// rooted in the global table.
 					usage: { type: 'definition' },
 				})
 			symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNamesInverse)

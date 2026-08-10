@@ -82,9 +82,7 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 		// Collect tokens from every child that owns a colorizer.
 		// `UnicodeEscapeNode` siblings need their own multi-segment
 		// highlighting, and the value-parser result (when present)
-		// gets its own tokens too. We then fill the remaining gaps
-		// with the string color so the body between escapes still
-		// reads as a string.
+		// gets its own tokens too.
 		const tokens: ColorToken[] = []
 		for (const child of node.children) {
 			if (!ctx.meta.hasColorizer(child.type)) {
