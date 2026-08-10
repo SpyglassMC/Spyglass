@@ -464,7 +464,116 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
       "start": 5,
       "end": 5
     },
-    "children": []
+    "children": [],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 5
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 5
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 5
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 5
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 5
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 5
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 5
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 5
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 5
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 5
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 5
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 5
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
   },
   "errors": [
     {
@@ -504,7 +613,116 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
       "start": 7,
       "end": 8
     },
-    "children": []
+    "children": [],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 8
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
   },
   "errors": [
     {
@@ -563,7 +781,116 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
         ],
         "quote": "\\""
       }
-    ]
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 44
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -613,7 +940,116 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
         ],
         "quote": "\\""
       }
-    ]
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 44
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305419896
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305419896
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305402420
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305402420
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305402420
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305402420
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 1450741778
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 1450741778
+          }
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -663,7 +1099,116 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
         ],
         "quote": "\\""
       }
-    ]
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 42
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 42
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 42
+              },
+              "value": 305419896
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 42
+            },
+            "value": 305419896
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 42
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 42
+              },
+              "value": 305402420
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 42
+            },
+            "value": 305402420
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 42
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 42
+              },
+              "value": 305397778
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 42
+            },
+            "value": 305397778
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 42
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 42
+              },
+              "value": 878082192
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 42
+            },
+            "value": 878082192
+          }
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -713,7 +1258,116 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
         ],
         "quote": "\\""
       }
-    ]
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 44
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": -1
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": -1
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": -1
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": -1
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": -1
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": -1
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": -1
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": -1
+          }
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -758,7 +1412,116 @@ exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Pars
         ],
         "quote": "\\""
       }
-    ]
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 18
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
   },
   "errors": [
     {

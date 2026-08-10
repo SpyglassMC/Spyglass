@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { NbtBoolNode, NbtNode, NbtUuidNode } from '../node/index.js'
+import type { NbtBoolNode, NbtIntArrayNode, NbtNode, NbtUuidNode } from '../node/index.js'
 import { NbtNumberNode } from '../node/index.js'
 import { newSyntax } from '../util.js'
 import { entry } from './entry.js'
@@ -172,6 +172,30 @@ const parseUuid = (
 		}
 	}
 
+	// Build a synthesized `nbt:int_array` so the runtime checker can descend
+	// into it like a real primitive array. Fall back to all zeros when the
+	// UUID string is missing or malformed so the checker still gets exactly
+	// four `nbt:int` children (and reports length errors against the type).
+	const intValues = value.length === 4 ? value : [0, 0, 0, 0]
+	const intArray: NbtIntArrayNode = {
+		type: 'nbt:int_array',
+		range: core.Range.create(prefixStart, src.cursor),
+		children: intValues.map((v) => ({
+			type: 'item' as const,
+			range: core.Range.create(prefixStart, src.cursor),
+			children: [{
+				type: 'nbt:int' as const,
+				range: core.Range.create(prefixStart, src.cursor),
+				value: v,
+			}],
+			value: {
+				type: 'nbt:int' as const,
+				range: core.Range.create(prefixStart, src.cursor),
+				value: v,
+			},
+		})),
+	}
+
 	return {
 		type: 'nbt:uuid',
 		range: core.Range.create(prefixStart, src.cursor),
@@ -179,5 +203,6 @@ const parseUuid = (
 		prefixRange,
 		suffixRange,
 		children: argResult?.type === 'nbt:string' ? [argResult] : [],
+		intArray,
 	}
 }

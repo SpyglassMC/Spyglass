@@ -141,6 +141,18 @@ export function typeDefinition(
 							n => [{ originalNode: n.value!, inferredType: inferType(n.value!) }],
 						)
 					}
+					if (type === 'nbt:uuid') {
+						// The parser synthesizes a real `nbt:int_array` with 4
+						// ints for every `uuid(...)` call. Delegate to its children
+						// so the checker descends into real nodes instead of
+						// recursing on the uuid node itself.
+						return node.intArray.children.filter(n => n.value).map(
+							n => [{
+								originalNode: n.value!,
+								inferredType: inferType(n.value!),
+							}],
+						)
+					}
 					if (type === 'nbt:compound') {
 						return node.children.filter(kvp => kvp.key).map(kvp => ({
 							key: { originalNode: kvp.key!, inferredType: inferType(kvp.key!) },
@@ -239,7 +251,10 @@ function inferType(node: NbtNode): SimplifiedMcdocTypeNoUnion {
 		case 'nbt:bool':
 			return { kind: 'literal', value: { kind: 'boolean', value: node.value } }
 		case 'nbt:uuid':
-			return { kind: 'list', item: { kind: 'int' } }
+			// A `uuid(...)` call is semantically a 4-long int array. The
+			// runtime checker sees it as a ghost `int_array` so fields typed
+			// as `int[]` (or `int_array`) accept it without complaint.
+			return { kind: 'int_array', lengthRange: { kind: 0b00, min: 4, max: 4 } }
 		case 'nbt:list':
 			return { kind: 'list', item: { kind: 'any' } }
 		case 'nbt:compound':

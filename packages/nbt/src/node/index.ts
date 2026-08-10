@@ -179,6 +179,13 @@ export interface NbtUuidNode extends core.AstNode, NbtBaseNode {
 	 * (e.g. `uuid(`), in which case an error is reported at the arg position.
 	 */
 	children: NbtStringNode[]
+	/**
+	 * A synthesized `nbt:int_array` containing the 4 parsed 32-bit groups of
+	 * the UUID. When the string is missing or malformed, this is a 4-element
+	 * int array of zeros so the runtime checker still has something to
+	 * descend into (and to flag length errors against).
+	 */
+	intArray: NbtIntArrayNode
 }
 export namespace NbtUuidNode {
 	/* istanbul ignore next */
