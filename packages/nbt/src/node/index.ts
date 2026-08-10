@@ -6,7 +6,7 @@ interface NbtBaseNode {
 	requireCanonical?: boolean
 }
 
-export type NbtNode = NbtPrimitiveNode | NbtCompoundNode | NbtCollectionNode
+export type NbtNode = NbtPrimitiveNode | NbtCompoundNode | NbtCollectionNode | NbtSnbtFunctionNode
 export namespace NbtNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtNode {
@@ -44,13 +44,16 @@ export namespace NbtNumberNode {
 
 // #region NbtIntegerAlikeNode
 export type NbtIntegerAlikeNode = NbtByteNode | NbtShortNode | NbtIntNode | NbtLongNode
+	| NbtHexNode | NbtBinNode
 export namespace NbtIntegerAlikeNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtIntegerAlikeNode {
 		return (NbtByteNode.is(node)
 			|| NbtShortNode.is(node)
 			|| NbtIntNode.is(node)
-			|| NbtLongNode.is(node))
+			|| NbtLongNode.is(node)
+			|| NbtHexNode.is(node)
+			|| NbtBinNode.is(node))
 	}
 }
 
@@ -91,6 +94,79 @@ export namespace NbtLongNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtLongNode {
 		return (node as NbtLongNode | undefined)?.type === 'nbt:long'
+	}
+}
+
+// Hex/binary value nodes are parsed via 0x/0b prefixes. They're not just for integer values —
+// any NBT value can be represented in hex/binary. The `prefixRange` marks the location of the
+// prefix (`0x` or `0b`) so the colorizer can highlight it as an escape.
+interface NbtRadixPrefixRange {
+	prefixRange: core.Range
+}
+
+export interface NbtHexNode extends core.LongBaseNode, NbtBaseNode, NbtRadixPrefixRange {
+	readonly type: 'nbt:hex'
+}
+export namespace NbtHexNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is NbtHexNode {
+		return (node as NbtHexNode | undefined)?.type === 'nbt:hex'
+	}
+}
+
+export interface NbtBinNode extends core.LongBaseNode, NbtBaseNode, NbtRadixPrefixRange {
+	readonly type: 'nbt:bin'
+}
+export namespace NbtBinNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is NbtBinNode {
+		return (node as NbtBinNode | undefined)?.type === 'nbt:bin'
+	}
+}
+// #endregion
+
+// #region NbtSnbtFunctionNode
+// Base type for SNBT function calls (e.g. `bool(value)`). Concrete function node types
+// (e.g. `nbt:bool`) extend this. `prefixRange` covers the function name and opening
+// parenthesis (e.g. `bool(`); `suffixRange` covers the closing parenthesis (`)`). The
+// argument(s) are stored as `children`. Colorizers color `prefixRange` and `suffixRange`
+// as `escape`.
+export type NbtSnbtFunctionNode = NbtBoolNode | NbtUuidNode
+export namespace NbtSnbtFunctionNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is NbtSnbtFunctionNode {
+		return NbtBoolNode.is(node) || NbtUuidNode.is(node)
+	}
+}
+
+// `bool(value)` evaluates to `false` if `value` is the numeric literal 0, else `true`.
+export interface NbtBoolNode extends core.AstNode, NbtBaseNode {
+	readonly type: 'nbt:bool'
+	value: boolean
+	prefixRange: core.Range
+	suffixRange: core.Range
+	children: [NbtNode]
+}
+export namespace NbtBoolNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is NbtBoolNode {
+		return (node as NbtBoolNode | undefined)?.type === 'nbt:bool'
+	}
+}
+
+// `uuid("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")` parses a UUID string into a
+// 4-element int array (each 32-bit group as an int).
+export interface NbtUuidNode extends core.AstNode, NbtBaseNode {
+	readonly type: 'nbt:uuid'
+	value: number[]
+	prefixRange: core.Range
+	suffixRange: core.Range
+	children: [NbtStringNode]
+}
+export namespace NbtUuidNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is NbtUuidNode {
+		return (node as NbtUuidNode | undefined)?.type === 'nbt:uuid'
 	}
 }
 // #endregion

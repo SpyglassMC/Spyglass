@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import type {
+	NbtBoolNode,
 	NbtCollectionNode,
 	NbtCompoundNode,
 	NbtNode,
@@ -8,6 +9,7 @@ import type {
 	NbtPathNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
+	NbtUuidNode,
 } from '../node/index.js'
 
 const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
@@ -88,6 +90,23 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 		...ctx,
 		requireCanonical: node.requireCanonical,
 	})
+}
+
+const snbtFunction: core.Completer<NbtBoolNode | NbtUuidNode> = (node, ctx) => {
+	// Provide `bool` and `uuid` completions. Parens are auto-inserted by the
+	// language configuration's `autoClosingPairs`, so the snippets just insert
+	// the keyword.
+	const keyword = node.type === 'nbt:bool' ? 'bool' : node.type === 'nbt:uuid' ? 'uuid' : ''
+	if (!keyword) {
+		return []
+	}
+	return [
+		core.CompletionItem.create(keyword, node.range, {
+			kind: core.CompletionKind.Function,
+			filterText: keyword,
+			insertText: keyword,
+		}),
+	]
 }
 
 const path: core.Completer<NbtPathNode> = (node, ctx) => {
@@ -195,6 +214,10 @@ export function register(meta: core.MetaRegistry): void {
 	meta.registerCompleter('nbt:string', primitive)
 	meta.registerCompleter('nbt:short', primitive)
 	meta.registerCompleter('nbt:float', primitive)
+	meta.registerCompleter('nbt:hex', primitive)
+	meta.registerCompleter('nbt:bin', primitive)
+	meta.registerCompleter<NbtBoolNode>('nbt:bool', snbtFunction)
+	meta.registerCompleter<NbtUuidNode>('nbt:uuid', snbtFunction)
 
 	meta.registerCompleter('nbt:path', path)
 	meta.registerCompleter('nbt:path/key', pathKey)

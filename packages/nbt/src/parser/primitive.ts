@@ -1,6 +1,11 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { NbtByteNode, NbtNumberNode, NbtPrimitiveNode, NbtStringNode } from '../node/index.js'
+import type {
+	NbtByteNode,
+	NbtNumberNode,
+	NbtPrimitiveNode,
+	NbtStringNode,
+} from '../node/index.js'
 import { localizeTag, newSyntax } from '../util.js'
 
 const enum Group {
@@ -32,11 +37,16 @@ const NumeralPatterns:
 		type: NbtNumberNode['type']
 		hasSuffix: boolean
 		group: Group.LongAlike
+		// When set, the integer is parsed in the given radix (e.g. `0xFF` → 255n).
+		// The pattern must include the prefix (`0x` or `0b`) which is highlighted as an escape.
+		radix?: 'hex' | 'bin'
 		min: bigint
 		max: bigint
 	})[] = [
+		// Decimal integer patterns. `_` is allowed between digits (ES2021 numeric separators,
+		// only valid in new syntax 1.21.5+ — the parser rejects `_` in pre-1.21.5).
 		{
-			pattern: /^[-+]?(?:0|[1-9][0-9]*)b$/i,
+			pattern: /^[-+]?(?:0|[1-9](?:_?[0-9])*)b$/i,
 			type: 'nbt:byte',
 			hasSuffix: true,
 			group: Group.IntegerAlike,
@@ -44,7 +54,7 @@ const NumeralPatterns:
 			max: 127,
 		},
 		{
-			pattern: /^[-+]?(?:0|[1-9][0-9]*)s$/i,
+			pattern: /^[-+]?(?:0|[1-9](?:_?[0-9])*)s$/i,
 			type: 'nbt:short',
 			hasSuffix: true,
 			group: Group.IntegerAlike,
@@ -52,7 +62,7 @@ const NumeralPatterns:
 			max: 32767,
 		},
 		{
-			pattern: /^[-+]?(?:0|[1-9][0-9]*)$/,
+			pattern: /^[-+]?(?:0|[1-9](?:_?[0-9])*)(?:[iI])?$/i,
 			type: 'nbt:int',
 			hasSuffix: false,
 			group: Group.IntegerAlike,
@@ -60,15 +70,16 @@ const NumeralPatterns:
 			max: 2147483647,
 		},
 		{
-			pattern: /^[-+]?(?:0|[1-9][0-9]*)l$/i,
+			pattern: /^[-+]?(?:0|[1-9](?:_?[0-9])*)l$/i,
 			type: 'nbt:long',
 			hasSuffix: true,
 			group: Group.LongAlike,
 			min: -9223372036854775808n,
 			max: 9223372036854775807n,
 		},
+		// Float/double patterns allow `_` between digits (same as ints).
 		{
-			pattern: /^[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?f$/i,
+			pattern: /^[-+]?(?:(?:0|[1-9](?:_?[0-9])*)\.?|(?:[0-9](?:_?[0-9])*)?\.(?:[0-9](?:_?[0-9])*))(?:e[-+]?(?:0|[1-9](?:_?[0-9])*))?f$/i,
 			type: 'nbt:float',
 			hasSuffix: true,
 			group: Group.FloatAlike,
@@ -76,20 +87,42 @@ const NumeralPatterns:
 			max: FloatMaximum,
 		},
 		{
-			pattern: /^[-+]?(?:[0-9]+\.|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?$/i,
+			pattern: /^[-+]?(?:(?:0|[1-9](?:_?[0-9])*)\.?|(?:[0-9](?:_?[0-9])*)?\.(?:[0-9](?:_?[0-9])*))(?:e[-+]?(?:0|[1-9](?:_?[0-9])*))?d$/i,
+			type: 'nbt:double',
+			hasSuffix: true,
+			group: Group.FloatAlike,
+			min: -Number.MAX_VALUE,
+			max: Number.MAX_VALUE,
+		},
+		{
+			pattern: /^[-+]?(?:(?:0|[1-9](?:_?[0-9])*)\.?|(?:[0-9](?:_?[0-9])*)?\.(?:[0-9](?:_?[0-9])*))(?:e[-+]?(?:0|[1-9](?:_?[0-9])*))?$/i,
 			type: 'nbt:double',
 			hasSuffix: false,
 			group: Group.FloatAlike,
 			min: -Number.MAX_VALUE,
 			max: Number.MAX_VALUE,
 		},
+		// Hex/binary literals (1.21.5+). Negative hex/binary is not supported by the game
+		// (`+0x...` is allowed, but `-0x...` is not), so they only allow `+` or no sign.
+		// Hex/binary have no type suffix (`0b` is parsed as byte 0, where `b` is the suffix).
+		// Always parsed as BigInt — mcdoc/runtime figures out the actual integer type.
 		{
-			pattern: /^[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?d$/i,
-			type: 'nbt:double',
-			hasSuffix: true,
-			group: Group.FloatAlike,
-			min: -Number.MAX_VALUE,
-			max: Number.MAX_VALUE,
+			pattern: /^[+]?0x[0-9a-fA-F](?:_?[0-9a-fA-F])*$/i,
+			type: 'nbt:hex',
+			hasSuffix: false,
+			group: Group.LongAlike,
+			radix: 'hex',
+			min: -9223372036854775808n,
+			max: 9223372036854775807n,
+		},
+		{
+			pattern: /^[+]?0b[01](?:_?[01])*$/i,
+			type: 'nbt:bin',
+			hasSuffix: false,
+			group: Group.LongAlike,
+			radix: 'bin',
+			min: -9223372036854775808n,
+			max: 9223372036854775807n,
 		},
 		{ pattern: /^true$/i, type: 'nbt:byte', value: 1, group: Group.Boolean },
 		{ pattern: /^false$/i, type: 'nbt:byte', value: 0, group: Group.Boolean },
@@ -119,8 +152,21 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 		src,
 		ctx,
 	)
+	const isNewSyntax = newSyntax(ctx)
 	for (const e of NumeralPatterns) {
 		if (e.pattern.test(unquotedResult.value)) {
+			// Hex/binary literals are only valid in new syntax (1.21.5+).
+			if (e.group === Group.LongAlike && e.radix && !isNewSyntax) {
+				continue
+			}
+			// Underscore digit separators are only valid in new syntax (1.21.5+).
+			if (e.group !== Group.Boolean && !isNewSyntax && unquotedResult.value.includes('_')) {
+				continue
+			}
+			// Explicit `i`/`I` int suffix is only valid in new syntax (1.21.5+).
+			if (e.group === Group.IntegerAlike && !isNewSyntax && /[iI]$/.test(unquotedResult.value)) {
+				continue
+			}
 			if (e.group === Group.Boolean) {
 				const ans: NbtByteNode = {
 					type: 'nbt:byte',
@@ -129,6 +175,67 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 				}
 				updateUnquoted()
 				return ans
+			}
+			// Hex/binary literals: skip the prefix (`0x` or `0b`) in source, capture the remaining
+			// digits, then convert to bigint via BigInt. The radix is determined
+			// by the actual prefix character.
+			// Note: Has support for negative hex/binary input for future proofing, support for
+			// them is prevented by the regex and a specific error is provided.
+			if (e.group === Group.LongAlike && e.radix) {
+				const hasSign = unquotedResult.value[0] === '+' || unquotedResult.value[0] === '-'
+				const prefixChar = unquotedResult.value[(hasSign ? 1 : 0) + 1]
+				const radix: 'hex' | 'bin' = (prefixChar === 'x' || prefixChar === 'X') ? 'hex' : 'bin'
+				const prefixStart = unquotedResult.range.start + (hasSign ? 1 : 0)
+				const prefixRange = core.Range.create(prefixStart, prefixStart + 2)
+
+				const startCursor = src.cursor
+				if (hasSign) {
+					src.skip(1) // skip sign
+				}
+				src.skip(2) // skip `0x` or `0b`
+
+				const digitsStart = src.cursor
+				const digitRegex = radix === 'hex' ? /[0-9a-fA-F]/ : /[01]/
+				while (src.canRead() && (digitRegex.test(src.peek()) || src.peek() === '_')) {
+					src.skip()
+				}
+				const digits = src.slice(digitsStart, src.cursor).replaceAll('_', '')
+
+				let value = BigInt((radix === 'hex' ? '0x' : '0b') + digits)
+				if (hasSign && unquotedResult.value[0] === '-') {
+					value = -value
+				}
+
+				let isOutOfRange = false
+				if (e.min !== undefined && e.max !== undefined) {
+					if (value < e.min || value > e.max) {
+						isOutOfRange = true
+					}
+				}
+				if (isOutOfRange) {
+					ctx.err.report(
+						localize(
+							'nbt.parser.number.out-of-range',
+							localizeTag(e.type),
+							localize('nbt.node.string'),
+							e.min,
+							e.max,
+						),
+						unquotedResult,
+						core.ErrorSeverity.Warning,
+					)
+					updateUnquoted()
+					break
+				}
+
+				updateUnquoted()
+				const range = core.Range.create(startCursor, src.cursor)
+				return {
+					type: e.type,
+					range,
+					prefixRange,
+					value,
+				} as NbtNumberNode
 			}
 			let isOutOfRange = false
 			const onOutOfRange = () => (isOutOfRange = true)
@@ -171,5 +278,35 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 	}
 
 	updateUnquoted()
+
+	if (unquotedResult.value) {
+		if (isNewSyntax) {
+			// Negative hex/binary literals (e.g. `-0xff`, `-0b101`) are not supported by the game.
+			if (
+				/^-0[xX][0-9a-fA-F]+/.test(unquotedResult.value)
+				|| /^-0[bB][01]+/.test(unquotedResult.value)
+			) {
+				ctx.err.report(
+					localize('nbt.parser.number.negative-radix-not-supported'),
+					unquotedResult,
+					core.ErrorSeverity.Error,
+				)
+			} else if (/^[0-9.+-]/.test(unquotedResult.value)) {
+				ctx.err.report(
+					localize('nbt.parser.string.unquoted-cannot-start-with', unquotedResult.value[0]),
+					unquotedResult,
+					core.ErrorSeverity.Error,
+				)
+			}
+		} else if (/^[-+]?(?:0|[1-9](?:_?[0-9])*)[iI]$/.test(unquotedResult.value)) {
+			// Explicit `i`/`I` int suffix is only valid in new syntax (1.21.5+).
+			ctx.err.report(
+				localize('nbt.parser.number.explicit-int-suffix-not-supported'),
+				unquotedResult,
+				core.ErrorSeverity.Error,
+			)
+		}
+	}
+
 	return unquotedResult
 }

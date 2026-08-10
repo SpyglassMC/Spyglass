@@ -16,6 +16,7 @@ import {
 	NbtPathKeyNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
+	NbtUuidNode,
 } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
@@ -187,6 +188,16 @@ export function typeDefinition(
 						node.hover = `\`\`\`typescript\n${
 							mcdoc.McdocType.toString(definition)
 						}\n\`\`\`\n${desc}`
+					} else if (NbtUuidNode.is(node)) {
+						const uuidNode = node
+						const arrayString = uuidNode.value.length === 4
+							? `[I; ${uuidNode.value.join(', ')}]`
+							: localize('nbt.parser.function.uuid.invalid')
+						uuidNode.hover = `\`\`\`mcdoc\n${arrayString}\n\`\`\`\n${
+							uuidNode.value.length === 4
+								? localize('nbt.parser.function.uuid.parsed-into-4-ints')
+								: localize('nbt.parser.function.uuid.invalid')
+						}`
 					}
 				},
 				nodeAttacher: (node, attacher) => attacher(node),
@@ -221,8 +232,15 @@ function inferType(node: NbtNode): SimplifiedMcdocTypeNoUnion {
 			return { kind: 'literal', value: { kind: 'int', value: node.value } }
 		case 'nbt:short':
 			return { kind: 'literal', value: { kind: 'short', value: node.value } }
+		case 'nbt:hex':
+		case 'nbt:bin':
+			return { kind: 'literal', value: { kind: 'long', value: node.value } }
 		case 'nbt:string':
 			return { kind: 'literal', value: { kind: 'string', value: node.value } }
+		case 'nbt:bool':
+			return { kind: 'literal', value: { kind: 'boolean', value: node.value } }
+		case 'nbt:uuid':
+			return { kind: 'list', item: { kind: 'int' } }
 		case 'nbt:list':
 			return { kind: 'list', item: { kind: 'any' } }
 		case 'nbt:compound':

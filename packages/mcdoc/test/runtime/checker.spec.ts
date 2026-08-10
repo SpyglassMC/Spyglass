@@ -13,7 +13,7 @@ import type { McdocRuntimeError } from '../../lib/runtime/checker/error.js'
 import { registerAttribute } from '../../lib/runtime/index.js'
 
 describe('mcdoc runtime checker', () => {
-	type JsValue = boolean | number | string | JsValue[] | { [key: string]: JsValue }
+	type JsValue = boolean | number | bigint | string | JsValue[] | { [key: string]: JsValue }
 	const suites: {
 		name: string
 		type: McdocType
@@ -729,6 +729,14 @@ describe('mcdoc runtime checker', () => {
 			registerAttribute(meta, 'test:filter', _ => true, { filterElement: _ => false })
 		},
 		values: [{ id: 'filtered', tag: { A: 'abc' } }, { id: 'elytra', tag: {} }],
+	}, {
+		name: 'bigint narrowing to byte',
+		type: { kind: 'byte' },
+		values: [127n, -128n, 5n, 255n, -129n, 128n],
+	}, {
+		name: 'bigint narrowing to int',
+		type: { kind: 'int' },
+		values: [255n, 2147483647n, -2147483648n, 2147483648n, -2147483649n],
 	}]
 
 	function inferType(value: JsValue): Exclude<McdocType, UnionType> {
@@ -736,6 +744,8 @@ describe('mcdoc runtime checker', () => {
 			return { kind: 'boolean' }
 		} else if (typeof value === 'number') {
 			return { kind: 'literal', value: { kind: 'double', value: Number(value) } }
+		} else if (typeof value === 'bigint') {
+			return { kind: 'literal', value: { kind: 'long', value } }
 		} else if (typeof value === 'string') {
 			return { kind: 'literal', value: { kind: 'string', value } }
 		} else if (Array.isArray(value)) {
@@ -750,7 +760,7 @@ describe('mcdoc runtime checker', () => {
 	for (const { name, type, values, init } of suites) {
 		describe(`typeDefinition ${localeQuote(name)}`, () => {
 			for (const value of values) {
-				it(`with value ${JSON.stringify(value)}`, (t) => {
+				it(`with value ${JSON.stringify(value, (_, v) => typeof v === 'bigint' ? `${v}n` : v)}`, (t) => {
 					const errors: McdocRuntimeError<JsValue>[] = []
 					const project = mockProjectData()
 					init?.(project.symbols, project.meta)

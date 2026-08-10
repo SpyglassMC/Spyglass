@@ -57,12 +57,13 @@ export function long(options: Options): Parser<LongNode> {
 			src.skip()
 		}
 
-		while (src.canRead() && Source.isDigit(src.peek())) {
+		// Digit reader accepts `_` between digits as a separator (ES2021 numeric separators).
+		while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 			src.skip()
 		}
 
 		ans.range.end = src.cursor
-		const raw = src.sliceToCursor(ans.range.start)
+		const raw = src.sliceToCursor(ans.range.start).replaceAll('_', '')
 
 		let isOnlySign = false
 		try {
