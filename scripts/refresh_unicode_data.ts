@@ -1,16 +1,17 @@
-// Usage: node scripts/refresh_unicode_data.ts [--force] [--write-lookup]
+// Usage: node scripts/refresh_unicode_data.ts [--force]
 //
 // Fetches `UnicodeData.txt` and `Blocks.txt` from
 // https://www.unicode.org/Public/UNIDATA/, caches them in `scripts/unicode/`
-// (gitignored), and writes `scripts/unicode/data.json` in the shape the
-// production endpoint serves at `api.spyglassmc.com/unicode/data.json`.
+// (gitignored), and writes the parsed result to
+// `packages/core/src/dependency/unicode-lookup-table.json`, which
+// `@spyglassmc/core` bundles and reads at startup.
 //
-// Re-runs are cheap: cached files are reused unless upstream returns a 304
-// with a different ETag. Pass `--force` to re-fetch unconditionally.
+// Also rewrites the `BUNDLE_CHECKSUM` marker in
+// `packages/core/src/dependency/unicode.ts` so the registrar's cache key
+// stays in sync with the JSON contents.
 //
-// Pass `--write-lookup` to also copy the generated `data.json` into
-// `packages/core/src/dependency/unicode-lookup-table.json` for use by
-// callers that prefer a vendored copy over the network endpoint.
+// Re-runs are cheap: cached files are reused unless upstream reports a newer
+// `Last-Modified`. Pass `--force` to re-fetch unconditionally.
 
 import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
@@ -226,11 +227,10 @@ async function fetchToCache(
 
 async function main(): Promise<void> {
 	const args = new Set(process.argv.slice(2))
-	if (args.size && ![...args].every((a) => a === '--force' || a === '--write-lookup')) {
-		throw new Error('Usage: node scripts/refresh_unicode_data.ts [--force] [--write-lookup]')
+	if (args.size && ![...args].every((a) => a === '--force')) {
+		throw new Error('Usage: node scripts/refresh_unicode_data.ts [--force]')
 	}
 	const force = args.has('--force')
-	const writeLookup = args.has('--write-lookup')
 
 	// Anchor paths to the script's location so the script works regardless of
 	// the caller's cwd. Resolve via import.meta.url -> repo root, then build
@@ -263,49 +263,42 @@ async function main(): Promise<void> {
 	)
 
 	const data = buildUnicodeDataJson(unicodeData.text, blocks.text)
-
-	const jsonPath = path.join(cacheDir, 'data.json')
 	const json = JSON.stringify(data, null, '\t')
-	await writeFile(jsonPath, json, 'utf-8')
 
-	console.log(`\nWrote ${jsonPath}`)
+	const lookupPath = path.join(
+		repoRoot,
+		'packages/core/src/dependency/unicode-lookup-table.json',
+	)
+	await mkdir(path.dirname(lookupPath), { recursive: true })
+	await writeFile(lookupPath, json, 'utf-8')
+
+	console.log(`\nWrote ${lookupPath}`)
 	console.log(`  version:        ${data.version}`)
 	console.log(`  names:          ${Object.keys(data.names).length}`)
 	console.log(`  ranges:         ${Object.keys(data.ranges).length}`)
 	console.log(`  blocks:         ${Object.keys(data.blocks).length}`)
 
-	if (writeLookup) {
-		const lookupPath = path.join(
-			repoRoot,
-			'packages/core/src/dependency/unicode-lookup-table.json',
-		)
-		await mkdir(path.dirname(lookupPath), { recursive: true })
-		await writeFile(lookupPath, json, 'utf-8')
-
-		// Also update the BUNDLE_CHECKSUM marker in unicode.ts so the bundled
-		// fallback's ETag stays in sync with the JSON contents.
-		const unicodeTsPath = path.join(
-			repoRoot,
-			'packages/core/src/dependency/unicode.ts',
-		)
-		const checksum = sha256(json)
-		const unicodeTs = await readFile(unicodeTsPath, 'utf-8')
-		const updated = unicodeTs.replace(
-			/(`bundle-)[0-9a-f]{64}(`)/,
-			`$1${checksum}$2`,
-		)
-		if (updated === unicodeTs) {
-			if (unicodeTs.includes('`bundle-')) {
-				console.log(`  bundle checksum: ${checksum} (unchanged)`)
-			} else {
-				console.warn('[unicode] BUNDLE_CHECKSUM marker not found in unicode.ts')
-			}
+	// Update the BUNDLE_CHECKSUM marker in unicode.ts so the registrar's
+	// cache key stays in sync with the JSON contents.
+	const unicodeTsPath = path.join(
+		repoRoot,
+		'packages/core/src/dependency/unicode.ts',
+	)
+	const checksum = sha256(json)
+	const unicodeTs = await readFile(unicodeTsPath, 'utf-8')
+	const updated = unicodeTs.replace(
+		/(`bundle-)[0-9a-f]{64}(`)/,
+		`$1${checksum}$2`,
+	)
+	if (updated === unicodeTs) {
+		if (unicodeTs.includes('`bundle-')) {
+			console.log(`  bundle checksum: ${checksum} (unchanged)`)
 		} else {
-			await writeFile(unicodeTsPath, updated, 'utf-8')
-			console.log(`  bundle checksum: ${checksum} (updated in unicode.ts)`)
+			console.warn('[unicode] BUNDLE_CHECKSUM marker not found in unicode.ts')
 		}
-
-		console.log(`  lookup mirror:  ${lookupPath}`)
+	} else {
+		await writeFile(unicodeTsPath, updated, 'utf-8')
+		console.log(`  bundle checksum: ${checksum} (updated in unicode.ts)`)
 	}
 }
 
