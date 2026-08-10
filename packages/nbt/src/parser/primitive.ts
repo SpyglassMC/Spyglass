@@ -320,7 +320,7 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 				)
 			} else if (/^[0-9.+-]/.test(unquotedResult.value)) {
 				ctx.err.report(
-					localize('nbt.parser.string.unquoted-cannot-start-with', unquotedResult.value[0]),
+					localize('nbt.parser.string.unquoted-string-first-character'),
 					unquotedResult,
 					core.ErrorSeverity.Error,
 				)

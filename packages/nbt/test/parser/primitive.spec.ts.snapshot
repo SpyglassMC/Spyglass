@@ -88,7 +88,7 @@ exports[`nbt primitive() > Parse '123456b' 1`] = `
         "start": 0,
         "end": 7
       },
-      "message": "Unquoted strings cannot start with 1 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -201,7 +201,7 @@ exports[`nbt primitive() > Parse '999e999f' 1`] = `
         "start": 0,
         "end": 8
       },
-      "message": "Unquoted strings cannot start with 9 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -378,7 +378,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '+abc' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with + in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -504,7 +504,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '-abc' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with - in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -539,7 +539,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '.abc' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with . in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -602,7 +602,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '01' 1`] = `
         "start": 0,
         "end": 2
       },
-      "message": "Unquoted strings cannot start with 0 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -637,7 +637,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '01d' 1`] = `
         "start": 0,
         "end": 3
       },
-      "message": "Unquoted strings cannot start with 0 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -672,7 +672,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '01e5' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with 0 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -707,7 +707,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '01f' 1`] = `
         "start": 0,
         "end": 3
       },
-      "message": "Unquoted strings cannot start with 0 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -808,7 +808,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0b101l' 1`] = `
         "start": 0,
         "end": 6
       },
-      "message": "Unquoted strings cannot start with 0 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -857,7 +857,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0x' 1`] = `
         "start": 0,
         "end": 2
       },
-      "message": "Unquoted strings cannot start with 0 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -996,7 +996,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1._5' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with 1 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1031,7 +1031,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '100_' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with 1 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1066,7 +1066,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1_.5' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with 1 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1137,7 +1137,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1_000b' 1`] = `
         "start": 0,
         "end": 6
       },
-      "message": "Unquoted strings cannot start with 1 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1214,7 +1214,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1__000' 1`] = `
         "start": 0,
         "end": 6
       },
-      "message": "Unquoted strings cannot start with 1 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1249,7 +1249,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1abc' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with 1 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1326,7 +1326,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '42bi' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with 4 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1375,7 +1375,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '42li' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with 4 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
@@ -1410,7 +1410,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '42si' 1`] = `
         "start": 0,
         "end": 4
       },
-      "message": "Unquoted strings cannot start with 4 in data pack format 71+ / minecraft 1.21.5",
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
       "severity": 3
     }
   ]
