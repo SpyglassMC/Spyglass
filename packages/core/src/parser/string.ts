@@ -1,20 +1,5 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import {
-	BlocksUri,
-	BulkBlocks,
-	BulkNames,
-	BulkNamesInverse,
-	BulkRanges,
-	codepointInAnyRange,
-	isUnicodeNameLookupMap,
-	isUnicodeNamesByCodepointMap,
-	isUnicodeRangeMap,
-	toTitleCase,
-	UnicodeBulkCategory,
-	UnicodeDataUri,
-	UnicodeNameCategory,
-} from '../dependency/index.js'
 import type {
 	Quote,
 	StringNode,
@@ -22,7 +7,7 @@ import type {
 	UnicodeEscapeKind,
 	UnicodeEscapeNode,
 } from '../node/index.js'
-import { EscapeChar, EscapeTable, UnicodeEscapeChar, UnicodeEscapeLengths } from '../node/index.js'
+import { EscapeChar, EscapeTable, UnicodeEscapeLengths } from '../node/index.js'
 import type { InfallibleParser } from '../parser/index.js'
 import type { ParserContext } from '../service/index.js'
 import type { IndexMap } from '../source/index.js'
@@ -30,286 +15,21 @@ import { Range, Source } from '../source/index.js'
 import type { Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
 
-const NamedEscapeWithHexPattern = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s+([a-f0-9]+)\s*$/i
-
-const NamedEscapePattern = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s*$/i
-
-/**
- * Returns the codepoint that `name` (case-insensitive) maps to, if any.
- */
-function lookupName(name: string, ctx: ParserContext): number | undefined {
-	const map = ctx.symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNames)
-		.getData(isUnicodeNameLookupMap)
-	return map?.[name.toLowerCase()]
-}
-
-/**
- * Returns the canonical Unicode name for `codepoint`, if known. Looks up the
- * codepoint → name reverse map populated by the Unicode dependency loader.
- */
-function lookupNameByCodepoint(codepoint: number, ctx: ParserContext): string | undefined {
-	const map = ctx.symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNamesInverse)
-		.getData(isUnicodeNamesByCodepointMap)
-	return map?.[codepoint.toString(16)]
-}
-
-/**
- * Renders a human-readable codepoint label, e.g. `U+1F514` or `U+0007`.
- * Uses uppercase hex with a minimum width of 4 to match the canonical
- * `\u`-escape format.
- */
-function formatCodepoint(codepoint: number): string {
-	return `U+${codepoint.toString(16).toUpperCase().padStart(4, '0')}`
-}
-
-/**
- * Returns a hover-friendly glyph for the resolved escape character.
- */
-function displayGlyph(codepoint: number): { text: string; isEscapeForm: boolean } {
-	switch (codepoint) {
-		case 0x09:
-			return { text: '\\t', isEscapeForm: true }
-		case 0x0a:
-			return { text: '\\n', isEscapeForm: true }
-		case 0x0d:
-			return { text: '\\r', isEscapeForm: true }
-		case 0x00:
-			return { text: '\\0', isEscapeForm: true }
-		case 0x08:
-			return { text: '\\b', isEscapeForm: true }
-		case 0x0b:
-			return { text: '\\v', isEscapeForm: true }
-		case 0x0c:
-			return { text: '\\f', isEscapeForm: true }
-		case 0x1b:
-			return { text: '\\e', isEscapeForm: true }
-		case 0x07:
-			return { text: '\\a', isEscapeForm: true }
-		default:
-			return { text: String.fromCodePoint(codepoint), isEscapeForm: false }
-	}
-}
-
-/**
- * Builds the hover markdown shown when the cursor is over an escape
- * sequence. Output is a single inline line of the form:
- *
- *     [ <glyph> ] 'Name' - `U+XXXX`
- *
- * `<glyph>` is the resolved character for printable codepoints and the
- * C-style escape form (e.g. `\n`) for non-printable controls.
- *
- * The Unicode name is omitted when unknown.
- */
-function buildEscapeHover(
-	codepoint: number,
-	name: string | undefined,
-): string {
-	const glyph = displayGlyph(codepoint)
-	// Wrap the C-style escape form in backticks so it's rendered as code
-	// (matching the visual treatment of the codepoint label) and so the
-	// literal backslash doesn't get mistaken for markdown syntax.
-	const glyphLabel = glyph.isEscapeForm ? `\`${glyph.text}\`` : glyph.text
-	const head = `[ ${glyphLabel} ]`
-	const codepointLabel = `\`${formatCodepoint(codepoint)}\``
-	return name
-		? `${head} '${toTitleCase(name)}' - ${codepointLabel}`
-		: `${head} - ${codepointLabel}`
-}
-
-/**
- * Constructs a {@link UnicodeEscapeNode} for the source range
- * `[start, end)`, with the `hover` field pre-filled with the markdown
- * built from `resolved`/`codepoint`/`name`.
- */
 function makeEscapeChild(
 	start: number,
 	end: number,
-	resolved: string,
-	codepoint: number,
-	name: string | undefined,
+	raw: string,
 	kind: UnicodeEscapeKind,
+	resolved = '',
 ): UnicodeEscapeNode {
 	return {
 		type: 'unicode_escape',
 		kind,
 		range: Range.create(start, end),
+		raw,
 		resolved,
-		codepoint,
-		name,
-		hover: buildEscapeHover(codepoint, name),
+		codepoint: resolved ? resolved.codePointAt(0)! : 0,
 	}
-}
-
-/**
- * Returns true if `codepoint` is valid per UnicodeData.txt. The codepoint
- * is considered valid when:
- * - it lies within one of the `<…, First>`/`<…, Last>` contiguous ranges, OR
- * - it is explicitly listed in `UnicodeData.txt` (any entry - real names,
- *   legacy Unicode 1.0 aliases, or placeholder names like `<control>`).
- */
-function isValidUnicodeCodepoint(codepoint: number, ctx: ParserContext): boolean {
-	const byCodepoint = ctx.symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNamesInverse)
-		.getData(isUnicodeNamesByCodepointMap)
-	const ranges = ctx.symbols.query(BlocksUri, UnicodeBulkCategory, BulkRanges)
-		.getData(isUnicodeRangeMap)
-	if (!byCodepoint || !ranges) {
-		return false
-	}
-	if (codepointInAnyRange(codepoint, ranges)) {
-		return true
-	}
-	return Object.prototype.hasOwnProperty.call(byCodepoint, codepoint.toString(16))
-}
-
-/**
- * Returns true if `codepoint` lies within a block declared in `Blocks.txt`.
- */
-function isInDeclaredBlock(codepoint: number, ctx: ParserContext): boolean {
-	const blocks = ctx.symbols.query(BlocksUri, UnicodeBulkCategory, BulkBlocks)
-		.getData(isUnicodeRangeMap)
-	return codepointInAnyRange(codepoint, blocks)
-}
-
-/**
- * Resolves a `\N{…}` escape to its codepoint, applying the full Unicode
- * validation pipeline. Returns `undefined` if the escape is invalid.
- *
- * Pipeline:
- * 1. Match the `name` pattern, or `name HEX` if the escape uses the
- *    hex-suffix form.
- * 2. Look up `name` in the Unicode name table (or in the blocks/ranges
- *    table when using the hex-suffix form).
- * 3. For the name form: verify the codepoint lies in a declared block and
- *    is a valid Unicode codepoint (in range or explicitly listed).
- * 4. For the hex-suffix form: verify the parsed hex codepoint lies within
- *    the matching block or range.
- *
- * Surrounding whitespace inside the braces is trimmed before validation
- * (vanilla accepts e.g. `\N{ snowman }`).
- */
-function resolveNamedEscape(escape: string, src: Source, ctx: ParserContext): number | undefined {
-	const hexMatch = NamedEscapeWithHexPattern.exec(escape)
-	if (hexMatch) {
-		const result = resolveHexSuffixedEscape(hexMatch[1]!, hexMatch[2]!, src, ctx)
-		if (result !== undefined) {
-			return result
-		}
-	}
-	const rangeProbe = NamedEscapePattern.exec(escape)
-	if (rangeProbe) {
-		const rangeSymbol = ctx.symbols.query(
-			UnicodeDataUri,
-			UnicodeNameCategory,
-			`${toTitleCase(rangeProbe[1]!)} `,
-		).symbol
-		if (rangeSymbol) {
-			const data = rangeSymbol.data as UnicodeRangeSymbolData | undefined
-			if (!data?.range) {
-				return undefined
-			}
-			const [start, end] = data.range
-			ctx.err.report(
-				localize(
-					'parser.string.hex-expected',
-					rangeProbe[1]!,
-					start.toString(16).toUpperCase(),
-					end.toString(16).toUpperCase(),
-				),
-				Range.create(src, src.getCharRange(rangeProbe[1]!.length - 1).end),
-			)
-			return undefined
-		}
-	}
-	const trailingMatch = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s+(.+?)\s*$/i.exec(escape)
-	if (trailingMatch && !/^[a-f0-9]+$/i.test(trailingMatch[2]!)) {
-		const rangeSymbol = ctx.symbols.query(
-			UnicodeDataUri,
-			UnicodeNameCategory,
-			`${toTitleCase(trailingMatch[1]!)} `,
-		).symbol
-		if (rangeSymbol) {
-			const data = rangeSymbol.data as UnicodeRangeSymbolData | undefined
-			if (data?.range) {
-				const [start] = data.range
-				const garbage = trailingMatch[2]!
-				ctx.err.report(
-					localize(
-						'parser.string.invalid-codepoint-suffix',
-						garbage,
-						start.toString(16).toUpperCase(),
-					),
-					Range.create(
-						src,
-						src.getCharRange(trailingMatch[1]!.length + 1 + garbage.length - 1).end,
-					),
-				)
-				return undefined
-			}
-		}
-	}
-	const match = NamedEscapePattern.exec(escape)
-	if (!match) {
-		return undefined
-	}
-	const name = match[1]!
-	const codepoint = lookupName(name, ctx)
-	if (codepoint === undefined) {
-		return undefined
-	}
-	if (!isInDeclaredBlock(codepoint, ctx)) {
-		return undefined
-	}
-	if (!isValidUnicodeCodepoint(codepoint, ctx)) {
-		return undefined
-	}
-	return codepoint
-}
-
-interface UnicodeRangeSymbolData {
-	range: [number, number]
-	source: 'unicode-range'
-	version: string
-	lowercase: string
-}
-
-function resolveHexSuffixedEscape(
-	name: string,
-	hex: string,
-	src: Source,
-	ctx: ParserContext,
-): number | undefined {
-	const query = ctx.symbols.query(
-		UnicodeDataUri,
-		UnicodeNameCategory,
-		`${toTitleCase(name)} `,
-	).symbol ?? ctx.symbols.query(
-		UnicodeDataUri,
-		UnicodeNameCategory,
-		toTitleCase(name),
-	).symbol
-	if (!query) {
-		return undefined
-	}
-	const data = query.data as UnicodeRangeSymbolData | undefined
-	if (!data?.range) {
-		return undefined
-	}
-	const [start, end] = data.range
-	const codepoint = parseInt(hex, 16)
-	if (Number.isNaN(codepoint) || codepoint < start || codepoint > end) {
-		ctx.err.report(
-			localize(
-				'parser.string.out-of-range',
-				toTitleCase(data.lowercase),
-				start.toString(16).toUpperCase(),
-				end.toString(16).toUpperCase(),
-			),
-			Range.create(src, src.getCharRange(name.length + 1 + hex.length - 1).end),
-		)
-		return undefined
-	}
-	return codepoint
 }
 
 export function string(options: StringOptions): InfallibleParser<StringNode> {
@@ -346,23 +66,16 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						})
 						ans.value += resolved
 						ans.children!.push(
-							makeEscapeChild(
-								cStart,
-								src.cursor,
-								resolved,
-								resolved.codePointAt(0)!,
-								lookupNameByCodepoint(resolved.codePointAt(0)!, ctx),
-								c2 as UnicodeEscapeKind,
-							),
+							makeEscapeChild(cStart, src.cursor, c2, c2 as UnicodeEscapeKind, resolved),
 						)
 					} else if (
-						options.escapable.unicode
-						&& (c2 === 'u' || (options.escapable.extendedUnicode && UnicodeEscapeChar.is(c2)))
+						c2 === 'u' || c2 === 'U' || c2 === 'x'
 					) {
 						const sequenceLength = UnicodeEscapeLengths.get(c2) ?? 4
 						const hex = src.peek(sequenceLength)
 						if (new RegExp(`^[0-9a-f]{${sequenceLength}}$`, 'i').test(hex)) {
 							src.skip(sequenceLength)
+							const raw = src.string.slice(cStart, src.cursor)
 							const codepoint = parseInt(hex, 16)
 							if (codepoint < 0 || codepoint > 0x10FFFF) {
 								ctx.err.report(
@@ -388,14 +101,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							})
 							ans.value += resolved
 							ans.children!.push(
-								makeEscapeChild(
-									cStart,
-									src.cursor,
-									resolved,
-									codepoint,
-									lookupNameByCodepoint(codepoint, ctx),
-									c2 as UnicodeEscapeKind,
-								),
+								makeEscapeChild(cStart, src.cursor, raw, c2),
 							)
 						} else {
 							const closingQuote = src.string.indexOf(currentQuote, src.cursor)
@@ -418,7 +124,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							})
 							ans.value += c2
 						}
-					} else if (options.escapable.extendedUnicode && c2 === 'N') {
+					} else if (c2 === 'N') {
 						if (!src.trySkip('{')) {
 							ctx.err.report(
 								localize('expected', localeQuote('{')),
@@ -436,9 +142,6 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						if (src.peek(1, name.length) !== '}') {
 							ctx.err.report(
 								localize('expected', localeQuote('}')),
-								// Anchor on the full escape so the squiggle lands
-								// on `\N{...` (or wherever it terminates), not
-								// past the end of the string.
 								Range.create(cStart, src),
 							)
 							ans.valueMap.push({
@@ -447,36 +150,14 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							})
 							ans.value += c2
 						} else {
-							const codepoint = resolveNamedEscape(name, src, ctx)
-							if (codepoint === undefined) {
-								ctx.err.report(
-									localize('parser.string.illegal-unicode-escape-name'),
-									Range.create(cStart, src),
-								)
-								ans.valueMap.push({
-									inner: Range.create(ans.value.length, ans.value.length + 1),
-									outer: Range.create(cStart, src),
-								})
-								ans.value += c2
-							} else {
-								src.skip(name.length + 1)
-								const resolved = String.fromCodePoint(codepoint)
-								ans.valueMap.push({
-									inner: Range.create(ans.value.length, ans.value.length + 1),
-									outer: Range.create(cStart, src),
-								})
-								ans.value += resolved
-								ans.children!.push(
-									makeEscapeChild(
-										cStart,
-										src.cursor,
-										resolved,
-										codepoint,
-										name,
-										'N',
-									),
-								)
-							}
+							src.skip(name.length + 1)
+							const raw = src.string.slice(cStart, src.cursor)
+							ans.children!.push(makeEscapeChild(cStart, src.cursor, raw, 'N'))
+							ans.valueMap.push({
+								inner: Range.create(ans.value.length, ans.value.length + raw.length),
+								outer: Range.create(cStart, src),
+							})
+							ans.value += raw
 						}
 					} else {
 						if (!options.escapable.allowUnknown) {

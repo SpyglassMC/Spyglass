@@ -120,9 +120,9 @@ exports[`mcdoc parser > string > Parse '\"fo\\no\"' 1`] = `
           "start": 3,
           "end": 5
         },
+        "raw": "n",
         "resolved": "\\n",
-        "codepoint": 10,
-        "hover": "[ \`\\\\n\` ] - \`U+000A\`"
+        "codepoint": 10
       }
     ],
     "quote": "\\""

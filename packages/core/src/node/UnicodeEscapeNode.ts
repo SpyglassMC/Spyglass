@@ -8,12 +8,14 @@ export interface UnicodeEscapeNode extends AstNode {
 	readonly type: 'unicode_escape'
 	/** Which escape form was used: `\x`, `\u`, `\U`, or `\N{...}`. */
 	readonly kind: UnicodeEscapeKind
+	/** Raw escape contents, resolved by Checker. */
+	raw: string
 	/** The single character this escape resolves to. */
-	readonly resolved: string
+	resolved: string
 	/** Codepoint of the resolved character. */
-	readonly codepoint: number
+	codepoint: number
 	/** Canonical Unicode name when known, otherwise `undefined`. */
-	readonly name?: string
+	name?: string
 }
 export namespace UnicodeEscapeNode {
 	/* istanbul ignore next */
@@ -26,6 +28,7 @@ export namespace UnicodeEscapeNode {
 			type: 'unicode_escape',
 			kind: 'u',
 			range: Range.get(range),
+			raw: '',
 			resolved: '',
 			codepoint: 0,
 		}

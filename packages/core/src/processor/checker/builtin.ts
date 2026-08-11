@@ -1,6 +1,6 @@
 import { StateProxy } from '../../common/index.js'
-import type { AstNode, ResourceLocationNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
-import type { CheckerContext, MetaRegistry } from '../../service/index.js'
+import type { AstNode } from '../../node/index.js'
+import type { CheckerContext } from '../../service/index.js'
 import { ErrorReporter } from '../../service/index.js'
 import { traversePreOrder } from '../util.js'
 import type { Checker, SyncChecker } from './Checker.js'
@@ -104,23 +104,4 @@ export const dispatchSync: SyncChecker<AstNode> = (node, ctx) => {
 			checker(child, ctx)
 		}
 	}
-}
-
-export const resourceLocation: Checker<ResourceLocationNode> = (node, ctx) => {
-	// const full = ResourceLocationNode.toString(node, 'full')
-	// if (node.options.pool) {
-	// 	if (!node.options.pool.includes(full)) {
-	// 		ctx.err.report(localize('expected', node.options.pool), node, ErrorSeverity.Error)
-	// 	}
-	// 	return
-	// }
-}
-
-export const symbol: Checker<SymbolBaseNode> = (_node, _ctx) => {
-	// TODO
-}
-
-export function registerCheckers(meta: MetaRegistry) {
-	meta.registerChecker<ResourceLocationNode>('resource_location', resourceLocation)
-	meta.registerChecker<SymbolNode>('symbol', symbol)
 }

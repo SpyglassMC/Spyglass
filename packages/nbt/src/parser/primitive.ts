@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { NbtByteNode, NbtNumberNode, NbtPrimitiveNode, NbtStringNode } from '../node/index.js'
-import { localizeTag, newSyntax } from '../util.js'
+import { localizeTag } from '../util.js'
 
 const enum Group {
 	Boolean,
@@ -102,8 +102,10 @@ const NbtStringOptions: core.StringOptions = {
 }
 
 export const string: core.InfallibleParser<NbtStringNode> = (src, ctx) => {
-	const options = newSyntax(ctx) ? NbtStringOptions : core.BrigadierStringOptions
-	return core.setType('nbt:string', core.string(options))(src, ctx)
+	// Always accept the full escape syntax; the core string checker reports
+	// version-gated errors when the loaded game version predates the
+	// support cutoff (1.21.5, mirroring `nbt.util.newSyntax`).
+	return core.setType('nbt:string', core.string(NbtStringOptions))(src, ctx)
 }
 
 export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (

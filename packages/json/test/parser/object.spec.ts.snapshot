@@ -884,9 +884,9 @@ exports[`JSON object parser > object() > Parse '{\"\\\"\": \"\\u1234\"}' 1`] = `
                   "start": 2,
                   "end": 4
                 },
+                "raw": "\\"",
                 "resolved": "\\"",
-                "codepoint": 34,
-                "hover": "[ \\" ] - \`U+0022\`"
+                "codepoint": 34
               }
             ],
             "quote": "\\""
@@ -928,9 +928,9 @@ exports[`JSON object parser > object() > Parse '{\"\\\"\": \"\\u1234\"}' 1`] = `
                   "start": 8,
                   "end": 14
                 },
-                "resolved": "ሴ",
-                "codepoint": 4660,
-                "hover": "[ ሴ ] - \`U+1234\`"
+                "raw": "\\\\u1234",
+                "resolved": "",
+                "codepoint": 0
               }
             ],
             "quote": "\\""
@@ -973,9 +973,9 @@ exports[`JSON object parser > object() > Parse '{\"\\\"\": \"\\u1234\"}' 1`] = `
                 "start": 2,
                 "end": 4
               },
+              "raw": "\\"",
               "resolved": "\\"",
-              "codepoint": 34,
-              "hover": "[ \\" ] - \`U+0022\`"
+              "codepoint": 34
             }
           ],
           "quote": "\\""
@@ -1021,9 +1021,9 @@ exports[`JSON object parser > object() > Parse '{\"\\\"\": \"\\u1234\"}' 1`] = `
                 "start": 8,
                 "end": 14
               },
-              "resolved": "ሴ",
-              "codepoint": 4660,
-              "hover": "[ ሴ ] - \`U+1234\`"
+              "raw": "\\\\u1234",
+              "resolved": "",
+              "codepoint": 0
             }
           ],
           "quote": "\\""

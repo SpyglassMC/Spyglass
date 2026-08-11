@@ -1,3 +1,4 @@
+export * as checker from './checker/index.js'
 export * from './common/index.js'
 export * as dependency from './dependency/index.js'
 export { initialize } from './init.js'

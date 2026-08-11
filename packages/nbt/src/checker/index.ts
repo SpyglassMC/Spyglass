@@ -25,6 +25,7 @@ export const typed: core.SyncChecker<TypedNbtNode> = (node, ctx) => {
 
 export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<TypedNbtNode>('nbt:typed', typed)
+	meta.registerChecker<NbtStringNode>('nbt:string', core.checker.string)
 }
 
 interface Options {
@@ -83,6 +84,11 @@ export function typeDefinition(
 	options: Options = {},
 ): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
+		// Run the registry-driven walk first: it descends to the shallowest nodes
+		// with their own checker (`nbt:string`) while their escape children are
+		// still intact. The mcdoc pass below replaces the children of any string
+		// that has a string parser attached to it.
+		core.checker.fallbackSync(node, ctx)
 		mcdoc.runtime.checker.typeDefinition<NbtNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			typeDef,
@@ -197,7 +203,6 @@ export function typeDefinition(
 					attacher(node)
 					if (node.children) {
 						core.AstNode.setParents(node)
-						// Because the runtime checker happens after binding, we need to manually call this
 						core.binder.fallbackSync(node, ctx)
 						core.checker.fallbackSync(node, ctx)
 					}
