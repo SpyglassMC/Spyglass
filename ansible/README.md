@@ -43,9 +43,6 @@ In this section the container will be named `spyglassmc-dev`, but anything would
 2. Create an inventory file `inventory-dev.yml` with the IP address of the container. Include any
    variables in either host vars or another separate extra variables file. Reference
    `secrets-template.yml` for a list of variables.
-   * Contact @SPGoding for `acmesh_dynamic_dns_key` if you'd like working acmesh verification for
-     `dev.spyglassmc.com`.
-
 3. Run the playbook
    ```
    $ ansible-playbook -i ansible/inventory-dev.yml ansible/playbook.yml
