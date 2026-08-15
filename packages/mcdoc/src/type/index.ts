@@ -323,6 +323,7 @@ export namespace LiteralNumericValue {
 		allowFloat: boolean = true,
 	): LiteralNumericValue | LiteralLongNumberValue | undefined {
 		value = Number(value)
+		allowInt = allowInt && Math.floor(number) === number
 		switch (kind) {
 			case 'byte':
 				if (allowInt && value >= -128 && value < 128) {
