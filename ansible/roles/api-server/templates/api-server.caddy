@@ -1,0 +1,12 @@
+api-origin.{{ common_base_domain }} {
+	@denied not header Bunny-CDN-Secret {{ api_server_bunny_cdn_secret }}
+	respond @denied 403
+
+	reverse_proxy 127.0.0.1:{{ api_server_port }} {
+		header_up Bunny-CDN-Secret ""
+	}
+
+	request_body {
+		max_size 2MB
+	}
+}
