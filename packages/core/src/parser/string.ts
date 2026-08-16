@@ -75,7 +75,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						const hex = src.peek(sequenceLength)
 						if (new RegExp(`^[0-9a-f]{${sequenceLength}}$`, 'i').test(hex)) {
 							src.skip(sequenceLength)
-							const raw = src.string.slice(cStart, src.cursor)
+							const raw = src.sliceToCursor(cStart)
 							const codepoint = parseInt(hex, 16)
 							if (codepoint < 0 || codepoint > 0x10FFFF) {
 								ctx.err.report(
@@ -104,10 +104,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								makeEscapeChild(cStart, src.cursor, raw, c2),
 							)
 						} else {
-							const closingQuote = src.string.indexOf(currentQuote, src.cursor)
+							const closingQuote = src.string.indexOf(currentQuote, src.innerCursor)
 							const charsLeft = closingQuote === -1
-								? src.string.length - src.cursor
-								: closingQuote - src.cursor
+								? src.string.length - src.innerCursor
+								: closingQuote - src.innerCursor
 							const hexEnd = src.getCharRange(
 								Math.min(sequenceLength, Math.max(charsLeft, 1)) - 1,
 							).end
@@ -151,7 +151,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							ans.value += c2
 						} else {
 							src.skip(name.length + 1)
-							const raw = src.string.slice(cStart, src.cursor)
+							const raw = src.sliceToCursor(cStart)
 							ans.children!.push(makeEscapeChild(cStart, src.cursor, raw, 'N'))
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + raw.length),

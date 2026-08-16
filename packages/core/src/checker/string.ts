@@ -331,11 +331,12 @@ function finalizeEscape(
 		rewriteValue(node, escapeRange, child.resolved)
 		return
 	}
-	// `\u`/`\U`/`\x`: parser already decoded the codepoint and wrote the
-	// resolved char into `value`. Just fill in `name` and `hover` from
-	// symbols; the parser will have reported any malformed-hex diagnostic.
 	const hex = raw.slice(2)
 	const codepoint = parseInt(hex, 16)
+	if (Number.isNaN(codepoint) || codepoint < 0 || codepoint > 0x10FFFF) {
+		// Malformed hex: the parser already reported a diagnostic for it.
+		return
+	}
 	child.codepoint = codepoint
 	child.resolved = String.fromCodePoint(codepoint)
 	child.name = lookupNameByCodepoint(codepoint, ctx)
@@ -347,29 +348,22 @@ function rewriteValue(
 	escapeRange: Range,
 	resolved: string,
 ): void {
-	// `value` is built from the source starting at the opening quote, so value
-	// offsets are `source offset - node.range.start - 1` (the leading quote is
-	// skipped). Compute offsets accordingly.
-	const start = escapeRange.start - node.range.start - 1
-	const end = escapeRange.end - node.range.start - 1
-	const newValue = node.value.slice(0, start) + resolved + node.value.slice(end)
-	node.value = newValue
-	for (const entry of node.valueMap) {
-		if (entry.outer.start === escapeRange.start && entry.outer.end === escapeRange.end) {
-			entry.inner = Range.create(start, start + resolved.length)
-			break
-		}
+	const entry = node.valueMap.find((e) =>
+		e.outer.start === escapeRange.start && e.outer.end === escapeRange.end
+	)
+	if (!entry) {
+		return
 	}
+	const start = entry.inner.start
+	const end = entry.inner.end
+	node.value = node.value.slice(0, start) + resolved + node.value.slice(end)
+	entry.inner = Range.create(start, start + resolved.length)
 }
 
 export const string: Checker<StringBaseNode> = (node: StringBaseNode, ctx: CheckerContext) => {
 	if (!node.options.escapable) {
 		return
 	}
-	// The fallback combinator short-circuits on the first node with a
-	// registered checker, so it won't descend into our string node. Walk
-	// the children manually, recursing into nested string-shaped sub-ASTs
-	// (e.g. the typed NBT sub-AST living under an nbt:string wrapper).
 	const visit = (n: AstNode): void => {
 		const children = n.children ?? []
 		const isStringNode = (n as StringBaseNode).options?.escapable !== undefined
