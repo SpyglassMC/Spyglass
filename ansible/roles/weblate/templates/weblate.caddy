@@ -1,0 +1,3 @@
+weblate.{{ common_base_domain }} {
+	reverse_proxy 127.0.0.1:{{ weblate_host_port }}
+}

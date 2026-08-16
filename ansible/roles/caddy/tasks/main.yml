@@ -1,0 +1,45 @@
+- name: Add Caddy apt repository
+  become: true
+  ansible.builtin.deb822_repository:
+    name: caddy
+    types: deb
+    architectures: arm64
+    uris: https://dl.cloudsmith.io/public/caddy/stable/deb/debian
+    suites: any-version
+    components: main
+    signed_by: https://dl.cloudsmith.io/public/caddy/stable/gpg.key
+
+- name: Install Caddy
+  become: true
+  ansible.builtin.apt:
+    name: caddy
+    state: present
+
+- name: Create Caddy conf.d directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/caddy/conf.d
+    state: directory
+    mode: '755'
+
+- name: Create Caddyfile
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/caddy/Caddyfile
+    content: |
+      {% if caddy_email %}
+      {
+      	email {{ caddy_email }}
+      }
+      {% endif %}
+
+      import /etc/caddy/conf.d/*.caddy
+    mode: '644'
+  notify: Reload Caddy
+
+- name: Ensure Caddy is running
+  become: true
+  ansible.builtin.service:
+    name: caddy
+    enabled: true
+    state: started

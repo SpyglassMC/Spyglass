@@ -27,13 +27,13 @@
   community.docker.docker_compose_v2:
     project_src: '{{ weblate_docker_project_src }}'
 
-- name: Create nginx reverse proxy
+- name: Create Caddy reverse proxy
   become: true
   ansible.builtin.template:
-    src: weblate.conf
-    dest: /etc/nginx/conf.d/weblate.conf
+    src: weblate.caddy
+    dest: /etc/caddy/conf.d/weblate.caddy
     mode: '644'
-  notify: Reload nginx
+  notify: Reload Caddy
 
 - name: Create backup script directory
   become: true
