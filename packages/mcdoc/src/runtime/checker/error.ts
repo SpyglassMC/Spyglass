@@ -548,7 +548,7 @@ export function getDefaultErrorReporter<T>(
 								: e.kind === 'literal'
 								? localeQuote(e.value.value.toString())
 								: localize(`mcdoc.type.${e.kind === 'tuple' ? 'list' : e.kind}`)
-						),
+						).filter((s, i, self) => self.indexOf(s) === i),
 						false,
 					),
 				)
