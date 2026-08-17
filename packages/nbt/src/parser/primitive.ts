@@ -38,8 +38,7 @@ const NumeralPatterns:
 		min: bigint
 		max: bigint
 	})[] = [
-		// Decimal integer patterns. `_` is allowed between digits (ES2021 numeric separators,
-		// only valid in new syntax 1.21.5+ - the parser rejects `_` in pre-1.21.5).
+		// Decimal integer patterns. `_` numeric separators are allowed between digits in MC 1.21.5+
 		{
 			pattern: /^[-+]?(?:0|[1-9](?:_?[0-9])*)b$/i,
 			type: 'nbt:byte',
