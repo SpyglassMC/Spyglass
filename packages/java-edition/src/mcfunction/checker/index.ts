@@ -7,7 +7,7 @@ import * as nbt from '@spyglassmc/nbt'
 import { dissectUri, reportDissectError } from '../../binder/index.js'
 import { getTagValues } from '../../common/index.js'
 import { ReleaseVersion } from '../../dependency/common.js'
-import type { EntitySelectorInvertableArgumentValueNode, UuidNode } from '../node/index.js'
+import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
 import {
 	BlockNode,
 	ComponentTestExactNode,
@@ -360,18 +360,6 @@ function getTypesFromEntity(
 	return undefined
 }
 
-export const uuid: core.Checker<UuidNode> = (node) => {
-	if (node.bits[0] === 0n && node.bits[1] === 0n) {
-		return
-	}
-	const parts: number[] = []
-	for (const bits of node.bits) {
-		parts.push(Number(BigInt.asIntN(32, bits >> 32n)))
-		parts.push(Number(BigInt.asIntN(32, bits & 0xFFFFFFFFn)))
-	}
-	node.hover = `\`\`\`mcdoc\n[I; ${parts.join(', ')}]\n\`\`\``
-}
-
 export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<mcf.McfunctionNode>('mcfunction:entry', entry)
 	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
@@ -380,5 +368,4 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<ItemStackNode>('mcfunction:item_stack', itemStack)
 	meta.registerChecker<ItemPredicateNode>('mcfunction:item_predicate', itemPredicate)
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
-	meta.registerChecker<UuidNode>('mcfunction:uuid', uuid)
 }
