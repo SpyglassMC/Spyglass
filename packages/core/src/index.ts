@@ -1,4 +1,3 @@
-export * as checker from './checker/index.js'
 export * from './common/index.js'
 export * from './node/index.js'
 export * from './parser/index.js'

@@ -1,4 +1,3 @@
-import * as checker from '../checker/index.js'
 import type { Logger } from '../common/index.js'
 import { Lazy } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
@@ -12,7 +11,15 @@ import type {
 	Completer,
 	InlayHintProvider,
 } from '../processor/index.js'
-import { binder, codeActions, colorizer, completer, formatter, linter } from '../processor/index.js'
+import {
+	binder,
+	checker,
+	codeActions,
+	colorizer,
+	completer,
+	formatter,
+	linter,
+} from '../processor/index.js'
 import type { Linter } from '../processor/linter/Linter.js'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider.js'
 import type { UriPredicateContext } from '../service/index.js'
