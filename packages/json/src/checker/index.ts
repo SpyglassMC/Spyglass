@@ -9,7 +9,6 @@ export const typed: core.SyncChecker<TypedJsonNode> = (node, ctx) => {
 
 export function register(meta: core.MetaRegistry): void {
 	meta.registerChecker<TypedJsonNode>('json:typed', typed)
-	meta.registerChecker<JsonStringNode>('json:string', core.checker.string)
 }
 
 export interface JsonCheckerOptions {

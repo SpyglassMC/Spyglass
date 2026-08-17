@@ -1,3 +1,11 @@
+import type {
+	AstNode,
+	CheckerContext,
+	StringBaseNode,
+	SyncChecker,
+	UnicodeEscapeNode,
+} from '@spyglassmc/core'
+import { Range } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import {
 	BlocksUri,
@@ -9,15 +17,12 @@ import {
 	isUnicodeNameLookupMap,
 	isUnicodeNamesByCodepointMap,
 	isUnicodeRangeMap,
+	ReleaseVersion,
 	toTitleCase,
 	UnicodeBulkCategory,
 	UnicodeDataUri,
 	UnicodeNameCategory,
 } from '../dependency/index.js'
-import type { AstNode, StringBaseNode, UnicodeEscapeNode } from '../node/index.js'
-import type { Checker } from '../processor/checker/Checker.js'
-import type { CheckerContext } from '../service/index.js'
-import { Range } from '../source/index.js'
 
 const NamedEscapeWithHexPattern = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s+([a-f0-9]+)\s*$/i
 const NamedEscapePattern = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s*$/i
@@ -244,64 +249,32 @@ function resolveNamedEscape(
 	return codepoint
 }
 
-// Extended Unicode escapes (`\u`, `\U`, `\x`, `\N{...}`) require the
-// loaded game version to meet a minimum cutoff. The parser accepts all of
-// them regardless of the loaded version; the core string checker reports a
-// specific diagnostic when the loaded version predates the cutoff. The
-// cutoff mirrors `nbt.util.newSyntax`.
-const EXTENDED_ESCAPE_MIN_VERSION = [1, 21, 5] as const
-
-function versionAtLeast(version: readonly number[], target: readonly number[]): boolean {
-	for (let i = 0; i < target.length; i++) {
-		const a = version[i] ?? 0
-		const b = target[i]!
-		if (a > b) {
-			return true
-		}
-		if (a < b) {
-			return false
-		}
-	}
-	return true
-}
-
-function parseGameVersion(raw: string): readonly number[] | undefined {
-	if (raw === 'Auto') {
-		return undefined
-	}
-	const match = /^(\d+)\.(\d+)(?:\.(\d+))?/.exec(raw)
-	if (!match) {
-		return undefined
-	}
-	return [Number(match[1]), Number(match[2]), Number(match[3] ?? 0)]
-}
+/**
+ * Extended Unicode escapes (`\u`, `\U`, `\x`, `\N{...}`) were added to the
+ * game's string parser in this release. The parser accepts all of them
+ * regardless of the loaded version; this checker reports a specific
+ * diagnostic when the loaded version predates the cutoff.
+ */
+const ExtendedEscapesSince: ReleaseVersion = '1.21.5'
 
 function finalizeEscape(
 	child: UnicodeEscapeNode,
 	ctx: CheckerContext,
 	node: StringBaseNode,
+	supportsExtendedEscapes: boolean,
 ): void {
 	const raw = child.raw
 	const escapeRange = child.range
-	// Reject extended escapes (\u/\U/\x/\N{...}) when the loaded/resolved
-	// game version predates 1.20.5. The parser accepted them syntactically;
-	// the checker is responsible for the version-gated diagnostic. Source of
-	// truth: `project.ctx.loadedVersion` (set by `je.initialize`), with
-	// `config.env.gameVersion` as a fallback for callers that configure it
-	// manually. 'Auto' disables the gate (we can't tell what version the
-	// project actually targets).
+	// Reject extended escapes (\u/\U/\x/\N{...}) when the resolved game
+	// version predates the cutoff. The parser accepted them syntactically; the
+	// checker is responsible for the version-gated diagnostic.
 	if (raw.length > 1) {
-		const loadedVersion = (ctx.project as { loadedVersion?: string }).loadedVersion
-		const configured = loadedVersion ?? ctx.config.env.gameVersion
-		const gameVersion = parseGameVersion(configured)
-		if (gameVersion && !versionAtLeast(gameVersion, EXTENDED_ESCAPE_MIN_VERSION)) {
+		if (!supportsExtendedEscapes) {
 			ctx.err.report(
 				localize(
 					'parser.string.extended-unicode-escape-not-supported',
 					raw,
-					`${EXTENDED_ESCAPE_MIN_VERSION[0]}.${EXTENDED_ESCAPE_MIN_VERSION[1]}.${
-						EXTENDED_ESCAPE_MIN_VERSION[2]
-					}`,
+					ExtendedEscapesSince,
 				),
 				escapeRange,
 			)
@@ -360,26 +333,38 @@ function rewriteValue(
 	entry.inner = Range.create(start, start + resolved.length)
 }
 
-export const string: Checker<StringBaseNode> = (node: StringBaseNode, ctx: CheckerContext) => {
-	if (!node.options.escapable) {
-		return
-	}
-	const visit = (n: AstNode): void => {
-		const children = n.children ?? []
-		const isStringNode = (n as StringBaseNode).options?.escapable !== undefined
-		if (isStringNode) {
-			for (const child of children) {
-				if (child.type === 'unicode_escape') {
-					finalizeEscape(child as UnicodeEscapeNode, ctx, n as StringBaseNode)
-				} else {
+/**
+ * Resolves the Unicode escapes of a string node against the bundled Unicode
+ * data, and reports the escapes that the given game version does not support.
+ */
+export function unicodeEscapes(release: ReleaseVersion): SyncChecker<StringBaseNode> {
+	const supportsExtendedEscapes = ReleaseVersion.cmp(release, ExtendedEscapesSince) >= 0
+	return (node, ctx) => {
+		if (!node.options.escapable) {
+			return
+		}
+		const visit = (n: AstNode): void => {
+			const children = n.children ?? []
+			const isStringNode = (n as StringBaseNode).options?.escapable !== undefined
+			if (isStringNode) {
+				for (const child of children) {
+					if (child.type === 'unicode_escape') {
+						finalizeEscape(
+							child as UnicodeEscapeNode,
+							ctx,
+							n as StringBaseNode,
+							supportsExtendedEscapes,
+						)
+					} else {
+						visit(child)
+					}
+				}
+			} else {
+				for (const child of children) {
 					visit(child)
 				}
 			}
-		} else {
-			for (const child of children) {
-				visit(child)
-			}
 		}
+		visit(node)
 	}
-	visit(node)
 }

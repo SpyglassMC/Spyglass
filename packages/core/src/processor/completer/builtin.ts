@@ -295,6 +295,10 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
  * Returns completion items for Unicode character names when the cursor is
  * inside an `\N{…}` escape in `node`. Returns `undefined` otherwise so the
  * caller can fall through to other completers.
+ *
+ * The `unicode-name` symbol category is contributed by whichever edition
+ * package bundles Unicode data (e.g. `java-edition`); when no such registrar
+ * ran, the category is empty and no items are returned.
  */
 function tryGetUnicodeNameCompletion(
 	node: DeepReadonly<StringBaseNode>,

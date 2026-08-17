@@ -3,6 +3,10 @@
 	"compilerOptions": {
 		"outDir": "../lib"
 	},
+	"include": [
+		"**/*.ts",
+		"dependency/unicode-lookup-table.json"
+	],
 	"references": [
 		{
 			"path": "../../core/src"

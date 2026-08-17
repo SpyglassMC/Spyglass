@@ -3,11 +3,11 @@
 // Fetches `UnicodeData.txt` and `Blocks.txt` from
 // https://www.unicode.org/Public/UNIDATA/, caches them in `scripts/unicode/`
 // (gitignored), and writes the parsed result to
-// `packages/core/src/dependency/unicode-lookup-table.json`, which
-// `@spyglassmc/core` bundles and reads at startup.
+// `packages/java-edition/src/dependency/unicode-lookup-table.json`, which
+// `@spyglassmc/java-edition` bundles and reads at startup.
 //
 // Also rewrites the `BUNDLE_CHECKSUM` marker in
-// `packages/core/src/dependency/unicode.ts` so the registrar's cache key
+// `packages/java-edition/src/dependency/unicode.ts` so the registrar's cache key
 // stays in sync with the JSON contents.
 //
 // Re-runs are cheap: cached files are reused unless upstream reports a newer
@@ -267,7 +267,7 @@ async function main(): Promise<void> {
 
 	const lookupPath = path.join(
 		repoRoot,
-		'packages/core/src/dependency/unicode-lookup-table.json',
+		'packages/java-edition/src/dependency/unicode-lookup-table.json',
 	)
 	await mkdir(path.dirname(lookupPath), { recursive: true })
 	await writeFile(lookupPath, json, 'utf-8')
@@ -282,7 +282,7 @@ async function main(): Promise<void> {
 	// cache key stays in sync with the JSON contents.
 	const unicodeTsPath = path.join(
 		repoRoot,
-		'packages/core/src/dependency/unicode.ts',
+		'packages/java-edition/src/dependency/unicode.ts',
 	)
 	const checksum = sha256(json)
 	const unicodeTs = await readFile(unicodeTsPath, 'utf-8')

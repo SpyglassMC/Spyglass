@@ -17,15 +17,36 @@ import {
 	NbtPrimitiveNode,
 	NbtStringNode,
 } from '../node/index.js'
+import { localizeTag } from '../util.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 export const typed: core.SyncChecker<TypedNbtNode> = (node, ctx) => {
 	typeDefinition(node.targetType)(node.children[0], ctx)
 }
 
+/**
+ * Reports list elements whose type differs from the type of the first element.
+ *
+ * Not registered by {@link register}: whether lists have to be homogeneous
+ * depends on the game version, which only the edition package knows. Edition
+ * packages register this checker for `nbt:list` when it applies.
+ */
+export const listTypeHomogeneous: core.SyncChecker<NbtListNode> = (node, ctx) => {
+	if (!node.valueType) {
+		return
+	}
+	for (const { value } of node.children) {
+		if (value && value.type !== node.valueType) {
+			ctx.err.report(
+				localize('expected-got', localizeTag(node.valueType), localizeTag(value.type)),
+				value,
+			)
+		}
+	}
+}
+
 export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<TypedNbtNode>('nbt:typed', typed)
-	meta.registerChecker<NbtStringNode>('nbt:string', core.checker.string)
 }
 
 interface Options {

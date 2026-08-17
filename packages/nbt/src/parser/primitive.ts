@@ -102,9 +102,9 @@ const NbtStringOptions: core.StringOptions = {
 }
 
 export const string: core.InfallibleParser<NbtStringNode> = (src, ctx) => {
-	// Always accept the full escape syntax; the core string checker reports
-	// version-gated errors when the loaded game version predates the
-	// support cutoff (1.21.5, mirroring `nbt.util.newSyntax`).
+	// Always accept the full escape syntax; the edition package's string
+	// checker reports version-gated errors when the loaded game version
+	// predates the support cutoff.
 	return core.setType('nbt:string', core.string(NbtStringOptions))(src, ctx)
 }
 

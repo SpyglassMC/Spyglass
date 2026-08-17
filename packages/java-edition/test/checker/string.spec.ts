@@ -1,7 +1,3 @@
-import * as assert from 'node:assert/strict'
-import { describe, it } from 'node:test'
-import { TextDocument } from 'vscode-languageserver-textdocument'
-import { UnicodeDataUri } from '../../lib/dependency/index.js'
 import type {
 	LanguageError,
 	MetaRegistry,
@@ -9,13 +5,11 @@ import type {
 	StringNode,
 	StringOptions,
 	SymbolUtil,
-} from '../../lib/index.js'
+} from '@spyglassmc/core'
 import {
-	checker,
 	CheckerContext,
 	completer as builtinCompleter,
 	CompleterContext,
-	initialize as coreInitialize,
 	ParserContext,
 	ReadonlySource,
 	Source,
@@ -23,33 +17,41 @@ import {
 	SymbolUtil as SymbolUtilCtor,
 	UnicodeEscapeNode,
 	VanillaConfig,
-} from '../../lib/index.js'
-import { mockProjectData } from '../utils.ts'
+} from '@spyglassmc/core'
+import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
+import * as assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
+import { TextDocument } from 'vscode-languageserver-textdocument'
+import { unicodeEscapes } from '../../lib/checker/index.js'
+import type { ReleaseVersion } from '../../lib/dependency/index.js'
+import {
+	getUnicodeData,
+	UnicodeDataUri,
+	unicodeSymbolRegistrar,
+} from '../../lib/dependency/index.js'
+
+/** The release used by tests that are not about the version gate itself. */
+const LatestRelease: ReleaseVersion = '1.21.5'
 
 /**
  * Building the Unicode symbol table costs ~200ms, so do it once and share the
  * result. Only the symbols and the meta registry are reused - every project
- * gets its own config, because `config.env.gameVersion` is written per test
- * and `VanillaConfig` is a shared singleton.
+ * gets its own config.
  */
 let unicodeBoot: { symbols: SymbolUtil; meta: MetaRegistry } | undefined
 
 /**
- * Mirrors the production symbol-table boot: `core.initialize` registers the
+ * Mirrors the production symbol-table boot: `je.initialize` registers the
  * Unicode data registrar on the project meta, then we run every registered
  * registrar through a fresh `SymbolUtil` exactly as `Project` would.
  */
-export function initializedProject(gameVersion?: string): ProjectData {
+export function initializedProject(): ProjectData {
 	if (!unicodeBoot) {
 		const boot = mockProjectData({ symbols: new SymbolUtilCtor({}) })
-		coreInitialize({
-			cacheRoot: boot.cacheRoot,
-			config: boot.config,
-			externals: boot.externals,
-			isDebugging: boot.isDebugging,
-			logger: boot.logger,
-			meta: boot.meta,
-			projectRoots: boot.projectRoots,
+		const data = getUnicodeData()
+		boot.meta.registerSymbolRegistrar('unicode-data', {
+			checksum: data.checksum,
+			registrar: unicodeSymbolRegistrar(data),
 		})
 		for (const [id, { registrar }] of boot.meta.symbolRegistrars) {
 			boot.symbols.contributeAs(`symbol_registrar/${id}`, () => {
@@ -59,11 +61,11 @@ export function initializedProject(gameVersion?: string): ProjectData {
 		}
 		unicodeBoot = { symbols: boot.symbols, meta: boot.meta }
 	}
-	const config = structuredClone(VanillaConfig)
-	if (gameVersion !== undefined) {
-		config.env.gameVersion = gameVersion
-	}
-	return mockProjectData({ config, meta: unicodeBoot.meta, symbols: unicodeBoot.symbols })
+	return mockProjectData({
+		config: structuredClone(VanillaConfig),
+		meta: unicodeBoot.meta,
+		symbols: unicodeBoot.symbols,
+	})
 }
 
 interface CheckerRun {
@@ -87,8 +89,12 @@ interface CheckerRun {
  * checker regression pass unnoticed whenever the parser happens to have
  * reported something at the same offset.
  */
-function runChecker(text: string, options: StringOptions, gameVersion?: string): CheckerRun {
-	const project = initializedProject(gameVersion)
+function runChecker(
+	text: string,
+	options: StringOptions,
+	release: ReleaseVersion = LatestRelease,
+): CheckerRun {
+	const project = initializedProject()
 	const doc = TextDocument.create('', '', 0, text)
 
 	const parseCtx = ParserContext.create(project, { doc })
@@ -97,7 +103,7 @@ function runChecker(text: string, options: StringOptions, gameVersion?: string):
 	const parsedEscapeCount = escapeChildren(node).length
 
 	const checkCtx = CheckerContext.create(project, { doc })
-	checker.string(node, checkCtx)
+	unicodeEscapes(release)(node, checkCtx)
 
 	return {
 		node,
@@ -245,7 +251,9 @@ describe('string checker', () => {
 		})
 
 		it('stays quiet when the version is "Auto"', () => {
-			const run = runChecker('"\\u00a7"', baseOptions(), 'Auto')
+			// `je.initialize` resolves `Auto` to a concrete release before it
+			// builds the checker, so the checker never sees `Auto` itself.
+			const run = runChecker('"\\u00a7"', baseOptions())
 			assert.deepEqual(run.checkErrors.map((e) => e.message), [])
 		})
 
@@ -254,7 +262,7 @@ describe('string checker', () => {
 			assert.deepEqual(run.checkErrors.map((e) => e.message), [])
 		})
 
-		it('does not leak the configured version between projects', () => {
+		it('does not leak the release between checkers', () => {
 			runChecker('"\\u00a7"', baseOptions(), '1.21.4')
 			const run = runChecker('"\\u00a7"', baseOptions())
 			assert.deepEqual(run.checkErrors.map((e) => e.message), [])

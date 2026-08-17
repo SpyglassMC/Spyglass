@@ -1,8 +1,8 @@
-import type { SymbolRegistrar } from '../service/SymbolRegistrar.js'
+import type * as core from '@spyglassmc/core'
 import unicodeLookupTable from './unicode-lookup-table.json' with { type: 'json' }
 
 /**
- * Non-`file:` URIs used by the {@link symbolRegistrar} as symbol-table identifiers.
+ * Non-`file:` URIs used by the {@link unicodeSymbolRegistrar} as symbol-table identifiers.
  * They are never actually fetched as documents.
  */
 export const UnicodeDataUri = 'spyglass://unicode/UnicodeData.json'
@@ -37,7 +37,7 @@ export const BlocksUri = 'spyglass://unicode/Blocks.json'
  */
 
 /**
- * Symbol categories used by the {@link symbolRegistrar}.
+ * Symbol categories used by the {@link unicodeSymbolRegistrar}.
  */
 export const UnicodeNameCategory = 'unicode-name'
 export const UnicodeBulkCategory = 'unicode-data'
@@ -48,7 +48,7 @@ export const UnicodeBulkCategory = 'unicode-data'
  * - `BulkNames`: lower-cased Unicode name -> codepoint. Used for fast O(1)
  *   case-insensitive name lookup from the parser.
  * - `BulkNamesInverse`: hex codepoint -> lower-cased name. Built at runtime
- *   in {@link symbolRegistrar} by reversing `names`. Used to validate that a
+ *   in {@link unicodeSymbolRegistrar} by reversing `names`. Used to validate that a
  *   codepoint is explicitly listed in UnicodeData.txt.
  * - `BulkRanges`: `<…, First>`/`<…, Last>` pair name -> inclusive `[start, end]`.
  * - `BulkBlocks`: block name from `Blocks.txt` -> inclusive `[start, end]`.
@@ -151,7 +151,7 @@ export function toTitleCase(name: string): string {
  * JDK aliases (see {@link JdkNameOverrides}) are also entered last under
  * the name category so they win on conflict (amend replaces `data`).
  */
-export function symbolRegistrar(data: UnicodeData): SymbolRegistrar {
+export function unicodeSymbolRegistrar(data: UnicodeData): core.SymbolRegistrar {
 	return (symbols) => {
 		symbols.contributeAs('symbol_registrar/unicode-data', () => {
 			const registerName = (name: string, codepoint: number, source: 'unicode' | 'jdk') => {
@@ -226,7 +226,7 @@ export function symbolRegistrar(data: UnicodeData): SymbolRegistrar {
 
 /* istanbul ignore next */
 /**
- * Helpers usable by consumers (e.g. `parser/string.ts`) to perform the
+ * Helpers usable by consumers (e.g. `checker/string.ts`) to perform the
  * Unicode escape validation pipeline.
  */
 
