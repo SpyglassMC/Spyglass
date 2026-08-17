@@ -78,6 +78,7 @@ function walk(node: NbtNode, ctx: core.CheckerContext, state: WalkState): void {
 		NbtNumberNode.is(node) && node.hasUnderscoreSeparator && state.isOldSyntax
 		&& !state.underscoreNotified
 	) {
+		// `1_000_000` is a perfectly valid unquoted string value pre-1.21.5. Therefore, this shouldn't be an error nor a warning.
 		ctx.err.report(
 			localize('nbt.parser.number.underscore-not-supported'),
 			node,
