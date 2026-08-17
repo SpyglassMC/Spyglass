@@ -47,13 +47,13 @@ const compound: core.Colorizer<NbtCompoundNode> = (node, ctx) => {
 			tokens.push(...ctx.meta.getColorizer(pair.key.type)(pair.key, ctx))
 		}
 		if (pair.sep) {
-			tokens.push(ColorToken.create(pair.sep, 'operator'))
+			tokens.push(ColorToken.create(pair.sep, 'punctuation'))
 		}
 		if (pair.value) {
 			tokens.push(...ctx.meta.getColorizer(pair.value.type)(pair.value, ctx))
 		}
 		if (pair.end) {
-			tokens.push(ColorToken.create(pair.end, 'operator'))
+			tokens.push(ColorToken.create(pair.end, 'punctuation'))
 		}
 	}
 	return tokens
