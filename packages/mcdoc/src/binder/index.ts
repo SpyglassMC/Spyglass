@@ -32,7 +32,6 @@ import type {
 	IndexNode,
 	LiteralTypeValueNode,
 	ModuleNode,
-	RangeKind,
 	StructFieldNode,
 	StructKeyNode,
 	TypeNode,
@@ -74,7 +73,6 @@ import {
 	TypeAliasNode,
 	TypeArgBlockNode,
 	TypeBaseNode,
-	TypedArrayNode,
 	TypedNumberNode,
 	TypeParamBlockNode,
 	TypeParamNode,
@@ -1158,31 +1156,7 @@ function convertRange(
 
 function convertLiteral(node: LiteralTypeNode, ctx: McdocBinderContext): McdocType {
 	const { value } = LiteralTypeNode.destruct(node)
-	if (TypedArrayNode.is(value)) {
-		// SNBT-style typed-array literal: `[B; 1, 2, 3]` / `[I; ...]` /
-		// `[L; ...]`. The binder doesn't model these as `kind: 'literal'`
-		// values - instead we synthesise the corresponding primitive_array
-		// type so downstream code at least knows the array shape. The
-		// values themselves aren't validated here; the runtime checker can
-		// inspect the AST shape if needed.
-		const valuesLength = value.children.length - 1 // minus the type tag
-		const lengthRange: NumericRange<number> = {
-			kind: 0b11,
-			min: valuesLength,
-			max: valuesLength,
-		}
-		const valueRange = value.arrayType === 'long'
-			? ({ kind: 0b11 as RangeKind } as NumericRange<bigint>)
-			: ({ kind: 0b11 as RangeKind } as NumericRange<number>)
-		const mcdocType: McdocType = {
-			kind: `${value.arrayType}_array`,
-			lengthRange,
-			valueRange,
-		} as McdocType
-		return wrapType(node, mcdocType, ctx)
-	}
-	const literalValue = convertLiteralValue(value, ctx)
-	return wrapType(node, { kind: 'literal', value: literalValue }, ctx)
+	return wrapType(node, { kind: 'literal', value: convertLiteralValue(value, ctx) }, ctx)
 }
 
 function convertLiteralValue(node: LiteralTypeValueNode, ctx: McdocBinderContext): LiteralValue {
@@ -1195,13 +1169,8 @@ function convertLiteralValue(node: LiteralTypeValueNode, ctx: McdocBinderContext
 				?? (value.type === 'integer' ? 'int' : 'double'),
 			value: value.value,
 		} as LiteralValue
-	} else if (StringNode.is(node)) {
-		return { kind: 'string', value: node.value }
 	} else {
-		// Typed-array literal - shouldn't be reached because `convertLiteral`
-		// handles them above. Return a `boolean` placeholder so the type
-		// system stays total.
-		return { kind: 'boolean', value: false }
+		return { kind: 'string', value: node.value }
 	}
 }
 

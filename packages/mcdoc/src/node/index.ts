@@ -356,13 +356,10 @@ export namespace LiteralTypeNode {
 	}
 }
 
-export type LiteralTypeValueNode = LiteralNode | TypedNumberNode | StringNode | TypedArrayNode
+export type LiteralTypeValueNode = LiteralNode | TypedNumberNode | StringNode
 export namespace LiteralTypeValueNode {
 	export function is(node: AstNode | undefined): node is LiteralTypeValueNode {
-		return (LiteralNode.is(node)
-			|| TypedNumberNode.is(node)
-			|| StringNode.is(node)
-			|| TypedArrayNode.is(node))
+		return (LiteralNode.is(node) || TypedNumberNode.is(node) || StringNode.is(node))
 	}
 }
 
@@ -383,29 +380,6 @@ export namespace TypedNumberNode {
 	}
 	export function is(node: AstNode | undefined): node is TypedNumberNode {
 		return (node as TypedNumberNode | undefined)?.type === 'mcdoc:typed_number'
-	}
-}
-
-/**
- * SNBT-style typed array literal: `[B;...]`, `[I;...]`, `[L;...]`. Used as
- * enum default values for `byte_array`/`int_array`/`long_array` enum
- * variants.
- *
- * `arrayType` mirrors the leading `[B` / `[I` / `[L` tag. `children[0]` is
- * the type-tag `LiteralNode`; subsequent children are the `TypedNumberNode`
- * entries (an array literal may contain zero entries).
- *
- * Note: Bedrock's `[D;...]` double-array form isn't supported - this codebase
- * targets Java Edition where `double_array` isn't a primitive array type.
- */
-export interface TypedArrayNode extends AstNode {
-	type: 'mcdoc:typed_array'
-	arrayType: 'byte' | 'int' | 'long'
-	children: [LiteralNode, ...TypedNumberNode[]]
-}
-export namespace TypedArrayNode {
-	export function is(node: AstNode | undefined): node is TypedArrayNode {
-		return (node as TypedArrayNode | undefined)?.type === 'mcdoc:typed_array'
 	}
 }
 
