@@ -1,14 +1,10 @@
 import * as core from '@spyglassmc/core'
-import {
-	CheckerContext,
-	ParserContext,
-	Source,
-} from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
+import { CheckerContext, ParserContext, Source } from '@spyglassmc/core'
+import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import { checkSnbtSyntax } from '@spyglassmc/java-edition/lib/checker/index.js'
+import { localize } from '@spyglassmc/locales'
 import type { NbtNode } from '@spyglassmc/nbt'
 import { entry } from '@spyglassmc/nbt/lib/parser/index.js'
-import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 

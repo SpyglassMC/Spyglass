@@ -230,7 +230,10 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 					src.skip()
 				}
 
-				const digits = src.slice(digitsStart, suffixRange?.start ?? src.cursor).replaceAll('_', '')
+				const digits = src.slice(digitsStart, suffixRange?.start ?? src.cursor).replaceAll(
+					'_',
+					'',
+				)
 				let bigValue = BigInt((radix === 'hex' ? '0x' : '0b') + digits)
 				if (hasSign && unquotedResult.value[0] === '-') {
 					bigValue = -bigValue
@@ -323,7 +326,9 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 				}
 				const isOutOfRange = typeof min === 'bigint'
 					? bigValue < min || bigValue > max
-					: (isFloat ? Number(bigValue) < min || Number(bigValue) > max : bigValue < BigInt(min) || bigValue > BigInt(max))
+					: (isFloat
+						? Number(bigValue) < min || Number(bigValue) > max
+						: bigValue < BigInt(min) || bigValue > BigInt(max))
 				if (isOutOfRange) {
 					ctx.err.report(
 						localize(
@@ -421,7 +426,7 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 				// `hasUnderscoreSeparator` lives on `NbtNumberBaseNode`; every
 				// numeric branch produces a node that extends it, so the cast
 				// through the union is safe here.
-				(ans as nbtNodeWithUnderscore).hasUnderscoreSeparator = true
+				;(ans as nbtNodeWithUnderscore).hasUnderscoreSeparator = true
 			}
 			// Explicit `i`/`I` integer suffix is only valid in 1.21.5+. Flag it
 			// here so the java-edition SNBT-syntax checker can report on it
