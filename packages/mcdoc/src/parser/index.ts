@@ -79,6 +79,7 @@ import type {
 	TupleTypeNode,
 	TypeAliasNode,
 	TypeArgBlockNode,
+	TypedArrayNode,
 	TypedNumberNode,
 	TypeNode,
 	TypeParamBlockNode,
@@ -576,14 +577,18 @@ const enumType: InfallibleParser<LiteralNode> = literal([
 ], { colorTokenType: 'type' })
 
 export const float: InfallibleParser<FloatNode> = core.float({
-	pattern: /^[-+]?(?:[0-9]+(?:[eE][-+]?[0-9]+)?|[0-9]*\.[0-9]+(?:[eE][-+]?[0-9]+)?)$/,
+	// `_` separators are allowed between digits in MC 1.21.5+; the parser
+	// accepts them unconditionally and the SNBT-syntax checker is responsible
+	// for flagging pre-1.21.5 usages.
+	pattern:
+		/^[-+]?(?:[0-9](?:_?[0-9])*(?:[eE][-+]?[0-9]+)?|(?:[0-9](?:_?[0-9])*)?\.(?:[0-9](?:_?[0-9])*)(?:[eE][-+]?[0-9]+)?)$/,
 })
 
 export const integer: InfallibleParser<IntegerNode> = core.integer({
-	pattern: /^(?:0|[-+]?[1-9][0-9]*)$/,
+	pattern: /^(?:0|[-+]?[1-9](?:_?[0-9])*)$/,
 })
 export const long: InfallibleParser<LongNode> = core.long({
-	pattern: /^(?:0|[-+]?[1-9][0-9]*)$/,
+	pattern: /^(?:0|[-+]?[1-9](?:_?[0-9])*)$/,
 })
 export const LiteralIntSuffixes = Object.freeze(['b', 's', 'l'] as const)
 export type LiteralIntSuffix = (typeof LiteralIntSuffixes)[number]
@@ -614,7 +619,8 @@ export type LiteralNumberCaseInsensitiveSuffix =
 export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 	'mcdoc:typed_number',
 	select([{
-		regex: /^(?:\+|-)?\d+L/i,
+		// Long literal: optional sign, digits (with `_` separators), `L`.
+		regex: /^(?:\+|-)?\d(?:_?\d)*L/i,
 		parser: sequence([
 			long,
 			optional(
@@ -622,7 +628,10 @@ export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 			),
 		]),
 	}, {
-		regex: /^(?:\+|-)?\d+(?!\d|[.dfe])/i,
+		// Int literal (with optional type suffix): digits (with `_`
+		// separators) not immediately followed by more digits / `.` / `d` /
+		// `f` / `e` (otherwise float branch wins).
+		regex: /^(?:\+|-)?\d(?:_?\d)*(?![.dfe\d])/i,
 		parser: sequence([
 			integer,
 			optional(
@@ -655,6 +664,97 @@ export const failableTypedNumber: Parser<TypedNumberNode> = (src, ctx) => {
 	updateSrcAndCtx()
 	return result
 }
+
+/**
+ * SNBT-style typed array literal: `[B;...]`, `[I;...]`, `[L;...]`.
+ * Recognised as enum default values for `byte_array` / `int_array` /
+ * `long_array` enum variants. `D` (double-array) is intentionally absent -
+ * Java Edition has no `double_array` primitive type.
+ *
+ * The parser is **infallible**: when the prefix matches but the contents are
+ * malformed, we report a diagnostic and still produce a `TypedArrayNode`
+ * covering the consumed range so downstream consumers (checker, colorizer,
+ * completion) keep receiving an AST node instead of `Failure`.
+ */
+function typedArray(
+	tagChar: 'B' | 'I' | 'L',
+	arrayType: 'byte' | 'int' | 'long',
+): InfallibleParser<TypedArrayNode> {
+	const tagNode: InfallibleParser<LiteralNode> = literal(tagChar, { colorTokenType: 'keyword' })
+	return (src, ctx) => {
+		const start = src.cursor
+		src.skipWhitespace()
+		src.skip() // '['
+		const tagResult = tagNode(src, ctx) as LiteralNode
+		if (!src.tryPeek(';')) {
+			ctx.err.report(
+				localize('expected', localize('mcdoc.parser.semicolon')),
+				core.Range.create(src.cursor, src.cursor + 1),
+				core.ErrorSeverity.Error,
+			)
+			src.skipRemaining()
+			return {
+				type: 'mcdoc:typed_array',
+				range: core.Range.create(start, src.cursor),
+				arrayType,
+				children: [tagResult],
+			}
+		}
+		src.skip() // ';'
+
+		const children: [LiteralNode, ...TypedNumberNode[]] = [tagResult]
+		if (!src.tryPeek(']')) {
+			const firstAttempt = core.attempt(typedNumber, src, ctx)
+			if (firstAttempt.errorAmount > 0) {
+				ctx.err.report(
+					localize('expected', localize('mcdoc.parser.typed_number')),
+					core.Range.create(src.cursor, src.cursor + 1),
+					core.ErrorSeverity.Error,
+				)
+				src.skipRemaining()
+				return {
+					type: 'mcdoc:typed_array',
+					range: core.Range.create(start, src.cursor),
+					arrayType,
+					children,
+				}
+			}
+			firstAttempt.updateSrcAndCtx()
+			children.push(firstAttempt.result as TypedNumberNode)
+			while (src.trySkip(',')) {
+				const nextAttempt = core.attempt(typedNumber, src, ctx)
+				if (nextAttempt.errorAmount > 0) {
+					// Skip past the comma but stop consuming values. The
+					// partial array is still valid from the AST point of view.
+					break
+				}
+				nextAttempt.updateSrcAndCtx()
+				children.push(nextAttempt.result as TypedNumberNode)
+			}
+		}
+		if (!src.tryPeek(']')) {
+			ctx.err.report(
+				localize('expected', localize('mcdoc.parser.close-square-bracket')),
+				core.Range.create(src.cursor, src.cursor + 1),
+				core.ErrorSeverity.Error,
+			)
+			src.skipRemaining()
+		} else {
+			src.skip()
+		}
+
+		return {
+			type: 'mcdoc:typed_array',
+			range: core.Range.create(start, src.cursor),
+			arrayType,
+			children,
+		}
+	}
+}
+
+const typedByteArray = typedArray('B', 'byte')
+const typedIntArray = typedArray('I', 'int')
+const typedLongArray = typedArray('L', 'long')
 
 const enumValue: InfallibleParser<EnumValueNode> = select([{ prefix: '"', parser: string }, {
 	parser: typedNumber,
@@ -926,6 +1026,9 @@ export const literalType: Parser<LiteralTypeNode> = typeBase(
 			parser: keyword(['false', 'true'], { colorTokenType: 'type' }),
 		},
 		{ prefix: '"', parser: failOnEmpty(string) },
+		{ prefix: '[B;', parser: typedByteArray },
+		{ prefix: '[I;', parser: typedIntArray },
+		{ prefix: '[L;', parser: typedLongArray },
 		{ parser: failableTypedNumber },
 	]),
 )
