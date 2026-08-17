@@ -43,11 +43,56 @@ describe('nbt entry() with SNBT functions', () => {
 			{ content: 'bool(' },
 			{ content: 'bool0' },
 			{ content: 'uuid("12345678-1234-1234-1234-123456789012")' },
+			// Parser-level argument validation still fires regardless of
+			// whether the version allows `bool(...)` / `uuid(...)`.
+			{ content: 'bool("hello")' },
+			{ content: 'bool({})' },
+			{ content: 'bool([])' },
+			{ content: 'uuid(42)' },
+			{ content: 'uuid([])' },
+			{ content: 'uuid("not-a-uuid")' },
 		]
 		for (const { content } of suites) {
 			it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 				const ctx = { project: { ctx: { loadedVersion: '1.21.4' } } }
 				t.assert.snapshot(testParser(entry, content, ctx))
+			})
+		}
+	})
+
+	// Lock-in cases for the parser-emitted argument-type / format errors.
+	// These are unrelated to version gating and emit on every version; the
+	// 1.21.5+ block above already exercises them implicitly. These cases
+	// group them together with explicit input variants for the snapshot.
+	describe('argument validation errors', () => {
+		const cases: { content: string; expected: string[] }[] = [
+			// `bool()` requires a numeric argument.
+			{ content: 'bool("hello")', expected: ['requires a numeric argument'] },
+			{ content: 'bool({})', expected: ['requires a numeric argument'] },
+			{ content: 'bool([])', expected: ['requires a numeric argument'] },
+			// `uuid()` requires a string argument.
+			{ content: 'uuid(42)', expected: ['requires a string argument'] },
+			{ content: 'uuid([])', expected: ['requires a string argument'] },
+			{ content: 'uuid({})', expected: ['requires a string argument'] },
+			// UUID format validation.
+			{ content: 'uuid("not-a-uuid")', expected: ['Expected a valid UUID'] },
+			{ content: 'uuid("")', expected: ['Expected a valid UUID'] },
+			{ content: 'uuid("12345678-1234-1234-1234-12345g")', expected: ['Expected a valid UUID'] },
+		]
+		for (const { content, expected } of cases) {
+			it(`reports for '${showWhitespaceGlyph(content)}'`, (t) => {
+				const ctx = { project: { ctx: { loadedVersion: '1.21.5' } } }
+				const result = testParser(entry, content, ctx)
+				for (const needle of expected) {
+					if (!result.errors.some(e => e.message.includes(needle))) {
+						throw new Error(
+							`Expected error matching "${needle}" for "${content}" in:\n  ${
+								result.errors.map(e => e.message).join('\n  ')
+							}`,
+						)
+					}
+				}
+				t.assert.snapshot(result)
 			})
 		}
 	})

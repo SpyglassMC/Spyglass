@@ -1,7 +1,19 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { NbtByteNode, NbtNumberNode, NbtPrimitiveNode, NbtStringNode } from '../node/index.js'
-import { localizeTag, newSyntax } from '../util.js'
+import { localizeTag } from '../util.js'
+
+/**
+ * Narrowed views used to set the post-1.21.5 signal flags the
+ * java-edition SNBT-syntax checker reads. Defined here because the parser
+ * is the only place that knows which input form produced each flag.
+ */
+interface nbtNodeWithUnderscore {
+	hasUnderscoreSeparator?: boolean
+}
+interface nbtNodeWithExplicitIntSuffix {
+	hasExplicitIntSuffix?: boolean
+}
 
 const enum Group {
 	Boolean,
@@ -112,10 +124,12 @@ const NumeralPatterns:
 		},
 		// Hex/binary literals (1.21.5+). Negative hex/binary is not supported by the game
 		// (`+0x...` is allowed, but `-0x...` is not), so they only allow `+` or no sign.
-		// Hex/binary have no type suffix (`0b` is parsed as byte 0, where `b` is the suffix).
-		// Always parsed as BigInt - mcdoc/runtime figures out the actual integer type.
+		// The optional trailing suffix is the standard SNBT type marker
+		// (`b`/`s`/`i`/`I`/`l`/`L`/`f`/`d`) - when present, the literal is parsed
+		// as the matching typed node; without a suffix it stays a generic
+		// `nbt:hex`/`nbt:bin` BigInt that mcdoc/runtime widens.
 		{
-			pattern: /^[+]?0x[0-9a-fA-F](?:_?[0-9a-fA-F])*$/i,
+			pattern: /^[+]?0x[0-9a-fA-F](?:_?[0-9a-fA-F])*(?:_?[bsilLfdiBSILFDI])?$/i,
 			type: 'nbt:hex',
 			hasSuffix: false,
 			group: Group.LongAlike,
@@ -124,7 +138,7 @@ const NumeralPatterns:
 			max: 9223372036854775807n,
 		},
 		{
-			pattern: /^[+]?0b[01](?:_?[01])*$/i,
+			pattern: /^[+]?0b[01](?:_?[01])*(?:_?[bsilLfdiBSILFDI])?$/i,
 			type: 'nbt:bin',
 			hasSuffix: false,
 			group: Group.LongAlike,
@@ -143,8 +157,10 @@ const NbtStringOptions: core.StringOptions = {
 }
 
 export const string: core.InfallibleParser<NbtStringNode> = (src, ctx) => {
-	const options = newSyntax(ctx) ? NbtStringOptions : core.BrigadierStringOptions
-	return core.setType('nbt:string', core.string(options))(src, ctx)
+	// Always use the new-syntax string options: escape sequences are allowed
+	// on every version, and the version-aware checks live in the
+	// java-edition SNBT-syntax checker step.
+	return core.setType('nbt:string', core.string(NbtStringOptions))(src, ctx)
 }
 
 export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
@@ -160,38 +176,11 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 		src,
 		ctx,
 	)
-	const isNewSyntax = newSyntax(ctx)
-	let underscoreNotified = false
+	const hasUnderscoreSeparator = unquotedResult.value.includes('_')
 	for (const e of NumeralPatterns) {
 		if (e.pattern.test(unquotedResult.value)) {
-			// Hex/binary literals are only valid in new syntax (1.21.5+).
-			if (e.group === Group.LongAlike && e.radix && !isNewSyntax) {
-				ctx.err.report(
-					localize('nbt.parser.number.radix-not-supported'),
-					unquotedResult,
-					core.ErrorSeverity.Error,
-				)
-			}
-			// Underscore digit separators are only valid in new syntax (1.21.5+).
-			if (e.group !== Group.Boolean && !isNewSyntax && unquotedResult.value.includes('_')) {
-				if (!underscoreNotified) {
-					ctx.err.report(
-						localize('nbt.parser.number.underscore-not-supported'),
-						unquotedResult,
-						core.ErrorSeverity.Information,
-					)
-					underscoreNotified = true
-				}
-				continue
-			}
-			// Explicit `i`/`I` int suffix is only valid in new syntax (1.21.5+).
-			if (e.group === Group.IntegerAlike && !isNewSyntax && /[iI]$/.test(unquotedResult.value)) {
-				ctx.err.report(
-					localize('nbt.parser.number.explicit-int-suffix-not-supported'),
-					unquotedResult,
-					core.ErrorSeverity.Error,
-				)
-			}
+			// Detect new-syntax-only number forms so the java-edition SNBT-syntax
+			// checker can flag them when running on pre-1.21.5 versions.
 			if (e.group === Group.Boolean) {
 				const ans: NbtByteNode = {
 					type: 'nbt:byte',
@@ -201,11 +190,15 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 				updateUnquoted()
 				return ans
 			}
-			// Hex/binary literals: skip the prefix (`0x` or `0b`) in source, capture the remaining
-			// digits, then convert to bigint via BigInt. The radix is determined
-			// by the actual prefix character.
-			// Note: Has support for negative hex/binary input for future proofing, support for
-			// them is prevented by the regex and a specific error is provided.
+			// Hex/binary literals: skip the prefix (`0x` or `0b`) in source, capture the
+			// remaining digits, then convert to bigint via BigInt. The radix is
+			// determined by the actual prefix character. If a type suffix
+			// (`b`/`s`/`i`/`I`/`l`/`L`/`f`/`d`) follows the digits we branch into
+			// the matching typed node; otherwise we keep the generic
+			// `nbt:hex`/`nbt:bin` BigInt for mcdoc/runtime to widen.
+			// Note: Has support for negative hex/binary input for future proofing,
+			// support for them is prevented by the regex and a specific error is
+			// provided.
 			if (e.group === Group.LongAlike && e.radix) {
 				const hasSign = unquotedResult.value[0] === '+' || unquotedResult.value[0] === '-'
 				const prefixChar = unquotedResult.value[(hasSign ? 1 : 0) + 1]
@@ -224,27 +217,121 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 				while (src.canRead() && (digitRegex.test(src.peek()) || src.peek() === '_')) {
 					src.skip()
 				}
-				const digits = src.slice(digitsStart, src.cursor).replaceAll('_', '')
+				// Optional `_` separator immediately before the type suffix.
+				if (src.canRead() && src.peek() === '_' && src.peek(1).match(/[bsilLfdiBSILFDI]/i)) {
+					src.skip()
+				}
+				// Optional type suffix (`b`, `s`, `i`/`I`, `l`/`L`, `f`, `d`).
+				let suffixChar = ''
+				let suffixRange: core.Range | undefined
+				if (src.canRead() && /[bsilLfdiBSILFDI]/i.test(src.peek())) {
+					suffixChar = src.peek()
+					suffixRange = core.Range.create(src.cursor, src.cursor + 1)
+					src.skip()
+				}
 
-				let value = BigInt((radix === 'hex' ? '0x' : '0b') + digits)
+				const digits = src.slice(digitsStart, suffixRange?.start ?? src.cursor).replaceAll('_', '')
+				let bigValue = BigInt((radix === 'hex' ? '0x' : '0b') + digits)
 				if (hasSign && unquotedResult.value[0] === '-') {
-					value = -value
+					bigValue = -bigValue
 				}
 
-				let isOutOfRange = false
-				if (e.min !== undefined && e.max !== undefined) {
-					if (value < e.min || value > e.max) {
-						isOutOfRange = true
+				const suffixLower = suffixChar.toLowerCase()
+				const annotated = unquotedResult.value.includes('_')
+					? { hasUnderscoreSeparator: true as const }
+					: {}
+
+				// No suffix: keep the generic BigInt node (mcdoc/runtime widens).
+				if (!suffixChar) {
+					let isOutOfRange = false
+					if (e.min !== undefined && e.max !== undefined) {
+						if (bigValue < e.min || bigValue > e.max) {
+							isOutOfRange = true
+						}
 					}
+					if (isOutOfRange) {
+						ctx.err.report(
+							localize(
+								'nbt.parser.number.out-of-range',
+								localizeTag(e.type),
+								localize('nbt.node.string'),
+								e.min,
+								e.max,
+							),
+							unquotedResult,
+							core.ErrorSeverity.Warning,
+						)
+						updateUnquoted()
+						break
+					}
+					updateUnquoted()
+					const out: NbtNumberNode = {
+						type: e.type,
+						range: core.Range.create(startCursor, src.cursor),
+						prefixRange,
+						value: bigValue,
+						hover: `\`${bigValue}\``,
+						...annotated,
+					} as NbtNumberNode
+					out.fromRadixLiteral = true
+					return out
 				}
+
+				// Suffix present: produce the matching typed node. Range checks
+				// happen against the same bounds used by the existing decimal
+				// numeral patterns.
+				let nodeType: NbtNumberNode['type']
+				let min: number | bigint
+				let max: number | bigint
+				let isFloat = false
+				switch (suffixLower) {
+					case 'b':
+						nodeType = 'nbt:byte'
+						min = -128
+						max = 127
+						break
+					case 's':
+						nodeType = 'nbt:short'
+						min = -32768
+						max = 32767
+						break
+					case 'i':
+						nodeType = 'nbt:int'
+						min = -2147483648
+						max = 2147483647
+						break
+					case 'l':
+						nodeType = 'nbt:long'
+						min = -9223372036854775808n
+						max = 9223372036854775807n
+						break
+					case 'f':
+						nodeType = 'nbt:float'
+						min = -FloatMaximum
+						max = FloatMaximum
+						isFloat = true
+						break
+					case 'd':
+						nodeType = 'nbt:double'
+						min = -Number.MAX_VALUE
+						max = Number.MAX_VALUE
+						isFloat = true
+						break
+					default:
+						// Unreachable - the regex restricts suffixChar to [bsilLfdi].
+						throw new Error(`Unexpected suffix character: ${suffixChar}`)
+				}
+				const isOutOfRange = typeof min === 'bigint'
+					? bigValue < min || bigValue > max
+					: (isFloat ? Number(bigValue) < min || Number(bigValue) > max : bigValue < BigInt(min) || bigValue > BigInt(max))
 				if (isOutOfRange) {
 					ctx.err.report(
 						localize(
 							'nbt.parser.number.out-of-range',
-							localizeTag(e.type),
+							localizeTag(nodeType),
 							localize('nbt.node.string'),
-							e.min,
-							e.max,
+							min,
+							max,
 						),
 						unquotedResult,
 						core.ErrorSeverity.Warning,
@@ -252,16 +339,43 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 					updateUnquoted()
 					break
 				}
-
 				updateUnquoted()
 				const range = core.Range.create(startCursor, src.cursor)
-				return {
-					type: e.type,
+				// For suffixed radix literals that collapse into a typed node
+				// (`nbt:byte`/`nbt:short`/`nbt:int`/`nbt:long`/`nbt:float`/`nbt:double`)
+				// we deliberately do NOT attach `prefixRange` or `suffixRange` -
+				// those are reserved for the generic `nbt:hex`/`nbt:bin` nodes
+				// via {@link NbtRadixPrefixRange}, and the typed-node colorizers
+				// (`core.colorizer.number`) don't try to highlight prefixes or
+				// suffixes anyway.
+				if (suffixLower === 'l') {
+					const out: NbtNumberNode = {
+						type: 'nbt:long',
+						range,
+						value: bigValue,
+						...annotated,
+					} as NbtNumberNode
+					out.fromRadixLiteral = true
+					return out
+				}
+				if (isFloat) {
+					const out: NbtNumberNode = {
+						type: nodeType,
+						range,
+						value: Number(bigValue),
+						...annotated,
+					} as NbtNumberNode
+					out.fromRadixLiteral = true
+					return out
+				}
+				const out: NbtNumberNode = {
+					type: nodeType,
 					range,
-					prefixRange,
-					value,
-					hover: `\`${value}\``,
+					value: Number(bigValue),
+					...annotated,
 				} as NbtNumberNode
+				out.fromRadixLiteral = true
+				return out
 			}
 			let isOutOfRange = false
 			const onOutOfRange = () => (isOutOfRange = true)
@@ -299,33 +413,33 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 				src.skip()
 				numeralResult.range.end++
 			}
-			return { ...numeralResult, type: e.type } as NbtNumberNode
+			const ans: NbtNumberNode = {
+				...numeralResult,
+				type: e.type,
+			} as NbtNumberNode
+			if (hasUnderscoreSeparator) {
+				// `hasUnderscoreSeparator` lives on `NbtNumberBaseNode`; every
+				// numeric branch produces a node that extends it, so the cast
+				// through the union is safe here.
+				(ans as nbtNodeWithUnderscore).hasUnderscoreSeparator = true
+			}
+			// Explicit `i`/`I` integer suffix is only valid in 1.21.5+. Flag it
+			// here so the java-edition SNBT-syntax checker can report on it
+			// for older versions. The `[iI]$` pattern only matches `nbt:int`,
+			// so the cast is well-defined for that branch.
+			if (e.group === Group.IntegerAlike && /[iI]$/.test(unquotedResult.value)) {
+				;(ans as nbtNodeWithExplicitIntSuffix).hasExplicitIntSuffix = true
+			}
+			return ans
 		}
 	}
 
 	updateUnquoted()
 
-	if (unquotedResult.value) {
-		if (isNewSyntax) {
-			// Negative hex/binary literals (e.g. `-0xff`, `-0b101`) are not supported by the game.
-			if (
-				/^-0[xX][0-9a-fA-F]+/.test(unquotedResult.value)
-				|| /^-0[bB][01]+/.test(unquotedResult.value)
-			) {
-				ctx.err.report(
-					localize('nbt.parser.number.negative-radix-not-supported'),
-					unquotedResult,
-					core.ErrorSeverity.Error,
-				)
-			} else if (/^[0-9.+-]/.test(unquotedResult.value)) {
-				ctx.err.report(
-					localize('nbt.parser.string.unquoted-string-first-character'),
-					unquotedResult,
-					core.ErrorSeverity.Error,
-				)
-			}
-		}
-	}
+	// New-syntax-only "invalid" unquoted strings (e.g. `1abc`, `-0xff`) are
+	// surfaced as errors only when running on 1.21.5+. The parser produces the
+	// `nbt:string` node unconditionally; the java-edition SNBT-syntax checker
+	// step handles reporting.
 
 	return unquotedResult
 }

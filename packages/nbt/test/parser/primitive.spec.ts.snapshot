@@ -82,14 +82,6 @@ exports[`nbt primitive() > Parse '123456b' 1`] = `
       },
       "message": "This looks like a byte tag, but it is actually a string tag due to the numeral value being out of [-128, 127]",
       "severity": 2
-    },
-    {
-      "range": {
-        "start": 0,
-        "end": 7
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
     }
   ]
 }
@@ -195,14 +187,6 @@ exports[`nbt primitive() > Parse '999e999f' 1`] = `
       },
       "message": "This looks like a float tag, but it is actually a string tag due to the numeral value being out of [-3.4028234663852886e+38, 3.4028234663852886e+38]",
       "severity": 2
-    },
-    {
-      "range": {
-        "start": 0,
-        "end": 8
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
     }
   ]
 }
@@ -316,7 +300,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '+0xff' 1`] = `
       "end": 3
     },
     "value": 255,
-    "hover": "\`255\`"
+    "hover": "\`255\`",
+    "fromRadixLiteral": true
   },
   "errors": []
 }
@@ -344,7 +329,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '+42i' 1`] = `
       "start": 0,
       "end": 4
     },
-    "value": 42
+    "value": 42,
+    "hasExplicitIntSuffix": true
   },
   "errors": []
 }
@@ -372,16 +358,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '+abc' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -435,16 +412,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '-0xff' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 5
-      },
-      "message": "Negative hexadecimal/binary numeric literals are not supported",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -470,7 +438,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '-42I' 1`] = `
       "start": 0,
       "end": 4
     },
-    "value": -42
+    "value": -42,
+    "hasExplicitIntSuffix": true
   },
   "errors": []
 }
@@ -498,16 +467,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '-abc' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -533,16 +493,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '.abc' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -596,16 +547,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '01' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 2
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -631,16 +573,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '01d' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 3
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -666,16 +599,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '01e5' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -701,16 +625,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '01f' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 3
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -755,7 +670,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0b101' 1`] = `
       "end": 2
     },
     "value": 5,
-    "hover": "\`5\`"
+    "hover": "\`5\`",
+    "fromRadixLiteral": true
   },
   "errors": []
 }
@@ -774,7 +690,9 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0b1010_1010' 1`
       "end": 2
     },
     "value": 170,
-    "hover": "\`170\`"
+    "hover": "\`170\`",
+    "hasUnderscoreSeparator": true,
+    "fromRadixLiteral": true
   },
   "errors": []
 }
@@ -783,35 +701,15 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0b1010_1010' 1`
 exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0b101l' 1`] = `
 {
   "node": {
-    "type": "nbt:string",
+    "type": "nbt:long",
     "range": {
       "start": 0,
       "end": 6
     },
-    "value": "0b101l",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 0,
-          "end": 0
-        }
-      }
-    ]
+    "value": 5,
+    "fromRadixLiteral": true
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 6
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -823,7 +721,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0i' 1`] = `
       "start": 0,
       "end": 2
     },
-    "value": 0
+    "value": 0,
+    "hasExplicitIntSuffix": true
   },
   "errors": []
 }
@@ -851,16 +750,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0x' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 2
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -877,7 +767,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0xFF' 1`] = `
       "end": 2
     },
     "value": 255,
-    "hover": "\`255\`"
+    "hover": "\`255\`",
+    "fromRadixLiteral": true
   },
   "errors": []
 }
@@ -896,7 +787,9 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0xFF_FF' 1`] = 
       "end": 2
     },
     "value": 65535,
-    "hover": "\`65535\`"
+    "hover": "\`65535\`",
+    "hasUnderscoreSeparator": true,
+    "fromRadixLiteral": true
   },
   "errors": []
 }
@@ -915,7 +808,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0xff' 1`] = `
       "end": 2
     },
     "value": 255,
-    "hover": "\`255\`"
+    "hover": "\`255\`",
+    "fromRadixLiteral": true
   },
   "errors": []
 }
@@ -934,7 +828,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '0xffb' 1`] = `
       "end": 2
     },
     "value": 4091,
-    "hover": "\`4091\`"
+    "hover": "\`4091\`",
+    "fromRadixLiteral": true
   },
   "errors": []
 }
@@ -948,7 +843,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1.5_3' 1`] = `
       "start": 0,
       "end": 5
     },
-    "value": 1.53
+    "value": 1.53,
+    "hasUnderscoreSeparator": true
   },
   "errors": []
 }
@@ -962,7 +858,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1.5_3e2' 1`] = 
       "start": 0,
       "end": 7
     },
-    "value": 153
+    "value": 153,
+    "hasUnderscoreSeparator": true
   },
   "errors": []
 }
@@ -990,16 +887,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1._5' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1025,16 +913,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '100_' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1060,16 +939,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1_.5' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1081,7 +951,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1_000' 1`] = `
       "start": 0,
       "end": 5
     },
-    "value": 1000
+    "value": 1000,
+    "hasUnderscoreSeparator": true
   },
   "errors": []
 }
@@ -1095,7 +966,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1_000_000' 1`] 
       "start": 0,
       "end": 9
     },
-    "value": 1000000
+    "value": 1000000,
+    "hasUnderscoreSeparator": true
   },
   "errors": []
 }
@@ -1131,14 +1003,6 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1_000b' 1`] = `
       },
       "message": "This looks like a byte tag, but it is actually a string tag due to the numeral value being out of [-128, 127]",
       "severity": 2
-    },
-    {
-      "range": {
-        "start": 0,
-        "end": 6
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
     }
   ]
 }
@@ -1152,7 +1016,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1_000l' 1`] = `
       "start": 0,
       "end": 6
     },
-    "value": 1000
+    "value": 1000,
+    "hasUnderscoreSeparator": true
   },
   "errors": []
 }
@@ -1166,7 +1031,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1_000s' 1`] = `
       "start": 0,
       "end": 6
     },
-    "value": 1000
+    "value": 1000,
+    "hasUnderscoreSeparator": true
   },
   "errors": []
 }
@@ -1180,7 +1046,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1_5e2' 1`] = `
       "start": 0,
       "end": 5
     },
-    "value": 1500
+    "value": 1500,
+    "hasUnderscoreSeparator": true
   },
   "errors": []
 }
@@ -1208,16 +1075,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1__000' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 6
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1243,16 +1101,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '1abc' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1264,7 +1113,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '2147483647i' 1`
       "start": 0,
       "end": 11
     },
-    "value": 2147483647
+    "value": 2147483647,
+    "hasExplicitIntSuffix": true
   },
   "errors": []
 }
@@ -1292,7 +1142,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '42I' 1`] = `
       "start": 0,
       "end": 3
     },
-    "value": 42
+    "value": 42,
+    "hasExplicitIntSuffix": true
   },
   "errors": []
 }
@@ -1320,16 +1171,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '42bi' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1341,7 +1183,8 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '42i' 1`] = `
       "start": 0,
       "end": 3
     },
-    "value": 42
+    "value": 42,
+    "hasExplicitIntSuffix": true
   },
   "errors": []
 }
@@ -1369,16 +1212,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '42li' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1404,16 +1238,7 @@ exports[`nbt primitive() with pack format 71+ (1.21.5+) > Parse '42si' 1`] = `
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1510,18 +1335,10 @@ exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '0b101' 1`] 
       "end": 2
     },
     "value": 5,
-    "hover": "\`5\`"
+    "hover": "\`5\`",
+    "fromRadixLiteral": true
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 5
-      },
-      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1538,96 +1355,46 @@ exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '0x1d' 1`] =
       "end": 2
     },
     "value": 29,
-    "hover": "\`29\`"
+    "hover": "\`29\`",
+    "fromRadixLiteral": true
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
 exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '0xFF_FF' 1`] = `
 {
   "node": {
-    "type": "nbt:string",
+    "type": "nbt:hex",
     "range": {
       "start": 0,
       "end": 7
     },
-    "value": "0xFF_FF",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 0,
-          "end": 0
-        }
-      }
-    ]
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 7
-      },
-      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
+    "prefixRange": {
+      "start": 0,
+      "end": 2
     },
-    {
-      "range": {
-        "start": 0,
-        "end": 7
-      },
-      "message": "Underscore digit separators are only valid in data pack format 71+ / minecraft 1.21.5",
-      "severity": 1
-    }
-  ]
+    "value": 65535,
+    "hover": "\`65535\`",
+    "hasUnderscoreSeparator": true,
+    "fromRadixLiteral": true
+  },
+  "errors": []
 }
 `;
 
 exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '1_000' 1`] = `
 {
   "node": {
-    "type": "nbt:string",
+    "type": "nbt:int",
     "range": {
       "start": 0,
       "end": 5
     },
-    "value": "1_000",
-    "valueMap": [
-      {
-        "inner": {
-          "start": 0,
-          "end": 0
-        },
-        "outer": {
-          "start": 0,
-          "end": 0
-        }
-      }
-    ]
+    "value": 1000,
+    "hasUnderscoreSeparator": true
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 5
-      },
-      "message": "Underscore digit separators are only valid in data pack format 71+ / minecraft 1.21.5",
-      "severity": 1
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1665,18 +1432,10 @@ exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '42I' 1`] = 
       "start": 0,
       "end": 3
     },
-    "value": 42
+    "value": 42,
+    "hasExplicitIntSuffix": true
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 3
-      },
-      "message": "Explicit \`i\`/\`I\` integer suffix is only valid in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 
@@ -1688,18 +1447,10 @@ exports[`nbt primitive() with pre-1.21.5 (no _ or i suffix) > Parse '42i' 1`] = 
       "start": 0,
       "end": 3
     },
-    "value": 42
+    "value": 42,
+    "hasExplicitIntSuffix": true
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 3
-      },
-      "message": "Explicit \`i\`/\`I\` integer suffix is only valid in data pack format 71+ / minecraft 1.21.5",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 `;
 

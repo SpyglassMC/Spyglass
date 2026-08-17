@@ -20,7 +20,15 @@ import {
 } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
-export const typed: core.SyncChecker<TypedNbtNode> = (node, ctx) => {
+/**
+ * Runs `typeDefinition` on the typed wrapper's inner NbtNode. The version-aware
+ * SNBT-syntax check is picked up from {@link core.MetaRegistry.snbtSyntaxCheck}
+ * by {@link invokeSnbtSyntaxCheck} once `typeDefinition` runs.
+ */
+export function typed(
+	node: TypedNbtNode,
+	ctx: core.CheckerContext,
+): void {
 	typeDefinition(node.targetType)(node.children[0], ctx)
 }
 
@@ -28,7 +36,7 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<TypedNbtNode>('nbt:typed', typed)
 }
 
-interface Options {
+export interface Options {
 	isPredicate?: boolean
 	isMerge?: boolean
 }
@@ -59,6 +67,7 @@ export function index(
 			}
 
 			return (node, ctx) => {
+				invokeSnbtSyntaxCheck(node, ctx)
 				typeDefinition(typeDef, options)(node, ctx)
 			}
 	}
@@ -77,6 +86,16 @@ function getIndices(
 }
 
 /**
+ * Invoke the consumer-registered SNBT-syntax check, if any. Java-edition sets
+ * this to gate version-aware syntax (hex/binary literals, `bool(...)` /
+ * `uuid(...)` calls, underscore digit separators) without every nbt caller
+ * having to thread an option through.
+ */
+function invokeSnbtSyntaxCheck(node: NbtNode, ctx: core.CheckerContext): void {
+	ctx.meta.snbtSyntaxCheck?.(node, ctx)
+}
+
+/**
  * @param identifier An identifier of mcdoc compound definition. e.g. `::minecraft::util::invitem::InventoryItem`
  */
 export function typeDefinition(
@@ -84,6 +103,7 @@ export function typeDefinition(
 	options: Options = {},
 ): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
+		invokeSnbtSyntaxCheck(node, ctx)
 		mcdoc.runtime.checker.typeDefinition<NbtNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			typeDef,

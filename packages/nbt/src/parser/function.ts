@@ -7,7 +7,6 @@ import type {
 	NbtUuidFunctionNode,
 } from '../node/index.js'
 import { NbtNumberNode } from '../node/index.js'
-import { newSyntax } from '../util.js'
 import { entry } from './entry.js'
 
 /**
@@ -27,14 +26,6 @@ export const snbtFunction = (
 	}
 	if (!matched) {
 		return core.Failure
-	}
-
-	if (!newSyntax(ctx)) {
-		ctx.err.report(
-			localize('nbt.parser.function.snbt-functions-not-supported'),
-			core.Range.create(src.cursor, src.cursor + matched.length),
-			core.ErrorSeverity.Error,
-		)
 	}
 
 	if (matched === 'bool') {

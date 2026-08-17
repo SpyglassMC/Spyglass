@@ -1,0 +1,917 @@
+exports[`checkSnbtSyntax (1.21.5+) > binary literal accepted 1`] = `
+{
+  "node": {
+    "type": "nbt:bin",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "prefixRange": {
+      "start": 0,
+      "end": 2
+    },
+    "value": 5,
+    "hover": "\`5\`",
+    "fromRadixLiteral": true
+  },
+  "errors": []
+}
+`;
+
+exports[`checkSnbtSyntax (1.21.5+) > bool() call accepted 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 6,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 6
+        },
+        "value": 0
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`checkSnbtSyntax (1.21.5+) > hex literal accepted 1`] = `
+{
+  "node": {
+    "type": "nbt:hex",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "prefixRange": {
+      "start": 0,
+      "end": 2
+    },
+    "value": 255,
+    "hover": "\`255\`",
+    "fromRadixLiteral": true
+  },
+  "errors": []
+}
+`;
+
+exports[`checkSnbtSyntax (1.21.5+) > hex with byte suffix accepted 1`] = `
+{
+  "node": {
+    "type": "nbt:hex",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "prefixRange": {
+      "start": 0,
+      "end": 2
+    },
+    "value": 1067,
+    "hover": "\`1067\`",
+    "fromRadixLiteral": true
+  },
+  "errors": []
+}
+`;
+
+exports[`checkSnbtSyntax (1.21.5+) > underscore separator accepted 1`] = `
+{
+  "node": {
+    "type": "nbt:int",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": 1000,
+    "hasUnderscoreSeparator": true
+  },
+  "errors": []
+}
+`;
+
+exports[`checkSnbtSyntax (1.21.5+) > unquoted negative binary literal 1`] = `
+{
+  "node": {
+    "type": "nbt:string",
+    "range": {
+      "start": 0,
+      "end": 6
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "s",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\\"",
+        "'"
+      ],
+      "unquotable": {
+        "allowEmpty": true,
+        "allowList": {}
+      }
+    },
+    "value": "-0b101",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 6
+      },
+      "message": "Negative hexadecimal/binary numeric literals are not supported",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (1.21.5+) > unquoted negative hex literal 1`] = `
+{
+  "node": {
+    "type": "nbt:string",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "s",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\\"",
+        "'"
+      ],
+      "unquotable": {
+        "allowEmpty": true,
+        "allowList": {}
+      }
+    },
+    "value": "-0xff",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "message": "Negative hexadecimal/binary numeric literals are not supported",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with dash 1`] = `
+{
+  "node": {
+    "type": "nbt:string",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "s",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\\"",
+        "'"
+      ],
+      "unquotable": {
+        "allowEmpty": true,
+        "allowList": {}
+      }
+    },
+    "value": "-abc",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with digit 1`] = `
+{
+  "node": {
+    "type": "nbt:string",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "s",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\\"",
+        "'"
+      ],
+      "unquotable": {
+        "allowEmpty": true,
+        "allowList": {}
+      }
+    },
+    "value": "1abc",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with dot 1`] = `
+{
+  "node": {
+    "type": "nbt:string",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "s",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\\"",
+        "'"
+      ],
+      "unquotable": {
+        "allowEmpty": true,
+        "allowList": {}
+      }
+    },
+    "value": ".abc",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with sign 1`] = `
+{
+  "node": {
+    "type": "nbt:string",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "s",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\\"",
+        "'"
+      ],
+      "unquotable": {
+        "allowEmpty": true,
+        "allowList": {}
+      }
+    },
+    "value": "+abc",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "message": "Unquoted strings cannot start with \`[0-9.+-]\` in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (no version) > skips gating when loadedVersion is undefined 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 6,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 6
+        },
+        "value": 0
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`checkSnbtSyntax (pre-1.21.5) > binary literal (suffix-less) 1`] = `
+{
+  "node": {
+    "type": "nbt:bin",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "prefixRange": {
+      "start": 0,
+      "end": 2
+    },
+    "value": 5,
+    "hover": "\`5\`",
+    "fromRadixLiteral": true
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (pre-1.21.5) > binary literal with long suffix 1`] = `
+{
+  "node": {
+    "type": "nbt:long",
+    "range": {
+      "start": 0,
+      "end": 6
+    },
+    "value": 5,
+    "fromRadixLiteral": true
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 6
+      },
+      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (pre-1.21.5) > bool() call 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 6,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 6
+        },
+        "value": 0
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "message": "SNBT Functions are only supported in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (pre-1.21.5) > capital I int suffix 1`] = `
+{
+  "node": {
+    "type": "nbt:int",
+    "range": {
+      "start": 0,
+      "end": 3
+    },
+    "value": 42,
+    "hasExplicitIntSuffix": true
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 3
+      },
+      "message": "Explicit \`i\`/\`I\` integer suffix is only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (pre-1.21.5) > explicit i/I int suffix 1`] = `
+{
+  "node": {
+    "type": "nbt:int",
+    "range": {
+      "start": 0,
+      "end": 3
+    },
+    "value": 42,
+    "hasExplicitIntSuffix": true
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 3
+      },
+      "message": "Explicit \`i\`/\`I\` integer suffix is only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (pre-1.21.5) > hex literal (suffix-less) 1`] = `
+{
+  "node": {
+    "type": "nbt:hex",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "prefixRange": {
+      "start": 0,
+      "end": 2
+    },
+    "value": 255,
+    "hover": "\`255\`",
+    "fromRadixLiteral": true
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (pre-1.21.5) > hex literal with byte suffix 1`] = `
+{
+  "node": {
+    "type": "nbt:hex",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "prefixRange": {
+      "start": 0,
+      "end": 2
+    },
+    "value": 1067,
+    "hover": "\`1067\`",
+    "fromRadixLiteral": true
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (pre-1.21.5) > underscore + hex 1`] = `
+{
+  "node": {
+    "type": "nbt:hex",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "prefixRange": {
+      "start": 0,
+      "end": 2
+    },
+    "value": 65535,
+    "hover": "\`65535\`",
+    "hasUnderscoreSeparator": true,
+    "fromRadixLiteral": true
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 7
+      },
+      "message": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (pre-1.21.5) > underscore digit separator 1`] = `
+{
+  "node": {
+    "type": "nbt:int",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": 1000,
+    "hasUnderscoreSeparator": true
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "message": "Underscore digit separators are only valid in data pack format 71+ / minecraft 1.21.5",
+      "severity": 1
+    }
+  ]
+}
+`;
+
+exports[`checkSnbtSyntax (pre-1.21.5) > uuid() call 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 44
+    },
+    "value": [
+      305419896,
+      305402420,
+      305402420,
+      1450741778
+    ],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 43,
+      "end": 44
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 43
+        },
+        "options": {
+          "escapable": {
+            "characters": [
+              "b",
+              "f",
+              "n",
+              "r",
+              "s",
+              "t"
+            ],
+            "unicode": true
+          },
+          "quotes": [
+            "\\"",
+            "'"
+          ],
+          "unquotable": {
+            "allowEmpty": true,
+            "allowList": {}
+          }
+        },
+        "value": "12345678-1234-1234-1234-123456789012",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 44
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305419896
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305419896
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305402420
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305402420
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305402420
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305402420
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 1450741778
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 1450741778
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "message": "SNBT Functions are only supported in data pack format 71+ / minecraft 1.21.5",
+      "severity": 3
+    }
+  ]
+}
+`;

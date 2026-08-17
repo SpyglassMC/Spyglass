@@ -6,6 +6,29 @@ interface NbtBaseNode {
 	requireCanonical?: boolean
 }
 
+/**
+ * Shared by every numeric node. Holds the new-syntax signals that the
+ * java-edition SNBT-syntax checker inspects to flag pre-1.21.5 usages.
+ */
+interface NbtNumberBaseNode {
+	/**
+	 * `true` when the literal source contained `_` digit separators (1.21.5+
+	 * only). The parser always accepts the new-syntax form; the java-edition
+	 * checker reports `nbt.parser.number.underscore-not-supported` for
+	 * older game versions.
+	 */
+	hasUnderscoreSeparator?: boolean
+	/**
+	 * `true` when the literal was written as a hex/binary prefixed value
+	 * (`0x...` / `0b...`). The node type already reports this for the
+	 * suffix-less case (`nbt:hex` / `nbt:bin`); the flag lets the
+	 * SNBT-syntax checker recognise the suffixed radix form
+	 * (`0x42b`, `0b101l`, ...) which collapses into a regular typed node
+	 * (`nbt:byte`, `nbt:long`, ...) on the AST.
+	 */
+	fromRadixLiteral?: boolean
+}
+
 export type NbtNode = NbtPrimitiveNode | NbtCompoundNode | NbtCollectionNode | NbtSnbtFunctionNode
 export namespace NbtNode {
 	/* istanbul ignore next */
@@ -62,7 +85,7 @@ export namespace NbtIntegerAlikeNode {
 	}
 }
 
-export interface NbtByteNode extends core.IntegerBaseNode, NbtBaseNode {
+export interface NbtByteNode extends core.IntegerBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:byte'
 }
 export namespace NbtByteNode {
@@ -72,7 +95,7 @@ export namespace NbtByteNode {
 	}
 }
 
-export interface NbtShortNode extends core.IntegerBaseNode, NbtBaseNode {
+export interface NbtShortNode extends core.IntegerBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:short'
 }
 export namespace NbtShortNode {
@@ -82,8 +105,16 @@ export namespace NbtShortNode {
 	}
 }
 
-export interface NbtIntNode extends core.IntegerBaseNode, NbtBaseNode {
+export interface NbtIntNode extends core.IntegerBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:int'
+	/**
+	 * `true` when the literal was written with the trailing `i`/`I` explicit
+	 * type suffix (1.21.5+ only). The parser always accepts the new-syntax
+	 * form; the java-edition checker reports
+	 * `nbt.parser.number.explicit-int-suffix-not-supported` for older game
+	 * versions.
+	 */
+	hasExplicitIntSuffix?: boolean
 }
 export namespace NbtIntNode {
 	/* istanbul ignore next */
@@ -92,7 +123,7 @@ export namespace NbtIntNode {
 	}
 }
 
-export interface NbtLongNode extends core.LongBaseNode, NbtBaseNode {
+export interface NbtLongNode extends core.LongBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:long'
 }
 export namespace NbtLongNode {
@@ -109,7 +140,9 @@ interface NbtRadixPrefixRange {
 	prefixRange: core.Range
 }
 
-export interface NbtHexadecimalNode extends core.LongBaseNode, NbtBaseNode, NbtRadixPrefixRange {
+export interface NbtHexadecimalNode
+	extends core.LongBaseNode, NbtBaseNode, NbtNumberBaseNode, NbtRadixPrefixRange
+{
 	readonly type: 'nbt:hex'
 }
 export namespace NbtHexadecimalNode {
@@ -119,7 +152,9 @@ export namespace NbtHexadecimalNode {
 	}
 }
 
-export interface NbtBinaryNode extends core.LongBaseNode, NbtBaseNode, NbtRadixPrefixRange {
+export interface NbtBinaryNode
+	extends core.LongBaseNode, NbtBaseNode, NbtNumberBaseNode, NbtRadixPrefixRange
+{
 	readonly type: 'nbt:bin'
 }
 export namespace NbtBinaryNode {
@@ -204,7 +239,7 @@ export namespace NbtFloatAlikeNode {
 	}
 }
 
-export interface NbtFloatNode extends core.FloatBaseNode, NbtBaseNode {
+export interface NbtFloatNode extends core.FloatBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:float'
 }
 export namespace NbtFloatNode {
@@ -214,7 +249,7 @@ export namespace NbtFloatNode {
 	}
 }
 
-export interface NbtDoubleNode extends core.FloatBaseNode, NbtBaseNode {
+export interface NbtDoubleNode extends core.FloatBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:double'
 }
 export namespace NbtDoubleNode {
