@@ -14,7 +14,6 @@
 		"build": "wireit",
 		"build:dev": "wireit",
 		"build:tsc6": "tsc -b packages",
-		"watch": "npm run build:dev --watch",
 		"clean": "tsgo -b packages --clean",
 		"clean:full": "rm -rf packages/*/lib packages/*/out packages/*/dist packages/*/test-out packages/*/*.tsbuildinfo .wireit packages/*/.wireit",
 		"commit": "gitmoji -c",
@@ -22,10 +21,10 @@
 		"docs:start": "cd docs && (bundle exec jekyll serve --incremental || true) && cd ..",
 		"fmt": "dprint fmt",
 		"fmt:check": "dprint check",
-		"refresh-unicode-data": "node scripts/refresh_unicode_data.ts",
-		"refresh-unicode-data:force": "node scripts/refresh_unicode_data.ts --force",
 		"lint": "eslint --cache --max-warnings=0",
 		"lint:fix": "eslint --cache --max-warnings=0 --fix",
+		"refresh-unicode-data": "node scripts/refresh_unicode_data.ts",
+		"refresh-unicode-data:force": "node scripts/refresh_unicode_data.ts --force",
 		"release": "node scripts/release.ts",
 		"release:dry": "node scripts/release.ts --dry-run",
 		"sync-package-taxonomy": "node scripts/sync_package_taxonomy.ts",
@@ -33,6 +32,7 @@
 		"start-web-api-server": "npm start --workspace=packages/web-api-server",
 		"test": "node --import=./packages/core/test/snapshot-setup.ts --test --test-isolation none",
 		"test:update-snapshots": "npm test -- --test-update-snapshots",
+		"watch": "npm run build:dev --watch",
 		"test:watch": "npm test -- --watch"
 	},
 	"wireit": {
