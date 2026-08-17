@@ -39,6 +39,7 @@ exports[`string() > quoted_string with allowUnknown > parses case 0 1`] = `
         }
       }
     ],
+    "quote": "\\"",
     "children": [
       {
         "type": "unicode_escape",
@@ -51,8 +52,7 @@ exports[`string() > quoted_string with allowUnknown > parses case 0 1`] = `
         "resolved": "",
         "codepoint": 0
       }
-    ],
-    "quote": "\\""
+    ]
   },
   "errors": []
 }
@@ -79,6 +79,7 @@ exports[`string() > quoted_string with nested value parser > parses case 0 1`] =
         }
       }
     ],
+    "quote": "\\"",
     "children": [
       {
         "type": "string",
@@ -98,11 +99,9 @@ exports[`string() > quoted_string with nested value parser > parses case 0 1`] =
               "end": 1
             }
           }
-        ],
-        "children": []
+        ]
       }
-    ],
-    "quote": "\\""
+    ]
   },
   "errors": [
     {
@@ -188,6 +187,7 @@ exports[`string() > quoted_string with nested value parser > parses case 1 1`] =
         }
       }
     ],
+    "quote": "\\"",
     "children": [
       {
         "type": "unicode_escape",
@@ -283,6 +283,7 @@ exports[`string() > quoted_string with nested value parser > parses case 1 1`] =
             }
           }
         ],
+        "quote": "\\"",
         "children": [
           {
             "type": "unicode_escape",
@@ -295,11 +296,9 @@ exports[`string() > quoted_string with nested value parser > parses case 1 1`] =
             "resolved": "\\\\",
             "codepoint": 92
           }
-        ],
-        "quote": "\\""
+        ]
       }
-    ],
-    "quote": "\\""
+    ]
   },
   "errors": []
 }
@@ -325,8 +324,7 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 0 1
           "end": 0
         }
       }
-    ],
-    "children": []
+    ]
   },
   "errors": [
     {
@@ -362,7 +360,6 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 1 1
         }
       }
     ],
-    "children": [],
     "quote": "\\""
   },
   "errors": [
@@ -399,7 +396,6 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 2 1
         }
       }
     ],
-    "children": [],
     "quote": "\\""
   },
   "errors": [
@@ -436,7 +432,6 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 3 1
         }
       }
     ],
-    "children": [],
     "quote": "\\""
   },
   "errors": []
@@ -464,7 +459,6 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 4 1
         }
       }
     ],
-    "children": [],
     "quote": "'"
   },
   "errors": [
@@ -541,6 +535,7 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 5 1
         }
       }
     ],
+    "quote": "\\"",
     "children": [
       {
         "type": "unicode_escape",
@@ -586,8 +581,7 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 5 1
         "resolved": "\\\\",
         "codepoint": 92
       }
-    ],
-    "quote": "\\""
+    ]
   },
   "errors": []
 }
@@ -634,6 +628,7 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 6 1
         }
       }
     ],
+    "quote": "\\"",
     "children": [
       {
         "type": "unicode_escape",
@@ -646,8 +641,7 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 6 1
         "resolved": "",
         "codepoint": 0
       }
-    ],
-    "quote": "\\""
+    ]
   },
   "errors": [
     {
@@ -703,6 +697,7 @@ exports[`string() > quoted_string with unicode escape and allowUnknown > parses 
         }
       }
     ],
+    "quote": "\\"",
     "children": [
       {
         "type": "unicode_escape",
@@ -715,8 +710,7 @@ exports[`string() > quoted_string with unicode escape and allowUnknown > parses 
         "resolved": "",
         "codepoint": 0
       }
-    ],
-    "quote": "\\""
+    ]
   },
   "errors": []
 }
@@ -753,7 +747,6 @@ exports[`string() > quoted_string with unicode escape and allowUnknown > parses 
         }
       }
     ],
-    "children": [],
     "quote": "\\""
   },
   "errors": [
@@ -789,8 +782,7 @@ exports[`string() > unquoted_string > parses case 0 1`] = `
           "end": 0
         }
       }
-    ],
-    "children": []
+    ]
   },
   "errors": [
     {
@@ -825,8 +817,7 @@ exports[`string() > unquoted_string > parses case 1 1`] = `
           "end": 0
         }
       }
-    ],
-    "children": []
+    ]
   },
   "errors": []
 }
@@ -852,8 +843,7 @@ exports[`string() > unquoted_string > parses case 2 1`] = `
           "end": 0
         }
       }
-    ],
-    "children": []
+    ]
   },
   "errors": [
     {
@@ -888,8 +878,7 @@ exports[`string() > unquoted_string > parses case 3 1`] = `
           "end": 0
         }
       }
-    ],
-    "children": []
+    ]
   },
   "errors": [
     {

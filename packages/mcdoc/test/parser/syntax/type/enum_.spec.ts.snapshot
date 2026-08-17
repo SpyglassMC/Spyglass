@@ -428,7 +428,6 @@ exports[`mcdoc parser > enum_ > Parse 'enum (double) Foo {↓⮀⮀⮀⮀⮀/// 
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               }
             ],

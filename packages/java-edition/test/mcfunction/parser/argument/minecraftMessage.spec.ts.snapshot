@@ -66,8 +66,7 @@ exports[`mcfunction argument parser > minecraft:message > Parse 'Hello @p :)' 1`
               "end": 0
             }
           }
-        ],
-        "children": []
+        ]
       },
       {
         "type": "mcfunction:entity_selector",
@@ -110,8 +109,7 @@ exports[`mcfunction argument parser > minecraft:message > Parse 'Hello @p :)' 1`
               "end": 8
             }
           }
-        ],
-        "children": []
+        ]
       }
     ]
   },
@@ -146,8 +144,7 @@ exports[`mcfunction argument parser > minecraft:message > Parse 'Hello world!' 1
               "end": 0
             }
           }
-        ],
-        "children": []
+        ]
       }
     ]
   },
@@ -182,8 +179,7 @@ exports[`mcfunction argument parser > minecraft:message > Parse 'foo' 1`] = `
               "end": 0
             }
           }
-        ],
-        "children": []
+        ]
       }
     ]
   },

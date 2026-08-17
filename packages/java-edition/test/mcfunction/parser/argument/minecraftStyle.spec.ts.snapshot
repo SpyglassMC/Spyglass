@@ -40,7 +40,6 @@ exports[`mcfunction argument parser > minecraft:style > Parse '{ \"color\": \"re
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               },
               {
@@ -62,7 +61,6 @@ exports[`mcfunction argument parser > minecraft:style > Parse '{ \"color\": \"re
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               }
             ],
@@ -85,7 +83,6 @@ exports[`mcfunction argument parser > minecraft:style > Parse '{ \"color\": \"re
                   }
                 }
               ],
-              "children": [],
               "quote": "\\""
             },
             "sep": {
@@ -111,7 +108,6 @@ exports[`mcfunction argument parser > minecraft:style > Parse '{ \"color\": \"re
                   }
                 }
               ],
-              "children": [],
               "quote": "\\""
             },
             "end": {
@@ -145,7 +141,6 @@ exports[`mcfunction argument parser > minecraft:style > Parse '{ \"color\": \"re
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               },
               {
@@ -176,7 +171,6 @@ exports[`mcfunction argument parser > minecraft:style > Parse '{ \"color\": \"re
                   }
                 }
               ],
-              "children": [],
               "quote": "\\""
             },
             "sep": {
@@ -250,7 +244,6 @@ exports[`mcfunction argument parser > minecraft:style > Parse '{\"bold\": true}'
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               },
               {
@@ -281,7 +274,6 @@ exports[`mcfunction argument parser > minecraft:style > Parse '{\"bold\": true}'
                   }
                 }
               ],
-              "children": [],
               "quote": "\\""
             },
             "sep": {

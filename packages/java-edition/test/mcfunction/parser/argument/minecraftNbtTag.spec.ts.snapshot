@@ -118,7 +118,6 @@ exports[`mcfunction argument parser > minecraft:nbt_tag > Parse '\"foo\"' 1`] = 
             }
           }
         ],
-        "children": [],
         "quote": "\\""
       }
     ]
@@ -168,8 +167,7 @@ exports[`mcfunction argument parser > minecraft:nbt_tag > Parse '{foo:bar}' 1`] 
                       "end": 1
                     }
                   }
-                ],
-                "children": []
+                ]
               },
               {
                 "type": "nbt:string",
@@ -189,8 +187,7 @@ exports[`mcfunction argument parser > minecraft:nbt_tag > Parse '{foo:bar}' 1`] 
                       "end": 5
                     }
                   }
-                ],
-                "children": []
+                ]
               }
             ],
             "key": {
@@ -211,8 +208,7 @@ exports[`mcfunction argument parser > minecraft:nbt_tag > Parse '{foo:bar}' 1`] 
                     "end": 1
                   }
                 }
-              ],
-              "children": []
+              ]
             },
             "sep": {
               "start": 4,
@@ -236,8 +232,7 @@ exports[`mcfunction argument parser > minecraft:nbt_tag > Parse '{foo:bar}' 1`] 
                     "end": 5
                   }
                 }
-              ],
-              "children": []
+              ]
             }
           }
         ],

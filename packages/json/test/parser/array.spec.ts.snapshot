@@ -666,6 +666,7 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
                 }
               }
             ],
+            "quote": "\\"",
             "children": [
               {
                 "type": "unicode_escape",
@@ -678,8 +679,7 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
                 "resolved": "\\"",
                 "codepoint": 34
               }
-            ],
-            "quote": "\\""
+            ]
           }
         ],
         "value": {
@@ -711,6 +711,7 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
               }
             }
           ],
+          "quote": "\\"",
           "children": [
             {
               "type": "unicode_escape",
@@ -723,8 +724,7 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
               "resolved": "\\"",
               "codepoint": 34
             }
-          ],
-          "quote": "\\""
+          ]
         },
         "sep": {
           "start": 5,
@@ -767,6 +767,7 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
                 }
               }
             ],
+            "quote": "\\"",
             "children": [
               {
                 "type": "unicode_escape",
@@ -779,8 +780,7 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
                 "resolved": "",
                 "codepoint": 0
               }
-            ],
-            "quote": "\\""
+            ]
           }
         ],
         "value": {
@@ -812,6 +812,7 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
               }
             }
           ],
+          "quote": "\\"",
           "children": [
             {
               "type": "unicode_escape",
@@ -824,8 +825,7 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
               "resolved": "",
               "codepoint": 0
             }
-          ],
-          "quote": "\\""
+          ]
         }
       }
     ]
@@ -879,7 +879,6 @@ exports[`JSON array parser > array() > Parse '[\"\\u1z34\"]' 1`] = `
                 }
               }
             ],
-            "children": [],
             "quote": "\\""
           }
         ],
@@ -912,7 +911,6 @@ exports[`JSON array parser > array() > Parse '[\"\\u1z34\"]' 1`] = `
               }
             }
           ],
-          "children": [],
           "quote": "\\""
         }
       }
@@ -976,7 +974,6 @@ exports[`JSON array parser > array() > Parse '[\"\\z\"]' 1`] = `
                 }
               }
             ],
-            "children": [],
             "quote": "\\""
           }
         ],
@@ -1009,7 +1006,6 @@ exports[`JSON array parser > array() > Parse '[\"\\z\"]' 1`] = `
               }
             }
           ],
-          "children": [],
           "quote": "\\""
         }
       }
@@ -1063,7 +1059,6 @@ exports[`JSON array parser > array() > Parse '[\"hey\",\"there\"]' 1`] = `
                 }
               }
             ],
-            "children": [],
             "quote": "\\""
           }
         ],
@@ -1086,7 +1081,6 @@ exports[`JSON array parser > array() > Parse '[\"hey\",\"there\"]' 1`] = `
               }
             }
           ],
-          "children": [],
           "quote": "\\""
         },
         "sep": {
@@ -1120,7 +1114,6 @@ exports[`JSON array parser > array() > Parse '[\"hey\",\"there\"]' 1`] = `
                 }
               }
             ],
-            "children": [],
             "quote": "\\""
           }
         ],
@@ -1143,7 +1136,6 @@ exports[`JSON array parser > array() > Parse '[\"hey\",\"there\"]' 1`] = `
               }
             }
           ],
-          "children": [],
           "quote": "\\""
         }
       }

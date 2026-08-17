@@ -40,7 +40,6 @@ exports[`mcfunction argument parser > minecraft:component > Parse '[\"\"]' 1`] =
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               }
             ],
@@ -63,7 +62,6 @@ exports[`mcfunction argument parser > minecraft:component > Parse '[\"\"]' 1`] =
                   }
                 }
               ],
-              "children": [],
               "quote": "\\""
             }
           }
@@ -107,7 +105,6 @@ exports[`mcfunction argument parser > minecraft:component > Parse '\"\"' 1`] = `
             }
           }
         ],
-        "children": [],
         "quote": "\\""
       }
     ],
@@ -148,7 +145,6 @@ exports[`mcfunction argument parser > minecraft:component > Parse '\"hello world
             }
           }
         ],
-        "children": [],
         "quote": "\\""
       }
     ],
@@ -203,7 +199,6 @@ exports[`mcfunction argument parser > minecraft:component > Parse '{\"text\":\"h
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               },
               {
@@ -225,7 +220,6 @@ exports[`mcfunction argument parser > minecraft:component > Parse '{\"text\":\"h
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               }
             ],
@@ -248,7 +242,6 @@ exports[`mcfunction argument parser > minecraft:component > Parse '{\"text\":\"h
                   }
                 }
               ],
-              "children": [],
               "quote": "\\""
             },
             "sep": {
@@ -274,7 +267,6 @@ exports[`mcfunction argument parser > minecraft:component > Parse '{\"text\":\"h
                   }
                 }
               ],
-              "children": [],
               "quote": "\\""
             }
           }

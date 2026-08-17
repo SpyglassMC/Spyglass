@@ -453,7 +453,6 @@ exports[`nbt list() > Parse '[\"string\", 1b]' in 1.21.4 1`] = `
                 }
               }
             ],
-            "children": [],
             "quote": "\\""
           }
         ],
@@ -476,7 +475,6 @@ exports[`nbt list() > Parse '[\"string\", 1b]' in 1.21.4 1`] = `
               }
             }
           ],
-          "children": [],
           "quote": "\\""
         },
         "sep": {
@@ -560,7 +558,6 @@ exports[`nbt list() > Parse '[\"string\", 1b]' in 1.21.5 1`] = `
                 }
               }
             ],
-            "children": [],
             "quote": "\\""
           }
         ],
@@ -583,7 +580,6 @@ exports[`nbt list() > Parse '[\"string\", 1b]' in 1.21.5 1`] = `
               }
             }
           ],
-          "children": [],
           "quote": "\\""
         },
         "sep": {
@@ -658,7 +654,6 @@ exports[`nbt list() > Parse '[\"string\"]' 1`] = `
                 }
               }
             ],
-            "children": [],
             "quote": "\\""
           }
         ],
@@ -681,7 +676,6 @@ exports[`nbt list() > Parse '[\"string\"]' 1`] = `
               }
             }
           ],
-          "children": [],
           "quote": "\\""
         }
       }
@@ -891,7 +885,6 @@ exports[`nbt longArray() > Parse '[L; 0L, 2, \"string\"]' 1`] = `
                 }
               }
             ],
-            "children": [],
             "quote": "\\""
           }
         ],
@@ -914,7 +907,6 @@ exports[`nbt longArray() > Parse '[L; 0L, 2, \"string\"]' 1`] = `
               }
             }
           ],
-          "children": [],
           "quote": "\\""
         }
       }

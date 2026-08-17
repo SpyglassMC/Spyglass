@@ -1,6 +1,7 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type {
+	AstNode,
 	Quote,
 	StringNode,
 	StringOptions,
@@ -40,8 +41,8 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			options,
 			value: '',
 			valueMap: [],
-			children: [],
 		}
+		const pushChild = (node: AstNode) => (ans.children ??= []).push(node)
 		let start: number
 
 		if (options.quotes?.length && (src.peek() === '"' || src.peek() === "'")) {
@@ -65,7 +66,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							outer: Range.create(cStart, src),
 						})
 						ans.value += resolved
-						ans.children!.push(
+						pushChild(
 							makeEscapeChild(cStart, src.cursor, c2, c2 as UnicodeEscapeKind, resolved),
 						)
 					} else if (
@@ -100,7 +101,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								outer: Range.create(cStart, src),
 							})
 							ans.value += resolved
-							ans.children!.push(
+							pushChild(
 								makeEscapeChild(cStart, src.cursor, raw, c2),
 							)
 						} else {
@@ -152,7 +153,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						} else {
 							src.skip(name.length + 1)
 							const raw = src.sliceToCursor(cStart)
-							ans.children!.push(makeEscapeChild(cStart, src.cursor, raw, 'N'))
+							pushChild(makeEscapeChild(cStart, src.cursor, raw, 'N'))
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + raw.length),
 								outer: Range.create(cStart, src),
@@ -213,7 +214,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			const valueResult = parseStringValue(options.value.parser, ans.value, ans.valueMap, ctx)
 			/* istanbul ignore else */
 			if (valueResult !== Failure) {
-				ans.children!.push(valueResult)
+				pushChild(valueResult)
 			}
 		}
 

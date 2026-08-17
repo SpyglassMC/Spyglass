@@ -1408,7 +1408,6 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                                           }
                                         }
                                       ],
-                                      "children": [],
                                       "quote": "\\""
                                     }
                                   ],
@@ -1439,7 +1438,6 @@ exports[`mcdoc __fixture__ > dispatcher/random number generator 1`] = `
                                           }
                                         }
                                       ],
-                                      "children": [],
                                       "quote": "\\""
                                     }
                                   ],

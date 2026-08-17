@@ -25,8 +25,7 @@ exports[`mcfunction argument parser > minecraft:game_profile > Parse '0123' 1`] 
               "end": 0
             }
           }
-        ],
-        "children": []
+        ]
       }
     ],
     "playerName": {
@@ -47,8 +46,7 @@ exports[`mcfunction argument parser > minecraft:game_profile > Parse '0123' 1`] 
             "end": 0
           }
         }
-      ],
-      "children": []
+      ]
     }
   },
   "errors": []
@@ -158,8 +156,7 @@ exports[`mcfunction argument parser > minecraft:game_profile > Parse 'Player' 1`
               "end": 0
             }
           }
-        ],
-        "children": []
+        ]
       }
     ],
     "playerName": {
@@ -180,8 +177,7 @@ exports[`mcfunction argument parser > minecraft:game_profile > Parse 'Player' 1`
             "end": 0
           }
         }
-      ],
-      "children": []
+      ]
     }
   },
   "errors": []

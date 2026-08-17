@@ -18,8 +18,7 @@ exports[`nbt primitive() > Parse '' 1`] = `
           "end": 0
         }
       }
-    ],
-    "children": []
+    ]
   },
   "errors": []
 }
@@ -73,8 +72,7 @@ exports[`nbt primitive() > Parse '123456b' 1`] = `
           "end": 0
         }
       }
-    ],
-    "children": []
+    ]
   },
   "errors": [
     {
@@ -180,7 +178,6 @@ exports[`nbt primitive() > Parse '\"quoted\"' 1`] = `
         }
       }
     ],
-    "children": [],
     "quote": "\\""
   },
   "errors": []
@@ -235,8 +232,7 @@ exports[`nbt primitive() > Parse 'unquoted' 1`] = `
           "end": 0
         }
       }
-    ],
-    "children": []
+    ]
   },
   "errors": []
 }

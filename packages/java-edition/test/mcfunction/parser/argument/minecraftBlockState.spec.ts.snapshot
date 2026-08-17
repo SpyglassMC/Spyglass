@@ -48,8 +48,7 @@ exports[`mcfunction argument parser > minecraft:block_state > Parse 'foo{bar:baz
                     "end": 4
                   }
                 }
-              ],
-              "children": []
+              ]
             },
             {
               "type": "nbt:string",
@@ -69,8 +68,7 @@ exports[`mcfunction argument parser > minecraft:block_state > Parse 'foo{bar:baz
                     "end": 8
                   }
                 }
-              ],
-              "children": []
+              ]
             }
           ],
           "key": {
@@ -91,8 +89,7 @@ exports[`mcfunction argument parser > minecraft:block_state > Parse 'foo{bar:baz
                   "end": 4
                 }
               }
-            ],
-            "children": []
+            ]
           },
           "sep": {
             "start": 7,
@@ -116,8 +113,7 @@ exports[`mcfunction argument parser > minecraft:block_state > Parse 'foo{bar:baz
                   "end": 8
                 }
               }
-            ],
-            "children": []
+            ]
           }
         }
       ],
@@ -231,8 +227,7 @@ exports[`mcfunction argument parser > minecraft:block_state > Parse 'stone[foo=b
                     "end": 6
                   }
                 }
-              ],
-              "children": []
+              ]
             },
             {
               "type": "string",
@@ -252,8 +247,7 @@ exports[`mcfunction argument parser > minecraft:block_state > Parse 'stone[foo=b
                     "end": 10
                   }
                 }
-              ],
-              "children": []
+              ]
             }
           ],
           "key": {
@@ -274,8 +268,7 @@ exports[`mcfunction argument parser > minecraft:block_state > Parse 'stone[foo=b
                   "end": 6
                 }
               }
-            ],
-            "children": []
+            ]
           },
           "sep": {
             "start": 9,
@@ -299,8 +292,7 @@ exports[`mcfunction argument parser > minecraft:block_state > Parse 'stone[foo=b
                   "end": 10
                 }
               }
-            ],
-            "children": []
+            ]
           }
         }
       ],

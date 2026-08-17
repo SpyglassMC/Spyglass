@@ -24,8 +24,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '0123' with {\"am
             "end": 0
           }
         }
-      ],
-      "children": []
+      ]
     }
   },
   "errors": []
@@ -58,8 +57,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '0123' with {\"am
             "end": 0
           }
         }
-      ],
-      "children": []
+      ]
     }
   },
   "errors": []
@@ -5921,7 +5919,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                           }
                         }
                       ],
-                      "children": [],
                       "quote": "\\""
                     }
                   ],
@@ -5945,7 +5942,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                         }
                       }
                     ],
-                    "children": [],
                     "quote": "\\""
                   }
                 }
@@ -6018,7 +6014,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                         }
                       }
                     ],
-                    "children": [],
                     "quote": "\\""
                   }
                 ],
@@ -6042,7 +6037,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                       }
                     }
                   ],
-                  "children": [],
                   "quote": "\\""
                 }
               },
@@ -6077,6 +6071,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                       }
                     }
                   ],
+                  "quote": "\\"",
                   "children": [
                     {
                       "type": "literal",
@@ -6086,8 +6081,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                       },
                       "value": "name"
                     }
-                  ],
-                  "quote": "\\""
+                  ]
                 },
                 {
                   "type": "mcfunction:entity_selector/arguments/value/invertable",
@@ -6122,8 +6116,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                             "end": 37
                           }
                         }
-                      ],
-                      "children": []
+                      ]
                     }
                   ],
                   "inverted": true,
@@ -6145,8 +6138,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                           "end": 37
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 }
               ],
@@ -6169,6 +6161,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                     }
                   }
                 ],
+                "quote": "\\"",
                 "children": [
                   {
                     "type": "literal",
@@ -6178,8 +6171,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                     },
                     "value": "name"
                   }
-                ],
-                "quote": "\\""
+                ]
               },
               "sep": {
                 "start": 33,
@@ -6218,8 +6210,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                           "end": 37
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 ],
                 "inverted": true,
@@ -6241,8 +6232,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                         "end": 37
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               },
               "end": {
@@ -6276,6 +6266,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                       }
                     }
                   ],
+                  "quote": "'",
                   "children": [
                     {
                       "type": "literal",
@@ -6285,8 +6276,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                       },
                       "value": "name"
                     }
-                  ],
-                  "quote": "'"
+                  ]
                 },
                 {
                   "type": "mcfunction:entity_selector/arguments/value/invertable",
@@ -6321,8 +6311,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                             "end": 57
                           }
                         }
-                      ],
-                      "children": []
+                      ]
                     }
                   ],
                   "inverted": true,
@@ -6344,8 +6333,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                           "end": 57
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 }
               ],
@@ -6368,6 +6356,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -6377,8 +6366,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                     },
                     "value": "name"
                   }
-                ],
-                "quote": "'"
+                ]
               },
               "sep": {
                 "start": 53,
@@ -6417,8 +6405,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                           "end": 57
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 ],
                 "inverted": true,
@@ -6440,8 +6427,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                         "end": 57
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               },
               "end": {
@@ -6535,7 +6521,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                         }
                       }
                     ],
-                    "children": [],
                     "quote": "\\""
                   }
                 ],
@@ -6559,7 +6544,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                       }
                     }
                   ],
-                  "children": [],
                   "quote": "\\""
                 }
               }
@@ -6632,7 +6616,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                       }
                     }
                   ],
-                  "children": [],
                   "quote": "\\""
                 }
               ],
@@ -6656,7 +6639,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               }
             },
@@ -6691,6 +6673,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                     }
                   }
                 ],
+                "quote": "\\"",
                 "children": [
                   {
                     "type": "literal",
@@ -6700,8 +6683,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                     },
                     "value": "name"
                   }
-                ],
-                "quote": "\\""
+                ]
               },
               {
                 "type": "mcfunction:entity_selector/arguments/value/invertable",
@@ -6736,8 +6718,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                           "end": 37
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 ],
                 "inverted": true,
@@ -6759,8 +6740,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                         "end": 37
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               }
             ],
@@ -6783,6 +6763,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                   }
                 }
               ],
+              "quote": "\\"",
               "children": [
                 {
                   "type": "literal",
@@ -6792,8 +6773,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                   },
                   "value": "name"
                 }
-              ],
-              "quote": "\\""
+              ]
             },
             "sep": {
               "start": 33,
@@ -6832,8 +6812,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                         "end": 37
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               ],
               "inverted": true,
@@ -6855,8 +6834,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                       "end": 37
                     }
                   }
-                ],
-                "children": []
+                ]
               }
             },
             "end": {
@@ -6890,6 +6868,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -6899,8 +6878,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                     },
                     "value": "name"
                   }
-                ],
-                "quote": "'"
+                ]
               },
               {
                 "type": "mcfunction:entity_selector/arguments/value/invertable",
@@ -6935,8 +6913,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                           "end": 57
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 ],
                 "inverted": true,
@@ -6958,8 +6935,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                         "end": 57
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               }
             ],
@@ -6982,6 +6958,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                   }
                 }
               ],
+              "quote": "'",
               "children": [
                 {
                   "type": "literal",
@@ -6991,8 +6968,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                   },
                   "value": "name"
                 }
-              ],
-              "quote": "'"
+              ]
             },
             "sep": {
               "start": 53,
@@ -7031,8 +7007,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                         "end": 57
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               ],
               "inverted": true,
@@ -7054,8 +7029,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
                       "end": 57
                     }
                   }
-                ],
-                "children": []
+                ]
               }
             },
             "end": {
@@ -7173,7 +7147,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                           }
                         }
                       ],
-                      "children": [],
                       "quote": "\\""
                     }
                   ],
@@ -7197,7 +7170,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                         }
                       }
                     ],
-                    "children": [],
                     "quote": "\\""
                   }
                 }
@@ -7262,7 +7234,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                         }
                       }
                     ],
-                    "children": [],
                     "quote": "\\""
                   }
                 ],
@@ -7286,7 +7257,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                       }
                     }
                   ],
-                  "children": [],
                   "quote": "\\""
                 }
               },
@@ -7321,6 +7291,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                       }
                     }
                   ],
+                  "quote": "\\"",
                   "children": [
                     {
                       "type": "literal",
@@ -7330,8 +7301,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                       },
                       "value": "name"
                     }
-                  ],
-                  "quote": "\\""
+                  ]
                 },
                 {
                   "type": "mcfunction:entity_selector/arguments/value/invertable",
@@ -7358,8 +7328,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                             "end": 33
                           }
                         }
-                      ],
-                      "children": []
+                      ]
                     }
                   ],
                   "inverted": false,
@@ -7381,8 +7350,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                           "end": 33
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 }
               ],
@@ -7405,6 +7373,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                     }
                   }
                 ],
+                "quote": "\\"",
                 "children": [
                   {
                     "type": "literal",
@@ -7414,8 +7383,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                     },
                     "value": "name"
                   }
-                ],
-                "quote": "\\""
+                ]
               },
               "sep": {
                 "start": 31,
@@ -7446,8 +7414,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                           "end": 33
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -7469,8 +7436,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                         "end": 33
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               },
               "end": {
@@ -7504,6 +7470,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                       }
                     }
                   ],
+                  "quote": "'",
                   "children": [
                     {
                       "type": "literal",
@@ -7513,8 +7480,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                       },
                       "value": "name"
                     }
-                  ],
-                  "quote": "'"
+                  ]
                 },
                 {
                   "type": "mcfunction:entity_selector/arguments/value/invertable",
@@ -7541,8 +7507,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                             "end": 51
                           }
                         }
-                      ],
-                      "children": []
+                      ]
                     }
                   ],
                   "inverted": false,
@@ -7564,8 +7529,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                           "end": 51
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 }
               ],
@@ -7588,6 +7552,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -7597,8 +7562,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                     },
                     "value": "name"
                   }
-                ],
-                "quote": "'"
+                ]
               },
               "sep": {
                 "start": 49,
@@ -7629,8 +7593,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                           "end": 51
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -7652,8 +7615,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                         "end": 51
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               },
               "end": {
@@ -7739,7 +7701,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                         }
                       }
                     ],
-                    "children": [],
                     "quote": "\\""
                   }
                 ],
@@ -7763,7 +7724,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                       }
                     }
                   ],
-                  "children": [],
                   "quote": "\\""
                 }
               }
@@ -7828,7 +7788,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                       }
                     }
                   ],
-                  "children": [],
                   "quote": "\\""
                 }
               ],
@@ -7852,7 +7811,6 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               }
             },
@@ -7887,6 +7845,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                     }
                   }
                 ],
+                "quote": "\\"",
                 "children": [
                   {
                     "type": "literal",
@@ -7896,8 +7855,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                     },
                     "value": "name"
                   }
-                ],
-                "quote": "\\""
+                ]
               },
               {
                 "type": "mcfunction:entity_selector/arguments/value/invertable",
@@ -7924,8 +7882,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                           "end": 33
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -7947,8 +7904,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                         "end": 33
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               }
             ],
@@ -7971,6 +7927,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                   }
                 }
               ],
+              "quote": "\\"",
               "children": [
                 {
                   "type": "literal",
@@ -7980,8 +7937,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                   },
                   "value": "name"
                 }
-              ],
-              "quote": "\\""
+              ]
             },
             "sep": {
               "start": 31,
@@ -8012,8 +7968,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                         "end": 33
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               ],
               "inverted": false,
@@ -8035,8 +7990,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                       "end": 33
                     }
                   }
-                ],
-                "children": []
+                ]
               }
             },
             "end": {
@@ -8070,6 +8024,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -8079,8 +8034,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                     },
                     "value": "name"
                   }
-                ],
-                "quote": "'"
+                ]
               },
               {
                 "type": "mcfunction:entity_selector/arguments/value/invertable",
@@ -8107,8 +8061,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                           "end": 51
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -8130,8 +8083,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                         "end": 51
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               }
             ],
@@ -8154,6 +8106,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                   }
                 }
               ],
+              "quote": "'",
               "children": [
                 {
                   "type": "literal",
@@ -8163,8 +8116,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                   },
                   "value": "name"
                 }
-              ],
-              "quote": "'"
+              ]
             },
             "sep": {
               "start": 49,
@@ -8195,8 +8147,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                         "end": 51
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 }
               ],
               "inverted": false,
@@ -8218,8 +8169,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
                       "end": 51
                     }
                   }
-                ],
-                "children": []
+                ]
               }
             },
             "end": {
@@ -12117,8 +12067,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'Player' with {\"
             "end": 0
           }
         }
-      ],
-      "children": []
+      ]
     }
   },
   "errors": []
@@ -12151,8 +12100,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'Player' with {\"
             "end": 0
           }
         }
-      ],
-      "children": []
+      ]
     }
   },
   "errors": []
@@ -12242,8 +12190,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'this_is_a_super_
             "end": 0
           }
         }
-      ],
-      "children": []
+      ]
     }
   },
   "errors": [

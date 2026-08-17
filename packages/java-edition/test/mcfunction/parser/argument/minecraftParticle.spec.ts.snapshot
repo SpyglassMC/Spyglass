@@ -163,8 +163,7 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                           "end": 6
                         }
                       }
-                    ],
-                    "children": []
+                    ]
                   },
                   {
                     "type": "nbt:string",
@@ -185,7 +184,6 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                         }
                       }
                     ],
-                    "children": [],
                     "quote": "\\""
                   }
                 ],
@@ -207,8 +205,7 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                         "end": 6
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 },
                 "sep": {
                   "start": 17,
@@ -233,7 +230,6 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                       }
                     }
                   ],
-                  "children": [],
                   "quote": "\\""
                 }
               }
@@ -283,8 +279,7 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                         "end": 6
                       }
                     }
-                  ],
-                  "children": []
+                  ]
                 },
                 {
                   "type": "nbt:string",
@@ -305,7 +300,6 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                       }
                     }
                   ],
-                  "children": [],
                   "quote": "\\""
                 }
               ],
@@ -327,8 +321,7 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                       "end": 6
                     }
                   }
-                ],
-                "children": []
+                ]
               },
               "sep": {
                 "start": 17,
@@ -353,7 +346,6 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               }
             }
@@ -449,8 +441,7 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                       "end": 6
                     }
                   }
-                ],
-                "children": []
+                ]
               },
               {
                 "type": "nbt:string",
@@ -471,7 +462,6 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                     }
                   }
                 ],
-                "children": [],
                 "quote": "\\""
               }
             ],
@@ -493,8 +483,7 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                     "end": 6
                   }
                 }
-              ],
-              "children": []
+              ]
             },
             "sep": {
               "start": 17,
@@ -519,7 +508,6 @@ exports[`mcfunction argument parser > minecraft:particle > Parse 'block{block_st
                   }
                 }
               ],
-              "children": [],
               "quote": "\\""
             }
           }
