@@ -1508,8 +1508,8 @@ export function scoreHolder(
 	)
 }
 
-const slotSource: core.Parser<core.LiteralNode | nbt.TypedNbtNode | core.ResourceLocationNode> = core
-	.any([
+const slotSource: core.Parser<core.LiteralNode | nbt.TypedNbtNode | core.ResourceLocationNode> =
+	core.any([
 		(src, ctx) => {
 			return commandLiteral({ pool: getItemSlotsArgumentValues(ctx) })(src, ctx)
 		},
