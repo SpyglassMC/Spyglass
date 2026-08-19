@@ -1,4 +1,5 @@
 {
+	"analyze-project.cancelled": "Projekt analyse abgebrochen nachdem %0% von %1% der Dateien analysiert wurden.",
 	"array": "ein Array",
 	"boolean": "einen Wahrheitswert",
 	"bug-of-mc": "Aufgrund eines Fehlers in Minecraft (%0%), %1%. Bitte beheben, Mojang danke",
@@ -150,6 +151,7 @@
 	"mcfunction.parser.range.span-too-small": "Der Bereichswert %0% ist kleiner als der Mindestwert %1%",
 	"mcfunction.parser.score_holder.fake-name.too-long": "Fake-Namen dürfen nicht länger als %0% Zeichen sein",
 	"mcfunction.parser.sep": "ein Leerzeichen (%0%)",
+	"mcfunction.parser.time.below-min": "Die Zeit kann nicht weniger als %0% Tick(s) sein.",
 	"mcfunction.parser.trailing": "Nachgestellte Daten gefunden: %0%",
 	"mcfunction.parser.unknown-parser": "Der Parser %0% wird noch nicht unterstützt",
 	"mcfunction.parser.uuid.invalid": "Ungültiges UUID Format",
@@ -231,6 +233,7 @@
 	"scoreholder-not-following-convention": "Ungültiger Punktehalter %0%, der nicht der Konvention %1% entspricht",
 	"selector": "einen Selektor",
 	"server.new-version": "Der Datapack Language Server wurde aktualisiert: %0%",
+	"server.progress.analyze-project.title": "Projekt wird analysiert…",
 	"server.progress.fixing-workspace.begin": "Behebe alle automatisch behebbaren Probleme im Arbeitsbereich",
 	"server.progress.fixing-workspace.report": "behebe %0%",
 	"server.progress.preparing.title": "Vorbereiten der Spyglass-Sprachfunktionen",
