@@ -259,6 +259,8 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 }
 
 export const string: Completer<StringBaseNode> = (node, ctx) => {
+	let valueItems: CompletionItem[] | undefined
+
 	if (node.children?.length) {
 		// `children` may include `UnicodeEscapeNode` siblings used solely for
 		// hover diagnostics. Dispatch to the first child that's not an escape
@@ -266,7 +268,7 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 		// the parsed value, e.g. nested strings, still works.
 		const child = node.children.find((c) => c.type !== 'unicode_escape')
 		if (child) {
-			return dispatch(child, ctx).map(item => ({
+			valueItems = dispatch(child, ctx).map(item => ({
 				...item,
 				filterText: escapeString(item.filterText ?? item.label, node.quote),
 				insertText: escapeString(item.insertText ?? item.label, node.quote),
@@ -274,9 +276,10 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 		}
 	}
 
-	const unicodeNameItem = tryGetUnicodeNameCompletion(node, ctx)
-	if (unicodeNameItem) {
-		return unicodeNameItem
+	const unicodeNameItems = tryGetUnicodeNameCompletion(node, ctx)
+
+	if (valueItems?.length || unicodeNameItems?.length) {
+		return [...valueItems ?? [], ...unicodeNameItems ?? []]
 	}
 
 	if (node.options.quotes && node.value === '') {
