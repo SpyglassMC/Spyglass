@@ -62,7 +62,11 @@ export function integer(options: Options): Parser<IntegerNode> {
 		}
 
 		ans.range.end = src.cursor
-		const raw = src.sliceToCursor(ans.range.start).replaceAll('_', '')
+		const original = src.sliceToCursor(ans.range.start)
+		if (original.includes('_')) {
+			ans.hasUnderscoreSeparator = true
+		}
+		const raw = original.replaceAll('_', '')
 
 		const isOnlySign = raw === '-' || raw === '+'
 		if (!isOnlySign) {

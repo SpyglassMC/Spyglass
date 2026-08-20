@@ -77,7 +77,11 @@ export function float(options: Options): Parser<FloatNode> {
 		}
 
 		ans.range.end = src.cursor
-		const raw = src.sliceToCursor(ans.range.start).replaceAll('_', '')
+		const original = src.sliceToCursor(ans.range.start)
+		if (original.includes('_')) {
+			ans.hasUnderscoreSeparator = true
+		}
+		const raw = original.replaceAll('_', '')
 		ans.value = parseFloat(raw) || 0
 
 		if (!raw) {

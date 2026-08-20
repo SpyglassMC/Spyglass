@@ -3,14 +3,6 @@ import { localize } from '@spyglassmc/locales'
 import type { NbtByteNode, NbtNumberNode, NbtPrimitiveNode, NbtStringNode } from '../node/index.js'
 import { localizeTag } from '../util.js'
 
-/**
- * Narrowed views used to set the post-1.21.5 signal flags the
- * java-edition SNBT-syntax checker reads. Defined here because the parser
- * is the only place that knows which input form produced each flag.
- */
-interface nbtNodeWithUnderscore {
-	hasUnderscoreSeparator?: boolean
-}
 interface nbtNodeWithExplicitIntSuffix {
 	hasExplicitIntSuffix?: boolean
 }
@@ -176,7 +168,6 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 		src,
 		ctx,
 	)
-	const hasUnderscoreSeparator = unquotedResult.value.includes('_')
 	for (const e of NumeralPatterns) {
 		if (e.pattern.test(unquotedResult.value)) {
 			// Detect new-syntax-only number forms so the java-edition SNBT-syntax
@@ -422,12 +413,6 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 				...numeralResult,
 				type: e.type,
 			} as NbtNumberNode
-			if (hasUnderscoreSeparator) {
-				// `hasUnderscoreSeparator` lives on `NbtNumberBaseNode`; every
-				// numeric branch produces a node that extends it, so the cast
-				// through the union is safe here.
-				;(ans as nbtNodeWithUnderscore).hasUnderscoreSeparator = true
-			}
 			// Explicit `i`/`I` integer suffix is only valid in 1.21.5+. Flag it
 			// here so the java-edition SNBT-syntax checker can report on it
 			// for older versions. The `[iI]$` pattern only matches `nbt:int`,
