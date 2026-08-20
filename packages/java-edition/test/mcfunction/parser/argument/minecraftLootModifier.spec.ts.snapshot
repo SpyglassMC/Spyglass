@@ -1,7 +1,7 @@
 exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{function:\"furnace_smelt\"}]' 1`] = `
 {
   "node": {
-    "type": "mcfunction:nbt_resource",
+    "type": "nbt:typed",
     "range": {
       "start": 0,
       "end": 28
@@ -243,7 +243,10 @@ exports[`mcfunction argument parser > minecraft:loot_modifier > Parse '[{functio
         "valueType": "nbt:compound"
       }
     ],
-    "category": "item_modifier"
+    "targetType": {
+      "kind": "reference",
+      "path": "::java::data::item_modifier::ItemModifierArgument"
+    }
   },
   "errors": []
 }
