@@ -1,0 +1,225 @@
+exports[`LiteralNumericValue > makeIfValid() > { kind: byte, value: -128, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "byte",
+  "value": -128
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: byte, value: -129, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: byte, value: 1, allowInt: false, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: byte, value: 1, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "byte",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: byte, value: 1.1, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: byte, value: 127, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "byte",
+  "value": 127
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: byte, value: 128, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: byte, value: 1n, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "byte",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: double, value: 1, allowInt: true, allowFloat: false) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: double, value: 1, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "double",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: double, value: 1.1, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "double",
+  "value": 1.1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: double, value: 1n, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "double",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: float, value: 1, allowInt: true, allowFloat: false) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: float, value: 1, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "float",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: float, value: 1.1, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "float",
+  "value": 1.1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: float, value: 1n, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "float",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: int, value: -2147483648, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "int",
+  "value": -2147483648
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: int, value: -2147483649, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: int, value: 1, allowInt: false, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: int, value: 1, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "int",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: int, value: 1.1, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: int, value: 1n, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "int",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: int, value: 2147483647, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "int",
+  "value": 2147483647
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: int, value: 2147483648, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: long, value: -9223372036854775808n, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "long",
+  "value": -9223372036854775808
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: long, value: -9223372036854775809n, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: long, value: 1, allowInt: false, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: long, value: 1, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "long",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: long, value: 1.1, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: long, value: 1n, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "long",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: long, value: 9223372036854775807n, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "long",
+  "value": 9223372036854775807
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: long, value: 9223372036854775808n, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: short, value: -32768, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "short",
+  "value": -32768
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: short, value: -32769, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: short, value: 1, allowInt: false, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: short, value: 1, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "short",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: short, value: 1.1, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: short, value: 1n, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "short",
+  "value": 1
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: short, value: 32767, allowInt: true, allowFloat: true) 1`] = `
+{
+  "kind": "short",
+  "value": 32767
+}
+`;
+
+exports[`LiteralNumericValue > makeIfValid() > { kind: short, value: 32768, allowInt: true, allowFloat: true) 1`] = `
+undefined
+`;

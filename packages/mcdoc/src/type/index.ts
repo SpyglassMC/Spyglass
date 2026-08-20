@@ -322,21 +322,22 @@ export namespace LiteralNumericValue {
 		allowInt: boolean = true,
 		allowFloat: boolean = true,
 	): LiteralNumericValue | LiteralLongNumberValue | undefined {
-		value = Number(value)
+		const numberValue = Number(value)
+		allowInt = allowInt && Math.floor(numberValue) === numberValue
 		switch (kind) {
 			case 'byte':
 				if (allowInt && value >= -128 && value < 128) {
-					return { kind: 'byte', value }
+					return { kind: 'byte', value: numberValue }
 				}
 				break
 			case 'short':
 				if (allowInt && value >= -32768 && value < 32768) {
-					return { kind: 'short', value }
+					return { kind: 'short', value: numberValue }
 				}
 				break
 			case 'int':
 				if (allowInt && value >= -2147483648 && value < 2147483648) {
-					return { kind: 'int', value }
+					return { kind: 'int', value: numberValue }
 				}
 				break
 			case 'long':
@@ -346,12 +347,12 @@ export namespace LiteralNumericValue {
 				break
 			case 'float':
 				if (allowFloat) {
-					return { kind: 'float', value }
+					return { kind: 'float', value: numberValue }
 				}
 				break
 			case 'double':
 				if (allowFloat) {
-					return { kind: 'double', value }
+					return { kind: 'double', value: numberValue }
 				}
 				break
 		}
