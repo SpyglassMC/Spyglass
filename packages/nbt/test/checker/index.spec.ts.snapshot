@@ -1,0 +1,55 @@
+exports[`nbt listTypeHomogeneous() > Check '[1b, \"string\", 2b, 3]' 1`] = `
+{
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 13
+      },
+      "message": "Expected a byte tag but got a string tag",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 19,
+        "end": 20
+      },
+      "message": "Expected a byte tag but got an int tag",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt listTypeHomogeneous() > Check '[\"string\", 1b]' 1`] = `
+{
+  "errors": [
+    {
+      "range": {
+        "start": 11,
+        "end": 13
+      },
+      "message": "Expected a string tag but got a byte tag",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt listTypeHomogeneous() > Check '[\"string\", \"another\"]' 1`] = `
+{
+  "errors": []
+}
+`;
+
+exports[`nbt listTypeHomogeneous() > Check '[\"string\"]' 1`] = `
+{
+  "errors": []
+}
+`;
+
+exports[`nbt listTypeHomogeneous() > Check '[]' 1`] = `
+{
+  "errors": []
+}
+`;

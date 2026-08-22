@@ -110,7 +110,20 @@ exports[`mcdoc parser > string > Parse '\"fo\\no\"' 1`] = `
         }
       }
     ],
-    "quote": "\\""
+    "quote": "\\"",
+    "children": [
+      {
+        "type": "unicode_escape",
+        "kind": "n",
+        "range": {
+          "start": 3,
+          "end": 5
+        },
+        "raw": "n",
+        "resolved": "\\n",
+        "codepoint": 10
+      }
+    ]
   },
   "errors": []
 }

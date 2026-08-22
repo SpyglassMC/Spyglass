@@ -1,12 +1,12 @@
+import * as assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-
-import type { StringOptions } from '../../lib/index.js'
-import { BrigadierUnquotableCharacterSet, string } from '../../lib/index.js'
-import { showWhitespaceGlyph, testParser } from '../utils.ts'
+import { TextDocument } from 'vscode-languageserver-textdocument'
+import { BrigadierUnquotableCharacterSet, ParserContext, Source, string } from '../../lib/index.js'
+import { mockProjectData, testParser } from '../utils.ts'
 
 describe('string()', () => {
-	const suites: { title: string; options: StringOptions; contents: string[] }[] = [{
-		title: 'quoted_string(", ⧵n⧵t)', // We use ⧵ (U+29f5) instead of normal back slash here, due to the snapshots being stupid and not escaping it before exporting.
+	const suites: { title: string; options: Parameters<typeof string>[0]; contents: string[] }[] = [{
+		title: 'quoted_string with newline and tab escapes',
 		options: { quotes: ['"'], escapable: { characters: ['n', 't'] } },
 		contents: [
 			'',
@@ -18,19 +18,19 @@ describe('string()', () => {
 			'"foo\\u00a7\\abar"',
 		],
 	}, {
-		title: 'quoted_string(", ⧵u⧵?)',
+		title: 'quoted_string with unicode escape and allowUnknown',
 		options: { quotes: ['"'], escapable: { characters: [], allowUnknown: true, unicode: true } },
 		contents: ['"foo\\u00a7\\abar"', '"\\uggez"'],
 	}, {
-		title: 'quoted_string(", ⧵?)',
+		title: 'quoted_string with allowUnknown',
 		options: { quotes: ['"'], escapable: { characters: [], allowUnknown: true } },
 		contents: ['"foo\\u00a7\\abar"'],
 	}, {
-		title: 'unquoted_string()',
+		title: 'unquoted_string',
 		options: { unquotable: { allowList: BrigadierUnquotableCharacterSet } },
 		contents: ['', 'foo', '$$$', '"foo"'],
 	}, {
-		title: 'quoted_string(quoted_string())',
+		title: 'quoted_string with nested value parser',
 		options: {
 			quotes: ['"'],
 			escapable: { allowUnknown: true, unicode: true },
@@ -40,12 +40,53 @@ describe('string()', () => {
 	}]
 	for (const { title, options, contents } of suites) {
 		describe(title, () => {
-			for (const content of contents) {
-				it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
+			for (const [i, content] of contents.entries()) {
+				it(`parses case ${i}`, (t) => {
 					const parser = string(options)
-					t.assert.snapshot(testParser(parser, content))
+					t.assert.snapshot(testParser(parser, content, { project: mockProjectData() }))
 				})
 			}
 		})
 	}
+
+	describe('\\N{…} named Unicode escapes (parser syntax)', () => {
+		const baseOptions = (
+			extra: Parameters<typeof string>[0]['escapable'] extends infer E
+				? E extends object ? Partial<E> : never
+				: never = {},
+		): Parameters<typeof string>[0] => ({
+			quotes: ['"'],
+			escapable: { unicode: true, extendedUnicode: true, ...extra },
+		})
+
+		const parse = (text: string, options: Parameters<typeof string>[0] = baseOptions()) => {
+			const parser = string(options)
+			return testParser(parser, text, { project: mockProjectData() })
+		}
+
+		it('captures the raw escape as a child node', () => {
+			const options = baseOptions()
+			const parser = string(options)
+			const project = mockProjectData()
+			const doc = TextDocument.create('', '', 0, '"\\N{snowman}"')
+			const ctx = ParserContext.create(project, { doc })
+			const node = parser(new Source('"\\N{snowman}"'), ctx) as any
+			assert.equal(ctx.err.dump().length, 0)
+			assert.equal(node.children.length, 1)
+			assert.equal(node.children[0].type, 'unicode_escape')
+			assert.equal(node.children[0].kind, 'N')
+			assert.equal(node.children[0].raw, '\\N{snowman}')
+		})
+
+		it('reports a missing closing brace', () => {
+			const result = parse('"\\N{foo')
+			assert.ok(result.errors.length >= 1)
+		})
+
+		it('rejects \\N at EOF (no opening brace)', () => {
+			const result = parse('"\\N')
+			assert.ok(result.errors.length >= 1)
+			assert.match(result.errors[0]!.message, /Expected/i)
+		})
+	})
 })

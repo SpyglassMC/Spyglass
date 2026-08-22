@@ -666,7 +666,20 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
                 }
               }
             ],
-            "quote": "\\""
+            "quote": "\\"",
+            "children": [
+              {
+                "type": "unicode_escape",
+                "kind": "\\"",
+                "range": {
+                  "start": 2,
+                  "end": 4
+                },
+                "raw": "\\"",
+                "resolved": "\\"",
+                "codepoint": 34
+              }
+            ]
           }
         ],
         "value": {
@@ -698,7 +711,20 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
               }
             }
           ],
-          "quote": "\\""
+          "quote": "\\"",
+          "children": [
+            {
+              "type": "unicode_escape",
+              "kind": "\\"",
+              "range": {
+                "start": 2,
+                "end": 4
+              },
+              "raw": "\\"",
+              "resolved": "\\"",
+              "codepoint": 34
+            }
+          ]
         },
         "sep": {
           "start": 5,
@@ -741,7 +767,20 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
                 }
               }
             ],
-            "quote": "\\""
+            "quote": "\\"",
+            "children": [
+              {
+                "type": "unicode_escape",
+                "kind": "u",
+                "range": {
+                  "start": 7,
+                  "end": 13
+                },
+                "raw": "\\\\u1234",
+                "resolved": "",
+                "codepoint": 0
+              }
+            ]
           }
         ],
         "value": {
@@ -773,7 +812,20 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
               }
             }
           ],
-          "quote": "\\""
+          "quote": "\\"",
+          "children": [
+            {
+              "type": "unicode_escape",
+              "kind": "u",
+              "range": {
+                "start": 7,
+                "end": 13
+              },
+              "raw": "\\\\u1234",
+              "resolved": "",
+              "codepoint": 0
+            }
+          ]
         }
       }
     ]

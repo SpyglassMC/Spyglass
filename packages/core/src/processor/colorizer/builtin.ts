@@ -14,6 +14,7 @@ import type {
 	StringNode,
 	SymbolBaseNode,
 	SymbolNode,
+	UnicodeEscapeNode,
 } from '../../node/index.js'
 import type { MetaRegistry } from '../../service/index.js'
 import { Range } from '../../source/index.js'
@@ -78,18 +79,57 @@ export const resourceLocation: Colorizer<ResourceLocationBaseNode> = (node, _ctx
 
 export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 	if (node.children) {
-		const colorizer = ctx.meta.getColorizer(node.children[0].type)
-		const result = colorizer(node.children[0], ctx)
-		// TODO: Fill the gap between the last token and the ending quote with errors.
-		return ColorToken.fillGap(result, node.range, node.options.colorTokenType ?? 'string')
-	} else {
-		return [ColorToken.create(node, node.options.colorTokenType ?? 'string')]
+		// Collect tokens from every child that owns a colorizer.
+		// `UnicodeEscapeNode` siblings need their own multi-segment
+		// highlighting, and the value-parser result (when present)
+		// gets its own tokens too.
+		const tokens: ColorToken[] = []
+		for (const child of node.children) {
+			if (!ctx.meta.hasColorizer(child.type)) {
+				continue
+			}
+			tokens.push(...ctx.meta.getColorizer(child.type)(child, ctx))
+		}
+		if (tokens.length) {
+			// TODO: Fill the gap between the last token and the ending quote with errors.
+			return ColorToken.fillGap(tokens, node.range, node.options.colorTokenType ?? 'string')
+		}
 	}
+	return [ColorToken.create(node, node.options.colorTokenType ?? 'string')]
 }
 
 export const symbol: Colorizer<SymbolBaseNode> = (node) => {
 	// TODO: Set the modifiers according to `node.symbol`.
 	return [ColorToken.create(node, 'variable')]
+}
+
+export const unicodeEscape: Colorizer<UnicodeEscapeNode> = (node) => {
+	const { range, kind } = node
+	const tokens: ColorToken[] = []
+	// Backslash + specifier char (`\` and `x`/`u`/`U`/`N`)
+	tokens.push(
+		ColorToken.create(Range.create(range.start, range.start + 2), 'escape'),
+	)
+	if (kind === 'N') {
+		tokens.push(
+			ColorToken.create(Range.create(range.start + 2, range.start + 3), 'escape'),
+		)
+		tokens.push(
+			ColorToken.create(
+				Range.create(range.start + 3, range.end - 1),
+				'resourceLocation',
+			),
+		)
+		tokens.push(
+			ColorToken.create(Range.create(range.end - 1, range.end), 'escape'),
+		)
+	} else {
+		// `\xHH` / `\uHHHH` / `\UHHHHHHHH`: hex digits
+		tokens.push(
+			ColorToken.create(Range.create(range.start + 2, range.end), 'number'),
+		)
+	}
+	return tokens
 }
 
 export function registerColorizers(meta: MetaRegistry) {
@@ -103,4 +143,5 @@ export function registerColorizers(meta: MetaRegistry) {
 	meta.registerColorizer<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerColorizer<StringNode>('string', string)
 	meta.registerColorizer<SymbolNode>('symbol', symbol)
+	meta.registerColorizer<UnicodeEscapeNode>('unicode_escape', unicodeEscape)
 }

@@ -17,10 +17,32 @@ import {
 	NbtPrimitiveNode,
 	NbtStringNode,
 } from '../node/index.js'
+import { localizeTag } from '../util.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 export const typed: core.SyncChecker<TypedNbtNode> = (node, ctx) => {
 	typeDefinition(node.targetType)(node.children[0], ctx)
+}
+
+/**
+ * Reports list elements whose type differs from the type of the first element.
+ *
+ * Not registered by {@link register}: whether lists have to be homogeneous
+ * depends on the game version, which only the edition package knows. Edition
+ * packages register this checker for `nbt:list` when it applies.
+ */
+export const listTypeHomogeneous: core.SyncChecker<NbtListNode> = (node, ctx) => {
+	if (!node.valueType) {
+		return
+	}
+	for (const { value } of node.children) {
+		if (value && value.type !== node.valueType) {
+			ctx.err.report(
+				localize('expected-got', localizeTag(node.valueType), localizeTag(value.type)),
+				value,
+			)
+		}
+	}
 }
 
 export function register(meta: core.MetaRegistry) {
@@ -83,6 +105,11 @@ export function typeDefinition(
 	options: Options = {},
 ): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
+		// Run the registry-driven walk first: it descends to the shallowest nodes
+		// with their own checker (`nbt:string`) while their escape children are
+		// still intact. The mcdoc pass below replaces the children of any string
+		// that has a string parser attached to it.
+		core.checker.fallbackSync(node, ctx)
 		mcdoc.runtime.checker.typeDefinition<NbtNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			typeDef,
@@ -197,7 +224,6 @@ export function typeDefinition(
 					attacher(node)
 					if (node.children) {
 						core.AstNode.setParents(node)
-						// Because the runtime checker happens after binding, we need to manually call this
 						core.binder.fallbackSync(node, ctx)
 						core.checker.fallbackSync(node, ctx)
 					}

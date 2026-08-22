@@ -2,7 +2,10 @@ import * as core from '@spyglassmc/core'
 import type { JsonStringNode } from '../node/index.js'
 
 export const JsonStringOptions: core.StringOptions = {
-	escapable: { characters: ['b', 'f', 'n', 'r', 't'], unicode: true },
+	// Always accept the full escape syntax; the edition package's string
+	// checker reports version-gated errors when the loaded game version
+	// predates the support cutoff.
+	escapable: { characters: ['b', 'f', 'n', 'r', 't'], unicode: true, extendedUnicode: true },
 	quotes: ['"'],
 }
 
