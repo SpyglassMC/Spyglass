@@ -3,6 +3,7 @@ import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { jeFileUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
+import * as jeChecker from './checker/index.js'
 import type { McmetaSummary, PackInfo } from './dependency/index.js'
 import {
 	fetchMcmetaVersions,
@@ -152,6 +153,12 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)
+
+	// Wire the version-aware SNBT-syntax check. Every nbt checker entry
+	// (index/typeDefinition/typed) reads this hook from the meta registry,
+	// so both mcfunction and JSON-via-mcdoc-string paths pick it up
+	// without each call site having to thread an `extraCheck` option.
+	meta.snbtSyntaxCheck = (node, ctx) => jeChecker.checkSnbtSyntax(node as nbt.NbtNode, ctx)
 
 	return { loadedVersion: release, errorSource: release }
 }

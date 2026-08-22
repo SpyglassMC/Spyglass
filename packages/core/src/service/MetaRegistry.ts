@@ -22,12 +22,19 @@ import {
 } from '../processor/index.js'
 import type { Linter } from '../processor/linter/Linter.js'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider.js'
-import type { UriPredicateContext } from '../service/index.js'
+import type { CheckerContext, UriPredicateContext } from '../service/index.js'
 import type { DependencyKey, DependencyProvider } from './Dependency.js'
 import type { FileExtension } from './fileUtil.js'
 import type { SymbolRegistrar } from './SymbolRegistrar.js'
 import type { UriBuilder } from './UriBuilder.js'
 import type { UriBinder, UriSorter, UriSorterRegistration } from './UriProcessor.js'
+
+/**
+ * Signature of the optional {@link MetaRegistry.snbtSyntaxCheck} hook. Keeps
+ * the type loose - it accepts a generic AstNode-shaped root - so {@link @spyglassmc/core}
+ * does not need to depend on {@link @spyglassmc/nbt}.
+ */
+export type SnbtSyntaxCheck = (node: unknown, ctx: CheckerContext) => void
 
 export interface LanguageOptions {
 	/**
@@ -67,6 +74,19 @@ interface SymbolRegistrarRegistration {
  * The meta registry of Spyglass. You can register new parsers, processors, and languages here.
  */
 export class MetaRegistry {
+	/**
+	 * Optional hook invoked by the {@link @spyglassmc/nbt} package's checker
+	 * functions on every NbtNode they visit, immediately before mcdoc runtime
+	 * descends. Consumers (e.g. java-edition) can set this to gate
+	 * version-aware SNBT syntax features (hex/binary literals,
+	 * `bool(...)`/`uuid(...)` calls, underscore digit separators, ...) without
+	 * each call site having to thread the check through per-call options.
+	 *
+	 * The hook is expected to walk its argument recursively if it cares about
+	 * nested nodes. The signature is intentionally loose to avoid dragging
+	 * {@link @spyglassmc/nbt}'s types into {@link @spyglassmc/core}.
+	 */
+	snbtSyntaxCheck?: SnbtSyntaxCheck
 	/**
 	 * A map from language IDs to language options.
 	 */

@@ -1,0 +1,3465 @@
+exports[`nbt entry() with SNBT functions > argument validation errors > reports for 'bool([])' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:list",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "children": []
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`bool()\` requires a numeric argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > argument validation errors > reports for 'bool(\"hello\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 13
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 12,
+      "end": 13
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 12
+        },
+        "value": "hello",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 12
+      },
+      "message": "\`bool()\` requires a numeric argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > argument validation errors > reports for 'bool({})' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:compound",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "children": [],
+        "innerRange": {
+          "start": 6,
+          "end": 6
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`bool()\` requires a numeric argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > argument validation errors > reports for 'uuid(42)' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 8
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`uuid()\` requires a string argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > argument validation errors > reports for 'uuid([])' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 8
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`uuid()\` requires a string argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > argument validation errors > reports for 'uuid(\"12345678-1234-1234-1234-12345g\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 38
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 37,
+      "end": 38
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 37
+        },
+        "value": "12345678-1234-1234-1234-12345g",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 38
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 38
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 38
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 38
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 38
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 38
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 38
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 38
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 38
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 38
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 38
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 38
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 38
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 37
+      },
+      "message": "Expected a valid UUID, received '12345678-1234-1234-1234-12345g'",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > argument validation errors > reports for 'uuid(\"\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "value": "",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 8
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "Expected a valid UUID, received ''",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > argument validation errors > reports for 'uuid(\"not-a-uuid\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 18
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 17,
+      "end": 18
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 17
+        },
+        "value": "not-a-uuid",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 18
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 17
+      },
+      "message": "Expected a valid UUID, received 'not-a-uuid'",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > argument validation errors > reports for 'uuid({})' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 8
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`uuid()\` requires a string argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 5,
+      "end": 5
+    },
+    "children": []
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected a tag",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected )",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(-1)' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": true,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "value": -1
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(0)' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 6,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 6
+        },
+        "value": 0
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(0.5)' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 9
+    },
+    "value": true,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 8,
+      "end": 9
+    },
+    "children": [
+      {
+        "type": "nbt:double",
+        "range": {
+          "start": 5,
+          "end": 8
+        },
+        "value": 0.5
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(0xff)' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 10
+    },
+    "value": true,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 9,
+      "end": 10
+    },
+    "children": [
+      {
+        "type": "nbt:hex",
+        "range": {
+          "start": 5,
+          "end": 9
+        },
+        "prefixRange": {
+          "start": 5,
+          "end": 7
+        },
+        "value": 255,
+        "hover": "\`255\`",
+        "fromRadixLiteral": true
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(1)' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "value": true,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 6,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 6
+        },
+        "value": 1
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(1b)' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": true,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:byte",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "value": 1
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(23' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "value": true,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "value": 23
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 7,
+        "end": 7
+      },
+      "message": "Expected )",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(42)' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": true,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "value": 42
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool([])' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:list",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "children": []
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`bool()\` requires a numeric argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool(\"hello\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 13
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 12,
+      "end": 13
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 12
+        },
+        "value": "hello",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 12
+      },
+      "message": "\`bool()\` requires a numeric argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'bool({})' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:compound",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "children": [],
+        "innerRange": {
+          "start": 6,
+          "end": 6
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`bool()\` requires a numeric argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 5,
+      "end": 5
+    },
+    "children": [],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 5
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 5
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 5
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 5
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 5
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 5
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 5
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 5
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 5
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 5
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 5
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 5
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected a string tag",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected )",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(42)' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 8
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`uuid()\` requires a string argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(\"00000000-0000-0000-0000-000000000000\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 44
+    },
+    "value": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 43,
+      "end": 44
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 43
+        },
+        "value": "00000000-0000-0000-0000-000000000000",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 44
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(\"12345678-1234-1234-1234-123456789012\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 44
+    },
+    "value": [
+      305419896,
+      305402420,
+      305402420,
+      1450741778
+    ],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 43,
+      "end": 44
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 43
+        },
+        "value": "12345678-1234-1234-1234-123456789012",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 44
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305419896
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305419896
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305402420
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305402420
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305402420
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305402420
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 1450741778
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 1450741778
+          }
+        }
+      ]
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(\"12345678-1234-1234-1234-1234567890\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 42
+    },
+    "value": [
+      305419896,
+      305402420,
+      305397778,
+      878082192
+    ],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 41,
+      "end": 42
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 41
+        },
+        "value": "12345678-1234-1234-1234-1234567890",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 42
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 42
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 42
+              },
+              "value": 305419896
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 42
+            },
+            "value": 305419896
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 42
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 42
+              },
+              "value": 305402420
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 42
+            },
+            "value": 305402420
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 42
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 42
+              },
+              "value": 305397778
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 42
+            },
+            "value": 305397778
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 42
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 42
+              },
+              "value": 878082192
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 42
+            },
+            "value": 878082192
+          }
+        }
+      ]
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 44
+    },
+    "value": [
+      -1,
+      -1,
+      -1,
+      -1
+    ],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 43,
+      "end": 44
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 43
+        },
+        "value": "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 44
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": -1
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": -1
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": -1
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": -1
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": -1
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": -1
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": -1
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": -1
+          }
+        }
+      ]
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pack format 71+ (1.21.5+) > Parse 'uuid(\"not-a-uuid\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 18
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 17,
+      "end": 18
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 17
+        },
+        "value": "not-a-uuid",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 18
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 17
+      },
+      "message": "Expected a valid UUID, received 'not-a-uuid'",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'bool(' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 5,
+      "end": 5
+    },
+    "children": []
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected a tag",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected )",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'bool(0)' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 6,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 6
+        },
+        "value": 0
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'bool(23)' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": true,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:int",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "value": 23
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'bool([])' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:list",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "children": []
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`bool()\` requires a numeric argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'bool(\"hello\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 13
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 12,
+      "end": 13
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 12
+        },
+        "value": "hello",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 12
+      },
+      "message": "\`bool()\` requires a numeric argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'bool({})' 1`] = `
+{
+  "node": {
+    "type": "nbt:bool_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": false,
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "nbt:compound",
+        "range": {
+          "start": 5,
+          "end": 7
+        },
+        "children": [],
+        "innerRange": {
+          "start": 6,
+          "end": 6
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`bool()\` requires a numeric argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'bool0' 1`] = `
+{
+  "node": {
+    "type": "nbt:string",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": "bool0",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'uuid(42)' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 8
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`uuid()\` requires a string argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'uuid([])' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 7,
+      "end": 8
+    },
+    "children": [],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 8
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 8
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 8
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 8
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 7
+      },
+      "message": "\`uuid()\` requires a string argument",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'uuid(\"12345678-1234-1234-1234-123456789012\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 44
+    },
+    "value": [
+      305419896,
+      305402420,
+      305402420,
+      1450741778
+    ],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 43,
+      "end": 44
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 43
+        },
+        "value": "12345678-1234-1234-1234-123456789012",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 44
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305419896
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305419896
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305402420
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305402420
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 305402420
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 305402420
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 44
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 44
+              },
+              "value": 1450741778
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 44
+            },
+            "value": 1450741778
+          }
+        }
+      ]
+    }
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > with pre-1.21.5 (no SNBT functions) > Parse 'uuid(\"not-a-uuid\")' 1`] = `
+{
+  "node": {
+    "type": "nbt:uuid_function",
+    "range": {
+      "start": 0,
+      "end": 18
+    },
+    "value": [],
+    "prefixRange": {
+      "start": 0,
+      "end": 5
+    },
+    "suffixRange": {
+      "start": 17,
+      "end": 18
+    },
+    "children": [
+      {
+        "type": "nbt:string",
+        "range": {
+          "start": 5,
+          "end": 17
+        },
+        "value": "not-a-uuid",
+        "valueMap": [
+          {
+            "inner": {
+              "start": 0,
+              "end": 0
+            },
+            "outer": {
+              "start": 6,
+              "end": 6
+            }
+          }
+        ],
+        "quote": "\\""
+      }
+    ],
+    "intArray": {
+      "type": "nbt:int_array",
+      "range": {
+        "start": 0,
+        "end": 18
+      },
+      "children": [
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        },
+        {
+          "type": "item",
+          "range": {
+            "start": 0,
+            "end": 18
+          },
+          "children": [
+            {
+              "type": "nbt:int",
+              "range": {
+                "start": 0,
+                "end": 18
+              },
+              "value": 0
+            }
+          ],
+          "value": {
+            "type": "nbt:int",
+            "range": {
+              "start": 0,
+              "end": 18
+            },
+            "value": 0
+          }
+        }
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 17
+      },
+      "message": "Expected a valid UUID, received 'not-a-uuid'",
+      "severity": 3
+    }
+  ]
+}
+`;

@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import type {
+	NbtBoolFunctionNode,
 	NbtCollectionNode,
 	NbtCompoundNode,
 	NbtNode,
@@ -8,6 +9,7 @@ import type {
 	NbtPathNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
+	NbtUuidFunctionNode,
 } from '../node/index.js'
 
 const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
@@ -73,6 +75,8 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 	},
 })
 
+const SNBT_FUNCTIONS = ['bool', 'uuid'] as const
+
 const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	const insideRange = core.Range.contains(node, ctx.offset, true)
 	if (node.type === 'nbt:string' && node.children?.length && insideRange) {
@@ -81,13 +85,49 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 			return childItems
 		}
 	}
+	if (
+		node.type === 'nbt:string' && !node.quote
+		&& SNBT_FUNCTIONS.some((name) => name.startsWith(node.value))
+	) {
+		const items = SNBT_FUNCTIONS.map((name) =>
+			core.CompletionItem.create(
+				name,
+				core.Range.create(node.range.start, ctx.offset),
+				{
+					kind: core.CompletionKind.Function,
+					filterText: name,
+					insertText: name,
+				},
+			)
+		)
+		return items
+	}
 	if (!node.typeDef) {
 		return []
 	}
-	return getValues(node.typeDef, insideRange ? node : ctx.offset, {
+	const values = getValues(node.typeDef, insideRange ? node : ctx.offset, {
 		...ctx,
 		requireCanonical: node.requireCanonical,
 	})
+	return values
+}
+
+const snbtFunction: core.Completer<NbtBoolFunctionNode | NbtUuidFunctionNode> = (node, ctx) => {
+	const keyword = node.type === 'nbt:bool_function'
+		? 'bool'
+		: node.type === 'nbt:uuid_function'
+		? 'uuid'
+		: ''
+	if (!keyword) {
+		return []
+	}
+	return [
+		core.CompletionItem.create(keyword, node.range, {
+			kind: core.CompletionKind.Function,
+			filterText: keyword,
+			insertText: keyword,
+		}),
+	]
 }
 
 const path: core.Completer<NbtPathNode> = (node, ctx) => {
@@ -195,6 +235,10 @@ export function register(meta: core.MetaRegistry): void {
 	meta.registerCompleter('nbt:string', primitive)
 	meta.registerCompleter('nbt:short', primitive)
 	meta.registerCompleter('nbt:float', primitive)
+	meta.registerCompleter('nbt:hex', primitive)
+	meta.registerCompleter('nbt:bin', primitive)
+	meta.registerCompleter<NbtBoolFunctionNode>('nbt:bool_function', snbtFunction)
+	meta.registerCompleter<NbtUuidFunctionNode>('nbt:uuid_function', snbtFunction)
 
 	meta.registerCompleter('nbt:path', path)
 	meta.registerCompleter('nbt:path/key', pathKey)
