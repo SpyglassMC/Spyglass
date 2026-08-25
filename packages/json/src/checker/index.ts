@@ -42,7 +42,7 @@ export function index(
 							const literalValue = mcdoc.LiteralNumericValue.makeIfValid(
 								target.kind,
 								node.value.value,
-								true,
+								node.value.type === 'long',
 								true,
 							)
 							if (literalValue !== undefined) {
