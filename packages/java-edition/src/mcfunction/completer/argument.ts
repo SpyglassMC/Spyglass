@@ -111,6 +111,10 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 				json.JsonObjectNode.mock(range),
 				json.JsonStringNode.mock(range),
 			]
+		case 'minecraft:context_float_provider':
+			return ResourceLocationNode.mock(range, { category: 'context_float_provider' })
+		case 'minecraft:context_int_provider':
+			return ResourceLocationNode.mock(range, { category: 'context_int_provider' })
 		case 'minecraft:dialog':
 			return ResourceLocationNode.mock(range, { category: 'dialog' })
 		case 'minecraft:dimension':
@@ -152,8 +156,6 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return ResourceLocationNode.mock(range, { category: 'loot_table' })
 		case 'minecraft:mob_effect':
 			return ResourceLocationNode.mock(range, { category: 'mob_effect' })
-		case 'minecraft:number_provider':
-			return ResourceLocationNode.mock(range, { category: 'number_provider' })
 		case 'minecraft:objective':
 			return SymbolNode.mock(range, { category: 'objective' })
 		case 'minecraft:objective_criteria':

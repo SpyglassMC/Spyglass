@@ -163,6 +163,10 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
 			return wrap(typeRefParser(mcdoc.typeRef('text_component')))
+		case 'minecraft:context_float_provider':
+			return wrap(resourceOrInline('context_float_provider'))
+		case 'minecraft:context_int_provider':
+			return wrap(resourceOrInline('context_int_provider'))
 		case 'minecraft:dialog':
 			return wrap(resourceOrInline('dialog'))
 		case 'minecraft:dimension':
@@ -233,8 +237,6 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(nbtPathParser(nbt.parser.path, treeNode.properties))
 		case 'minecraft:nbt_tag':
 			return wrap(nbtDispatchedParser(nbt.parser.entry, treeNode.properties))
-		case 'minecraft:number_provider':
-			return wrap(resourceOrInline('number_provider'))
 		case 'minecraft:objective':
 			return wrap(
 				objective(
