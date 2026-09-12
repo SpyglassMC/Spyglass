@@ -381,7 +381,15 @@ export function path(
 						({ originalNode: link }) => link.node.range,
 					)(error)
 				},
-				attachTypeInfo: (link, definition, desc = '', originalDefinition) => {
+				attachTypeInfo: function attachTypeInfo(
+					link,
+					definition,
+					desc = '',
+					originalDefinition,
+				) {
+					if (NbtPathFilterNode.is(link.node) && link.next) {
+						attachTypeInfo(link.next, definition, desc, originalDefinition)
+					}
 					if (link.node.type === 'leaf') {
 						link.path.endOriginalTypeDef = originalDefinition
 					}
