@@ -14,6 +14,7 @@ import {
 	BulkNamesInverse,
 	BulkRanges,
 	codepointInAnyRange,
+	getRangeData,
 	isUnicodeNameLookupMap,
 	isUnicodeNamesByCodepointMap,
 	isUnicodeRangeMap,
@@ -21,12 +22,9 @@ import {
 	toTitleCase,
 	UnicodeBulkCategory,
 	UnicodeDataUri,
-	UnicodeNameCategory,
 } from '../dependency/index.js'
 
-const NamedEscapeWithHexPattern = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s([a-f0-9]+)\s*$/i
-const NamedEscapePattern = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s*$/i
-const TrailingNamePattern = /^\s*([a-z0-9-]+(?: [a-z0-9-]+)*)\s+(.+?)\s*$/i
+const EscapeShapePattern = /^[a-z0-9-]+(\s+[a-z0-9-]+)*$/i
 
 function lookupName(name: string, ctx: CheckerContext): number | undefined {
 	const map = ctx.symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNames)
@@ -99,42 +97,23 @@ function isInDeclaredBlock(codepoint: number, ctx: CheckerContext): boolean {
 	return codepointInAnyRange(codepoint, blocks)
 }
 
-interface UnicodeRangeSymbolData {
-	range: [number, number]
-	source: 'unicode-range'
-	version: string
-	lowercase: string
-}
-
 function resolveHexSuffixedEscape(
 	name: string,
 	hex: string,
 	escapeRange: Range,
 	ctx: CheckerContext,
 ): number | undefined {
-	const query = ctx.symbols.query(
-		UnicodeDataUri,
-		UnicodeNameCategory,
-		`${toTitleCase(name)} `,
-	).symbol ?? ctx.symbols.query(
-		UnicodeDataUri,
-		UnicodeNameCategory,
-		toTitleCase(name),
-	).symbol
-	if (!query) {
+	const rangeData = getRangeData(name, ctx)
+	if (!rangeData) {
 		return undefined
 	}
-	const data = query.data as UnicodeRangeSymbolData | undefined
-	if (!data?.range) {
-		return undefined
-	}
-	const [start, end] = data.range
+	const [start, end] = rangeData.range
 	const codepoint = parseInt(hex, 16)
 	if (Number.isNaN(codepoint) || codepoint < start || codepoint > end) {
 		ctx.err.report(
 			localize(
 				'parser.string.out-of-range',
-				toTitleCase(data.lowercase),
+				toTitleCase(rangeData.lowercase),
 				start.toString(16).toUpperCase(),
 				end.toString(16).toUpperCase(),
 			),
@@ -154,99 +133,106 @@ function resolveNamedEscape(
 		escapeRange.start + 2,
 		escapeRange.end,
 	)
-	const errorsBefore = ctx.err.errors.length
-	const hexMatch = NamedEscapeWithHexPattern.exec(escape)
-	if (hexMatch) {
-		const result = resolveHexSuffixedEscape(hexMatch[1]!, hexMatch[2]!, escapeRange, ctx)
-		if (result !== undefined) {
-			return result
-		}
+	const inner = escape.trim()
+
+	// 1. Malformed shape (illegal characters, pure whitespace, empty):
+	// bail before we even consult the symbol table.
+	if (!EscapeShapePattern.test(inner)) {
+		ctx.err.report(
+			localize('parser.string.illegal-unicode-escape-name'),
+			escapeRange,
+		)
+		return undefined
 	}
-	const rangeProbe = NamedEscapePattern.exec(escape)
-	if (rangeProbe) {
-		const rangeSymbol = ctx.symbols.query(
-			UnicodeDataUri,
-			UnicodeNameCategory,
-			`${toTitleCase(rangeProbe[1]!)} `,
-		).symbol
-		if (rangeSymbol) {
-			const data = rangeSymbol.data as UnicodeRangeSymbolData | undefined
-			if (!data?.range) {
-				return undefined
-			}
-			const [start, end] = data.range
+
+	// 2. Try the whole string as a name with no tail argument. This handles
+	// `\N{Hangul Syllables}` (range name, missing hex) and `\N{snowman}`
+	// (single-character lookup). Hex-tail dispatch happens in step 3.
+	const rangeAsFull = getRangeData(inner, ctx)
+	if (rangeAsFull) {
+		const [start, end] = rangeAsFull.range
+		ctx.err.report(
+			localize(
+				'parser.string.hex-expected',
+				inner,
+				start.toString(16).toUpperCase(),
+				end.toString(16).toUpperCase(),
+			),
+			innerRange,
+		)
+		return undefined
+	}
+	const codepointAsFull = lookupName(inner, ctx)
+	if (codepointAsFull !== undefined) {
+		if (!isInDeclaredBlock(codepointAsFull, ctx)) {
 			ctx.err.report(
-				localize(
-					'parser.string.hex-expected',
-					rangeProbe[1]!,
-					start.toString(16).toUpperCase(),
-					end.toString(16).toUpperCase(),
-				),
-				innerRange,
+				localize('parser.string.illegal-unicode-escape-name'),
+				escapeRange,
 			)
+			return undefined
 		}
-	}
-	const trailingMatch = TrailingNamePattern.exec(escape)
-	if (trailingMatch && !/^[a-f0-9]+$/i.test(trailingMatch[2]!)) {
-		const rangeSymbol = ctx.symbols.query(
-			UnicodeDataUri,
-			UnicodeNameCategory,
-			`${toTitleCase(trailingMatch[1]!)} `,
-		).symbol
-		if (rangeSymbol) {
-			const data = rangeSymbol.data as UnicodeRangeSymbolData | undefined
-			if (data?.range) {
-				const [start] = data.range
-				const garbage = trailingMatch[2]!
-				ctx.err.report(
-					localize(
-						'parser.string.invalid-codepoint-suffix',
-						garbage,
-						start.toString(16).toUpperCase(),
-					),
-					escapeRange,
-				)
-			}
+		if (!isValidUnicodeCodepoint(codepointAsFull, ctx)) {
+			ctx.err.report(
+				localize('parser.string.illegal-unicode-escape-name'),
+				escapeRange,
+			)
+			return undefined
 		}
+		return codepointAsFull
 	}
-	// If a specific error was already reported (e.g. "Hex codepoint
-	// expected", "Codepoint out of range", "Unexpected character(s)"), don't
-	// also emit the generic "Unicode character name expected"
-	if (ctx.err.errors.length > errorsBefore) {
-		return undefined
+
+	// 3. Whole-string name didn't resolve — try splitting: last token is the
+	// tail, everything before is the name. Handles `\N{Hangul Syllables D800}`
+	// (valid range + hex), `\N{Hangul Syllables FFFFF}` (range + out-of-range
+	// hex), and `\N{Hangul Syllables garbage}` (range + non-hex tail).
+	const words = inner.split(/\s+/)
+	if (words.length < 2) {
+		return reportIllegalName(ctx, escapeRange)
 	}
-	const match = NamedEscapePattern.exec(escape)
-	if (!match) {
+	const name = words.slice(0, -1).join(' ')
+	const tail = words[words.length - 1]!
+
+	if (/^[a-f0-9]+$/i.test(tail)) {
+		const errorsBefore = ctx.err.errors.length
+		const codepoint = resolveHexSuffixedEscape(name, tail, escapeRange, ctx)
+		if (codepoint !== undefined) {
+			return codepoint
+		}
+		// resolveHexSuffixedEscape emits out-of-range itself when the name is
+		// a known range; otherwise it returns silently. Honor the out-of-range
+		// diagnostic by returning without piling on a generic illegal-name
+		// error.
+		if (ctx.err.errors.length > errorsBefore) {
+			return undefined
+		}
+		return reportIllegalName(ctx, escapeRange)
+	}
+
+	const tailRangeData = getRangeData(name, ctx)
+	if (tailRangeData) {
 		ctx.err.report(
-			localize('parser.string.illegal-unicode-escape-name'),
+			localize(
+				'parser.string.invalid-codepoint-suffix',
+				tail,
+				tailRangeData.range[0].toString(16).toUpperCase(),
+			),
 			escapeRange,
 		)
 		return undefined
 	}
-	const name = match[1]!
-	const codepoint = lookupName(name, ctx)
-	if (codepoint === undefined) {
-		ctx.err.report(
-			localize('parser.string.illegal-unicode-escape-name'),
-			escapeRange,
-		)
-		return undefined
-	}
-	if (!isInDeclaredBlock(codepoint, ctx)) {
-		ctx.err.report(
-			localize('parser.string.illegal-unicode-escape-name'),
-			escapeRange,
-		)
-		return undefined
-	}
-	if (!isValidUnicodeCodepoint(codepoint, ctx)) {
-		ctx.err.report(
-			localize('parser.string.illegal-unicode-escape-name'),
-			escapeRange,
-		)
-		return undefined
-	}
-	return codepoint
+	return reportIllegalName(ctx, escapeRange)
+}
+
+/**
+ * Reports "illegal Unicode character name" and returns `undefined`.
+ * Extracted so the dispatch reads at one indent level.
+ */
+function reportIllegalName(ctx: CheckerContext, escapeRange: Range): undefined {
+	ctx.err.report(
+		localize('parser.string.illegal-unicode-escape-name'),
+		escapeRange,
+	)
+	return undefined
 }
 
 /**

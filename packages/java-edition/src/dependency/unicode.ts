@@ -239,10 +239,35 @@ export interface UnicodeNameSymbolData {
 	lowercase: string
 }
 
+/** Data payload of a Unicode range symbol (e.g. `<…, First>`/`<…, Last>`). */
+export interface UnicodeRangeSymbolData {
+	range: [number, number]
+	source: 'unicode-range'
+	version: string
+	lowercase: string
+}
+
 export function isUnicodeNameSymbolData(value: unknown): value is UnicodeNameSymbolData {
 	return typeof value === 'object'
 		&& value !== undefined
 		&& typeof (value as UnicodeNameSymbolData).codepoint === 'number'
+}
+
+export function getRangeData(
+	name: string,
+	ctx: core.CheckerContext,
+): UnicodeRangeSymbolData | undefined {
+	const symbol = ctx.symbols.query(
+		UnicodeDataUri,
+		UnicodeNameCategory,
+		`${toTitleCase(name)} `,
+	).symbol ?? ctx.symbols.query(
+		UnicodeDataUri,
+		UnicodeNameCategory,
+		toTitleCase(name),
+	).symbol
+	const data = symbol?.data as UnicodeRangeSymbolData | undefined
+	return data?.range ? data : undefined
 }
 
 export type UnicodeNameLookupMap = { [lowerName: string]: number }
