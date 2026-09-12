@@ -381,7 +381,10 @@ export function path(
 						({ originalNode: link }) => link.node.range,
 					)(error)
 				},
-				attachTypeInfo: (link, definition, desc = '') => {
+				attachTypeInfo: (link, definition, desc = '', originalDefinition) => {
+					if (link.node.type === 'leaf') {
+						link.path.endOriginalTypeDef = originalDefinition
+					}
 					if (definition.kind === 'literal' && !definition.attributes?.length) {
 						return
 					}

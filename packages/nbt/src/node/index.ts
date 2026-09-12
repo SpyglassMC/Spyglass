@@ -207,6 +207,7 @@ export interface NbtPathNode extends core.AstNode {
 	 * The type definition at the end of the path
 	 */
 	endTypeDef?: mcdoc.runtime.checker.SimplifiedMcdocType
+	endOriginalTypeDef?: mcdoc.McdocType
 }
 export namespace NbtPathNode {
 	/* istanbul ignore next */
