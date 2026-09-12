@@ -1,11 +1,5 @@
-import type {
-	AstNode,
-	CheckerContext,
-	StringBaseNode,
-	SyncChecker,
-	UnicodeEscapeNode,
-} from '@spyglassmc/core'
-import { Range } from '@spyglassmc/core'
+import type { AstNode, CheckerContext, SyncChecker, UnicodeEscapeNode } from '@spyglassmc/core'
+import { Range, StringBaseNode } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import {
 	BlocksUri,
@@ -331,7 +325,7 @@ export function unicodeEscapes(release: ReleaseVersion): SyncChecker<StringBaseN
 		}
 		const visit = (n: AstNode): void => {
 			const children = n.children ?? []
-			const isStringNode = (n as StringBaseNode).options?.escapable !== undefined
+			const isStringNode = StringBaseNode.is(n)
 			if (isStringNode) {
 				for (const child of children) {
 					if (child.type === 'unicode_escape') {
