@@ -196,7 +196,7 @@
   "nbt.parser.number.explicit-int-suffix-not-supported": "Explicit `i`/`I` integer suffix is only valid in data pack format 71+ / minecraft 1.21.5",
   "nbt.parser.number.negative-radix-not-supported": "Negative hexadecimal/binary numeric literals are not supported",
   "nbt.parser.number.radix-not-supported": "Hexadecimal/binary numeric literals are only valid in data pack format 71+ / minecraft 1.21.5",
-  "nbt.parser.number.underscore-not-supported": "Underscore digit separators are only valid in data pack format 71+ / minecraft 1.21.5",
+  "nbt.parser.number.underscore-not-supported": "Rendered as a number by Spyglass, while the game will see it as a string in version 1.21.4 and lower / data pack format 70 and lower",
   "nbt.parser.string.unquoted-string-first-character": "Unquoted strings cannot start with `[0-9.+-]` in data pack format 71+ / minecraft 1.21.5",
   "not-allowed-here": "Value %0% is not allowed here",
   "not-divisible-by": "Value %0% is not divisible by %1%",
