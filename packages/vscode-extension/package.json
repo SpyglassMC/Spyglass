@@ -379,6 +379,10 @@
         "description": "An operator."
       },
       {
+        "id": "punctuation",
+        "description": "A punctuation like a colon or a comma."
+      },
+      {
         "id": "resourceLocation",
         "description": "A resource location."
       },
@@ -401,6 +405,9 @@
             "keyword.other"
           ],
           "operator": [
+            "keyword.operator"
+          ],
+          "punctuation": [
             "keyword.operator"
           ],
           "resourceLocation": [

@@ -4,6 +4,7 @@ import type { AstNode } from './AstNode.js'
 
 export interface LongBaseNode extends AstNode {
 	value: bigint
+	hasUnderscoreSeparator?: boolean
 }
 
 export interface LongNode extends LongBaseNode {

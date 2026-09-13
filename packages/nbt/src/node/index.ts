@@ -6,7 +6,31 @@ interface NbtBaseNode {
 	requireCanonical?: boolean
 }
 
-export type NbtNode = NbtPrimitiveNode | NbtCompoundNode | NbtCollectionNode
+/**
+ * Shared by every numeric node. Holds the new-syntax signals that the
+ * java-edition SNBT-syntax checker inspects to flag pre-1.21.5 usages.
+ */
+interface NbtNumberBaseNode {
+	/**
+	 * `true` when the literal source contained `_` digit separators (1.21.5+
+	 * only). The parser always accepts the new-syntax form; the java-edition
+	 * checker reports `nbt.parser.number.underscore-not-supported` for
+	 * older game versions.
+	 */
+	hasUnderscoreSeparator?: boolean
+	/**
+	 * Set when the literal was written with a `0x`/`0b` radix prefix
+	 * (1.21.5+ only). Lives on every numeric node so the suffix-less form,
+	 * the `0x...l` long form, and the typed collapses (`0x42b` → `nbt:byte`,
+	 * `0xffs` → `nbt:short`, ...) all share the same signal. The
+	 * SNBT-syntax checker reads this to flag pre-1.21.5 usages; the
+	 * formatter reads it to round-trip back to the original hex/binary
+	 * representation.
+	 */
+	radix?: 'hex' | 'bin'
+}
+
+export type NbtNode = NbtPrimitiveNode | NbtCompoundNode | NbtCollectionNode | NbtFunctionNode
 export namespace NbtNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtNode {
@@ -54,7 +78,7 @@ export namespace NbtIntegerAlikeNode {
 	}
 }
 
-export interface NbtByteNode extends core.IntegerBaseNode, NbtBaseNode {
+export interface NbtByteNode extends core.IntegerBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:byte'
 }
 export namespace NbtByteNode {
@@ -64,7 +88,7 @@ export namespace NbtByteNode {
 	}
 }
 
-export interface NbtShortNode extends core.IntegerBaseNode, NbtBaseNode {
+export interface NbtShortNode extends core.IntegerBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:short'
 }
 export namespace NbtShortNode {
@@ -74,8 +98,16 @@ export namespace NbtShortNode {
 	}
 }
 
-export interface NbtIntNode extends core.IntegerBaseNode, NbtBaseNode {
+export interface NbtIntNode extends core.IntegerBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:int'
+	/**
+	 * `true` when the literal was written with the trailing `i`/`I` explicit
+	 * type suffix (1.21.5+ only). The parser always accepts the new-syntax
+	 * form; the java-edition checker reports
+	 * `nbt.parser.number.explicit-int-suffix-not-supported` for older game
+	 * versions.
+	 */
+	hasExplicitIntSuffix?: boolean
 }
 export namespace NbtIntNode {
 	/* istanbul ignore next */
@@ -84,13 +116,78 @@ export namespace NbtIntNode {
 	}
 }
 
-export interface NbtLongNode extends core.LongBaseNode, NbtBaseNode {
+export interface NbtLongNode extends core.LongBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:long'
 }
 export namespace NbtLongNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtLongNode {
 		return (node as NbtLongNode | undefined)?.type === 'nbt:long'
+	}
+}
+// #endregion
+
+// #region NbtFunctionNode
+// Base type for SNBT function calls (e.g. `bool(value)`). Concrete function node types
+// (e.g. `nbt:bool_function`) extend this. `prefixRange` covers the function name and opening
+// parenthesis (e.g. `bool(`); `suffixRange` covers the closing parenthesis (`)`). The
+// argument(s) are stored as `children`. Colorizers color `prefixRange` and `suffixRange`
+// as `escape`.
+export type NbtFunctionNode = NbtBoolFunctionNode | NbtUuidFunctionNode
+export namespace NbtFunctionNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is NbtFunctionNode {
+		return NbtBoolFunctionNode.is(node) || NbtUuidFunctionNode.is(node)
+	}
+}
+
+// `bool(value)` evaluates to `false` if `value` is the numeric literal 0, else `true`.
+export interface NbtBoolFunctionNode extends core.AstNode, NbtBaseNode {
+	readonly type: 'nbt:bool_function'
+	value: boolean
+	prefixRange: core.Range
+	suffixRange: core.Range
+	/**
+	 * The argument to `bool(...)`. Empty when the argument is missing (e.g. `bool(`),
+	 * in which case an error is reported at the arg position.
+	 */
+	children: NbtNode[]
+}
+export namespace NbtBoolFunctionNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is NbtBoolFunctionNode {
+		return (node as NbtBoolFunctionNode | undefined)?.type === 'nbt:bool_function'
+	}
+}
+
+// `uuid("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")` parses a UUID string into a
+// 4-element int array (each 32-bit group as an int).
+export interface NbtUuidFunctionNode extends core.AstNode, NbtBaseNode {
+	readonly type: 'nbt:uuid_function'
+	value: number[]
+	prefixRange: core.Range
+	/**
+	 * Zero-length when the closing `)` is missing. Otherwise covers the
+	 * closing `)` of `uuid(...)`.
+	 */
+	suffixRange: core.Range
+	/**
+	 * The string argument to `uuid(...)`. Empty when the argument is missing
+	 * (e.g. `uuid(`), in which case an error is reported at the arg position.
+	 */
+	children: NbtStringNode[]
+	/**
+	 * A synthesized `nbt:int_array` containing the 4 parsed 32-bit groups of
+	 * the UUID. When the string is missing or malformed, this is a 4-element
+	 * int array of zeros so the runtime checker still has something to
+	 * descend into (and to flag length errors against).
+	 */
+	intArray: NbtIntArrayNode
+}
+export namespace NbtUuidFunctionNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is NbtUuidFunctionNode {
+		return (node as NbtUuidFunctionNode | undefined)?.type === 'nbt:uuid_function'
 	}
 }
 // #endregion
@@ -104,7 +201,7 @@ export namespace NbtFloatAlikeNode {
 	}
 }
 
-export interface NbtFloatNode extends core.FloatBaseNode, NbtBaseNode {
+export interface NbtFloatNode extends core.FloatBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:float'
 }
 export namespace NbtFloatNode {
@@ -114,7 +211,7 @@ export namespace NbtFloatNode {
 	}
 }
 
-export interface NbtDoubleNode extends core.FloatBaseNode, NbtBaseNode {
+export interface NbtDoubleNode extends core.FloatBaseNode, NbtBaseNode, NbtNumberBaseNode {
 	readonly type: 'nbt:double'
 }
 export namespace NbtDoubleNode {
