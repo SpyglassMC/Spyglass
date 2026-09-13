@@ -153,11 +153,6 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)
-
-	// Register per-NbtNode-type version-aware SNBT-syntax checkers. The
-	// core checker framework dispatches them by node type during descent,
-	// so both mcfunction and JSON-via-mcdoc-string paths pick them up
-	// without each call site having to thread an extra check option.
 	jeChecker.register(meta)
 
 	return { loadedVersion: release, errorSource: release }

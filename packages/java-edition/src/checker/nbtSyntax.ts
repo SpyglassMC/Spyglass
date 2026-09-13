@@ -2,23 +2,25 @@ import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type {
 	NbtBoolFunctionNode,
+	NbtByteArrayNode,
 	NbtByteNode,
+	NbtCompoundNode,
 	NbtDoubleNode,
 	NbtFloatNode,
 	NbtFunctionNode,
+	NbtIntArrayNode,
 	NbtIntNode,
+	NbtListNode,
+	NbtLongArrayNode,
 	NbtLongNode,
-	NbtNumberNode,
 	NbtShortNode,
 	NbtStringNode,
 	NbtUuidFunctionNode,
 } from '@spyglassmc/nbt'
+import { NbtNumberNode } from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../dependency/common.js'
 
 const MIN_NEW_SYNTAX: ReleaseVersion = '1.21.5'
-
-// Report `underscore-not-supported` at most once per checker call.
-const underscoreNotifiedContexts = new WeakSet<core.CheckerContext>()
 
 function getRelease(ctx: core.CheckerContext): ReleaseVersion | undefined {
 	return ctx.project['loadedVersion'] as ReleaseVersion | undefined
@@ -31,6 +33,40 @@ function isOldSyntax(ctx: core.CheckerContext): boolean {
 		return false
 	}
 	return ReleaseVersion.cmp(release, MIN_NEW_SYNTAX) < 0
+}
+
+function runUnderscorePass(root: core.AstNode, ctx: core.CheckerContext): void {
+	let first: NbtNumberNode | undefined
+	core.traversePreOrder(
+		root,
+		() => true,
+		(n): n is NbtNumberNode => NbtNumberNode.is(n) && n.hasUnderscoreSeparator === true,
+		(n) => {
+			if (!n.underscoreNotSupportedReported) {
+				n.underscoreNotSupportedReported = true
+				if (!first) {
+					first = n
+				}
+			}
+		},
+	)
+	if (first) {
+		ctx.err.report(
+			localize('nbt.parser.number.underscore-not-supported'),
+			first,
+			core.ErrorSeverity.Information,
+		)
+	}
+}
+
+function walkAndRunRegisteredCheckers(node: core.AstNode, ctx: core.CheckerContext): void {
+	for (const child of node.children ?? []) {
+		if (ctx.meta.hasChecker(child.type)) {
+			const checker = ctx.meta.getChecker(child.type) as core.SyncChecker<core.AstNode>
+			checker(child, ctx)
+		}
+		walkAndRunRegisteredCheckers(child, ctx)
+	}
 }
 
 function checkRadixAndUnderscore(
@@ -49,14 +85,49 @@ function checkRadixAndUnderscore(
 		)
 		return
 	}
-	if (node.hasUnderscoreSeparator && oldSyntax && !underscoreNotifiedContexts.has(ctx)) {
+	if (
+		node.hasUnderscoreSeparator
+		&& oldSyntax
+		&& !node.underscoreNotSupportedReported
+	) {
+		node.underscoreNotSupportedReported = true
 		ctx.err.report(
 			localize('nbt.parser.number.underscore-not-supported'),
 			node,
 			core.ErrorSeverity.Information,
 		)
-		underscoreNotifiedContexts.add(ctx)
 	}
+}
+
+function checkCompound(node: NbtCompoundNode, ctx: core.CheckerContext): void {
+	if (isOldSyntax(ctx)) {
+		runUnderscorePass(node, ctx)
+	}
+	walkAndRunRegisteredCheckers(node, ctx)
+}
+function checkList(node: NbtListNode, ctx: core.CheckerContext): void {
+	if (isOldSyntax(ctx)) {
+		runUnderscorePass(node, ctx)
+	}
+	walkAndRunRegisteredCheckers(node, ctx)
+}
+function checkByteArray(node: NbtByteArrayNode, ctx: core.CheckerContext): void {
+	if (isOldSyntax(ctx)) {
+		runUnderscorePass(node, ctx)
+	}
+	walkAndRunRegisteredCheckers(node, ctx)
+}
+function checkIntArray(node: NbtIntArrayNode, ctx: core.CheckerContext): void {
+	if (isOldSyntax(ctx)) {
+		runUnderscorePass(node, ctx)
+	}
+	walkAndRunRegisteredCheckers(node, ctx)
+}
+function checkLongArray(node: NbtLongArrayNode, ctx: core.CheckerContext): void {
+	if (isOldSyntax(ctx)) {
+		runUnderscorePass(node, ctx)
+	}
+	walkAndRunRegisteredCheckers(node, ctx)
 }
 
 function reportSnbtFunctionsNotSupported(node: NbtFunctionNode, ctx: core.CheckerContext): void {
@@ -143,4 +214,9 @@ export function register(meta: core.MetaRegistry): void {
 	meta.registerChecker<NbtFloatNode>('nbt:float', checkFloat)
 	meta.registerChecker<NbtDoubleNode>('nbt:double', checkDouble)
 	meta.registerChecker<NbtStringNode>('nbt:string', checkString)
+	meta.registerChecker<NbtCompoundNode>('nbt:compound', checkCompound)
+	meta.registerChecker<NbtListNode>('nbt:list', checkList)
+	meta.registerChecker<NbtByteArrayNode>('nbt:byte_array', checkByteArray)
+	meta.registerChecker<NbtIntArrayNode>('nbt:int_array', checkIntArray)
+	meta.registerChecker<NbtLongArrayNode>('nbt:long_array', checkLongArray)
 }

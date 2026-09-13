@@ -10,7 +10,7 @@ interface NbtBaseNode {
  * Shared by every numeric node. Holds the new-syntax signals that the
  * java-edition SNBT-syntax checker inspects to flag pre-1.21.5 usages.
  */
-interface NbtNumberBaseNode {
+export interface NbtNumberBaseNode {
 	/**
 	 * `true` when the literal source contained `_` digit separators (1.21.5+
 	 * only). The parser always accepts the new-syntax form; the java-edition
@@ -28,6 +28,14 @@ interface NbtNumberBaseNode {
 	 * representation.
 	 */
 	radix?: 'hex' | 'bin'
+	/**
+	 * Set by the java-edition SNBT-syntax checker on the number node that
+	 * received the file-level `underscore-not-supported` info diagnostic, so
+	 * later per-type passes on the same node don't re-emit. Stays `undefined`
+	 * on every other number node; the checker skips emission when the flag
+	 * is already set.
+	 */
+	underscoreNotSupportedReported?: boolean
 }
 
 export type NbtNode = NbtPrimitiveNode | NbtCompoundNode | NbtCollectionNode | NbtFunctionNode

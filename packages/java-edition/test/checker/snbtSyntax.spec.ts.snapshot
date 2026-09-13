@@ -732,7 +732,8 @@ exports[`checkSnbtSyntax (pre-1.21.5) > underscore digit separator 1`] = `
       "end": 5
     },
     "value": 1000,
-    "hasUnderscoreSeparator": true
+    "hasUnderscoreSeparator": true,
+    "underscoreNotSupportedReported": true
   },
   "errors": [
     {
