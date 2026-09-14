@@ -107,7 +107,7 @@ export function typeDefinition(
 				allowMissingKeys: options.isPredicate || options.isMerge,
 				requireCanonical: options.isPredicate,
 				tryConvertTo: (node, target) => {
-					if (target.kind === 'boolean' && NbtByteNode.is(node)) {
+					if (target.kind === 'boolean' && isNumber(node, options, NbtByteNode.is)) {
 						if (node.value === 0) {
 							return { kind: 'literal', value: { kind: 'boolean', value: false } }
 						} else if (node.value === 1) {
@@ -121,7 +121,7 @@ export function typeDefinition(
 						}
 					}
 					if (!options.isPredicate) {
-						if (NbtNumberNode.is(node)) {
+						if (isNumber(node, options, NbtNumberNode.is)) {
 							const literalValue = mcdoc.LiteralNumericValue.makeIfValid(
 								target.kind,
 								node.value,
@@ -273,6 +273,15 @@ export function typeDefinition(
 			}),
 		)
 	}
+}
+
+function isNumber<T extends NbtNumberNode>(
+	node: NbtNode,
+	options: Options,
+	is: (n: NbtNode) => n is T,
+): node is T {
+	return is(node)
+		&& (!node.hasUnderscoreSeparator || !options.interpretNumeralWithUnderscoresAsString)
 }
 
 function inferType(
