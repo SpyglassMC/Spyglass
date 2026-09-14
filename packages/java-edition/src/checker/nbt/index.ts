@@ -19,7 +19,7 @@ import type {
 	NbtUuidFunctionNode,
 } from '@spyglassmc/nbt'
 import { NbtNumberNode } from '@spyglassmc/nbt'
-import { ReleaseVersion } from '../dependency/common.js'
+import { ReleaseVersion } from '../../dependency/common.js'
 import { unicodeEscapes } from './string.js'
 
 const MIN_NEW_SYNTAX: ReleaseVersion = '1.21.5'
@@ -208,7 +208,7 @@ const checkString: core.SyncChecker<NbtStringNode> = (node, ctx) => {
 	}
 }
 
-export function registerNBT(meta: core.MetaRegistry): void {
+export function register(meta: core.MetaRegistry): void {
 	meta.registerChecker<NbtBoolFunctionNode>('nbt:bool_function', checkBoolFunction)
 	meta.registerChecker<NbtUuidFunctionNode>('nbt:uuid_function', checkUuidFunction)
 	meta.registerChecker<NbtLongNode>('nbt:long', checkLong)

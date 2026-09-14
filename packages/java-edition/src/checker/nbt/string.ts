@@ -11,7 +11,7 @@ import {
 	toTitleCase,
 	UnicodeBulkCategory,
 	UnicodeDataUri,
-} from '../dependency/index.js'
+} from '../../dependency/index.js'
 
 const EscapeShapePattern = /^[a-z0-9-]+(\s+[a-z0-9-]+)*$/i
 
