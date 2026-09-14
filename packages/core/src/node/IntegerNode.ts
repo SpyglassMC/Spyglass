@@ -4,6 +4,7 @@ import type { AstNode } from './AstNode.js'
 
 export interface IntegerBaseNode extends AstNode {
 	value: number
+	hasUnderscoreSeparator?: boolean
 }
 
 export interface IntegerNode extends IntegerBaseNode {

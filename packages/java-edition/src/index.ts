@@ -162,6 +162,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)
+	jeChecker.register(meta)
 
 	// Must come last: it chains onto the checkers registered above.
 	jeChecker.register(meta, release)

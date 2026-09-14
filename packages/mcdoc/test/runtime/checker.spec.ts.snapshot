@@ -687,6 +687,145 @@ exports[`mcdoc runtime checker > typeDefinition “[struct { foo: double, bar?: 
 ]
 `;
 
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to byte” > with value \"-128n\" 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to byte” > with value \"-129n\" 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": -129,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "long",
+          "value": -129
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "byte"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to byte” > with value \"127n\" 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to byte” > with value \"128n\" 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 128,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "long",
+          "value": 128
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "byte"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to byte” > with value \"255n\" 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 255,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "long",
+          "value": 255
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "byte"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to byte” > with value \"5n\" 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to int” > with value \"-2147483648n\" 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to int” > with value \"-2147483649n\" 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": -2147483649,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "long",
+          "value": -2147483649
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "int"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to int” > with value \"2147483647n\" 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to int” > with value \"2147483648n\" 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 2147483648,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "long",
+          "value": 2147483648
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "int"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > typeDefinition “bigint narrowing to int” > with value \"255n\" 1`] = `
+[]
+`;
+
 exports[`mcdoc runtime checker > typeDefinition “dispatch minecraft:item[elytra] to struct { Damage: double }; #[\"test:filter\"] dispatch minecraft:item[filtered] to struct { Test: string }; struct { id: string, tag?: minecraft:item[[id]] }” > with value {\"id\":\"elytra\",\"tag\":{}} 1`] = `
 [
   {

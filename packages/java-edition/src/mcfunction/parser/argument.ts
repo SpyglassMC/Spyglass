@@ -162,7 +162,11 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:column_pos':
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
-			return wrap(typeRefParser(mcdoc.typeRefPath('text_component')))
+			return wrap(typeRefParser(mcdoc.typeRef('text_component')))
+		case 'minecraft:context_float_provider':
+			return wrap(resourceOrInline('context_float_provider'))
+		case 'minecraft:context_int_provider':
+			return wrap(resourceOrInline('context_int_provider'))
 		case 'minecraft:dialog':
 			return wrap(resourceOrInline('dialog'))
 		case 'minecraft:dimension':
@@ -218,7 +222,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
 		case 'minecraft:loot_modifier':
-			return wrap(resourceOrInline('item_modifier'))
+			return wrap(resourceOrTypedNbt('item_modifier', mcdoc.typeRef('item_modifier')))
 		case 'minecraft:loot_predicate':
 			return wrap(resourceOrInline('predicate'))
 		case 'minecraft:loot_table':
@@ -278,7 +282,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:slot_source':
 			return wrap(slotSource)
 		case 'minecraft:style':
-			return wrap(typeRefParser(mcdoc.typeRefPath('text_style')))
+			return wrap(typeRefParser(mcdoc.typeRef('text_style')))
 		case 'minecraft:swizzle':
 			return wrap(commandLiteral({ pool: SwizzleArgumentValues }))
 		case 'minecraft:team':
@@ -549,7 +553,7 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 }
 
 export function typeRefParser(
-	typeRef: `::${string}::${string}`,
+	typeRef: mcdoc.ReferenceType,
 ): core.Parser<json.TypedJsonNode | nbt.TypedNbtNode> {
 	return (src, ctx) => {
 		const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
@@ -560,21 +564,21 @@ export function typeRefParser(
 	}
 }
 
-export function jsonParser(typeRef: `::${string}::${string}`): core.Parser<json.TypedJsonNode> {
+export function jsonParser(typeRef: mcdoc.ReferenceType): core.Parser<json.TypedJsonNode> {
 	return core.map(json.parser.entry, (res) => ({
 		type: 'json:typed',
 		range: res.range,
 		children: [res],
-		targetType: { kind: 'reference', path: typeRef },
+		targetType: typeRef,
 	} satisfies json.TypedJsonNode))
 }
 
-export function nbtParser(typeRef: `::${string}::${string}`): core.Parser<nbt.TypedNbtNode> {
+export function nbtParser(typeRef: mcdoc.ReferenceType): core.Parser<nbt.TypedNbtNode> {
 	return core.map(nbt.parser.entry, (res) => ({
 		type: 'nbt:typed',
 		range: res.range,
 		children: [res],
-		targetType: { kind: 'reference', path: typeRef },
+		targetType: typeRef,
 	} satisfies nbt.TypedNbtNode))
 }
 
@@ -813,6 +817,18 @@ function resourceOrInline(category: core.FileCategory) {
 			}
 			return ans
 		}),
+	}])
+}
+
+function resourceOrTypedNbt(
+	category: core.FileCategory,
+	typeRef: mcdoc.ReferenceType,
+) {
+	return core.select([{
+		predicate: (src) => core.LegalResourceLocationCharacters.has(src.peek()),
+		parser: core.resourceLocation({ category }),
+	}, {
+		parser: nbtParser(typeRef),
 	}])
 }
 
@@ -1496,12 +1512,12 @@ export function scoreHolder(
 	)
 }
 
-const slotSource: core.Parser<core.LiteralNode | NbtResourceNode | core.ResourceLocationNode> = core
-	.any([
+const slotSource: core.Parser<core.LiteralNode | nbt.TypedNbtNode | core.ResourceLocationNode> =
+	core.any([
 		(src, ctx) => {
 			return commandLiteral({ pool: getItemSlotsArgumentValues(ctx) })(src, ctx)
 		},
-		resourceOrInline('slot_source'),
+		resourceOrTypedNbt('slot_source', mcdoc.typeRef('slot_source')),
 	])
 
 function symbol(
@@ -1639,6 +1655,15 @@ export const uuid: core.InfallibleParser<UuidNode> = (src, ctx): UuidNode => {
 	}
 
 	ans.range.end = src.cursor
+
+	if (isLegal && (ans.bits[0] !== 0n || ans.bits[1] !== 0n)) {
+		const parts: number[] = []
+		for (const bits of ans.bits) {
+			parts.push(Number(BigInt.asIntN(32, bits >> 32n)))
+			parts.push(Number(BigInt.asIntN(32, bits & 0xFFFFFFFFn)))
+		}
+		ans.hover = `\`\`\`mcdoc\n[I; ${parts.join(', ')}]\n\`\`\``
+	}
 
 	if (!isLegal) {
 		ctx.err.report(localize('mcfunction.parser.uuid.invalid'), ans)

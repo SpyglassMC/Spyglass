@@ -17,9 +17,9 @@
 
 /packages/vscode-extension/**/*.vsix
 
-/.agents
-/.claude
-/CLAUDE.md
-/AGENTS.md
-/.temp
-/scripts/unicode
+# LLM Usage
+.temp/
+.claude/
+.agents/
+CLAUDE.md
+AGENTS.md

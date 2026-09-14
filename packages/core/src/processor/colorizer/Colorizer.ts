@@ -74,6 +74,7 @@ export const ColorTokenTypes = Object.freeze(
 		'error',
 		'literal',
 		'operator',
+		'punctuation',
 		'resourceLocation',
 		'vector',
 	] as const,

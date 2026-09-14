@@ -95,6 +95,9 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 }
 
 const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
+	if (node.uuid !== undefined) {
+		core.checker.dispatchSync(node, ctx)
+	}
 	for (const pair of node.selector?.arguments?.children ?? []) {
 		if (pair.key?.value !== 'nbt' || !pair.value) {
 			continue

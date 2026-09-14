@@ -16,11 +16,18 @@ import {
 	NbtPathKeyNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
+	NbtUuidFunctionNode,
 } from '../node/index.js'
 import { localizeTag } from '../util.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
-export const typed: core.SyncChecker<TypedNbtNode> = (node, ctx) => {
+/**
+ * Runs `typeDefinition` on the typed wrapper's inner NbtNode.
+ */
+export function typed(
+	node: TypedNbtNode,
+	ctx: core.CheckerContext,
+): void {
 	typeDefinition(node.targetType)(node.children[0], ctx)
 }
 
@@ -49,7 +56,7 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<TypedNbtNode>('nbt:typed', typed)
 }
 
-interface Options {
+export interface Options {
 	isPredicate?: boolean
 	isMerge?: boolean
 }
@@ -105,10 +112,10 @@ export function typeDefinition(
 	options: Options = {},
 ): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
-		// Run the registry-driven walk first: it descends to the shallowest nodes
-		// with their own checker (`nbt:string`) while their escape children are
-		// still intact. The mcdoc pass below replaces the children of any string
-		// that has a string parser attached to it.
+		// Run any per-NbtNode-type checkers (e.g. the java-edition
+		// SNBT-syntax check) before mcdoc/runtime descends so that
+		// version-aware syntax diagnostics land alongside the type
+		// errors instead of after them.
 		core.checker.fallbackSync(node, ctx)
 		mcdoc.runtime.checker.typeDefinition<NbtNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
@@ -167,6 +174,11 @@ export function typeDefinition(
 							n => [{ originalNode: n.value!, inferredType: inferType(n.value!) }],
 						)
 					}
+					if (type === 'nbt:uuid_function') {
+						return node.intArray.children.filter(n => n.value).map(
+							n => [{ originalNode: n.value!, inferredType: inferType(n.value!) }],
+						)
+					}
 					if (type === 'nbt:compound') {
 						return node.children.filter(kvp => kvp.key).map(kvp => ({
 							key: { originalNode: kvp.key!, inferredType: inferType(kvp.key!) },
@@ -206,14 +218,36 @@ export function typeDefinition(
 								`\`\`\`typescript\n${keyString}: ${valueString}\n\`\`\`\n${desc}`
 
 							if (NbtPrimitiveNode.is(node.parent.value)) {
-								node.parent.value.hover =
-									`\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+								let valueHover = `\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+								// Preserve any hover set by the parser (e.g. the decimal
+								// value of a hex/binary literal) so it shows up alongside
+								// the mcdoc type info instead of being clobbered.
+								if (node.parent.value.hover) {
+									valueHover += `\n\n${node.parent.value.hover}`
+								}
+								node.parent.value.hover = valueHover
 							}
 						}
 					} else if (NbtPrimitiveNode.is(node)) {
-						node.hover = `\`\`\`typescript\n${
+						let hover = `\`\`\`typescript\n${
 							mcdoc.McdocType.toString(definition)
 						}\n\`\`\`\n${desc}`
+						// Preserve any hover set by the parser (e.g. the decimal
+						// value of a hex/binary literal) so it shows up alongside
+						// the mcdoc type info instead of being clobbered.
+						if (node.hover) {
+							hover += `\n\n${node.hover}`
+						}
+						node.hover = hover
+					} else if (NbtUuidFunctionNode.is(node)) {
+						const uuidNode = node
+						// Skip the hover when the UUID is invalid - the parser
+						// already reports the error on the string arg, and a
+						// hover here would be redundant noise.
+						if (uuidNode.value.length !== 4) {
+							return
+						}
+						uuidNode.hover = `\`\`\`mcdoc\n[I; ${uuidNode.value.join(', ')}]\n\`\`\``
 					}
 				},
 				nodeAttacher: (node, attacher) => attacher(node),
@@ -224,6 +258,7 @@ export function typeDefinition(
 					attacher(node)
 					if (node.children) {
 						core.AstNode.setParents(node)
+						// Because the runtime checker happens after binding, we need to manually call this
 						core.binder.fallbackSync(node, ctx)
 						core.checker.fallbackSync(node, ctx)
 					}
@@ -249,6 +284,13 @@ function inferType(node: NbtNode): SimplifiedMcdocTypeNoUnion {
 			return { kind: 'literal', value: { kind: 'short', value: node.value } }
 		case 'nbt:string':
 			return { kind: 'literal', value: { kind: 'string', value: node.value } }
+		case 'nbt:bool_function':
+			return { kind: 'literal', value: { kind: 'boolean', value: node.value } }
+		case 'nbt:uuid_function':
+			// A `uuid(...)` call is semantically a 4-long int array. The
+			// runtime checker sees it as a ghost `int_array` so fields typed
+			// as `int[]` (or `int_array`) accept it without complaint.
+			return { kind: 'int_array', lengthRange: { kind: 0b00, min: 4, max: 4 } }
 		case 'nbt:list':
 			return { kind: 'list', item: { kind: 'any' } }
 		case 'nbt:compound':

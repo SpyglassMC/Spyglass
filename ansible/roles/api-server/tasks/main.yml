@@ -84,5 +84,5 @@
   ansible.builtin.template:
     src: api-server.caddy
     dest: /etc/caddy/conf.d/api-server.caddy
-    mode: '600'
+    mode: '644'
   notify: Reload Caddy
