@@ -24,6 +24,7 @@ export type TypeInfoAttacher<T> = (
 	node: T,
 	definition: SimplifiedMcdocType,
 	description?: string,
+	originalDefinition?: McdocType,
 ) => void
 
 export type NodeAttacher<T> = (node: T, attacher: (node: core.AstNode) => void) => void
