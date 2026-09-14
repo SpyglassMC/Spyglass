@@ -292,7 +292,10 @@ describe('checkSnbtSyntax (hex-expected diagnostic range)', () => {
 		it(name, (t) => {
 			const result = check(source, '1.21.5')
 			const match = result.errors.find(e => e.message.includes('Hex codepoint expected'))
-			assert.ok(match, `expected a hex-expected diagnostic, got ${JSON.stringify(result.errors)}`)
+			assert.ok(
+				match,
+				`expected a hex-expected diagnostic, got ${JSON.stringify(result.errors)}`,
+			)
 			t.assert.snapshot({
 				source,
 				escapeRange: match!.range,
