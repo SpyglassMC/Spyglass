@@ -106,13 +106,9 @@ export const symbol: Colorizer<SymbolBaseNode> = (node) => {
 export const unicodeEscape: Colorizer<UnicodeEscapeNode> = (node) => {
 	const { range, kind } = node
 	const tokens: ColorToken[] = []
-	// Backslash + specifier char (`\` and `x`/`u`/`U`/`N`)
-	tokens.push(
-		ColorToken.create(Range.create(range.start, range.start + 2), 'escape'),
-	)
 	if (kind === 'N') {
 		tokens.push(
-			ColorToken.create(Range.create(range.start + 2, range.start + 3), 'escape'),
+			ColorToken.create(Range.create(range.start, range.start + 3), 'escape'),
 		)
 		tokens.push(
 			ColorToken.create(
@@ -124,9 +120,9 @@ export const unicodeEscape: Colorizer<UnicodeEscapeNode> = (node) => {
 			ColorToken.create(Range.create(range.end - 1, range.end), 'escape'),
 		)
 	} else {
-		// `\xHH` / `\uHHHH` / `\UHHHHHHHH`: hex digits
+		// `\xHH` / `\uHHHH` / `\UHHHHHHHH`; highlight the entire escape as `escape`
 		tokens.push(
-			ColorToken.create(Range.create(range.start + 2, range.end), 'number'),
+			ColorToken.create(Range.create(range.start, range.end), 'escape'),
 		)
 	}
 	return tokens
