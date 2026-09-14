@@ -17,6 +17,8 @@
 
 /packages/vscode-extension/**/*.vsix
 
+scripts/unicode/
+
 # LLM Usage
 .temp/
 .claude/
