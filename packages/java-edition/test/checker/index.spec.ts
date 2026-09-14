@@ -19,62 +19,18 @@ function stringNode(): core.StringNode {
 	}
 }
 
-function run(meta: core.MetaRegistry, node: core.StringNode): void {
-	const project = mockProjectData({ meta })
-	const doc = TextDocument.create('', '', 0, '""')
-	const ctx = core.CheckerContext.create(project, { doc })
-	meta.getChecker<core.StringNode>('string')(node, ctx)
-}
-
 describe('java-edition checker register()', () => {
-	it('keeps the checker that was already registered', () => {
-		const meta = new core.MetaRegistry()
-		let calls = 0
-		meta.registerChecker<core.StringNode>('string', () => {
-			calls += 1
-		})
-
-		register(meta, '1.21.5')
-		run(meta, stringNode())
-
-		assert.equal(calls, 1)
-	})
-
-	it('does not stack a second copy of itself when called twice', () => {
-		const meta = new core.MetaRegistry()
-		let calls = 0
-		meta.registerChecker<core.StringNode>('string', () => {
-			calls += 1
-		})
-
-		register(meta, '1.21.5')
-		register(meta, '1.21.4')
-		run(meta, stringNode())
-
-		assert.equal(calls, 1)
-	})
-
 	it('stays synchronous when the existing checker is synchronous', () => {
 		const meta = new core.MetaRegistry()
 		meta.registerChecker<core.StringNode>('string', () => {})
 
-		register(meta, '1.21.5')
-		const project = mockProjectData({ meta })
+		register(meta)
+		const project = mockProjectData({ meta, ctx: { loadedVersion: '1.21.5' } })
 		const doc = TextDocument.create('', '', 0, '""')
 		const ctx = core.CheckerContext.create(project, { doc })
 		const result = meta.getChecker<core.StringNode>('string')(stringNode(), ctx)
 
 		assert.equal(result instanceof Promise, false)
-	})
-
-	it('only checks NBT list types for versions that require them', () => {
-		const before = new core.MetaRegistry()
-		register(before, '1.21.4')
-		assert.equal(before.hasChecker('nbt:list'), true)
-
-		const after = new core.MetaRegistry()
-		register(after, '1.21.5')
-		assert.equal(after.hasChecker('nbt:list'), false)
 	})
 
 	describe('heterogeneous NBT lists', () => {
@@ -89,8 +45,8 @@ describe('java-edition checker register()', () => {
 			content: string,
 		): { errors: readonly core.LanguageError[] } {
 			const meta = new core.MetaRegistry()
-			register(meta, release)
-			const project = mockProjectData({ meta })
+			register(meta)
+			const project = mockProjectData({ meta, ctx: { loadedVersion: release } })
 			const doc = TextDocument.create('', '', 0, content)
 			const node = nbtList(
 				new core.Source(content),

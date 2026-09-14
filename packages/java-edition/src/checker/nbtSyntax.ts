@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
+import * as nbt from '@spyglassmc/nbt'
 import type {
 	NbtBoolFunctionNode,
 	NbtByteArrayNode,
@@ -19,6 +20,7 @@ import type {
 } from '@spyglassmc/nbt'
 import { NbtNumberNode } from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../dependency/common.js'
+import { unicodeEscapes } from './string.js'
 
 const MIN_NEW_SYNTAX: ReleaseVersion = '1.21.5'
 
@@ -108,6 +110,7 @@ function checkCompound(node: NbtCompoundNode, ctx: core.CheckerContext): void {
 function checkList(node: NbtListNode, ctx: core.CheckerContext): void {
 	if (isOldSyntax(ctx)) {
 		runUnderscorePass(node, ctx)
+		nbt.checker.listTypeHomogeneous(node, ctx)
 	}
 	walkAndRunRegisteredCheckers(node, ctx)
 }
@@ -183,6 +186,7 @@ const checkDouble: core.SyncChecker<NbtDoubleNode> = (node, ctx) => {
 }
 
 const checkString: core.SyncChecker<NbtStringNode> = (node, ctx) => {
+	unicodeEscapes(node, ctx)
 	if (isOldSyntax(ctx) || node.quote) {
 		return
 	}
@@ -219,4 +223,7 @@ export function register(meta: core.MetaRegistry): void {
 	meta.registerChecker<NbtByteArrayNode>('nbt:byte_array', checkByteArray)
 	meta.registerChecker<NbtIntArrayNode>('nbt:int_array', checkIntArray)
 	meta.registerChecker<NbtLongArrayNode>('nbt:long_array', checkLongArray)
+
+	meta.registerChecker<core.StringNode>('string', unicodeEscapes)
+	meta.registerChecker<core.StringBaseNode>('json:string', unicodeEscapes)
 }

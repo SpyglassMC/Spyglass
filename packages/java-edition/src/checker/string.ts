@@ -315,36 +315,36 @@ function rewriteValue(
 
 /**
  * Resolves the Unicode escapes of a string node against the bundled Unicode
- * data, and reports the escapes that the given game version does not support.
+ * data, and reports the escapes that the target game version (read from
+ * `ctx.project['loadedVersion']`) does not support.
  */
-export function unicodeEscapes(release: ReleaseVersion): SyncChecker<StringBaseNode> {
+export const unicodeEscapes: SyncChecker<StringBaseNode> = (node, ctx) => {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion
 	const supportsExtendedEscapes = ReleaseVersion.cmp(release, ExtendedEscapesSince) >= 0
-	return (node, ctx) => {
-		if (!node.options.escapable) {
-			return
-		}
-		const visit = (n: AstNode): void => {
-			const children = n.children ?? []
-			const isStringNode = StringBaseNode.is(n)
-			if (isStringNode) {
-				for (const child of children) {
-					if (child.type === 'unicode_escape') {
-						finalizeEscape(
-							child as UnicodeEscapeNode,
-							ctx,
-							n as StringBaseNode,
-							supportsExtendedEscapes,
-						)
-					} else {
-						visit(child)
-					}
-				}
-			} else {
-				for (const child of children) {
+	if (!node.options.escapable) {
+		return
+	}
+	const visit = (n: AstNode): void => {
+		const children = n.children ?? []
+		const isStringNode = StringBaseNode.is(n)
+		if (isStringNode) {
+			for (const child of children) {
+				if (child.type === 'unicode_escape') {
+					finalizeEscape(
+						child as UnicodeEscapeNode,
+						ctx,
+						n as StringBaseNode,
+						supportsExtendedEscapes,
+					)
+				} else {
 					visit(child)
 				}
 			}
+		} else {
+			for (const child of children) {
+				visit(child)
+			}
 		}
-		visit(node)
 	}
+	visit(node)
 }

@@ -45,7 +45,7 @@ let unicodeBoot: { symbols: SymbolUtil; meta: MetaRegistry } | undefined
  * Unicode data registrar on the project meta, then we run every registered
  * registrar through a fresh `SymbolUtil` exactly as `Project` would.
  */
-export function initializedProject(): ProjectData {
+export function initializedProject(release: ReleaseVersion = LatestRelease): ProjectData {
 	if (!unicodeBoot) {
 		const boot = mockProjectData({ symbols: new SymbolUtilCtor({}) })
 		const data = getUnicodeData()
@@ -63,6 +63,7 @@ export function initializedProject(): ProjectData {
 	}
 	return mockProjectData({
 		config: structuredClone(VanillaConfig),
+		ctx: { loadedVersion: release },
 		meta: unicodeBoot.meta,
 		symbols: unicodeBoot.symbols,
 	})
@@ -94,7 +95,7 @@ function runChecker(
 	options: StringOptions,
 	release: ReleaseVersion = LatestRelease,
 ): CheckerRun {
-	const project = initializedProject()
+	const project = initializedProject(release)
 	const doc = TextDocument.create('', '', 0, text)
 
 	const parseCtx = ParserContext.create(project, { doc })
@@ -103,7 +104,7 @@ function runChecker(
 	const parsedEscapeCount = escapeChildren(node).length
 
 	const checkCtx = CheckerContext.create(project, { doc })
-	unicodeEscapes(release)(node, checkCtx)
+	unicodeEscapes(node, checkCtx)
 
 	return {
 		node,

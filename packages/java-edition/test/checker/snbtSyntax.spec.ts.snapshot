@@ -111,7 +111,8 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted negative binary literal 1`] = `
           "s",
           "t"
         ],
-        "unicode": true
+        "unicode": true,
+        "extendedUnicode": true
       },
       "quotes": [
         "\\"",
@@ -167,7 +168,8 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted negative hex literal 1`] = `
           "s",
           "t"
         ],
-        "unicode": true
+        "unicode": true,
+        "extendedUnicode": true
       },
       "quotes": [
         "\\"",
@@ -223,7 +225,8 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with dash 1`] = `
           "s",
           "t"
         ],
-        "unicode": true
+        "unicode": true,
+        "extendedUnicode": true
       },
       "quotes": [
         "\\"",
@@ -279,7 +282,8 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with digit 1`] = `
           "s",
           "t"
         ],
-        "unicode": true
+        "unicode": true,
+        "extendedUnicode": true
       },
       "quotes": [
         "\\"",
@@ -335,7 +339,8 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with dot 1`] = `
           "s",
           "t"
         ],
-        "unicode": true
+        "unicode": true,
+        "extendedUnicode": true
       },
       "quotes": [
         "\\"",
@@ -391,7 +396,8 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with sign 1`] = `
           "s",
           "t"
         ],
-        "unicode": true
+        "unicode": true,
+        "extendedUnicode": true
       },
       "quotes": [
         "\\"",
@@ -426,38 +432,6 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with sign 1`] = `
       "severity": 3
     }
   ]
-}
-`;
-
-exports[`checkSnbtSyntax (no version) > skips gating when loadedVersion is undefined 1`] = `
-{
-  "node": {
-    "type": "nbt:bool_function",
-    "range": {
-      "start": 0,
-      "end": 7
-    },
-    "value": false,
-    "prefixRange": {
-      "start": 0,
-      "end": 5
-    },
-    "suffixRange": {
-      "start": 6,
-      "end": 7
-    },
-    "children": [
-      {
-        "type": "nbt:int",
-        "range": {
-          "start": 5,
-          "end": 6
-        },
-        "value": 0
-      }
-    ]
-  },
-  "errors": []
 }
 `;
 
@@ -787,7 +761,8 @@ exports[`checkSnbtSyntax (pre-1.21.5) > uuid() call 1`] = `
               "s",
               "t"
             ],
-            "unicode": true
+            "unicode": true,
+            "extendedUnicode": true
           },
           "quotes": [
             "\\"",

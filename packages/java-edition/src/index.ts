@@ -164,8 +164,5 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	nbt.initialize(ctx)
 	jeChecker.register(meta)
 
-	// Must come last: it chains onto the checkers registered above.
-	jeChecker.register(meta, release)
-
 	return { loadedVersion: release, errorSource: release }
 }

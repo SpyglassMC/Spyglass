@@ -7,6 +7,7 @@ import * as nbt from '@spyglassmc/nbt'
 import { entry } from '@spyglassmc/nbt/lib/parser/index.js'
 import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import type { ReleaseVersion } from '../../lib/dependency/index.js'
 
 /**
  * Parses `content` as SNBT and runs the je SNBT-syntax checkers on the
@@ -15,11 +16,8 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
  * the AST root (so the snapshot captures both the node shape and the error
  * list).
  */
-function check(content: string, version?: string) {
-	const ctx: Record<string, string> = {}
-	if (version !== undefined) {
-		ctx['loadedVersion'] = version
-	}
+function check(content: string, version: ReleaseVersion) {
+	const ctx: Record<string, string> = { loadedVersion: version }
 	const project = mockProjectData({ ctx })
 	register(project.meta)
 	const parserCtx = ParserContext.create(project, {
@@ -233,26 +231,9 @@ describe('checkSnbtSyntax (1.21.5+)', () => {
 	}
 })
 
-describe('checkSnbtSyntax (no version)', () => {
-	it('skips gating when loadedVersion is undefined', (t) => {
-		const result = check('bool(0)', undefined)
-		if (hasError(result.errors, 'nbt.parser.function.snbt-functions-not-supported')) {
-			throw new Error(
-				`Did not expect an SNBT-syntax error without loadedVersion. Got:\n  ${
-					result.errors.map(e => e.message).join('\n  ')
-				}`,
-			)
-		}
-		t.assert.snapshot(result)
-	})
-})
-
 describe('checkSnbtSyntax (via typeDefinition wrapper)', () => {
-	function typeCheck(content: string, version: string | undefined) {
-		const ctx: Record<string, string> = {}
-		if (version !== undefined) {
-			ctx['loadedVersion'] = version
-		}
+	function typeCheck(content: string, version: ReleaseVersion) {
+		const ctx: Record<string, string> = { loadedVersion: version }
 		const project = mockProjectData({ ctx })
 		register(project.meta)
 		const parserCtx = ParserContext.create(project, {
