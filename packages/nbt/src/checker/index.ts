@@ -154,31 +154,19 @@ export function typeDefinition(
 						|| type === 'nbt:int_array' || type === 'nbt:long_array'
 					) {
 						return node.children.filter(n => n.value).map(
-							n => [{
-								originalNode: n.value!,
-								inferredType: inferType(n.value!, options),
-							}],
+							n => [{ originalNode: n.value!, inferredType: inferType(n.value!, options) }],
 						)
 					}
 					if (type === 'nbt:uuid_function') {
 						return node.intArray.children.filter(n => n.value).map(
-							n => [{
-								originalNode: n.value!,
-								inferredType: inferType(n.value!, options),
-							}],
+							n => [{ originalNode: n.value!, inferredType: inferType(n.value!, options) }],
 						)
 					}
 					if (type === 'nbt:compound') {
 						return node.children.filter(kvp => kvp.key).map(kvp => ({
-							key: {
-								originalNode: kvp.key!,
-								inferredType: inferType(kvp.key!, options),
-							},
+							key: { originalNode: kvp.key!, inferredType: inferType(kvp.key!, options) },
 							possibleValues: kvp.value
-								? [{
-									originalNode: kvp.value,
-									inferredType: inferType(kvp.value, options),
-								}]
+								? [{ originalNode: kvp.value, inferredType: inferType(kvp.value, options) }]
 								: [],
 						}))
 					}
