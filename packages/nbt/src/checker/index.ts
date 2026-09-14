@@ -100,7 +100,7 @@ export function typeDefinition(
 		mcdoc.runtime.checker.typeDefinition<NbtNode>(
 			[{
 				originalNode: node,
-				inferredType: inferType(node, options.interpretNumeralWithUnderscoresAsString),
+				inferredType: inferType(node, options),
 			}],
 			typeDef,
 			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
@@ -156,10 +156,7 @@ export function typeDefinition(
 						return node.children.filter(n => n.value).map(
 							n => [{
 								originalNode: n.value!,
-								inferredType: inferType(
-									n.value!,
-									options.interpretNumeralWithUnderscoresAsString,
-								),
+								inferredType: inferType(n.value!, options),
 							}],
 						)
 					}
@@ -167,10 +164,7 @@ export function typeDefinition(
 						return node.intArray.children.filter(n => n.value).map(
 							n => [{
 								originalNode: n.value!,
-								inferredType: inferType(
-									n.value!,
-									options.interpretNumeralWithUnderscoresAsString,
-								),
+								inferredType: inferType(n.value!, options),
 							}],
 						)
 					}
@@ -178,18 +172,12 @@ export function typeDefinition(
 						return node.children.filter(kvp => kvp.key).map(kvp => ({
 							key: {
 								originalNode: kvp.key!,
-								inferredType: inferType(
-									kvp.key!,
-									options.interpretNumeralWithUnderscoresAsString,
-								),
+								inferredType: inferType(kvp.key!, options),
 							},
 							possibleValues: kvp.value
 								? [{
 									originalNode: kvp.value,
-									inferredType: inferType(
-										kvp.value,
-										options.interpretNumeralWithUnderscoresAsString,
-									),
+									inferredType: inferType(kvp.value, options),
 								}]
 								: [],
 						}))
@@ -284,13 +272,11 @@ function isNumber<T extends NbtNumberNode>(
 		&& (!node.hasUnderscoreSeparator || !options.interpretNumeralWithUnderscoresAsString)
 }
 
-function inferType(
-	node: NbtNode,
-	interpretNumeralWithUnderscoresAsString: boolean | undefined,
-): SimplifiedMcdocTypeNoUnion {
+function inferType(node: NbtNode, options: Options): SimplifiedMcdocTypeNoUnion {
 	if (
-		NbtNumberNode.is(node) && node.hasUnderscoreSeparator
-		&& interpretNumeralWithUnderscoresAsString
+		NbtNumberNode.is(node)
+		&& node.hasUnderscoreSeparator
+		&& options.interpretNumeralWithUnderscoresAsString
 	) {
 		return { kind: 'literal', value: { kind: 'string', value: node.value.toString() } }
 	}
