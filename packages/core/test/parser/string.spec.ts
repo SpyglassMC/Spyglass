@@ -1,11 +1,17 @@
 import * as assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { BrigadierUnquotableCharacterSet, ParserContext, Source, string } from '../../lib/index.js'
+import {
+	BrigadierUnquotableCharacterSet,
+	ParserContext,
+	Source,
+	string,
+	type StringOptions,
+} from '../../lib/index.js'
 import { mockProjectData, testParser } from '../utils.ts'
 
 describe('string()', () => {
-	const suites: { title: string; options: Parameters<typeof string>[0]; contents: string[] }[] = [{
+	const suites: { title: string; options: StringOptions; contents: string[] }[] = [{
 		title: 'quoted_string with newline and tab escapes',
 		options: { quotes: ['"'], escapable: { characters: ['n', 't'] } },
 		contents: [
@@ -19,7 +25,7 @@ describe('string()', () => {
 		],
 	}, {
 		title: 'quoted_string with unicode escape and allowUnknown',
-		options: { quotes: ['"'], escapable: { characters: [], allowUnknown: true, unicode: true } },
+		options: { quotes: ['"'], escapable: { characters: [], allowUnknown: true } },
 		contents: ['"foo\\u00a7\\abar"', '"\\uggez"'],
 	}, {
 		title: 'quoted_string with allowUnknown',
@@ -33,7 +39,7 @@ describe('string()', () => {
 		title: 'quoted_string with nested value parser',
 		options: {
 			quotes: ['"'],
-			escapable: { allowUnknown: true, unicode: true },
+			escapable: { allowUnknown: true },
 			value: { type: 'string', parser: string({ quotes: ['"'], escapable: {} }) },
 		},
 		contents: ['"foo"', '"\\"\\u0066oo\\\\\\\\bar\\""'],
@@ -51,15 +57,13 @@ describe('string()', () => {
 
 	describe('\\N{…} named Unicode escapes (parser syntax)', () => {
 		const baseOptions = (
-			extra: Parameters<typeof string>[0]['escapable'] extends infer E
-				? E extends object ? Partial<E> : never
-				: never = {},
-		): Parameters<typeof string>[0] => ({
+			escapable: StringOptions['escapable'] = {},
+		): StringOptions => ({
 			quotes: ['"'],
-			escapable: { unicode: true, extendedUnicode: true, ...extra },
+			escapable,
 		})
 
-		const parse = (text: string, options: Parameters<typeof string>[0] = baseOptions()) => {
+		const parse = (text: string, options: StringOptions = baseOptions()) => {
 			const parser = string(options)
 			return testParser(parser, text, { project: mockProjectData() })
 		}

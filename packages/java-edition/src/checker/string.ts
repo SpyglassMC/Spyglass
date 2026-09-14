@@ -2,16 +2,11 @@ import type { AstNode, CheckerContext, SyncChecker, UnicodeEscapeNode } from '@s
 import { Range, StringBaseNode } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import {
-	BlocksUri,
-	BulkBlocks,
 	BulkNames,
 	BulkNamesInverse,
-	BulkRanges,
-	codepointInAnyRange,
 	getRangeData,
 	isUnicodeNameLookupMap,
 	isUnicodeNamesByCodepointMap,
-	isUnicodeRangeMap,
 	ReleaseVersion,
 	toTitleCase,
 	UnicodeBulkCategory,
@@ -71,26 +66,6 @@ function buildEscapeHover(codepoint: number, name: string | undefined): string {
 		: `${head} - ${codepointLabel}`
 }
 
-function isValidUnicodeCodepoint(codepoint: number, ctx: CheckerContext): boolean {
-	const byCodepoint = ctx.symbols.query(UnicodeDataUri, UnicodeBulkCategory, BulkNamesInverse)
-		.getData(isUnicodeNamesByCodepointMap)
-	const ranges = ctx.symbols.query(BlocksUri, UnicodeBulkCategory, BulkRanges)
-		.getData(isUnicodeRangeMap)
-	if (!byCodepoint || !ranges) {
-		return false
-	}
-	if (codepointInAnyRange(codepoint, ranges)) {
-		return true
-	}
-	return Object.prototype.hasOwnProperty.call(byCodepoint, codepoint.toString(16))
-}
-
-function isInDeclaredBlock(codepoint: number, ctx: CheckerContext): boolean {
-	const blocks = ctx.symbols.query(BlocksUri, UnicodeBulkCategory, BulkBlocks)
-		.getData(isUnicodeRangeMap)
-	return codepointInAnyRange(codepoint, blocks)
-}
-
 function resolveHexSuffixedEscape(
 	name: string,
 	hex: string,
@@ -123,10 +98,6 @@ function resolveNamedEscape(
 	escapeRange: Range,
 	ctx: CheckerContext,
 ): number | undefined {
-	const innerRange = Range.create(
-		escapeRange.start + 2,
-		escapeRange.end,
-	)
 	const inner = escape.trim()
 
 	// 1. Malformed shape (illegal characters, pure whitespace, empty):
@@ -139,12 +110,12 @@ function resolveNamedEscape(
 		return undefined
 	}
 
-	// 2. Try the whole string as a name with no tail argument. This handles
-	// `\N{Hangul Syllables}` (range name, missing hex) and `\N{snowman}`
-	// (single-character lookup). Hex-tail dispatch happens in step 3.
-	const rangeAsFull = getRangeData(inner, ctx)
-	if (rangeAsFull) {
-		const [start, end] = rangeAsFull.range
+	// 2. `inner` is the name of a known First/Last range. A hex codepoint tail
+	// is required after a range name (e.g. `\N{Hangul Syllables AC00}`);
+	// if the tail is missing, point the user at the range they should pick from.
+	const rangeData = getRangeData(inner, ctx)
+	if (rangeData) {
+		const [start, end] = rangeData.range
 		ctx.err.report(
 			localize(
 				'parser.string.hex-expected',
@@ -152,33 +123,23 @@ function resolveNamedEscape(
 				start.toString(16).toUpperCase(),
 				end.toString(16).toUpperCase(),
 			),
-			innerRange,
+			Range.create(escapeRange.end - 2, escapeRange.end - 1),
 		)
 		return undefined
 	}
-	const codepointAsFull = lookupName(inner, ctx)
-	if (codepointAsFull !== undefined) {
-		if (!isInDeclaredBlock(codepointAsFull, ctx)) {
-			ctx.err.report(
-				localize('parser.string.illegal-unicode-escape-name'),
-				escapeRange,
-			)
-			return undefined
-		}
-		if (!isValidUnicodeCodepoint(codepointAsFull, ctx)) {
-			ctx.err.report(
-				localize('parser.string.illegal-unicode-escape-name'),
-				escapeRange,
-			)
-			return undefined
-		}
-		return codepointAsFull
+
+	// 3. Treat the whole input as a single character name. Handles
+	// `\N{snowman}` and other named characters with no tail.
+	const codepoint = lookupName(inner, ctx)
+	if (codepoint !== undefined) {
+		return codepoint
 	}
 
-	// 3. Whole-string name didn't resolve — try splitting: last token is the
-	// tail, everything before is the name. Handles `\N{Hangul Syllables D800}`
-	// (valid range + hex), `\N{Hangul Syllables FFFFF}` (range + out-of-range
-	// hex), and `\N{Hangul Syllables garbage}` (range + non-hex tail).
+	// 4. Whole input didn't resolve. Try splitting: last token is the
+	// tail, everything before is the name. Handles
+	// `\N{Hangul Syllables D800}` (valid range + hex),
+	// `\N{Hangul Syllables FFFFF}` (range + out-of-range hex), and
+	// `\N{Hangul Syllables garbage}` (range + non-hex tail).
 	const words = inner.split(/\s+/)
 	if (words.length < 2) {
 		return reportIllegalName(ctx, escapeRange)

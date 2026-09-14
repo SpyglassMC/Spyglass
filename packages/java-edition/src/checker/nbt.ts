@@ -64,10 +64,10 @@ function runUnderscorePass(root: core.AstNode, ctx: core.CheckerContext): void {
 function walkAndRunRegisteredCheckers(node: core.AstNode, ctx: core.CheckerContext): void {
 	for (const child of node.children ?? []) {
 		if (ctx.meta.hasChecker(child.type)) {
-			const checker = ctx.meta.getChecker(child.type) as core.SyncChecker<core.AstNode>
-			checker(child, ctx)
+			ctx.meta.getChecker(child.type)(child, ctx)
+		} else {
+			walkAndRunRegisteredCheckers(child, ctx)
 		}
-		walkAndRunRegisteredCheckers(child, ctx)
 	}
 }
 
@@ -208,7 +208,7 @@ const checkString: core.SyncChecker<NbtStringNode> = (node, ctx) => {
 	}
 }
 
-export function register(meta: core.MetaRegistry): void {
+export function registerNBT(meta: core.MetaRegistry): void {
 	meta.registerChecker<NbtBoolFunctionNode>('nbt:bool_function', checkBoolFunction)
 	meta.registerChecker<NbtUuidFunctionNode>('nbt:uuid_function', checkUuidFunction)
 	meta.registerChecker<NbtLongNode>('nbt:long', checkLong)
@@ -223,7 +223,4 @@ export function register(meta: core.MetaRegistry): void {
 	meta.registerChecker<NbtByteArrayNode>('nbt:byte_array', checkByteArray)
 	meta.registerChecker<NbtIntArrayNode>('nbt:int_array', checkIntArray)
 	meta.registerChecker<NbtLongArrayNode>('nbt:long_array', checkLongArray)
-
-	meta.registerChecker<core.StringNode>('string', unicodeEscapes)
-	meta.registerChecker<core.StringBaseNode>('json:string', unicodeEscapes)
 }

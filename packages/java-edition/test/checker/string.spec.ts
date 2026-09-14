@@ -139,10 +139,10 @@ function onlyEscape(run: CheckerRun): UnicodeEscapeNode {
 }
 
 const baseOptions = (
-	extra: Partial<NonNullable<StringOptions['escapable']>> = {},
+	escapable: NonNullable<StringOptions['escapable']> = { characters: ['n'] },
 ): StringOptions => ({
 	quotes: ['"'],
-	escapable: { characters: ['n'], unicode: true, extendedUnicode: true, ...extra },
+	escapable,
 })
 
 describe('string checker', () => {
@@ -459,7 +459,7 @@ describe('\\N{…} completion', () => {
 			src: new ReadonlySource(source),
 			offset: cursorOffset,
 		})
-		const node = stringParser({ quotes: ['"'], escapable: { extendedUnicode: true } })(
+		const node = stringParser({ quotes: ['"'], escapable: { characters: [] } })(
 			new Source(source),
 			{
 				...ctx,

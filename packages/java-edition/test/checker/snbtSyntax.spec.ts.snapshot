@@ -110,9 +110,7 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted negative binary literal 1`] = `
           "r",
           "s",
           "t"
-        ],
-        "unicode": true,
-        "extendedUnicode": true
+        ]
       },
       "quotes": [
         "\\"",
@@ -167,9 +165,7 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted negative hex literal 1`] = `
           "r",
           "s",
           "t"
-        ],
-        "unicode": true,
-        "extendedUnicode": true
+        ]
       },
       "quotes": [
         "\\"",
@@ -224,9 +220,7 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with dash 1`] = `
           "r",
           "s",
           "t"
-        ],
-        "unicode": true,
-        "extendedUnicode": true
+        ]
       },
       "quotes": [
         "\\"",
@@ -281,9 +275,7 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with digit 1`] = `
           "r",
           "s",
           "t"
-        ],
-        "unicode": true,
-        "extendedUnicode": true
+        ]
       },
       "quotes": [
         "\\"",
@@ -338,9 +330,7 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with dot 1`] = `
           "r",
           "s",
           "t"
-        ],
-        "unicode": true,
-        "extendedUnicode": true
+        ]
       },
       "quotes": [
         "\\"",
@@ -395,9 +385,7 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with sign 1`] = `
           "r",
           "s",
           "t"
-        ],
-        "unicode": true,
-        "extendedUnicode": true
+        ]
       },
       "quotes": [
         "\\"",
@@ -432,6 +420,28 @@ exports[`checkSnbtSyntax (1.21.5+) > unquoted string starting with sign 1`] = `
       "severity": 3
     }
   ]
+}
+`;
+
+exports[`checkSnbtSyntax (hex-expected diagnostic range) > no trailing space 1`] = `
+{
+  "source": "\\"\\\\N{Hangul Syllables}\\"",
+  "escapeRange": {
+    "start": 19,
+    "end": 20
+  },
+  "message": "Hex codepoint expected after \`Hangul Syllables\`. Range: \`0xAC00\`-\`0xD7A3\`"
+}
+`;
+
+exports[`checkSnbtSyntax (hex-expected diagnostic range) > with trailing space 1`] = `
+{
+  "source": "\\"\\\\N{Hangul Syllables }\\"",
+  "escapeRange": {
+    "start": 20,
+    "end": 21
+  },
+  "message": "Hex codepoint expected after \`Hangul Syllables\`. Range: \`0xAC00\`-\`0xD7A3\`"
 }
 `;
 
@@ -760,9 +770,7 @@ exports[`checkSnbtSyntax (pre-1.21.5) > uuid() call 1`] = `
               "r",
               "s",
               "t"
-            ],
-            "unicode": true,
-            "extendedUnicode": true
+            ]
           },
           "quotes": [
             "\\"",

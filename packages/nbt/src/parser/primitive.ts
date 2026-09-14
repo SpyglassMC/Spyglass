@@ -144,7 +144,7 @@ const NumeralPatterns:
 	]
 
 const NbtStringOptions: core.StringOptions = {
-	escapable: { characters: ['b', 'f', 'n', 'r', 's', 't'], unicode: true, extendedUnicode: true },
+	escapable: { characters: ['b', 'f', 'n', 'r', 's', 't'] },
 	quotes: ['"', "'"],
 	unquotable: core.BrigadierUnquotableOption,
 }

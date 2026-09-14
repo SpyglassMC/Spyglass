@@ -5,9 +5,11 @@ import { register } from '@spyglassmc/java-edition/lib/checker/index.js'
 import { localize } from '@spyglassmc/locales'
 import * as nbt from '@spyglassmc/nbt'
 import { entry } from '@spyglassmc/nbt/lib/parser/index.js'
+import * as assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ReleaseVersion } from '../../lib/dependency/index.js'
+import { getUnicodeData, unicodeSymbolRegistrar } from '../../lib/dependency/index.js'
 
 /**
  * Parses `content` as SNBT and runs the je SNBT-syntax checkers on the
@@ -19,6 +21,19 @@ import type { ReleaseVersion } from '../../lib/dependency/index.js'
 function check(content: string, version: ReleaseVersion) {
 	const ctx: Record<string, string> = { loadedVersion: version }
 	const project = mockProjectData({ ctx })
+	// Mirror `je.initialize`: register the Unicode symbol registrar so the
+	// checker can resolve named escapes to codepoints.
+	const data = getUnicodeData()
+	project.meta.registerSymbolRegistrar('unicode-data', {
+		checksum: data.checksum,
+		registrar: unicodeSymbolRegistrar(data),
+	})
+	for (const [id, { registrar }] of project.meta.symbolRegistrars) {
+		project.symbols.contributeAs(`symbol_registrar/${id}`, () => {
+			registrar(project.symbols, {})
+			return undefined
+		})
+	}
 	register(project.meta)
 	const parserCtx = ParserContext.create(project, {
 		doc: TextDocument.create('', '', 0, content),
@@ -227,6 +242,62 @@ describe('checkSnbtSyntax (1.21.5+)', () => {
 				}
 			}
 			t.assert.snapshot(result)
+		})
+	}
+})
+
+describe('checkSnbtSyntax (string inside compound does not double-fire)', () => {
+	const Cases: { name: string; source: string }[] = [
+		{
+			name: 'known block name with no hex, inside a compound',
+			source: '{name:"\\N{Hangul Syllables }"}',
+		},
+		{
+			name: 'known block name with no hex, inside a list',
+			source: '["\\N{Hangul Syllables }"]',
+		},
+		{
+			name: 'known block name with no hex, inside a nested compound',
+			source: '{outer:{inner:"\\N{Hangul Syllables }"}}',
+		},
+	]
+	for (const { name, source } of Cases) {
+		it(name, () => {
+			// Sanity guard: the `hex-expected` diagnostic must fire exactly
+			// once. If the binder fallback ever starts re-dispatching child
+			// checkers in addition to `walkAndRunRegisteredCheckers`, the
+			// count goes to 2 and this assertion fires.
+			const result = check(source, '1.21.5')
+			const matches = result.errors.filter(e => e.message.includes('Hex codepoint expected'))
+			assert.equal(
+				matches.length,
+				1,
+				`expected 1 hex-expected diagnostic, got ${matches.length}:\n  ${
+					matches.map(e => e.message).join('\n  ')
+				}`,
+			)
+		})
+	}
+})
+
+describe('checkSnbtSyntax (hex-expected diagnostic range)', () => {
+	// Snapshot the diagnostic position for both shapes so the difference
+	// between a trailing-space input and a no-trailing-space input is
+	// visible in the diff.
+	const Cases: { name: string; source: string }[] = [
+		{ name: 'no trailing space', source: '"\\N{Hangul Syllables}"' },
+		{ name: 'with trailing space', source: '"\\N{Hangul Syllables }"' },
+	]
+	for (const { name, source } of Cases) {
+		it(name, (t) => {
+			const result = check(source, '1.21.5')
+			const match = result.errors.find(e => e.message.includes('Hex codepoint expected'))
+			assert.ok(match, `expected a hex-expected diagnostic, got ${JSON.stringify(result.errors)}`)
+			t.assert.snapshot({
+				source,
+				escapeRange: match!.range,
+				message: match!.message,
+			})
 		})
 	}
 })
