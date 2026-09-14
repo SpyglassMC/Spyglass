@@ -16,3 +16,5 @@
 /packages/*/test-out
 
 /packages/vscode-extension/**/*.vsix
+
+.temp/

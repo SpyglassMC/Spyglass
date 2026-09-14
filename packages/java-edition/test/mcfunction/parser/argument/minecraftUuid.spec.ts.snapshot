@@ -9,7 +9,8 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse '1-1-1-1-1' 1`] = `
     "bits": [
       4295032833,
       281474976710657
-    ]
+    ],
+    "hover": "\`\`\`mcdoc\\n[I; 1, 65537, 65536, 1]\\n\`\`\`"
   },
   "errors": []
 }
@@ -52,7 +53,8 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse 'dd12be42-52a9-4a91
     "bits": [
       -2516740049682740591,
       -6295731287348353896
-    ]
+    ],
+    "hover": "\`\`\`mcdoc\\n[I; -585974206, 1386826385, -1465839168, 407495832]\\n\`\`\`"
   },
   "errors": []
 }
@@ -69,7 +71,8 @@ exports[`mcfunction argument parser > minecraft:uuid > Parse 'fffffffffffffff-1-
     "bits": [
       -4294901759,
       281474976710657
-    ]
+    ],
+    "hover": "\`\`\`mcdoc\\n[I; -1, 65537, 65536, 1]\\n\`\`\`"
   },
   "errors": []
 }

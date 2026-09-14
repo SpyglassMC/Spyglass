@@ -3,6 +3,7 @@ import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { jeFileUriPredicate, registerUriBuilders, uriBinder } from './binder/index.js'
+import * as jeChecker from './checker/index.js'
 import type { McmetaSummary, PackInfo } from './dependency/index.js'
 import {
 	fetchMcmetaVersions,
@@ -152,6 +153,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)
+	jeChecker.register(meta)
 
 	return { loadedVersion: release, errorSource: release }
 }

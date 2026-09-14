@@ -12124,7 +12124,8 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'dd12be42-52a9-4a
       "bits": [
         -2516740049682740591,
         -6295731287348353896
-      ]
+      ],
+      "hover": "\`\`\`mcdoc\\n[I; -585974206, 1386826385, -1465839168, 407495832]\\n\`\`\`"
     }
   },
   "errors": []
@@ -12148,7 +12149,8 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'dd12be42-52a9-4a
       "bits": [
         -2516740049682740591,
         -6295731287348353896
-      ]
+      ],
+      "hover": "\`\`\`mcdoc\\n[I; -585974206, 1386826385, -1465839168, 407495832]\\n\`\`\`"
     }
   },
   "errors": [
