@@ -365,7 +365,12 @@ function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerCon
 	const definitions = node.definitionsByParent.flatMap(d => d.validDefinitions)
 	if (definitions.length === 1) {
 		const { typeDef, groupNode } = definitions[0]
-		ctx.attachTypeInfo?.(node.node.originalNode, typeDef, groupNode.desc)
+		ctx.attachTypeInfo?.(
+			node.node.originalNode,
+			typeDef,
+			groupNode.desc,
+			groupNode.originalTypeDef,
+		)
 		handleNodeAttachers(node.node, typeDef, ctx)
 
 		if (node.entryNode.runtimeKey && groupNode.keyDefinition) {
@@ -377,10 +382,20 @@ function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerCon
 			handleNodeAttachers(node.entryNode.runtimeKey, groupNode.keyDefinition, ctx)
 		}
 	} else if (definitions.length > 1) {
-		ctx.attachTypeInfo?.(node.node.originalNode, {
-			kind: 'union',
-			members: definitions.map(d => d.typeDef),
-		})
+		ctx.attachTypeInfo?.(
+			node.node.originalNode,
+			{
+				kind: 'union',
+				members: definitions.map(d => d.typeDef),
+			},
+			undefined,
+			{
+				kind: 'union',
+				members: node.definitionsByParent
+					.filter(d => d.validDefinitions.length > 0)
+					.map(d => d.originalTypeDef),
+			},
+		)
 
 		if (node.entryNode.runtimeKey) {
 			ctx.attachTypeInfo?.(node.entryNode.runtimeKey.originalNode, {
