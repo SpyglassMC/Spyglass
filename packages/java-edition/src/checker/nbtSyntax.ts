@@ -26,7 +26,7 @@ function getRelease(ctx: core.CheckerContext): ReleaseVersion | undefined {
 	return ctx.project['loadedVersion'] as ReleaseVersion | undefined
 }
 
-function isOldSyntax(ctx: core.CheckerContext): boolean {
+export function isOldSyntax(ctx: core.CheckerContext): boolean {
 	const release = getRelease(ctx)
 	if (release === undefined) {
 		// Skip gating until the version is resolved.

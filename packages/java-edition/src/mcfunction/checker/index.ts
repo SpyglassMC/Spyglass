@@ -5,6 +5,7 @@ import * as mcdoc from '@spyglassmc/mcdoc'
 import type * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { dissectUri, reportDissectError } from '../../binder/index.js'
+import { isOldSyntax as isOldNbtSyntax } from '../../checker/nbtSyntax.js'
 import { getTagValues } from '../../common/index.js'
 import { ReleaseVersion } from '../../dependency/common.js'
 import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
@@ -72,7 +73,9 @@ const rootCommand = (
 		} else if (json.TypedJsonNode.is(node)) {
 			json.checker.typed(node, ctx)
 		} else if (nbt.TypedNbtNode.is(node)) {
-			nbt.checker.typed(node, ctx)
+			nbt.checker.typed(node, ctx, {
+				interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+			})
 		} else if (NbtNode.is(node) && node.properties) {
 			const dispatchedBy = getEarlierNode(nodes, i, node.properties.dispatchedBy)
 			const indexedBy = getEarlierNode(nodes, i, node.properties.indexedBy)
@@ -91,7 +94,10 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 	}
 
 	const type = core.ResourceLocationNode.toString(node.id, 'full')
-	nbt.checker.index('minecraft:block', type, { isPredicate: node.isPredicate })(node.nbt, ctx)
+	nbt.checker.index('minecraft:block', type, {
+		isPredicate: node.isPredicate,
+		interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+	})(node.nbt, ctx)
 }
 
 const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
@@ -106,14 +112,20 @@ const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 		if (!nbt.NbtCompoundNode.is(pair.value.value)) {
 			continue
 		}
-		nbt.checker.index('minecraft:entity', types, { isPredicate: true })(pair.value.value, ctx)
+		nbt.checker.index('minecraft:entity', types, {
+			isPredicate: true,
+			interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+		})(pair.value.value, ctx)
 	}
 }
 
 const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 	if (node.nbt) {
 		const type = core.ResourceLocationNode.toString(node.id, 'full')
-		nbt.checker.index('minecraft:item', type, { isPredicate: true })(node.nbt, ctx)
+		nbt.checker.index('minecraft:item', type, {
+			isPredicate: true,
+			interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+		})(node.nbt, ctx)
 	}
 	if (!node.tests?.children) {
 		return
@@ -126,11 +138,17 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 			// note: basically all errors checked here are otherwise accepted by vanilla, but it's good to report them
 			if (key === 'minecraft:count' && !ComponentTestExistsNode.is(test) && test.value) {
 				const type: mcdoc.McdocType = mcdoc.typeRef('item_count_predicate')
-				nbt.checker.typeDefinition(type)(test.value, ctx)
+				nbt.checker.typeDefinition(type, {
+					interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+				})(test.value, ctx)
 			} else if (ComponentTestExactNode.is(test) && test.value) {
-				nbt.checker.index('minecraft:data_component', key)(test.value, ctx)
+				nbt.checker.index('minecraft:data_component', key, {
+					interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+				})(test.value, ctx)
 			} else if (ComponentTestSubpredicateNode.is(test) && test.value) {
-				nbt.checker.index('minecraft:data_component_predicate', key)(test.value, ctx)
+				nbt.checker.index('minecraft:data_component_predicate', key, {
+					interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+				})(test.value, ctx)
 			}
 		}
 	}
@@ -139,7 +157,9 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 	const itemId = core.ResourceLocationNode.toString(node.id, 'full')
 	if (node.nbt) {
-		nbt.checker.index('minecraft:item', itemId)(node.nbt, ctx)
+		nbt.checker.index('minecraft:item', itemId, {
+			interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+		})(node.nbt, ctx)
 	}
 	if (!node.components) {
 		return
@@ -155,7 +175,9 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 		}
 		groupedComponents.get(componentId)!.push(child.key)
 		if (child.type === 'mcfunction:component' && child.value) {
-			nbt.checker.index('minecraft:data_component', componentId)(child.value, ctx)
+			nbt.checker.index('minecraft:data_component', componentId, {
+				interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+			})(child.value, ctx)
 		}
 	}
 	for (const [_, group] of groupedComponents) {
@@ -177,7 +199,9 @@ const nbtResource: core.SyncChecker<NbtResourceNode> = (node, ctx) => {
 		registry: 'minecraft:resource',
 		parallelIndices: [{ kind: 'static', value: core.ResourceLocation.lengthen(node.category) }],
 	}
-	nbt.checker.typeDefinition(type)(node.children[0], ctx)
+	nbt.checker.typeDefinition(type, {
+		interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+	})(node.children[0], ctx)
 }
 
 function nbtChecker(
@@ -196,7 +220,11 @@ function nbtChecker(
 					? getListLikeChild(indexedByTypedef)
 					: indexedBy.children[0].endOriginalTypeDef ?? indexedByTypedef
 				if (typeDef) {
-					nbt.checker.typeDefinition(typeDef, node.properties)(tag, ctx)
+					nbt.checker.typeDefinition(typeDef, {
+						isPredicate: node.properties.isPredicate,
+						isMerge: node.properties.isMerge,
+						interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+					})(tag, ctx)
 				}
 			}
 			return
@@ -211,6 +239,7 @@ function nbtChecker(
 					nbt.checker.index('minecraft:entity', types, {
 						isPredicate: node.properties.isPredicate,
 						isMerge: node.properties.isMerge,
+						interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
 					})(tag, ctx)
 				}
 				break
@@ -219,6 +248,7 @@ function nbtChecker(
 					nbt.checker.index('minecraft:block', undefined, {
 						isPredicate: node.properties.isPredicate,
 						isMerge: node.properties.isMerge,
+						interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
 					})(tag, ctx)
 				}
 				break
@@ -230,6 +260,7 @@ function nbtChecker(
 					nbt.checker.index('minecraft:storage', storage, {
 						isPredicate: node.properties.isPredicate,
 						isMerge: node.properties.isMerge,
+						interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
 					})(tag, ctx)
 				}
 				break
@@ -303,7 +334,9 @@ const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
 	if (options) {
 		// Even if particle isn't explicitly marked as requiring options,
 		// run the type checker anyways to allow an empty compound
-		nbt.checker.index('minecraft:particle', core.ResourceLocation.lengthen(id))(options, ctx)
+		nbt.checker.index('minecraft:particle', core.ResourceLocation.lengthen(id), {
+			interpretNumeralWithUnderscoresAsString: isOldNbtSyntax(ctx),
+		})(options, ctx)
 	} else if (ParticleNode.requiresOptions(id, release)) {
 		ctx.err.report(
 			localize('expected', localize('nbt.node.compound')),
