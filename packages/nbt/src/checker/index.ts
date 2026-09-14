@@ -26,8 +26,9 @@ import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 export function typed(
 	node: TypedNbtNode,
 	ctx: core.CheckerContext,
+	options: Options = {},
 ): void {
-	typeDefinition(node.targetType)(node.children[0], ctx)
+	typeDefinition(node.targetType, options)(node.children[0], ctx)
 }
 
 export function register(meta: core.MetaRegistry) {
@@ -37,6 +38,7 @@ export function register(meta: core.MetaRegistry) {
 export interface Options {
 	isPredicate?: boolean
 	isMerge?: boolean
+	interpretNumeralWithUnderscoresAsString?: boolean
 }
 
 /**
@@ -96,7 +98,10 @@ export function typeDefinition(
 		// errors instead of after them.
 		core.checker.fallbackSync(node, ctx)
 		mcdoc.runtime.checker.typeDefinition<NbtNode>(
-			[{ originalNode: node, inferredType: inferType(node) }],
+			[{
+				originalNode: node,
+				inferredType: inferType(node, options.interpretNumeralWithUnderscoresAsString),
+			}],
 			typeDef,
 			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
 				allowMissingKeys: options.isPredicate || options.isMerge,
@@ -149,19 +154,43 @@ export function typeDefinition(
 						|| type === 'nbt:int_array' || type === 'nbt:long_array'
 					) {
 						return node.children.filter(n => n.value).map(
-							n => [{ originalNode: n.value!, inferredType: inferType(n.value!) }],
+							n => [{
+								originalNode: n.value!,
+								inferredType: inferType(
+									n.value!,
+									options.interpretNumeralWithUnderscoresAsString,
+								),
+							}],
 						)
 					}
 					if (type === 'nbt:uuid_function') {
 						return node.intArray.children.filter(n => n.value).map(
-							n => [{ originalNode: n.value!, inferredType: inferType(n.value!) }],
+							n => [{
+								originalNode: n.value!,
+								inferredType: inferType(
+									n.value!,
+									options.interpretNumeralWithUnderscoresAsString,
+								),
+							}],
 						)
 					}
 					if (type === 'nbt:compound') {
 						return node.children.filter(kvp => kvp.key).map(kvp => ({
-							key: { originalNode: kvp.key!, inferredType: inferType(kvp.key!) },
+							key: {
+								originalNode: kvp.key!,
+								inferredType: inferType(
+									kvp.key!,
+									options.interpretNumeralWithUnderscoresAsString,
+								),
+							},
 							possibleValues: kvp.value
-								? [{ originalNode: kvp.value, inferredType: inferType(kvp.value) }]
+								? [{
+									originalNode: kvp.value,
+									inferredType: inferType(
+										kvp.value,
+										options.interpretNumeralWithUnderscoresAsString,
+									),
+								}]
 								: [],
 						}))
 					}
@@ -246,7 +275,16 @@ export function typeDefinition(
 	}
 }
 
-function inferType(node: NbtNode): SimplifiedMcdocTypeNoUnion {
+function inferType(
+	node: NbtNode,
+	interpretNumeralWithUnderscoresAsString: boolean | undefined,
+): SimplifiedMcdocTypeNoUnion {
+	if (
+		NbtNumberNode.is(node) && node.hasUnderscoreSeparator
+		&& interpretNumeralWithUnderscoresAsString
+	) {
+		return { kind: 'literal', value: { kind: 'string', value: node.value.toString() } }
+	}
 	switch (node.type) {
 		case 'nbt:byte':
 			return { kind: 'literal', value: { kind: 'byte', value: node.value } }
