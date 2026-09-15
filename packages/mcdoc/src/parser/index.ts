@@ -287,7 +287,7 @@ const UnicodeControlCharacters = Object.freeze([
 
 export const string: InfallibleParser<StringNode> = stopBefore(
 	core.string({
-		escapable: { characters: ['b', 'f', 'n', 'r', 't', '\\', '"'], unicode: true },
+		escapable: { characters: ['b', 'f', 'n', 'r', 't', '\\', '"'] },
 		quotes: ['"'],
 	}),
 	...UnicodeControlCharacters,

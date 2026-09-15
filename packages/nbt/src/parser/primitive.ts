@@ -1,11 +1,13 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { NbtByteNode, NbtNumberNode, NbtPrimitiveNode, NbtStringNode } from '../node/index.js'
+import {
+	type NbtByteNode,
+	NbtIntNode,
+	type NbtNumberNode,
+	type NbtPrimitiveNode,
+	type NbtStringNode,
+} from '../node/index.js'
 import { localizeTag } from '../util.js'
-
-interface nbtNodeWithExplicitIntSuffix {
-	hasExplicitIntSuffix?: boolean
-}
 
 const enum Group {
 	Boolean,
@@ -142,15 +144,15 @@ const NumeralPatterns:
 	]
 
 const NbtStringOptions: core.StringOptions = {
-	escapable: { characters: ['b', 'f', 'n', 'r', 's', 't'], unicode: true },
+	escapable: { characters: ['b', 'f', 'n', 'r', 's', 't'] },
 	quotes: ['"', "'"],
 	unquotable: core.BrigadierUnquotableOption,
 }
 
 export const string: core.InfallibleParser<NbtStringNode> = (src, ctx) => {
-	// Always use the new-syntax string options: escape sequences are allowed
-	// on every version, and the version-aware checks live in the
-	// java-edition SNBT-syntax checker step.
+	// Always accept the full escape syntax; the edition package's string
+	// checker reports version-gated errors when the loaded game version
+	// predates the support cutoff.
 	return core.setType('nbt:string', core.string(NbtStringOptions))(src, ctx)
 }
 
@@ -407,8 +409,8 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 			// here so the java-edition SNBT-syntax checker can report on it
 			// for older versions. The `[iI]$` pattern only matches `nbt:int`,
 			// so the cast is well-defined for that branch.
-			if (e.group === Group.IntegerAlike && /[iI]$/.test(unquotedResult.value)) {
-				;(ans as nbtNodeWithExplicitIntSuffix).hasExplicitIntSuffix = true
+			if (NbtIntNode.is(ans) && /[iI]$/.test(unquotedResult.value)) {
+				ans.hasExplicitIntSuffix = true
 			}
 			return ans
 		}

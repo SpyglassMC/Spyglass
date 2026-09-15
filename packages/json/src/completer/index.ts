@@ -66,11 +66,11 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 
 const primitive: core.Completer<JsonPrimitiveNode> = (node, ctx) => {
 	const insideRange = core.Range.contains(node, ctx.offset, true)
-	if (node.type === 'json:string' && node.children?.length && insideRange) {
-		const childItems = core.completer.string(node, ctx)
-		if (childItems.length > 0) {
-			return childItems
-		}
+	if (node.type === 'json:string' && insideRange) {
+		// Delegate to core's string completer for the `\N{…}` named-Unicode
+		// escape completion. Works whether or not the json:string has a child
+		// string-parser result.
+		return core.completer.string(node, ctx)
 	}
 	if (!node.typeDef) {
 		return []

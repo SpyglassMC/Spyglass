@@ -6,7 +6,7 @@ import type {
 	NbtListNode,
 	NbtLongArrayNode,
 } from '../node/index.js'
-import { localizeTag, newSyntax } from '../util.js'
+import { localizeTag } from '../util.js'
 import { entry } from './entry.js'
 import { primitive } from './primitive.js'
 
@@ -21,18 +21,6 @@ export const list: core.Parser<NbtListNode> = (src, ctx) => {
 	const ans = parser(src, ctx) as NbtListNode
 	ans.type = 'nbt:list'
 	ans.valueType = ans.children[0]?.value?.type
-
-	// Check if every element is of the same type.
-	if (ans.valueType && !newSyntax(ctx)) {
-		for (const { value } of ans.children) {
-			if (value && value.type !== ans.valueType) {
-				ctx.err.report(
-					localize('expected-got', localizeTag(ans.valueType), localizeTag(value.type)),
-					value,
-				)
-			}
-		}
-	}
 
 	return ans
 }

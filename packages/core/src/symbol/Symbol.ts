@@ -606,7 +606,6 @@ export namespace SymbolTable {
 			if (parentSymbol) {
 				symbol.parentSymbol = parentSymbol
 			}
-
 			if (symbol.members) {
 				linkSymbolMap(symbol.members, symbol, category, path)
 			}
@@ -645,7 +644,6 @@ export namespace SymbolTable {
 			delete symbol.parentMap
 			delete symbol.parentSymbol
 			delete symbol.path
-
 			if (symbol.members) {
 				unlinkSymbolMap(symbol.members)
 			}

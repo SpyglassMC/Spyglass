@@ -1,0 +1,49 @@
+exports[`java-edition checker register() > heterogeneous NBT lists > Check '[1b, \"string\", 2b, 3]' in 1.21.4 1`] = `
+{
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 13
+      },
+      "message": "Expected a byte tag but got a string tag",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 19,
+        "end": 20
+      },
+      "message": "Expected a byte tag but got an int tag",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`java-edition checker register() > heterogeneous NBT lists > Check '[\"string\", 1b]' in 1.21.4 1`] = `
+{
+  "errors": [
+    {
+      "range": {
+        "start": 11,
+        "end": 13
+      },
+      "message": "Expected a string tag but got a byte tag",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`java-edition checker register() > heterogeneous NBT lists > Check '[\"string\", 1b]' in 1.21.5 1`] = `
+{
+  "errors": []
+}
+`;
+
+exports[`java-edition checker register() > heterogeneous NBT lists > Check '[\"string\", \"another\"]' in 1.21.4 1`] = `
+{
+  "errors": []
+}
+`;

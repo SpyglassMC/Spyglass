@@ -13,6 +13,7 @@ import type {
 	NbtShortNode,
 	NbtStringNode,
 	NbtUuidFunctionNode,
+	TypedNbtNode,
 } from '../node/index.js'
 
 const snbtFunction: core.Colorizer<NbtFunctionNode> = (node) => {
@@ -48,6 +49,11 @@ const compound: core.Colorizer<NbtCompoundNode> = (node, ctx) => {
 	return tokens
 }
 
+const typed: core.Colorizer<TypedNbtNode> = (node, ctx) => {
+	const child = node.children[0]
+	return ctx.meta.getColorizer(child.type)(child, ctx)
+}
+
 export function register(meta: MetaRegistry) {
 	meta.registerColorizer<NbtStringNode>('nbt:string', core.colorizer.string)
 	meta.registerColorizer<NbtByteNode>('nbt:byte', core.colorizer.number)
@@ -59,4 +65,5 @@ export function register(meta: MetaRegistry) {
 	meta.registerColorizer<NbtBoolFunctionNode>('nbt:bool_function', snbtFunction)
 	meta.registerColorizer<NbtUuidFunctionNode>('nbt:uuid_function', snbtFunction)
 	meta.registerColorizer<NbtCompoundNode>('nbt:compound', compound)
+	meta.registerColorizer<TypedNbtNode>('nbt:typed', typed)
 }

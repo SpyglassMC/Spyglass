@@ -259,12 +259,27 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 }
 
 export const string: Completer<StringBaseNode> = (node, ctx) => {
+	let valueItems: CompletionItem[] | undefined
+
 	if (node.children?.length) {
-		return dispatch(node.children[0], ctx).map(item => ({
-			...item,
-			filterText: escapeString(item.filterText ?? item.label, node.quote),
-			insertText: escapeString(item.insertText ?? item.label, node.quote),
-		}))
+		// `children` may include `UnicodeEscapeNode` siblings used solely for
+		// hover diagnostics. Dispatch to the first child that's not an escape
+		// (typically the result of the `value` parser) so completion inside
+		// the parsed value, e.g. nested strings, still works.
+		const child = node.children.find((c) => c.type !== 'unicode_escape')
+		if (child) {
+			valueItems = dispatch(child, ctx).map(item => ({
+				...item,
+				filterText: escapeString(item.filterText ?? item.label, node.quote),
+				insertText: escapeString(item.insertText ?? item.label, node.quote),
+			}))
+		}
+	}
+
+	const unicodeNameItems = tryGetUnicodeNameCompletion(node, ctx)
+
+	if (valueItems?.length || unicodeNameItems?.length) {
+		return [...valueItems ?? [], ...unicodeNameItems ?? []]
 	}
 
 	if (node.options.quotes && node.value === '') {
@@ -277,6 +292,42 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 	}
 
 	return []
+}
+
+/**
+ * Returns completion items for Unicode character names when the cursor is
+ * inside an `\N{…}` escape in `node`. Returns `undefined` otherwise so the
+ * caller can fall through to other completers.
+ *
+ * The `unicode-name` symbol category is contributed by whichever edition
+ * package bundles Unicode data (e.g. `java-edition`); when no such registrar
+ * ran, the category is empty and no items are returned.
+ */
+function tryGetUnicodeNameCompletion(
+	node: DeepReadonly<StringBaseNode>,
+	ctx: CompleterContext,
+): CompletionItem[] | undefined {
+	const before = ctx.src.slice(node.range.start, ctx.offset)
+	const match = before.match(/\\N\{([^\}]*)$/)
+	if (!match) {
+		return undefined
+	}
+	const partial = match[1]!
+	const replaceRange = Range.create(ctx.offset - partial.length, ctx.offset)
+
+	const map = ctx.symbols.getVisibleSymbols('unicode-name')
+	const items: CompletionItem[] = []
+	for (const [identifier, symbol] of Object.entries(map)) {
+		if (!SymbolUtil.isDeclared(symbol)) {
+			continue
+		}
+		items.push(
+			CompletionItem.create(identifier, replaceRange, {
+				kind: CompletionKind.Constant,
+			}),
+		)
+	}
+	return items
 }
 
 export function escapeString(value: string, quote?: Quote) {

@@ -8,18 +8,21 @@ import type { McmetaSummary, PackInfo } from './dependency/index.js'
 import {
 	fetchMcmetaVersions,
 	getMcmetaSummary,
+	getUnicodeData,
 	getVanillaDatapack,
 	getVanillaMcdoc,
 	getVanillaResourcepack,
 	PackMcmeta,
 	resolveConfiguredVersion,
 	symbolRegistrar,
+	unicodeSymbolRegistrar,
 } from './dependency/index.js'
 import * as jeJson from './json/index.js'
 import { registerMcdocAttributes, registerPackFormatAttribute } from './mcdocAttributes.js'
 import * as jeMcf from './mcfunction/index.js'
 
 export * as binder from './binder/index.js'
+export * as checker from './checker/index.js'
 export * as dependency from './dependency/index.js'
 export * as json from './json/index.js'
 export * from './mcdocAttributes.js'
@@ -77,6 +80,12 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 
 	meta.registerUriBinder(uriBinder)
 	registerUriBuilders(meta)
+
+	const unicodeData = getUnicodeData()
+	meta.registerSymbolRegistrar('unicode-data', {
+		checksum: unicodeData.checksum,
+		registrar: unicodeSymbolRegistrar(unicodeData),
+	})
 
 	const [versions, packs] = await Promise.all([
 		fetchMcmetaVersions(externals, logger),

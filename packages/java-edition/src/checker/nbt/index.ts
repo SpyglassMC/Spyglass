@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
+import * as nbt from '@spyglassmc/nbt'
 import type {
 	NbtBoolFunctionNode,
 	NbtByteArrayNode,
@@ -18,7 +19,8 @@ import type {
 	NbtUuidFunctionNode,
 } from '@spyglassmc/nbt'
 import { NbtNumberNode } from '@spyglassmc/nbt'
-import { ReleaseVersion } from '../dependency/common.js'
+import { ReleaseVersion } from '../../dependency/common.js'
+import { unicodeEscapes } from './string.js'
 
 const MIN_NEW_SYNTAX: ReleaseVersion = '1.21.5'
 
@@ -62,10 +64,10 @@ function runUnderscorePass(root: core.AstNode, ctx: core.CheckerContext): void {
 function walkAndRunRegisteredCheckers(node: core.AstNode, ctx: core.CheckerContext): void {
 	for (const child of node.children ?? []) {
 		if (ctx.meta.hasChecker(child.type)) {
-			const checker = ctx.meta.getChecker(child.type) as core.SyncChecker<core.AstNode>
-			checker(child, ctx)
+			ctx.meta.getChecker(child.type)(child, ctx)
+		} else {
+			walkAndRunRegisteredCheckers(child, ctx)
 		}
-		walkAndRunRegisteredCheckers(child, ctx)
 	}
 }
 
@@ -108,6 +110,7 @@ function checkCompound(node: NbtCompoundNode, ctx: core.CheckerContext): void {
 function checkList(node: NbtListNode, ctx: core.CheckerContext): void {
 	if (isOldSyntax(ctx)) {
 		runUnderscorePass(node, ctx)
+		nbt.checker.listTypeHomogeneous(node, ctx)
 	}
 	walkAndRunRegisteredCheckers(node, ctx)
 }
@@ -183,6 +186,7 @@ const checkDouble: core.SyncChecker<NbtDoubleNode> = (node, ctx) => {
 }
 
 const checkString: core.SyncChecker<NbtStringNode> = (node, ctx) => {
+	unicodeEscapes(node, ctx)
 	if (isOldSyntax(ctx) || node.quote) {
 		return
 	}

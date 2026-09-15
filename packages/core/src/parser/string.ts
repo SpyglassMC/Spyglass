@@ -1,13 +1,37 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { Quote, StringNode, StringOptions } from '../node/index.js'
-import { EscapeChar, EscapeTable } from '../node/index.js'
+import type {
+	AstNode,
+	Quote,
+	StringNode,
+	StringOptions,
+	UnicodeEscapeKind,
+	UnicodeEscapeNode,
+} from '../node/index.js'
+import { EscapeChar, EscapeTable, UnicodeEscapeLengths } from '../node/index.js'
 import type { InfallibleParser } from '../parser/index.js'
 import type { ParserContext } from '../service/index.js'
 import type { IndexMap } from '../source/index.js'
 import { Range, Source } from '../source/index.js'
 import type { Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
+
+function makeEscapeChild(
+	start: number,
+	end: number,
+	raw: string,
+	kind: UnicodeEscapeKind,
+	resolved = '',
+): UnicodeEscapeNode {
+	return {
+		type: 'unicode_escape',
+		kind,
+		range: Range.create(start, end),
+		raw,
+		resolved,
+		codepoint: resolved ? resolved.codePointAt(0)! : 0,
+	}
+}
 
 export function string(options: StringOptions): InfallibleParser<StringNode> {
 	return (src: Source, ctx: ParserContext): StringNode => {
@@ -18,6 +42,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			value: '',
 			valueMap: [],
 		}
+		const pushChild = (node: AstNode) => (ans.children ??= []).push(node)
 		let start: number
 
 		if (options.quotes?.length && (src.peek() === '"' || src.peek() === "'")) {
@@ -35,30 +60,105 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						|| c2 === currentQuote
 						|| EscapeChar.is(options.escapable.characters, c2)
 					) {
+						const resolved = EscapeTable.get(c2)!
 						ans.valueMap.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
 							outer: Range.create(cStart, src),
 						})
-						ans.value += EscapeTable.get(c2)
-					} else if (options.escapable.unicode && c2 === 'u') {
-						const hex = src.peek(4)
-						if (/^[0-9a-f]{4}$/i.test(hex)) {
-							src.skip(4)
+						ans.value += resolved
+						pushChild(
+							makeEscapeChild(cStart, src.cursor, c2, c2 as UnicodeEscapeKind, resolved),
+						)
+					} else if (
+						c2 === 'u' || c2 === 'U' || c2 === 'x'
+					) {
+						const sequenceLength = UnicodeEscapeLengths.get(c2) ?? 4
+						const hex = src.peek(sequenceLength)
+						if (new RegExp(`^[0-9a-f]{${sequenceLength}}$`, 'i').test(hex)) {
+							src.skip(sequenceLength)
+							const raw = src.sliceToCursor(cStart)
+							const codepoint = parseInt(hex, 16)
+							if (codepoint < 0 || codepoint > 0x10FFFF) {
+								ctx.err.report(
+									localize(
+										'parser.string.illegal-unicode-escape-out-of-range',
+										'0',
+										`0x${(0x10FFFF).toString(16).toUpperCase()}`,
+									),
+									Range.create(cStart + 2, src),
+								)
+								ans.valueMap.push({
+									inner: Range.create(ans.value.length, ans.value.length + 1),
+									outer: Range.create(cStart, src),
+								})
+								ans.value += c2
+								cStart = src.cursor
+								continue
+							}
+							const resolved = String.fromCodePoint(codepoint)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(cStart, src),
 							})
-							ans.value += String.fromCharCode(parseInt(hex, 16))
+							ans.value += resolved
+							pushChild(
+								makeEscapeChild(cStart, src.cursor, raw, c2),
+							)
 						} else {
+							const closingQuote = src.string.indexOf(currentQuote, src.innerCursor)
+							const charsLeft = closingQuote === -1
+								? src.string.length - src.innerCursor
+								: closingQuote - src.innerCursor
+							const hexEnd = src.getCharRange(
+								Math.min(sequenceLength, Math.max(charsLeft, 1)) - 1,
+							).end
+							const range = charsLeft > 0
+								? Range.create(src, hexEnd)
+								: Range.create(cStart, cStart + 2)
 							ctx.err.report(
 								localize('parser.string.illegal-unicode-escape'),
-								Range.create(src, src.getCharRange(3).end),
+								range,
 							)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(cStart, src),
 							})
 							ans.value += c2
+						}
+					} else if (c2 === 'N') {
+						if (!src.trySkip('{')) {
+							ctx.err.report(
+								localize('expected', localeQuote('{')),
+								src.getCharRange(-1),
+							)
+							ans.valueMap.push({
+								inner: Range.create(ans.value.length, ans.value.length + 1),
+								outer: Range.create(cStart, src),
+							})
+							ans.value += c2
+							cStart = src.cursor
+							continue
+						}
+						const name = src.peekUntil('}')
+						if (src.peek(1, name.length) !== '}') {
+							ctx.err.report(
+								localize('expected', localeQuote('}')),
+								Range.create(cStart, src),
+							)
+							ans.valueMap.push({
+								inner: Range.create(ans.value.length, ans.value.length + 1),
+								outer: Range.create(cStart, src),
+							})
+							ans.value += c2
+						} else {
+							src.skip(name.length + 1)
+							const raw = src.sliceToCursor(cStart)
+							pushChild(makeEscapeChild(cStart, src.cursor, raw, 'N'))
+							ans.valueMap.push({
+								inner: Range.create(ans.value.length, ans.value.length + raw.length),
+								outer: Range.create(cStart, src),
+							})
+							ans.value += raw
 						}
 					} else {
 						if (!options.escapable.allowUnknown) {
@@ -114,7 +214,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			const valueResult = parseStringValue(options.value.parser, ans.value, ans.valueMap, ctx)
 			/* istanbul ignore else */
 			if (valueResult !== Failure) {
-				ans.children = [valueResult]
+				pushChild(valueResult)
 			}
 		}
 

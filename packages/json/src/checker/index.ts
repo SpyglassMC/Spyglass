@@ -20,6 +20,11 @@ export function index(
 	options?: JsonCheckerOptions,
 ): core.SyncChecker<JsonNode> {
 	return (node, ctx) => {
+		// Run the registry-driven walk first: it descends to the shallowest nodes
+		// with their own checker (`json:string`) while their escape children are
+		// still intact. The mcdoc pass below replaces the children of any string
+		// that has a string parser attached to it.
+		core.checker.fallbackSync(node, ctx)
 		mcdoc.runtime.checker.typeDefinition<JsonNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			type,
