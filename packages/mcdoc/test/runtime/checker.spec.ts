@@ -83,6 +83,22 @@ describe('mcdoc runtime checker', () => {
 					{ two: 91, four: 91 },
 					{ one: 91 },
 				],
+			'( struct { foo: int } | struct { bar: string, [any]: any } )': [
+				{ foo: 91 },
+				{ bar: 'bar' },
+			],
+			'( struct { bar: int } | struct { bar: string, baz: int } )': [
+				{ bar: 91 },
+				{ bar: 'bar' },
+				{ bar: 'bar', baz: 91 },
+			],
+			'( struct { bar: int, baz: string } | struct { bar: string, [string]: any } )': [
+				{ bar: 91 },
+				{ bar: 91, baz: 'hi' },
+				{ bar: 'str' },
+				{ bar: 'str', myFavoriteNumber: 91 },
+				{ bar: 'str', darkOverloard: { name: 'NeunEinser', powerLevel: 9001 } },
+			],
 		},
 		'list': {
 			'[int] @ 0..5': [[], [1, 2, 3], [1, 2, 3, 4, 5, 6]],

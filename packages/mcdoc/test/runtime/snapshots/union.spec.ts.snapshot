@@ -1,3 +1,804 @@
+exports[`mcdoc runtime checker > ( struct { bar: int } | struct { bar: string, baz: int } ) > with value {\"bar\":91} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "bar": 91
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "int"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 91,
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "int"
+          },
+          {
+            "kind": "string"
+          }
+        ]
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          },
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > ( struct { bar: int } | struct { bar: string, baz: int } ) > with value {\"bar\":\"bar\",\"baz\":91} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "bar": "bar",
+        "baz": 91
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "baz"
+              }
+            },
+            "type": {
+              "kind": "int"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "int"
+          },
+          {
+            "kind": "string"
+          }
+        ]
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          },
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 91,
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": "baz",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > ( struct { bar: int } | struct { bar: string, baz: int } ) > with value {\"bar\":\"bar\"} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": "bar",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "bar"
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "int"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "bar": "bar"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "int"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "int"
+          },
+          {
+            "kind": "string"
+          }
+        ]
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          },
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > ( struct { bar: int, baz: string } | struct { bar: string, [string]: any } ) > with value {\"bar\":91,\"baz\":\"hi\"} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "bar": 91,
+        "baz": "hi"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "int"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "baz"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 91,
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    },
+    {
+      "node": "hi",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "baz",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > ( struct { bar: int, baz: string } | struct { bar: string, [string]: any } ) > with value {\"bar\":91} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 91,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 91
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "string"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "bar": 91
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "string"
+            },
+            "type": {
+              "kind": "any"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 91,
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "int"
+          },
+          {
+            "kind": "string"
+          }
+        ]
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          },
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > ( struct { bar: int, baz: string } | struct { bar: string, [string]: any } ) > with value {\"bar\":\"str\",\"darkOverloard\":{\"name\":\"NeunEinser\",\"powerLevel\":9001}} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "bar": "str",
+        "darkOverloard": {
+          "name": "NeunEinser",
+          "powerLevel": 9001
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "string"
+            },
+            "type": {
+              "kind": "any"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "str",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "int"
+          },
+          {
+            "kind": "string"
+          }
+        ]
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          },
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": {
+        "name": "NeunEinser",
+        "powerLevel": 9001
+      },
+      "definition": {
+        "kind": "any"
+      }
+    },
+    {
+      "node": "darkOverloard",
+      "definition": {
+        "kind": "string"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > ( struct { bar: int, baz: string } | struct { bar: string, [string]: any } ) > with value {\"bar\":\"str\",\"myFavoriteNumber\":91} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "bar": "str",
+        "myFavoriteNumber": 91
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "string"
+            },
+            "type": {
+              "kind": "any"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "str",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "int"
+          },
+          {
+            "kind": "string"
+          }
+        ]
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          },
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 91,
+      "definition": {
+        "kind": "any"
+      }
+    },
+    {
+      "node": "myFavoriteNumber",
+      "definition": {
+        "kind": "string"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > ( struct { bar: int, baz: string } | struct { bar: string, [string]: any } ) > with value {\"bar\":\"str\"} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "bar": "str"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "string"
+            },
+            "type": {
+              "kind": "any"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "str",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "int"
+          },
+          {
+            "kind": "string"
+          }
+        ]
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          },
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > ( struct { foo: int } | struct { bar: string, [any]: any } ) > with value {\"bar\":\"bar\"} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "bar": "bar"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "any"
+            },
+            "type": {
+              "kind": "any"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > ( struct { foo: int } | struct { bar: string, [any]: any } ) > with value {\"foo\":91} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "foo": 91
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "int"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 91,
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "int"
+          },
+          {
+            "kind": "any"
+          }
+        ]
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "foo"
+            }
+          },
+          {
+            "kind": "any"
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
 exports[`mcdoc runtime checker > ( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean }) > with value {\"one\":91} 1`] = `
 {
   "errors": [
