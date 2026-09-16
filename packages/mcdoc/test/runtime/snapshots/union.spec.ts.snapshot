@@ -28,37 +28,17 @@ exports[`mcdoc runtime checker > ( struct { bar: int } | struct { bar: string, b
     {
       "node": 91,
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "int"
-          },
-          {
-            "kind": "string"
-          }
-        ]
+        "kind": "int"
       }
     },
     {
       "node": "bar",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          },
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          }
-        ]
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
       }
     }
   ]
@@ -109,37 +89,17 @@ exports[`mcdoc runtime checker > ( struct { bar: int } | struct { bar: string, b
     {
       "node": "bar",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "int"
-          },
-          {
-            "kind": "string"
-          }
-        ]
+        "kind": "string"
       }
     },
     {
       "node": "bar",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          },
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          }
-        ]
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
       }
     },
     {
@@ -211,37 +171,17 @@ exports[`mcdoc runtime checker > ( struct { bar: int } | struct { bar: string, b
     {
       "node": "bar",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "int"
-          },
-          {
-            "kind": "string"
-          }
-        ]
+        "kind": "int"
       }
     },
     {
       "node": "bar",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          },
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          }
-        ]
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
       }
     }
   ]
@@ -383,37 +323,17 @@ exports[`mcdoc runtime checker > ( struct { bar: int, baz: string } | struct { b
     {
       "node": 91,
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "int"
-          },
-          {
-            "kind": "string"
-          }
-        ]
+        "kind": "string"
       }
     },
     {
       "node": "bar",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          },
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          }
-        ]
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
       }
     }
   ]
@@ -463,37 +383,17 @@ exports[`mcdoc runtime checker > ( struct { bar: int, baz: string } | struct { b
     {
       "node": "str",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "int"
-          },
-          {
-            "kind": "string"
-          }
-        ]
+        "kind": "string"
       }
     },
     {
       "node": "bar",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          },
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          }
-        ]
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
       }
     },
     {
@@ -555,37 +455,17 @@ exports[`mcdoc runtime checker > ( struct { bar: int, baz: string } | struct { b
     {
       "node": "str",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "int"
-          },
-          {
-            "kind": "string"
-          }
-        ]
+        "kind": "string"
       }
     },
     {
       "node": "bar",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          },
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          }
-        ]
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
       }
     },
     {
@@ -643,37 +523,17 @@ exports[`mcdoc runtime checker > ( struct { bar: int, baz: string } | struct { b
     {
       "node": "str",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "int"
-          },
-          {
-            "kind": "string"
-          }
-        ]
+        "kind": "string"
       }
     },
     {
       "node": "bar",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          },
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "bar"
-            }
-          }
-        ]
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
       }
     }
   ]
@@ -766,33 +626,17 @@ exports[`mcdoc runtime checker > ( struct { foo: int } | struct { bar: string, [
     {
       "node": 91,
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "int"
-          },
-          {
-            "kind": "any"
-          }
-        ]
+        "kind": "int"
       }
     },
     {
       "node": "foo",
       "definition": {
-        "kind": "union",
-        "members": [
-          {
-            "kind": "literal",
-            "value": {
-              "kind": "string",
-              "value": "foo"
-            }
-          },
-          {
-            "kind": "any"
-          }
-        ]
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
       }
     }
   ]
