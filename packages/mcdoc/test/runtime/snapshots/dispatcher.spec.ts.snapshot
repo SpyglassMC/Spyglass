@@ -1,98 +1,713 @@
 exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } #[filter] dispatch minecraft:item[filtered] to struct { Test: string } > with value {\"id\":\"elytra\",\"tag\":{}} 1`] = `
-[
-  {
-    "kind": "missing_key",
-    "node": {
-      "originalNode": {},
-      "inferredType": {
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "Damage"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "elytra",
+        "tag": {}
+      },
+      "definition": {
         "kind": "struct",
-        "fields": []
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "tag"
+              }
+            },
+            "type": {
+              "kind": "dispatcher",
+              "parallelIndices": [
+                {
+                  "kind": "dynamic",
+                  "accessor": [
+                    "id"
+                  ]
+                }
+              ],
+              "registry": "minecraft:item"
+            },
+            "optional": true
+          }
+        ]
       }
     },
-    "keys": [
-      "Damage"
-    ]
-  }
-]
+    {
+      "node": "elytra",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {},
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "Damage"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "tag",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "tag"
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } #[filter] dispatch minecraft:item[filtered] to struct { Test: string } > with value {\"id\":\"filtered\",\"tag\":{\"A\":\"abc\"}} 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": {
-        "A": "abc"
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": {
+          "A": "abc"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
       },
-      "inferredType": {
+      "expected": []
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "filtered",
+        "tag": {
+          "A": "abc"
+        }
+      },
+      "definition": {
         "kind": "struct",
-        "fields": []
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "tag"
+              }
+            },
+            "type": {
+              "kind": "dispatcher",
+              "parallelIndices": [
+                {
+                  "kind": "dynamic",
+                  "accessor": [
+                    "id"
+                  ]
+                }
+              ],
+              "registry": "minecraft:item"
+            },
+            "optional": true
+          }
+        ]
       }
     },
-    "expected": []
-  }
-]
+    {
+      "node": "filtered",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } > with value {\"id\":\"diamond\"} 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "diamond"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "tag"
+              }
+            },
+            "type": {
+              "kind": "dispatcher",
+              "parallelIndices": [
+                {
+                  "kind": "dynamic",
+                  "accessor": [
+                    "id"
+                  ]
+                }
+              ],
+              "registry": "minecraft:item"
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "node": "diamond",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } > with value {\"id\":\"elytra\",\"tag\":{\"Damage\":20}} 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "elytra",
+        "tag": {
+          "Damage": 20
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "tag"
+              }
+            },
+            "type": {
+              "kind": "dispatcher",
+              "parallelIndices": [
+                {
+                  "kind": "dynamic",
+                  "accessor": [
+                    "id"
+                  ]
+                }
+              ],
+              "registry": "minecraft:item"
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "node": "elytra",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {
+        "Damage": 20
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "Damage"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "tag",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "tag"
+        }
+      }
+    },
+    {
+      "node": 20,
+      "definition": {
+        "kind": "double"
+      }
+    },
+    {
+      "node": "Damage",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "Damage"
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } > with value {\"id\":\"elytra\",\"tag\":{\"Damage\":true}} 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": true,
-      "inferredType": {
-        "kind": "boolean"
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": true,
+        "inferredType": {
+          "kind": "boolean"
+        }
+      },
+      "expected": [
+        {
+          "kind": "double"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "elytra",
+        "tag": {
+          "Damage": true
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "tag"
+              }
+            },
+            "type": {
+              "kind": "dispatcher",
+              "parallelIndices": [
+                {
+                  "kind": "dynamic",
+                  "accessor": [
+                    "id"
+                  ]
+                }
+              ],
+              "registry": "minecraft:item"
+            },
+            "optional": true
+          }
+        ]
       }
     },
-    "expected": [
-      {
+    {
+      "node": "elytra",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {
+        "Damage": true
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "Damage"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "tag",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "tag"
+        }
+      }
+    },
+    {
+      "node": true,
+      "definition": {
         "kind": "double"
       }
-    ]
-  }
-]
+    },
+    {
+      "node": "Damage",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "Damage"
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } > with value {\"id\":\"elytra\",\"tag\":{}} 1`] = `
-[
-  {
-    "kind": "missing_key",
-    "node": {
-      "originalNode": {},
-      "inferredType": {
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "Damage"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "elytra",
+        "tag": {}
+      },
+      "definition": {
         "kind": "struct",
-        "fields": []
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "tag"
+              }
+            },
+            "type": {
+              "kind": "dispatcher",
+              "parallelIndices": [
+                {
+                  "kind": "dynamic",
+                  "accessor": [
+                    "id"
+                  ]
+                }
+              ],
+              "registry": "minecraft:item"
+            },
+            "optional": true
+          }
+        ]
       }
     },
-    "keys": [
-      "Damage"
-    ]
-  }
-]
+    {
+      "node": "elytra",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {},
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "Damage"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "tag",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "tag"
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } > with value {} 1`] = `
-[
-  {
-    "kind": "missing_key",
-    "node": {
-      "originalNode": {},
-      "inferredType": {
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "id"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {},
+      "definition": {
         "kind": "struct",
-        "fields": []
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "tag"
+              }
+            },
+            "type": {
+              "kind": "dispatcher",
+              "parallelIndices": [
+                {
+                  "kind": "dynamic",
+                  "accessor": [
+                    "id"
+                  ]
+                }
+              ],
+              "registry": "minecraft:item"
+            },
+            "optional": true
+          }
+        ]
       }
-    },
-    "keys": [
-      "id"
-    ]
-  }
-]
+    }
+  ]
+}
 `;

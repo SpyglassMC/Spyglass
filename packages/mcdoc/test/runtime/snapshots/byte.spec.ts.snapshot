@@ -1,80 +1,140 @@
 exports[`mcdoc runtime checker > byte > with value \"-128n\" 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": -128,
+      "definition": {
+        "kind": "byte"
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > byte > with value \"-129n\" 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": -129,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "long",
-          "value": -129
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": -129,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "long",
+            "value": -129
+          }
         }
-      }
-    },
-    "expected": [
-      {
+      },
+      "expected": [
+        {
+          "kind": "byte"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": -129,
+      "definition": {
         "kind": "byte"
       }
-    ]
-  }
-]
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > byte > with value \"127n\" 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": 127,
+      "definition": {
+        "kind": "byte"
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > byte > with value \"128n\" 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": 128,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "long",
-          "value": 128
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 128,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "long",
+            "value": 128
+          }
         }
-      }
-    },
-    "expected": [
-      {
+      },
+      "expected": [
+        {
+          "kind": "byte"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": 128,
+      "definition": {
         "kind": "byte"
       }
-    ]
-  }
-]
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > byte > with value \"255n\" 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": 255,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "long",
-          "value": 255
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 255,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "long",
+            "value": 255
+          }
         }
-      }
-    },
-    "expected": [
-      {
+      },
+      "expected": [
+        {
+          "kind": "byte"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": 255,
+      "definition": {
         "kind": "byte"
       }
-    ]
-  }
-]
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > byte > with value \"5n\" 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": 5,
+      "definition": {
+        "kind": "byte"
+      }
+    }
+  ]
+}
 `;

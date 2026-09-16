@@ -291,7 +291,7 @@ describe('mcdoc runtime checker', () => {
 							data.typeDef,
 							ctx,
 						)
-						snapshotWithUri(t, { uri, value: errors })
+						snapshotWithUri(t, { uri, value: { errors, typeAttachments } })
 					})
 				}
 			})

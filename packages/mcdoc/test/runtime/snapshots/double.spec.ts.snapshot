@@ -1,114 +1,109 @@
 exports[`mcdoc runtime checker > double @ 2..<4 > with value 2 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": 2,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 1,
+          "min": 2,
+          "max": 4
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > double @ 2..<4 > with value 3.99 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": 3.99,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 1,
+          "min": 2,
+          "max": 4
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > double @ 2..<4 > with value 4 1`] = `
-[
-  {
-    "kind": "number_out_of_range",
-    "node": {
-      "originalNode": 4,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "double",
-          "value": 4
+{
+  "errors": [
+    {
+      "kind": "number_out_of_range",
+      "node": {
+        "originalNode": 4,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 4
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 1,
+          "min": 2,
+          "max": 4
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": 4,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 1,
+          "min": 2,
+          "max": 4
         }
       }
-    },
-    "ranges": [
-      {
-        "kind": 1,
-        "min": 2,
-        "max": 4
-      }
-    ]
-  }
-]
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > double @ 3..6.2 > with value 1 1`] = `
-[
-  {
-    "kind": "number_out_of_range",
-    "node": {
-      "originalNode": 1,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "double",
-          "value": 1
+{
+  "errors": [
+    {
+      "kind": "number_out_of_range",
+      "node": {
+        "originalNode": 1,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 1
+          }
         }
-      }
-    },
-    "ranges": [
-      {
-        "kind": 0,
-        "min": 3,
-        "max": 6.2
-      }
-    ]
-  }
-]
-`;
-
-exports[`mcdoc runtime checker > double @ 3..6.2 > with value 3 1`] = `
-[]
-`;
-
-exports[`mcdoc runtime checker > double @ 3..6.2 > with value 4 1`] = `
-[]
-`;
-
-exports[`mcdoc runtime checker > double @ 3..6.2 > with value 6.2 1`] = `
-[]
-`;
-
-exports[`mcdoc runtime checker > double @ 3..6.2 > with value 6.3 1`] = `
-[
-  {
-    "kind": "number_out_of_range",
-    "node": {
-      "originalNode": 6.3,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "double",
-          "value": 6.3
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "min": 3,
+          "max": 6.2
         }
-      }
-    },
-    "ranges": [
-      {
-        "kind": 0,
-        "min": 3,
-        "max": 6.2
-      }
-    ]
-  }
-]
-`;
-
-exports[`mcdoc runtime checker > double @ 3..6.2 > with value \"hello\" 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": "hello",
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "string",
-          "value": "hello"
-        }
-      }
-    },
-    "expected": [
-      {
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": 1,
+      "definition": {
         "kind": "double",
         "valueRange": {
           "kind": 0,
@@ -116,7 +111,147 @@ exports[`mcdoc runtime checker > double @ 3..6.2 > with value \"hello\" 1`] = `
           "max": 6.2
         }
       }
-    ]
-  }
-]
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > double @ 3..6.2 > with value 3 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": 3,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 3,
+          "max": 6.2
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > double @ 3..6.2 > with value 4 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": 4,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 3,
+          "max": 6.2
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > double @ 3..6.2 > with value 6.2 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": 6.2,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 3,
+          "max": 6.2
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > double @ 3..6.2 > with value 6.3 1`] = `
+{
+  "errors": [
+    {
+      "kind": "number_out_of_range",
+      "node": {
+        "originalNode": 6.3,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 6.3
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "min": 3,
+          "max": 6.2
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": 6.3,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 3,
+          "max": 6.2
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > double @ 3..6.2 > with value \"hello\" 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": "hello",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "hello"
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "double",
+          "valueRange": {
+            "kind": 0,
+            "min": 3,
+            "max": 6.2
+          }
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": "hello",
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 3,
+          "max": 6.2
+        }
+      }
+    }
+  ]
+}
 `;

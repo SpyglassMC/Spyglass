@@ -1,122 +1,476 @@
 exports[`mcdoc runtime checker > struct { foo: Ref } type Ref = double > with value {\"foo\":4.1} 1`] = `
-[]
-`;
-
-exports[`mcdoc runtime checker > struct { foo: Ref } type Ref = double > with value {\"foo\":\"hello\"} 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": "hello",
-      "inferredType": {
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "foo": 4.1
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "reference",
+              "path": "::test::Ref"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 4.1,
+      "definition": {
+        "kind": "double"
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
         "kind": "literal",
         "value": {
           "kind": "string",
-          "value": "hello"
+          "value": "foo"
         }
       }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { foo: Ref } type Ref = double > with value {\"foo\":\"hello\"} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": "hello",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "hello"
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "double"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "foo": "hello"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "reference",
+              "path": "::test::Ref"
+            }
+          }
+        ]
+      }
     },
-    "expected": [
-      {
+    {
+      "node": "hello",
+      "definition": {
         "kind": "double"
       }
-    ]
-  }
-]
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > struct { foo: Ref } type Ref = double > with value {} 1`] = `
-[
-  {
-    "kind": "missing_key",
-    "node": {
-      "originalNode": {},
-      "inferredType": {
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "foo"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {},
+      "definition": {
         "kind": "struct",
-        "fields": []
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "reference",
+              "path": "::test::Ref"
+            }
+          }
+        ]
       }
-    },
-    "keys": [
-      "foo"
-    ]
-  }
-]
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | EmptyUnion ) } type EmptyUnion = () > with value {\"foo\":\"hello\",\"bar\":\"world\"} 1`] = `
-[]
-`;
-
-exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | EmptyUnion ) } type EmptyUnion = () > with value {\"foo\":\"hi\",\"bar\":1} 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": 1,
-      "inferredType": {
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "foo": "hello",
+        "bar": "world"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "hello",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
         "kind": "literal",
         "value": {
-          "kind": "double",
-          "value": 1
+          "kind": "string",
+          "value": "foo"
         }
       }
     },
-    "expected": [
-      {
+    {
+      "node": "world",
+      "definition": {
         "kind": "string"
       }
-    ]
-  }
-]
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | EmptyUnion ) } type EmptyUnion = () > with value {\"foo\":\"hi\",\"bar\":1} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 1,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 1
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "string"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "foo": "hi",
+        "bar": 1
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "hi",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    },
+    {
+      "node": 1,
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | EmptyUnion ) } type EmptyUnion = () > with value {\"foo\":\"hi\"} 1`] = `
-[
-  {
-    "kind": "missing_key",
-    "node": {
-      "originalNode": {
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "foo": "hi"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "bar"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
         "foo": "hi"
       },
-      "inferredType": {
+      "definition": {
         "kind": "struct",
-        "fields": []
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          }
+        ]
       }
     },
-    "keys": [
-      "bar"
-    ]
-  }
-]
+    {
+      "node": "hi",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | EmptyUnion ) } type EmptyUnion = () > with value {} 1`] = `
-[
-  {
-    "kind": "missing_key",
-    "node": {
-      "originalNode": {},
-      "inferredType": {
-        "kind": "struct",
-        "fields": []
-      }
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "foo"
+      ]
     },
-    "keys": [
-      "foo"
-    ]
-  },
-  {
-    "kind": "missing_key",
-    "node": {
-      "originalNode": {},
-      "inferredType": {
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "bar"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {},
+      "definition": {
         "kind": "struct",
-        "fields": []
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          }
+        ]
       }
-    },
-    "keys": [
-      "bar"
-    ]
-  }
-]
+    }
+  ]
+}
 `;

@@ -1,54 +1,96 @@
 exports[`mcdoc runtime checker > string @ ..8 > with value 1 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": 1,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "double",
-          "value": 1
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 1,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 1
+          }
         }
-      }
-    },
-    "expected": [
-      {
+      },
+      "expected": [
+        {
+          "kind": "string",
+          "lengthRange": {
+            "kind": 0,
+            "max": 8
+          }
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": 1,
+      "definition": {
         "kind": "string",
         "lengthRange": {
           "kind": 0,
           "max": 8
         }
       }
-    ]
-  }
-]
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > string @ ..8 > with value \"abc\" 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": "abc",
+      "definition": {
+        "kind": "string",
+        "lengthRange": {
+          "kind": 0,
+          "max": 8
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > string @ ..8 > with value \"abcdefghij\" 1`] = `
-[
-  {
-    "kind": "invalid_string_length",
-    "node": {
-      "originalNode": "abcdefghij",
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "string",
-          "value": "abcdefghij"
+{
+  "errors": [
+    {
+      "kind": "invalid_string_length",
+      "node": {
+        "originalNode": "abcdefghij",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "abcdefghij"
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "max": 8
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": "abcdefghij",
+      "definition": {
+        "kind": "string",
+        "lengthRange": {
+          "kind": 0,
+          "max": 8
         }
       }
-    },
-    "ranges": [
-      {
-        "kind": 0,
-        "max": 8
-      }
-    ]
-  }
-]
+    }
+  ]
+}
 `;

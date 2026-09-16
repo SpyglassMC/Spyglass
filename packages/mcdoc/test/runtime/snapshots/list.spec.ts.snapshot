@@ -1,140 +1,430 @@
 exports[`mcdoc runtime checker > [double @ 0..1] @ 1..3 > with value [0.2,6] 1`] = `
-[
-  {
-    "kind": "number_out_of_range",
-    "node": {
-      "originalNode": 6,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
+{
+  "errors": [
+    {
+      "kind": "number_out_of_range",
+      "node": {
+        "originalNode": 6,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 6
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
+        0.2,
+        6
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
           "kind": "double",
-          "value": 6
+          "valueRange": {
+            "kind": 0,
+            "min": 0,
+            "max": 1
+          }
+        },
+        "lengthRange": {
+          "kind": 0,
+          "min": 1,
+          "max": 3
         }
       }
     },
-    "ranges": [
-      {
-        "kind": 0,
-        "min": 0,
-        "max": 1
+    {
+      "node": 0.2,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
       }
-    ]
-  }
-]
+    },
+    {
+      "node": 6,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [double @ 0..1] @ 1..3 > with value [0.3,0.1] 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": [
+        0.3,
+        0.1
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "double",
+          "valueRange": {
+            "kind": 0,
+            "min": 0,
+            "max": 1
+          }
+        },
+        "lengthRange": {
+          "kind": 0,
+          "min": 1,
+          "max": 3
+        }
+      }
+    },
+    {
+      "node": 0.3,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      }
+    },
+    {
+      "node": 0.1,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [double @ 0..1] @ 1..3 > with value [0.3,0.9,0.1,0.1] 1`] = `
-[
-  {
-    "kind": "invalid_collection_length",
-    "node": {
-      "originalNode": [
+{
+  "errors": [
+    {
+      "kind": "invalid_collection_length",
+      "node": {
+        "originalNode": [
+          0.3,
+          0.9,
+          0.1,
+          0.1
+        ],
+        "inferredType": {
+          "kind": "list",
+          "item": {
+            "kind": "any"
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "min": 1,
+          "max": 3
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
         0.3,
         0.9,
         0.1,
         0.1
       ],
-      "inferredType": {
+      "definition": {
         "kind": "list",
         "item": {
-          "kind": "any"
+          "kind": "double",
+          "valueRange": {
+            "kind": 0,
+            "min": 0,
+            "max": 1
+          }
+        },
+        "lengthRange": {
+          "kind": 0,
+          "min": 1,
+          "max": 3
         }
       }
     },
-    "ranges": [
-      {
-        "kind": 0,
-        "min": 1,
-        "max": 3
+    {
+      "node": 0.3,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
       }
-    ]
-  }
-]
+    },
+    {
+      "node": 0.9,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      }
+    },
+    {
+      "node": 0.1,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      }
+    },
+    {
+      "node": 0.1,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [double @ 0..1] @ 1..3 > with value [2,0.9,0.1,0.1] 1`] = `
-[
-  {
-    "kind": "invalid_collection_length",
-    "node": {
-      "originalNode": [
+{
+  "errors": [
+    {
+      "kind": "invalid_collection_length",
+      "node": {
+        "originalNode": [
+          2,
+          0.9,
+          0.1,
+          0.1
+        ],
+        "inferredType": {
+          "kind": "list",
+          "item": {
+            "kind": "any"
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "min": 1,
+          "max": 3
+        }
+      ]
+    },
+    {
+      "kind": "number_out_of_range",
+      "node": {
+        "originalNode": 2,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 2
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
         2,
         0.9,
         0.1,
         0.1
       ],
-      "inferredType": {
+      "definition": {
         "kind": "list",
         "item": {
-          "kind": "any"
-        }
-      }
-    },
-    "ranges": [
-      {
-        "kind": 0,
-        "min": 1,
-        "max": 3
-      }
-    ]
-  },
-  {
-    "kind": "number_out_of_range",
-    "node": {
-      "originalNode": 2,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
           "kind": "double",
-          "value": 2
+          "valueRange": {
+            "kind": 0,
+            "min": 0,
+            "max": 1
+          }
+        },
+        "lengthRange": {
+          "kind": 0,
+          "min": 1,
+          "max": 3
         }
       }
     },
-    "ranges": [
-      {
-        "kind": 0,
-        "min": 0,
-        "max": 1
+    {
+      "node": 2,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
       }
-    ]
-  }
-]
+    },
+    {
+      "node": 0.9,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      }
+    },
+    {
+      "node": 0.1,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      }
+    },
+    {
+      "node": 0.1,
+      "definition": {
+        "kind": "double",
+        "valueRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 1
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [double @ 0..1] @ 1..3 > with value [] 1`] = `
-[
-  {
-    "kind": "invalid_collection_length",
-    "node": {
-      "originalNode": [],
-      "inferredType": {
+{
+  "errors": [
+    {
+      "kind": "invalid_collection_length",
+      "node": {
+        "originalNode": [],
+        "inferredType": {
+          "kind": "list",
+          "item": {
+            "kind": "any"
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "min": 1,
+          "max": 3
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [],
+      "definition": {
         "kind": "list",
         "item": {
-          "kind": "any"
+          "kind": "double",
+          "valueRange": {
+            "kind": 0,
+            "min": 0,
+            "max": 1
+          }
+        },
+        "lengthRange": {
+          "kind": 0,
+          "min": 1,
+          "max": 3
         }
       }
-    },
-    "ranges": [
-      {
-        "kind": 0,
-        "min": 1,
-        "max": 3
-      }
-    ]
-  }
-]
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [int] @ 0..5 > with value [1,2,3,4,5,6] 1`] = `
-[
-  {
-    "kind": "invalid_collection_length",
-    "node": {
-      "originalNode": [
+{
+  "errors": [
+    {
+      "kind": "invalid_collection_length",
+      "node": {
+        "originalNode": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "inferredType": {
+          "kind": "list",
+          "item": {
+            "kind": "any"
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "min": 0,
+          "max": 5
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
         1,
         2,
         3,
@@ -142,48 +432,207 @@ exports[`mcdoc runtime checker > [int] @ 0..5 > with value [1,2,3,4,5,6] 1`] = `
         5,
         6
       ],
-      "inferredType": {
+      "definition": {
         "kind": "list",
         "item": {
-          "kind": "any"
+          "kind": "int"
+        },
+        "lengthRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 5
         }
       }
     },
-    "ranges": [
-      {
-        "kind": 0,
-        "min": 0,
-        "max": 5
+    {
+      "node": 1,
+      "definition": {
+        "kind": "int"
       }
-    ]
-  }
-]
+    },
+    {
+      "node": 2,
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": 3,
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": 4,
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": 5,
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": 6,
+      "definition": {
+        "kind": "int"
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [int] @ 0..5 > with value [1,2,3] 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": [
+        1,
+        2,
+        3
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "int"
+        },
+        "lengthRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 5
+        }
+      }
+    },
+    {
+      "node": 1,
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": 2,
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": 3,
+      "definition": {
+        "kind": "int"
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [int] @ 0..5 > with value [] 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": [],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "int"
+        },
+        "lengthRange": {
+          "kind": 0,
+          "min": 0,
+          "max": 5
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [struct { foo: double, bar?: boolean }] > with value [4] 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": 4,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "double",
-          "value": 4
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 4,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 4
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "struct",
+          "fields": [
+            {
+              "kind": "pair",
+              "key": {
+                "kind": "literal",
+                "value": {
+                  "kind": "string",
+                  "value": "foo"
+                }
+              },
+              "type": {
+                "kind": "double"
+              }
+            },
+            {
+              "kind": "pair",
+              "key": {
+                "kind": "literal",
+                "value": {
+                  "kind": "string",
+                  "value": "bar"
+                }
+              },
+              "type": {
+                "kind": "boolean"
+              },
+              "optional": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
+        4
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "struct",
+          "fields": [
+            {
+              "kind": "pair",
+              "key": "foo",
+              "type": {
+                "kind": "double"
+              }
+            },
+            {
+              "kind": "pair",
+              "key": "bar",
+              "type": {
+                "kind": "boolean"
+              },
+              "optional": true
+            }
+          ]
         }
       }
     },
-    "expected": [
-      {
+    {
+      "node": 4,
+      "definition": {
         "kind": "struct",
         "fields": [
           {
@@ -215,31 +664,155 @@ exports[`mcdoc runtime checker > [struct { foo: double, bar?: boolean }] > with 
           }
         ]
       }
-    ]
-  }
-]
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [struct { foo: double, bar?: boolean }] > with value [] 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": [],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "struct",
+          "fields": [
+            {
+              "kind": "pair",
+              "key": "foo",
+              "type": {
+                "kind": "double"
+              }
+            },
+            {
+              "kind": "pair",
+              "key": "bar",
+              "type": {
+                "kind": "boolean"
+              },
+              "optional": true
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [struct { foo: double, bar?: boolean }] > with value [{\"foo\":2},{\"foo\":3,\"bar\":4},\"test\"] 1`] = `
-[
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": "test",
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "string",
-          "value": "test"
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": "test",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "test"
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "struct",
+          "fields": [
+            {
+              "kind": "pair",
+              "key": {
+                "kind": "literal",
+                "value": {
+                  "kind": "string",
+                  "value": "foo"
+                }
+              },
+              "type": {
+                "kind": "double"
+              }
+            },
+            {
+              "kind": "pair",
+              "key": {
+                "kind": "literal",
+                "value": {
+                  "kind": "string",
+                  "value": "bar"
+                }
+              },
+              "type": {
+                "kind": "boolean"
+              },
+              "optional": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 4,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 4
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "boolean"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
+        {
+          "foo": 2
+        },
+        {
+          "foo": 3,
+          "bar": 4
+        },
+        "test"
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "struct",
+          "fields": [
+            {
+              "kind": "pair",
+              "key": "foo",
+              "type": {
+                "kind": "double"
+              }
+            },
+            {
+              "kind": "pair",
+              "key": "bar",
+              "type": {
+                "kind": "boolean"
+              },
+              "optional": true
+            }
+          ]
         }
       }
     },
-    "expected": [
-      {
+    {
+      "node": {
+        "foo": 2
+      },
+      "definition": {
         "kind": "struct",
         "fields": [
           {
@@ -271,47 +844,304 @@ exports[`mcdoc runtime checker > [struct { foo: double, bar?: boolean }] > with 
           }
         ]
       }
-    ]
-  },
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": 4,
-      "inferredType": {
+    },
+    {
+      "node": 2,
+      "definition": {
+        "kind": "double"
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
         "kind": "literal",
         "value": {
-          "kind": "double",
-          "value": 4
+          "kind": "string",
+          "value": "foo"
         }
       }
     },
-    "expected": [
-      {
+    {
+      "node": {
+        "foo": 3,
+        "bar": 4
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "boolean"
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "node": 3,
+      "definition": {
+        "kind": "double"
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    },
+    {
+      "node": 4,
+      "definition": {
         "kind": "boolean"
       }
-    ]
-  }
-]
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "boolean"
+            },
+            "optional": true
+          }
+        ]
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [struct { foo: double, bar?: boolean }] > with value [{\"foo\":5}] 1`] = `
-[]
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": [
+        {
+          "foo": 5
+        }
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "struct",
+          "fields": [
+            {
+              "kind": "pair",
+              "key": "foo",
+              "type": {
+                "kind": "double"
+              }
+            },
+            {
+              "kind": "pair",
+              "key": "bar",
+              "type": {
+                "kind": "boolean"
+              },
+              "optional": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "node": {
+        "foo": 5
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "boolean"
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "node": 5,
+      "definition": {
+        "kind": "double"
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    }
+  ]
+}
 `;
 
 exports[`mcdoc runtime checker > [struct { foo: double, bar?: boolean }] > with value [{}] 1`] = `
-[
-  {
-    "kind": "missing_key",
-    "node": {
-      "originalNode": {},
-      "inferredType": {
-        "kind": "struct",
-        "fields": []
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "foo"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
+        {}
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "struct",
+          "fields": [
+            {
+              "kind": "pair",
+              "key": "foo",
+              "type": {
+                "kind": "double"
+              }
+            },
+            {
+              "kind": "pair",
+              "key": "bar",
+              "type": {
+                "kind": "boolean"
+              },
+              "optional": true
+            }
+          ]
+        }
       }
     },
-    "keys": [
-      "foo"
-    ]
-  }
-]
+    {
+      "node": {},
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "boolean"
+            },
+            "optional": true
+          }
+        ]
+      }
+    }
+  ]
+}
 `;
