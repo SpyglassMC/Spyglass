@@ -1,0 +1,122 @@
+exports[`mcdoc runtime checker > struct { foo: Ref } type Ref = double > with value {\"foo\":4.1} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: Ref } type Ref = double > with value {\"foo\":\"hello\"} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "hello",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "hello"
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "double"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: Ref } type Ref = double > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "foo"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | EmptyUnion ) } type EmptyUnion = () > with value {\"foo\":\"hello\",\"bar\":\"world\"} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | EmptyUnion ) } type EmptyUnion = () > with value {\"foo\":\"hi\",\"bar\":1} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 1,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 1
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "string"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | EmptyUnion ) } type EmptyUnion = () > with value {\"foo\":\"hi\"} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "foo": "hi"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "bar"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | EmptyUnion ) } type EmptyUnion = () > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "foo"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "bar"
+    ]
+  }
+]
+`;

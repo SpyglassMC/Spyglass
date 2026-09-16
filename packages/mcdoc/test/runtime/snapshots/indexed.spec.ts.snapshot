@@ -1,0 +1,1207 @@
+exports[`mcdoc runtime checker > struct { foo: double, bar: string }[foo] > with value 5 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 5,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 5
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: double, bar: string }[foo] > with value \"hello\" 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "hello",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "hello"
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: double, bar: string }[foo] > with value {\"foo\":4,\"bar\":\"wrong\"} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"fallback\"} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "fallback"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "fallback"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\",\"baz\":\"world\"} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "other",
+        "baz": "world"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "other",
+        "baz": "world"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\",\"baz\":true} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "other",
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "other",
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\"} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "other"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "other"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"baz\":true} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "test",
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "test",
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"config\":5} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "config",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "config"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "test",
+        "config": 5
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "test",
+        "config": 5
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"config\":\"hello\"} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "config",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "config"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "test",
+        "config": "hello"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "test",
+        "config": "hello"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\"} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "test"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "test"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "id"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"fallback\",\"data\":{\"baz\":true}} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"fallback\",\"data\":{\"config\":\"hello\"}} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "config",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "config"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "config": "hello"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "config": "hello"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"fallback\",\"data\":{}} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"fallback\"} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "fallback"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "data"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\",\"data\":{\"baz\":\"world\"}} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": "world"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": "world"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\",\"data\":{\"baz\":true}} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\",\"data\":{}} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"data\":{\"baz\":true}} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"data\":{\"config\":5}} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "config",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "config"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "config": 5
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "config": 5
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"data\":{\"config\":\"hello\"}} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "config",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "config"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "config": "hello"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "config": "hello"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"data\":{}} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "id"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "data"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback] > with value {\"baz\":\"world\"} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": "world"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": "world"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback] > with value {\"baz\":true} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback] > with value {\"config\":5} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "config",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "config"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "config": 5
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "config": 5
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback] > with value {\"config\":\"hello\"} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "config",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "config"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "config": "hello"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "config": "hello"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback] > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "test"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "other"
+    ]
+  }
+]
+`;

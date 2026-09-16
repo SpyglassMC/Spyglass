@@ -1,0 +1,490 @@
+exports[`mcdoc runtime checker > struct { ...struct { foo: double, bar: boolean }, foo: string } > with value {\"foo\":4,\"bar\":false} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 4,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 4
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "string"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { ...struct { foo: double, bar: boolean }, foo: string } > with value {\"foo\":\"hello\",\"bar\":true} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { ...struct { foo: double, bar: boolean }, foo: string } > with value {\"foo\":\"hello\"} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "foo": "hello"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "bar"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { ...struct { foo: double, bar: boolean }, foo: string } > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "foo"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "bar"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, #[filter] bar: [double] } > with value {\"foo\":\"hello\",\"bar\":[2]} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "bar",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    }
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, #[filter] bar: [double] } > with value {\"foo\":\"hello\"} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, #[filter] bar: [double] } > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "foo"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) } > with value {\"foo\":\"hello\",\"bar\":\"world\"} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "bar",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    }
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) } > with value {\"foo\":\"hello\",\"baz\":\"world\"} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) } > with value {\"foo\":\"hi\",\"bar\":1} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "bar",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    }
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) } > with value {\"foo\":\"hi\"} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) } > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "foo"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, bar: [double] } > with value 2 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 2,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 2
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "list",
+              "item": {
+                "kind": "double"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, bar: [double] } > with value {\"foo\":\"hello\"} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "foo": "hello"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "bar"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, bar: [double] } > with value {\"foo\":true,\"bar\":[]} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": true,
+      "inferredType": {
+        "kind": "boolean"
+      }
+    },
+    "expected": [
+      {
+        "kind": "string"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo: string, bar: [double] } > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "foo"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "bar"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo?: () } > with value {\"foo\":\"something\"} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "something",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "something"
+        }
+      }
+    },
+    "expected": []
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { foo?: () } > with value {} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { pages: ([struct { raw: string, filtered?: string }] | [string]) } > with value {\"pages\":[\"foo\",\"bar\"]} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { pages: ([struct { raw: string, filtered?: string }] | [string]) } > with value {\"pages\":[\"foo\",{\"raw\":\"bar\"}]} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "foo",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "raw"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "filtered"
+              }
+            },
+            "type": {
+              "kind": "string"
+            },
+            "optional": true
+          }
+        ]
+      }
+    ],
+    "nodesWithConflictingErrors": [
+      {
+        "originalNode": "foo",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "foo"
+          }
+        }
+      },
+      {
+        "originalNode": {
+          "raw": "bar"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      }
+    ]
+  },
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": {
+        "raw": "bar"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "expected": [
+      {
+        "kind": "string"
+      }
+    ],
+    "nodesWithConflictingErrors": [
+      {
+        "originalNode": "foo",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "foo"
+          }
+        }
+      },
+      {
+        "originalNode": {
+          "raw": "bar"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { pages: ([struct { raw: string, filtered?: string }] | [string]) } > with value {\"pages\":[]} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { pages: ([struct { raw: string, filtered?: string }] | [string]) } > with value {\"pages\":[{\"raw\":\"foo\"},{\"raw\":\"bar\",\"filtered\":\"baz\"}]} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { test: double } > with value {\"test\":1} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { test: double } > with value {\"test\":\"hello\"} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "hello",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "hello"
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "double"
+      }
+    ]
+  }
+]
+`;

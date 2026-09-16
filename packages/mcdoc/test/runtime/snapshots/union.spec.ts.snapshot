@@ -1,0 +1,244 @@
+exports[`mcdoc runtime checker > ( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean }) > with value {\"one\":91} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 91,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 91
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "string"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > ( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean }) > with value {\"one\":\"something\"} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > ( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean }) > with value {\"two\":91,\"four\":91} 1`] = `
+[
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "four",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "four"
+        }
+      }
+    },
+    "nodesWithConflictingErrors": [
+      {
+        "originalNode": "four",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "four"
+          }
+        }
+      },
+      {
+        "originalNode": "two",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "two"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "two",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "two"
+        }
+      }
+    },
+    "nodesWithConflictingErrors": [
+      {
+        "originalNode": "four",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "four"
+          }
+        }
+      },
+      {
+        "originalNode": "two",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "two"
+          }
+        }
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > ( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean }) > with value {\"two\":91,\"three\":true} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > ( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean }) > with value {\"two\":91} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > ( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean }) > with value {} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > (double @ 2..4 | double @ 8..) > with value 3 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > (double @ 2..4 | double @ 8..) > with value 5 1`] = `
+[
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 5,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 5
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 2,
+        "max": 4
+      },
+      {
+        "kind": 0,
+        "min": 8
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > (double @ 2..4 | double @ 8..) > with value 9 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > (string | #[filter] int) > with value 1 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 1,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 1
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "string"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > (string | #[filter] int) > with value \"hello\" 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > (struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 }) > with value {\"foo\":23} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > (struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 }) > with value {\"foo\":4} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > (struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 }) > with value {\"foo\":9} 1`] = `
+[
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 9,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 9
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 4,
+        "max": 6
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > (struct { foo: int @ 0..5 } | struct { foo: int @ 4..6 }) > with value {\"foo\":4} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > (struct { foo: int @ 0..5 } | struct { foo: int @ 4..6 }) > with value {\"foo\":9} 1`] = `
+[
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 9,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 9
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 0,
+        "max": 5
+      },
+      {
+        "kind": 0,
+        "min": 4,
+        "max": 6
+      }
+    ]
+  }
+]
+`;

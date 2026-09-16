@@ -1,0 +1,57 @@
+exports[`mcdoc runtime checker > int > with value \"-2147483648n\" 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > int > with value \"-2147483649n\" 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": -2147483649,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "long",
+          "value": -2147483649
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "int"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > int > with value \"2147483647n\" 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > int > with value \"2147483648n\" 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 2147483648,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "long",
+          "value": 2147483648
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "int"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > int > with value \"255n\" 1`] = `
+[]
+`;

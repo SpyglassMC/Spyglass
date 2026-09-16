@@ -1,0 +1,98 @@
+exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } #[filter] dispatch minecraft:item[filtered] to struct { Test: string } > with value {\"id\":\"elytra\",\"tag\":{}} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "Damage"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } #[filter] dispatch minecraft:item[filtered] to struct { Test: string } > with value {\"id\":\"filtered\",\"tag\":{\"A\":\"abc\"}} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": {
+        "A": "abc"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "expected": []
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } > with value {\"id\":\"diamond\"} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } > with value {\"id\":\"elytra\",\"tag\":{\"Damage\":20}} 1`] = `
+[]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } > with value {\"id\":\"elytra\",\"tag\":{\"Damage\":true}} 1`] = `
+[
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": true,
+      "inferredType": {
+        "kind": "boolean"
+      }
+    },
+    "expected": [
+      {
+        "kind": "double"
+      }
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } > with value {\"id\":\"elytra\",\"tag\":{}} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "Damage"
+    ]
+  }
+]
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, tag?: minecraft:item[[id]] } dispatch minecraft:item[elytra] to struct { Damage: double } > with value {} 1`] = `
+[
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "id"
+    ]
+  }
+]
+`;
