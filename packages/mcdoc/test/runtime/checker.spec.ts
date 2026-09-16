@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core/lib/index.js'
 import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import { localeQuote } from '@spyglassmc/locales'
-import { McdocCheckerContext, typeDefinition } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
+import { McdocCheckerContext, typeDefinition, type SimplifiedMcdocType } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
 import {
 	LiteralNumericValue,
 	type McdocType,
@@ -11,88 +11,39 @@ import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { McdocRuntimeError } from '../../lib/runtime/checker/error.js'
 import { registerAttribute } from '../../lib/runtime/index.js'
+import { module_ as parser } from '../../lib/parser/index.js'
+import { module_ as binder, TypeDefSymbolData } from '../../lib/binder/index.js'
 
 describe('mcdoc runtime checker', () => {
 	type JsValue = boolean | number | bigint | string | JsValue[] | { [key: string]: JsValue }
 	const suites: {
-		name: string
-		type: McdocType
-		init?: (symbols: core.SymbolUtil, meta: core.MetaRegistry) => void
+		mcdoc: string
+		init?: (meta: core.MetaRegistry) => void
 		values: JsValue[]
 	}[] = [{
-		name: 'struct { test: double }',
-		type: { kind: 'struct', fields: [{ kind: 'pair', key: 'test', type: { kind: 'double' } }] },
+		mcdoc: 'struct { test: double }',
 		values: [{ test: 1 }, { test: 'hello' }],
 	}, {
-		name: 'struct { foo: string, bar: [double] }',
-		type: {
-			kind: 'struct',
-			fields: [{ kind: 'pair', key: 'foo', type: { kind: 'string' } }, {
-				kind: 'pair',
-				key: 'bar',
-				type: { kind: 'list', item: { kind: 'double' } },
-			}],
-		},
+		mcdoc: 'struct { foo: string, bar: [double] }',
 		values: [2, {}, { foo: 'hello' }, { foo: true, bar: [] }],
 	}, {
-		name: 'struct { foo: string, #["test:filter"] bar: [double] }',
-		type: {
-			kind: 'struct',
-			fields: [{ kind: 'pair', key: 'foo', type: { kind: 'string' } }, {
-				attributes: [{ name: 'test:filter' }],
-				kind: 'pair',
-				key: 'bar',
-				type: { kind: 'list', item: { kind: 'double' } },
-			}],
-		},
+		mcdoc: 'struct { foo: string, #[filter] bar: [double] }',
 		values: [{}, { foo: 'hello' }, { foo: 'hello', bar: [2] }],
-		init: (_, meta) =>
-			registerAttribute(meta, 'test:filter', _ => true, { filterElement: _ => false }),
+		init: (meta) =>
+			registerAttribute(meta, 'filter', _ => true, { filterElement: _ => false }),
 	}, {
-		name: '( struct { text: string } | struct { selector: number })',
-		type: {
-			kind: 'union',
-			members: [{
-				kind: 'struct',
-				fields: [{ kind: 'pair', key: 'text', type: { kind: 'string' } }],
-			}, {
-				kind: 'struct',
-				fields: [{ kind: 'pair', key: 'selector', type: { kind: 'double' } }],
-			}],
-		},
+		mcdoc: '( struct { text: string } | struct { selector: double })',
 		values: [{}, { text: 'something' }, { selector: 20 }, { text: 'foo', selector: 40 }, {
 			selector: [1],
 		}],
 	}, {
-		name: '( string | #["test:filter"] int)',
-		type: {
-			kind: 'union',
-			members: [{ kind: 'string' }, { kind: 'int', attributes: [{ name: 'test:filter' }] }],
-		},
+		mcdoc: '( string | #[filter] int)',
 		values: ['hello', 1],
-		init: (_, meta) =>
-			registerAttribute(meta, 'test:filter', _ => true, { filterElement: _ => false }),
+		init: (meta) =>
+			registerAttribute(meta, 'filter', _ => true, { filterElement: _ => false }),
 	}, {
-		name:
+		mcdoc:
 			'( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })',
-		type: {
-			kind: 'union',
-			members: [{
-				kind: 'struct',
-				fields: [
-					{ kind: 'pair', key: 'one', optional: true, type: { kind: 'string' } },
-					{ kind: 'pair', key: 'two', optional: true, type: { kind: 'int' } },
-					{ kind: 'pair', key: 'three', optional: true, type: { kind: 'boolean' } },
-				],
-			}, {
-				kind: 'struct',
-				fields: [
-					{ kind: 'pair', key: 'one', optional: true, type: { kind: 'string' } },
-					{ kind: 'pair', key: 'four', optional: true, type: { kind: 'int' } },
-					{ kind: 'pair', key: 'five', optional: true, type: { kind: 'boolean' } },
-				],
-			}],
-		},
 		values: [
 			{},
 			{ one: 'something' },
@@ -102,110 +53,22 @@ describe('mcdoc runtime checker', () => {
 			{ one: 91 },
 		],
 	}, {
-		name: '[struct { foo: double, bar?: boolean }]',
-		type: {
-			kind: 'list',
-			item: {
-				kind: 'struct',
-				fields: [{ kind: 'pair', key: 'foo', type: { kind: 'double' } }, {
-					kind: 'pair',
-					key: 'bar',
-					optional: true,
-					type: { kind: 'boolean' },
-				}],
-			},
-		},
+		mcdoc: '[struct { foo: double, bar?: boolean }]',
 		values: [[], [4], [{}], [{ foo: 5 }], [{ foo: 2 }, { foo: 3, bar: 4 }, 'test']],
 	}, {
-		name: 'struct { pages: ([struct { raw: string, filtered?: string }] | [string]) }',
-		type: {
-			kind: 'struct',
-			fields: [{
-				kind: 'pair',
-				key: 'pages',
-				type: {
-					kind: 'union',
-					members: [{
-						kind: 'list',
-						item: {
-							kind: 'struct',
-							fields: [{ kind: 'pair', key: 'raw', type: { kind: 'string' } }, {
-								kind: 'pair',
-								key: 'filtered',
-								optional: true,
-								type: { kind: 'string' },
-							}],
-						},
-					}, { kind: 'list', item: { kind: 'string' } }],
-				},
-			}],
-		},
+		mcdoc: 'struct { pages: ([struct { raw: string, filtered?: string }] | [string]) }',
 		values: [{ pages: [] }, { pages: ['foo', 'bar'] }, {
 			pages: [{ raw: 'foo' }, { raw: 'bar', filtered: 'baz' }],
 		}, { pages: ['foo', { raw: 'bar' }] }],
 	}, {
-		name: 'struct { ...struct { foo: double, bar: boolean }, foo: string }',
-		type: {
-			kind: 'struct',
-			fields: [{
-				kind: 'spread',
-				type: {
-					kind: 'struct',
-					fields: [{ kind: 'pair', key: 'foo', type: { kind: 'double' } }, {
-						kind: 'pair',
-						key: 'bar',
-						type: { kind: 'boolean' },
-					}],
-				},
-			}, { kind: 'pair', key: 'foo', type: { kind: 'string' } }],
-		},
+		mcdoc: 'struct { ...struct { foo: double, bar: boolean }, foo: string }',
 		values: [{}, { foo: 'hello' }, { foo: 'hello', bar: true }, { foo: 4, bar: false }],
 	}, {
-		name: 'struct { foo: double, bar: string }[foo]',
-		type: {
-			kind: 'indexed',
-			child: {
-				kind: 'struct',
-				fields: [{ kind: 'pair', key: 'foo', type: { kind: 'double' } }, {
-					kind: 'pair',
-					key: 'bar',
-					type: { kind: 'string' },
-				}],
-			},
-			parallelIndices: [{ kind: 'static', value: 'foo' }],
-		},
+		mcdoc: 'struct { foo: double, bar: string }[foo]',
 		values: [{ foo: 4, bar: 'wrong' }, 5, 'hello'],
 	}, {
-		name:
+		mcdoc:
 			'struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }',
-		type: {
-			kind: 'struct',
-			fields: [{ kind: 'pair', key: 'id', type: { kind: 'string' } }, {
-				kind: 'spread',
-				type: {
-					kind: 'indexed',
-					child: {
-						kind: 'struct',
-						fields: [{
-							kind: 'pair',
-							key: 'test',
-							type: {
-								kind: 'struct',
-								fields: [{ kind: 'pair', key: 'config', type: { kind: 'double' } }],
-							},
-						}, {
-							kind: 'pair',
-							key: 'other',
-							type: {
-								kind: 'struct',
-								fields: [{ kind: 'pair', key: 'baz', type: { kind: 'boolean' } }],
-							},
-						}],
-					},
-					parallelIndices: [{ kind: 'dynamic', accessor: ['id'] }],
-				},
-			}],
-		},
 		values: [
 			{},
 			{ id: 'fallback' },
@@ -218,134 +81,38 @@ describe('mcdoc runtime checker', () => {
 			{ id: 'other', baz: true },
 		],
 	}, {
-		name: 'struct { foo?: () }',
-		type: {
-			kind: 'struct',
-			fields: [{
-				kind: 'pair',
-				key: 'foo',
-				optional: true,
-				type: { kind: 'union', members: [] },
-			}],
-		},
+		mcdoc: 'struct { foo?: () }',
 		values: [
 			{},
 			{ foo: 'something' },
 		],
 	}, {
-		name: 'double @ 3..6.2',
-		type: { kind: 'double', valueRange: { kind: 0b00, min: 3, max: 6.2 } },
+		mcdoc: 'double @ 3..6.2',
 		values: ['hello', 1, 3, 4, 6.2, 6.3],
 	}, {
-		name: 'double @ 2..<4',
-		type: { kind: 'double', valueRange: { kind: 0b01, min: 2, max: 4 } },
+		mcdoc: 'double @ 2..<4',
 		values: [2, 3.99, 4],
 	}, {
-		name: '(double @ 2..4 | double @ 8..)',
-		type: {
-			kind: 'union',
-			members: [{ kind: 'double', valueRange: { kind: 0b00, min: 2, max: 4 } }, {
-				kind: 'double',
-				valueRange: { kind: 0b00, min: 8 },
-			}],
-		},
+		mcdoc: '(double @ 2..4 | double @ 8..)',
 		values: [3, 5, 9],
 	}, {
-		name: '(struct { foo: int @ 0..5 } | struct { foo: int @ 4..6 })',
-		type: {
-			kind: 'union',
-			members: [{
-				kind: 'struct',
-				fields: [{
-					kind: 'pair',
-					key: 'foo',
-					type: { kind: 'int', valueRange: { kind: 0b00, min: 0, max: 5 } },
-				}],
-			}, {
-				kind: 'struct',
-				fields: [{
-					kind: 'pair',
-					key: 'foo',
-					type: { kind: 'int', valueRange: { kind: 0b00, min: 4, max: 6 } },
-				}],
-			}],
-		},
+		mcdoc: '(struct { foo: int @ 0..5 } | struct { foo: int @ 4..6 })',
 		values: [{ foo: 4 }, { foo: 9 }],
 	}, {
-		name: '(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })',
-		type: {
-			kind: 'union',
-			members: [{
-				kind: 'struct',
-				fields: [{
-					kind: 'pair',
-					key: 'foo',
-					type: {
-						kind: 'union',
-						members: [{ kind: 'int', valueRange: { kind: 0b00, min: 0, max: 5 } }, {
-							kind: 'int',
-							valueRange: { kind: 0b00, min: 20, max: 25 },
-						}],
-					},
-				}],
-			}, {
-				kind: 'struct',
-				fields: [{
-					kind: 'pair',
-					key: 'foo',
-					type: { kind: 'int', valueRange: { kind: 0b00, min: 4, max: 6 } },
-				}],
-			}],
-		},
+		mcdoc: '(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })',
 		values: [{ foo: 4 }, { foo: 9 }, { foo: 23 }],
 	}, {
-		name: '[int] @ 0..5',
-		type: { kind: 'list', item: { kind: 'int' }, lengthRange: { kind: 0b00, min: 0, max: 5 } },
+		mcdoc: '[int] @ 0..5',
 		values: [[], [1, 2, 3], [1, 2, 3, 4, 5, 6]],
 	}, {
-		name: '[double @ 0..1] @ 1..3',
-		type: {
-			kind: 'list',
-			item: { kind: 'double', valueRange: { kind: 0b00, min: 0, max: 1 } },
-			lengthRange: { kind: 0b00, min: 1, max: 3 },
-		},
+		mcdoc: '[double @ 0..1] @ 1..3',
 		values: [[], [0.3, 0.1], [0.2, 6], [0.3, 0.9, 0.1, 0.1], [2, 0.9, 0.1, 0.1]],
 	}, {
-		name: 'string @ ..8',
-		type: { kind: 'string', lengthRange: { kind: 0b00, max: 8 } },
+		mcdoc: 'string @ ..8',
 		values: [1, 'abc', 'abcdefghij'],
 	}, {
-		name:
+		mcdoc:
 			'struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }',
-		type: {
-			kind: 'struct',
-			fields: [{ kind: 'pair', key: 'id', type: { kind: 'string' } }, {
-				kind: 'pair',
-				key: 'data',
-				type: {
-					kind: 'indexed',
-					child: {
-						kind: 'struct',
-						fields: [{
-							kind: 'pair',
-							key: 'test',
-							type: {
-								kind: 'struct',
-								fields: [{ kind: 'pair', key: 'config', type: { kind: 'double' } }],
-							},
-						}, {
-							kind: 'pair',
-							key: 'other',
-							type: {
-								kind: 'struct',
-								fields: [{ kind: 'pair', key: 'baz', type: { kind: 'boolean' } }],
-							},
-						}],
-					},
-					parallelIndices: [{ kind: 'dynamic', accessor: ['id'] }],
-				},
-			}],
-		},
 		values: [
 			{},
 			{ id: 'fallback' },
@@ -361,29 +128,7 @@ describe('mcdoc runtime checker', () => {
 			{ id: 'other', data: { baz: true } },
 		],
 	}, {
-		name: 'struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback]',
-		type: {
-			kind: 'indexed',
-			child: {
-				kind: 'struct',
-				fields: [{
-					kind: 'pair',
-					key: 'test',
-					type: {
-						kind: 'struct',
-						fields: [{ kind: 'pair', key: 'config', type: { kind: 'double' } }],
-					},
-				}, {
-					kind: 'pair',
-					key: 'other',
-					type: {
-						kind: 'struct',
-						fields: [{ kind: 'pair', key: 'baz', type: { kind: 'boolean' } }],
-					},
-				}],
-			},
-			parallelIndices: [{ kind: 'static', value: '%fallback' }],
-		},
+		mcdoc: 'struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback]',
 		values: [
 			{},
 			{ config: 'hello' },
@@ -392,29 +137,7 @@ describe('mcdoc runtime checker', () => {
 			{ baz: true },
 		],
 	}, {
-		name: 'struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) }',
-		type: {
-			kind: 'struct',
-			fields: [
-				{ kind: 'pair', key: 'foo', type: { kind: 'string' } },
-				{
-					kind: 'spread',
-					type: {
-						kind: 'union',
-						members: [
-							{
-								kind: 'struct',
-								fields: [{ kind: 'pair', key: 'bar', type: { kind: 'string' } }],
-							},
-							{
-								kind: 'struct',
-								fields: [{ kind: 'pair', key: 'baz', type: { kind: 'string' } }],
-							},
-						],
-					},
-				},
-			],
-		},
+		mcdoc: 'struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) }',
 		values: [
 			{},
 			{ foo: 'hi' },
@@ -423,319 +146,57 @@ describe('mcdoc runtime checker', () => {
 			{ foo: 'hello', baz: 'world' },
 		],
 	}, {
-		name:
-			'type EmptyUnion = (); struct { foo: string, ...( struct { bar: string } | EmptyUnion ) }',
-		type: {
-			kind: 'struct',
-			fields: [
-				{ kind: 'pair', key: 'foo', type: { kind: 'string' } },
-				{
-					kind: 'spread',
-					type: {
-						kind: 'union',
-						members: [
-							{
-								kind: 'struct',
-								fields: [{ kind: 'pair', key: 'bar', type: { kind: 'string' } }],
-							},
-							{ kind: 'reference', path: '::EmptyUnion' },
-						],
-					},
-				},
-			],
-		},
+		mcdoc:
+			`struct { foo: string, ...( struct { bar: string } | EmptyUnion ) }
+type EmptyUnion = ()`,
 		values: [
 			{},
 			{ foo: 'hi' },
 			{ foo: 'hi', bar: 1 },
 			{ foo: 'hello', bar: 'world' },
 		],
-		init: (symbols) => {
-			symbols
-				.query(TextDocument.create('', '', 0, ''), 'mcdoc', '::EmptyUnion')
-				.enter({
-					data: {
-						data: {
-							typeDef: {
-								kind: 'union',
-								members: [],
-							} satisfies McdocType,
-						},
-					},
-					usage: { type: 'definition' },
-				})
-		},
 	}, {
-		name: 'type Bounds<T> = struct { min: T, max: T }; Bounds<int @ 1..>',
-		type: {
-			kind: 'concrete',
-			child: { kind: 'reference', path: '::Bounds' },
-			typeArgs: [{ kind: 'int', valueRange: { kind: 0b00, min: 1 } }],
-		},
-		init: (symbols) => {
-			symbols.query(TextDocument.create('', '', 0, ''), 'mcdoc', '::Bounds').enter({
-				data: {
-					subcategory: 'type_alias',
-					data: {
-						typeDef: {
-							kind: 'template',
-							typeParams: [{ path: '::T' }],
-							child: {
-								kind: 'struct',
-								fields: [{
-									kind: 'pair',
-									key: 'min',
-									type: { kind: 'reference', path: '::T' },
-								}, { kind: 'pair', key: 'max', type: { kind: 'reference', path: '::T' } }],
-							},
-						} satisfies McdocType,
-					},
-				},
-				usage: { type: 'definition' },
-			})
-		},
+		mcdoc: `Bounds<int @ 1..>
+type Bounds<T> = struct { min: T, max: T }`,
 		values: [{}, { min: 2, max: 5 }, { min: 'hello', max: -1 }],
 	}, {
-		name: 'type Tag<V> = (V | [V]); Tag<string>',
-		type: {
-			kind: 'concrete',
-			child: { kind: 'reference', path: '::Tag' },
-			typeArgs: [{ kind: 'string' }],
-		},
-		init: (symbols) => {
-			symbols.query(TextDocument.create('', '', 0, ''), 'mcdoc', '::Tag').enter({
-				data: {
-					subcategory: 'type_alias',
-					data: {
-						typeDef: {
-							kind: 'template',
-							typeParams: [{ path: '::V' }],
-							child: {
-								kind: 'union',
-								members: [{ kind: 'reference', path: '::V' }, {
-									kind: 'list',
-									item: { kind: 'reference', path: '::V' },
-								}],
-							},
-						} satisfies McdocType,
-					},
-				},
-				usage: { type: 'definition' },
-			})
-		},
+		mcdoc: 'type Tag<V> = (V | [V]); Tag<string>',
 		values: [2, 'hello', [], ['test'], [10]],
 	}, {
-		name: 'type Tag<V> = [int, V]; Tag<string>',
-		type: {
-			kind: 'concrete',
-			child: { kind: 'reference', path: '::Tag' },
-			typeArgs: [{ kind: 'string' }],
-		},
-		init: (symbols) => {
-			symbols.query(TextDocument.create('', '', 0, ''), 'mcdoc', '::Tag').enter({
-				data: {
-					subcategory: 'type_alias',
-					data: {
-						typeDef: {
-							kind: 'template',
-							typeParams: [{ path: '::V' }],
-							child: {
-								kind: 'tuple',
-								items: [{ kind: 'int' }, { kind: 'reference', path: '::V' }],
-							},
-						} satisfies McdocType,
-					},
-				},
-				usage: { type: 'definition' },
-			})
-		},
+		mcdoc: `Tag<string>
+type Tag<V> = [int, V]`,
 		values: ['test', [4, 5], [10, 'test'], ['foo', 'test'], [10]],
 	}, {
-		name:
-			'type Inner<B> = struct { bar: B }; type Outer<A> = struct { foo: Inner<[A]> }; Outer<string>',
-		type: {
-			kind: 'concrete',
-			child: { kind: 'reference', path: '::Outer' },
-			typeArgs: [{ kind: 'string' }],
-		},
-		init: (symbols) => {
-			symbols.query(TextDocument.create('', '', 0, ''), 'mcdoc', '::Outer').enter({
-				data: {
-					subcategory: 'type_alias',
-					data: {
-						typeDef: {
-							kind: 'template',
-							typeParams: [{ path: '::A' }],
-							child: {
-								kind: 'struct',
-								fields: [{
-									kind: 'pair',
-									key: 'foo',
-									type: {
-										kind: 'concrete',
-										child: { kind: 'reference', path: '::Inner' },
-										typeArgs: [{
-											kind: 'list',
-											item: { kind: 'reference', path: '::A' },
-										}],
-									},
-								}],
-							},
-						} satisfies McdocType,
-					},
-				},
-				usage: { type: 'definition' },
-			})
-			symbols.query(TextDocument.create('', '', 0, ''), 'mcdoc', '::Inner').enter({
-				data: {
-					subcategory: 'type_alias',
-					data: {
-						typeDef: {
-							kind: 'template',
-							typeParams: [{ path: '::B' }],
-							child: {
-								kind: 'struct',
-								fields: [{
-									kind: 'pair',
-									key: 'bar',
-									type: { kind: 'reference', path: '::B' },
-								}],
-							},
-						} satisfies McdocType,
-					},
-				},
-				usage: { type: 'definition' },
-			})
-		},
+		mcdoc: `Outer<string>
+type Inner<B> = struct { bar: B }
+type Outer<A> = struct { foo: Inner<[A]> }`,
 		values: [{ foo: 3 }, { foo: { bar: 'hello' } }, { foo: { bar: ['hello'] } }, {
 			foo: { bar: [2] },
 		}],
 	}, {
-		name: 'type Ref = double; struct { foo: Ref }',
-		type: {
-			kind: 'struct',
-			fields: [{ kind: 'pair', key: 'foo', type: { kind: 'reference', path: '::Ref' } }],
-		},
-		init: (symbols) => {
-			symbols.query(TextDocument.create('', '', 0, ''), 'mcdoc', '::Ref').enter({
-				data: {
-					subcategory: 'type_alias',
-					data: { typeDef: { kind: 'double' } satisfies McdocType },
-				},
-				usage: { type: 'definition' },
-			})
-		},
+		mcdoc: `struct { foo: Ref }
+type Ref = double`,
 		values: [{}, { foo: 'hello' }, { foo: 4.1 }],
 	}, {
-		name:
-			'dispatch minecraft:item[elytra] to struct { Damage: double }; struct { id: string, tag?: minecraft:item[[id]] }',
-		type: {
-			kind: 'struct',
-			fields: [{ kind: 'pair', key: 'id', type: { kind: 'string' } }, {
-				kind: 'pair',
-				key: 'tag',
-				optional: true,
-				type: {
-					kind: 'dispatcher',
-					registry: 'minecraft:item',
-					parallelIndices: [{ kind: 'dynamic', accessor: ['id'] }],
-				},
-			}],
-		},
-		init: (symbols) => {
-			symbols
-				.query(TextDocument.create('', '', 0, ''), 'mcdoc/dispatcher', 'minecraft:item')
-				.enter({ usage: { type: 'reference' } })
-			symbols
-				.query(
-					TextDocument.create('', '', 0, ''),
-					'mcdoc/dispatcher',
-					'minecraft:item',
-					'elytra',
-				)
-				.enter({
-					data: {
-						data: {
-							typeDef: {
-								kind: 'struct',
-								fields: [{ kind: 'pair', key: 'Damage', type: { kind: 'double' } }],
-							} satisfies McdocType,
-						},
-					},
-					usage: { type: 'definition' },
-				})
-		},
+		mcdoc: `struct { id: string, tag?: minecraft:item[[id]] }
+dispatch minecraft:item[elytra] to struct { Damage: double }`,
 		values: [{}, { id: 'diamond' }, { id: 'elytra', tag: {} }, {
 			id: 'elytra',
 			tag: { Damage: true },
 		}, { id: 'elytra', tag: { Damage: 20 } }],
 	}, {
-		name:
-			'dispatch minecraft:item[elytra] to struct { Damage: double }; #["test:filter"] dispatch minecraft:item[filtered] to struct { Test: string }; struct { id: string, tag?: minecraft:item[[id]] }',
-		type: {
-			kind: 'struct',
-			fields: [{ kind: 'pair', key: 'id', type: { kind: 'string' } }, {
-				kind: 'pair',
-				key: 'tag',
-				optional: true,
-				type: {
-					kind: 'dispatcher',
-					registry: 'minecraft:item',
-					parallelIndices: [{ kind: 'dynamic', accessor: ['id'] }],
-				},
-			}],
-		},
-		init: (symbols, meta) => {
-			symbols
-				.query(TextDocument.create('', '', 0, ''), 'mcdoc/dispatcher', 'minecraft:item')
-				.enter({ usage: { type: 'reference' } })
-			symbols
-				.query(
-					TextDocument.create('', '', 0, ''),
-					'mcdoc/dispatcher',
-					'minecraft:item',
-					'elytra',
-				)
-				.enter({
-					data: {
-						data: {
-							typeDef: {
-								kind: 'struct',
-								fields: [{ kind: 'pair', key: 'Damage', type: { kind: 'double' } }],
-							} satisfies McdocType,
-						},
-					},
-					usage: { type: 'definition' },
-				})
-			symbols
-				.query(
-					TextDocument.create('', '', 0, ''),
-					'mcdoc/dispatcher',
-					'minecraft:item',
-					'filtered',
-				)
-				.enter({
-					data: {
-						data: {
-							typeDef: {
-								kind: 'struct',
-								fields: [{ kind: 'pair', key: 'Test', type: { kind: 'string' } }],
-								attributes: [{ name: 'test:filter' }],
-							} satisfies McdocType,
-						},
-					},
-					usage: { type: 'definition' },
-				})
-			registerAttribute(meta, 'test:filter', _ => true, { filterElement: _ => false })
+		mcdoc: `struct { id: string, tag?: minecraft:item[[id]] }
+dispatch minecraft:item[elytra] to struct { Damage: double }
+#[filter] dispatch minecraft:item[filtered] to struct { Test: string }`,
+		init: (meta) => {
+			registerAttribute(meta, 'filter', _ => true, { filterElement: _ => false })
 		},
 		values: [{ id: 'filtered', tag: { A: 'abc' } }, { id: 'elytra', tag: {} }],
 	}, {
-		name: 'bigint narrowing to byte',
-		type: { kind: 'byte' },
+		mcdoc: 'byte',
 		values: [127n, -128n, 5n, 255n, -129n, 128n],
 	}, {
-		name: 'bigint narrowing to int',
-		type: { kind: 'int' },
+		mcdoc: 'int',
 		values: [255n, 2147483647n, -2147483648n, 2147483648n, -2147483649n],
 	}]
 
@@ -757,16 +218,30 @@ describe('mcdoc runtime checker', () => {
 		}
 	}
 
-	for (const { name, type, values, init } of suites) {
-		describe(`typeDefinition ${localeQuote(name)}`, () => {
+	for (const { mcdoc, values, init } of suites) {
+		describe(`typeDefinition ${localeQuote(mcdoc)}`, () => {
 			for (const value of values) {
-				it(`with value ${JSON.stringify(value, (_, v) => typeof v === 'bigint' ? `${v}n` : v)}`, (t) => {
+				it(`with value ${JSON.stringify(value, (_, v) => typeof v === 'bigint' ? `${v}n` : v)}`, async (t) => {
 					const errors: McdocRuntimeError<JsValue>[] = []
 					const project = mockProjectData()
-					init?.(project.symbols, project.meta)
-					const checkerCtx = core.CheckerContext.create(project, {
-						doc: TextDocument.create('', '', 0, ''),
+					init?.(project.meta)
+
+					const doc = TextDocument.create('test.mcdoc', '', 0, '')
+					const parseResult = parser(
+						new core.Source(mcdoc),
+						core.ParserContext.create(project, { doc }),
+					)
+					if (parseResult === core.Failure) {
+						throw new Error(`Failed to parse content: ${mcdoc}`)
+					}
+					const binderCtx = core.BinderContext.create(project, { doc })
+					project.symbols.query(doc, 'mcdoc', '::test').enter({
+						data: { data: {nextAnonymousIndex: 0 } },
+						usage: { type: 'definition' }
 					})
+					await binder(parseResult, { ... binderCtx, moduleIdentifier: '::test' })
+					const checkerCtx = core.CheckerContext.create(project, { doc })
+					const typeAttachments: { node: JsValue, definition: SimplifiedMcdocType, desc?: string }[] = []
 					const ctx = McdocCheckerContext.create<JsValue>(checkerCtx, {
 						getChildren: (value) => {
 							if (Array.isArray(value)) {
@@ -808,10 +283,18 @@ describe('mcdoc runtime checker', () => {
 							}
 							return undefined
 						},
+						attachTypeInfo: (node, definition, desc) => {
+							typeAttachments.push({node, definition, desc})
+						}
 					})
+					const symbol = project.symbols.query(doc, 'mcdoc', '::test::Test')
+					const data = symbol.getData(TypeDefSymbolData.is)
+					if (!data?.typeDef) {
+						throw new Error(`Could not resolve typedef`)
+					}
 					typeDefinition(
 						[{ originalNode: value, inferredType: inferType(value) }],
-						type,
+						data.typeDef,
 						ctx,
 					)
 					t.assert.snapshot(errors)
