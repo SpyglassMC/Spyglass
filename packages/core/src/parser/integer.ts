@@ -57,12 +57,16 @@ export function integer(options: Options): Parser<IntegerNode> {
 			src.skip()
 		}
 
-		while (src.canRead() && Source.isDigit(src.peek())) {
+		while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 			src.skip()
 		}
 
 		ans.range.end = src.cursor
-		const raw = src.sliceToCursor(ans.range.start)
+		const original = src.sliceToCursor(ans.range.start)
+		if (original.includes('_')) {
+			ans.hasUnderscoreSeparator = true
+		}
+		const raw = original.replaceAll('_', '')
 
 		const isOnlySign = raw === '-' || raw === '+'
 		if (!isOnlySign) {

@@ -95,6 +95,9 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 }
 
 const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
+	if (node.uuid !== undefined) {
+		core.checker.dispatchSync(node, ctx)
+	}
 	for (const pair of node.selector?.arguments?.children ?? []) {
 		if (pair.key?.value !== 'nbt' || !pair.value) {
 			continue
@@ -191,7 +194,7 @@ function nbtChecker(
 				const indexedByTypedef = indexedBy.children[0].endTypeDef
 				const typeDef = indexedByTypedef && node.properties.isListIndex
 					? getListLikeChild(indexedByTypedef)
-					: indexedByTypedef
+					: indexedBy.children[0].endOriginalTypeDef ?? indexedByTypedef
 				if (typeDef) {
 					nbt.checker.typeDefinition(typeDef, node.properties)(tag, ctx)
 				}

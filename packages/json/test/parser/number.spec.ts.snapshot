@@ -286,6 +286,48 @@ exports[`JSON number parser > number() > Parse '1.342E-10' 1`] = `
 }
 `;
 
+exports[`JSON number parser > number() > Parse '1.5_5' 1`] = `
+{
+  "node": {
+    "type": "json:number",
+    "children": [
+      {
+        "type": "float",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "value": 1.55,
+        "hasUnderscoreSeparator": true
+      }
+    ],
+    "value": {
+      "type": "float",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "value": 1.55,
+      "hasUnderscoreSeparator": true
+    },
+    "range": {
+      "start": 0,
+      "end": 5
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 3,
+        "end": 4
+      },
+      "message": "Underscores are not allowed in JSON numbers",
+      "severity": 3
+    }
+  ]
+}
+`;
+
 exports[`JSON number parser > number() > Parse '1E12' 1`] = `
 {
   "node": {
@@ -314,5 +356,131 @@ exports[`JSON number parser > number() > Parse '1E12' 1`] = `
     }
   },
   "errors": []
+}
+`;
+
+exports[`JSON number parser > number() > Parse '1E1_0' 1`] = `
+{
+  "node": {
+    "type": "json:number",
+    "children": [
+      {
+        "type": "float",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "value": 10000000000,
+        "hasUnderscoreSeparator": true
+      }
+    ],
+    "value": {
+      "type": "float",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "value": 10000000000,
+      "hasUnderscoreSeparator": true
+    },
+    "range": {
+      "start": 0,
+      "end": 5
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 3,
+        "end": 4
+      },
+      "message": "Underscores are not allowed in JSON numbers",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`JSON number parser > number() > Parse '1_000' 1`] = `
+{
+  "node": {
+    "type": "json:number",
+    "children": [
+      {
+        "type": "long",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "value": 1000,
+        "hasUnderscoreSeparator": true
+      }
+    ],
+    "value": {
+      "type": "long",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "value": 1000,
+      "hasUnderscoreSeparator": true
+    },
+    "range": {
+      "start": 0,
+      "end": 5
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 1,
+        "end": 2
+      },
+      "message": "Underscores are not allowed in JSON numbers",
+      "severity": 3
+    }
+  ]
+}
+`;
+
+exports[`JSON number parser > number() > Parse '1_000.5' 1`] = `
+{
+  "node": {
+    "type": "json:number",
+    "children": [
+      {
+        "type": "long",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "value": 1000,
+        "hasUnderscoreSeparator": true
+      }
+    ],
+    "value": {
+      "type": "long",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "value": 1000,
+      "hasUnderscoreSeparator": true
+    },
+    "range": {
+      "start": 0,
+      "end": 5
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 1,
+        "end": 2
+      },
+      "message": "Underscores are not allowed in JSON numbers",
+      "severity": 3
+    }
+  ]
 }
 `;

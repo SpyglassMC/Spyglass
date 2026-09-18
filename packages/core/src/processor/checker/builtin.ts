@@ -1,5 +1,5 @@
 import { StateProxy } from '../../common/index.js'
-import type { AstNode, ResourceLocationNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
+import type { AstNode, ResourceLocationNode, SymbolBaseNode } from '../../node/index.js'
 import type { CheckerContext, MetaRegistry } from '../../service/index.js'
 import { ErrorReporter } from '../../service/index.js'
 import { traversePreOrder } from '../util.js'
@@ -121,6 +121,6 @@ export const symbol: Checker<SymbolBaseNode> = (_node, _ctx) => {
 }
 
 export function registerCheckers(meta: MetaRegistry) {
-	meta.registerChecker<ResourceLocationNode>('resource_location', resourceLocation)
-	meta.registerChecker<SymbolNode>('symbol', symbol)
+	// meta.registerChecker<ResourceLocationNode>('resource_location', resourceLocation)
+	// meta.registerChecker<SymbolNode>('symbol', symbol)
 }

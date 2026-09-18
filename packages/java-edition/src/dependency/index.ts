@@ -1,6 +1,7 @@
 export * from './common.js'
 export * from './mcmeta.js'
 export * from './mcmeta/index.js'
+export * from './unicode.js'
 
 import * as core from '@spyglassmc/core'
 import { Fluids } from './mcmeta.js'

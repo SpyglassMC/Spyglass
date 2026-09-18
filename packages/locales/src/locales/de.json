@@ -1,5 +1,6 @@
 {
 	"analyze-project.cancelled": "Projekt analyse abgebrochen nachdem %0% von %1% der Dateien analysiert wurden.",
+	"analyze-project.done": "%0% Dateien wurden analysiert.",
 	"array": "ein Array",
 	"boolean": "einen Wahrheitswert",
 	"bug-of-mc": "Aufgrund eines Fehlers in Minecraft (%0%), %1%. Bitte beheben, Mojang danke",

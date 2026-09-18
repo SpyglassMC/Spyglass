@@ -3,18 +3,18 @@ import { byteArray, intArray, list, longArray } from '@spyglassmc/nbt/lib/parser
 import { describe, it } from 'node:test'
 
 describe('nbt list()', () => {
-	const suites: { content: string; version?: string }[] = [
+	// The parser accepts mixed element types regardless of the game version;
+	// `checker.listTypeHomogeneous` reports them for the versions that care.
+	const suites: { content: string }[] = [
 		{ content: '' },
 		{ content: '[]' },
 		{ content: '["string"]' },
-		{ content: '["string", 1b]', version: '1.21.4' },
-		{ content: '["string", 1b]', version: '1.21.5' },
+		{ content: '["string", 1b]' },
 	]
-	for (const { content, version } of suites) {
-		it(`Parse '${showWhitespaceGlyph(content)}'${version ? ` in ${version}` : ''}`, (t) => {
+	for (const { content } of suites) {
+		it(`Parse '${showWhitespaceGlyph(content)}'`, (t) => {
 			const parser = list
-			const ctx = version ? { project: { ctx: { loadedVersion: version } } } : undefined
-			t.assert.snapshot(testParser(parser, content, ctx))
+			t.assert.snapshot(testParser(parser, content))
 		})
 	}
 })

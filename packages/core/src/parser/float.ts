@@ -56,12 +56,12 @@ export function float(options: Options): Parser<FloatNode> {
 		if (src.peek() === '-' || src.peek() === '+') {
 			src.skip()
 		}
-		while (src.canRead() && Source.isDigit(src.peek())) {
+		while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 			src.skip()
 		}
 
 		if (src.trySkip('.')) {
-			while (src.canRead() && Source.isDigit(src.peek())) {
+			while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 				src.skip()
 			}
 		}
@@ -71,13 +71,17 @@ export function float(options: Options): Parser<FloatNode> {
 			if (src.peek() === '-' || src.peek() === '+') {
 				src.skip()
 			}
-			while (src.canRead() && Source.isDigit(src.peek())) {
+			while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 				src.skip()
 			}
 		}
 
 		ans.range.end = src.cursor
-		const raw = src.sliceToCursor(ans.range.start)
+		const original = src.sliceToCursor(ans.range.start)
+		if (original.includes('_')) {
+			ans.hasUnderscoreSeparator = true
+		}
+		const raw = original.replaceAll('_', '')
 		ans.value = parseFloat(raw) || 0
 
 		if (!raw) {

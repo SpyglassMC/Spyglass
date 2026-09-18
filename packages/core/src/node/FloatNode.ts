@@ -4,6 +4,7 @@ import type { AstNode } from './AstNode.js'
 
 export interface FloatBaseNode extends AstNode {
 	value: number
+	hasUnderscoreSeparator?: boolean
 }
 
 export interface FloatNode extends FloatBaseNode {

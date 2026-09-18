@@ -163,6 +163,10 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
 			return wrap(typeRefParser(mcdoc.typeRef('text_component')))
+		case 'minecraft:context_float_provider':
+			return wrap(resourceOrInline('context_float_provider'))
+		case 'minecraft:context_int_provider':
+			return wrap(resourceOrInline('context_int_provider'))
 		case 'minecraft:dialog':
 			return wrap(resourceOrInline('dialog'))
 		case 'minecraft:dimension':
@@ -1651,6 +1655,15 @@ export const uuid: core.InfallibleParser<UuidNode> = (src, ctx): UuidNode => {
 	}
 
 	ans.range.end = src.cursor
+
+	if (isLegal && (ans.bits[0] !== 0n || ans.bits[1] !== 0n)) {
+		const parts: number[] = []
+		for (const bits of ans.bits) {
+			parts.push(Number(BigInt.asIntN(32, bits >> 32n)))
+			parts.push(Number(BigInt.asIntN(32, bits & 0xFFFFFFFFn)))
+		}
+		ans.hover = `\`\`\`mcdoc\n[I; ${parts.join(', ')}]\n\`\`\``
+	}
 
 	if (!isLegal) {
 		ctx.err.report(localize('mcfunction.parser.uuid.invalid'), ans)

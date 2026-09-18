@@ -308,6 +308,7 @@ const ColorTokenTypeLegend: Record<ColorTokenType, Set<RenderFormat>> = {
 	number: new Set(['foreground_green']),
 	operator: new Set(['reset']),
 	property: new Set(['foreground_cyan']),
+	punctuation: new Set(['reset']),
 	resourceLocation: new Set(['foreground_yellow']),
 	string: new Set(['foreground_green']),
 	struct: new Set(['foreground_white']),
