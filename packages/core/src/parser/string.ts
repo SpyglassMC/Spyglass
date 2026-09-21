@@ -72,7 +72,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						const resolved = EscapeTable.get(c2)!
 						ans.valueMap.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
-							outer: Range.create(cStart, src),
+							outer: Range.create(src.cursor - 1, src.cursor),
 						})
 						ans.value += resolved
 						pushChild(

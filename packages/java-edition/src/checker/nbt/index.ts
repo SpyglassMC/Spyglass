@@ -77,8 +77,7 @@ function checkRadixAndUnderscore(
 	oldSyntax: boolean,
 ): void {
 	// Typed radix collapses (`0x42b`, `0xffs`, `0b101i`, ...). Suffix-less
-	// and `0x...l` long forms are caught by `checkLong`. Skip underscore
-	// below when radix fires to match the original `else if` ordering.
+	// and `0x...l` long forms are caught by `checkLong`.
 	if (node.radix !== undefined && oldSyntax) {
 		ctx.err.report(
 			localize('nbt.parser.number.radix-not-supported'),

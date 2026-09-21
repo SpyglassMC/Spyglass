@@ -142,7 +142,7 @@ exports[`string() > quoted_string with nested value parser > parses case 1 1`] =
           "end": 1
         },
         "outer": {
-          "start": 1,
+          "start": 2,
           "end": 3
         }
       },
@@ -162,7 +162,7 @@ exports[`string() > quoted_string with nested value parser > parses case 1 1`] =
           "end": 5
         },
         "outer": {
-          "start": 11,
+          "start": 12,
           "end": 13
         }
       },
@@ -172,7 +172,7 @@ exports[`string() > quoted_string with nested value parser > parses case 1 1`] =
           "end": 6
         },
         "outer": {
-          "start": 13,
+          "start": 14,
           "end": 15
         }
       },
@@ -182,7 +182,7 @@ exports[`string() > quoted_string with nested value parser > parses case 1 1`] =
           "end": 10
         },
         "outer": {
-          "start": 18,
+          "start": 19,
           "end": 20
         }
       }
@@ -247,7 +247,7 @@ exports[`string() > quoted_string with nested value parser > parses case 1 1`] =
       {
         "type": "string",
         "range": {
-          "start": 1,
+          "start": 2,
           "end": 20
         },
         "value": "foo\\\\bar",
@@ -274,12 +274,32 @@ exports[`string() > quoted_string with nested value parser > parses case 1 1`] =
           },
           {
             "inner": {
+              "start": 2,
+              "end": 3
+            },
+            "outer": {
+              "start": 10,
+              "end": 12
+            }
+          },
+          {
+            "inner": {
               "start": 3,
               "end": 4
             },
             "outer": {
-              "start": 11,
+              "start": 14,
               "end": 15
+            }
+          },
+          {
+            "inner": {
+              "start": 6,
+              "end": 7
+            },
+            "outer": {
+              "start": 17,
+              "end": 19
             }
           }
         ],
@@ -289,7 +309,7 @@ exports[`string() > quoted_string with nested value parser > parses case 1 1`] =
             "type": "unicode_escape",
             "kind": "\\\\",
             "range": {
-              "start": 11,
+              "start": 12,
               "end": 15
             },
             "raw": "\\\\",
@@ -500,7 +520,7 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 5 1
           "end": 4
         },
         "outer": {
-          "start": 4,
+          "start": 5,
           "end": 6
         }
       },
@@ -510,7 +530,7 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 5 1
           "end": 8
         },
         "outer": {
-          "start": 9,
+          "start": 10,
           "end": 11
         }
       },
@@ -520,7 +540,7 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 5 1
           "end": 9
         },
         "outer": {
-          "start": 11,
+          "start": 12,
           "end": 13
         }
       },
@@ -530,7 +550,7 @@ exports[`string() > quoted_string with newline and tab escapes > parses case 5 1
           "end": 10
         },
         "outer": {
-          "start": 13,
+          "start": 14,
           "end": 15
         }
       }

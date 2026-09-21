@@ -847,7 +847,7 @@ exports[`JSON object parser > object() > Parse '{\"\\\"\": \"\\u1234\"}' 1`] = `
                   "end": 1
                 },
                 "outer": {
-                  "start": 2,
+                  "start": 3,
                   "end": 4
                 }
               }
@@ -936,7 +936,7 @@ exports[`JSON object parser > object() > Parse '{\"\\\"\": \"\\u1234\"}' 1`] = `
                 "end": 1
               },
               "outer": {
-                "start": 2,
+                "start": 3,
                 "end": 4
               }
             }
