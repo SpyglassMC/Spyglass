@@ -9,6 +9,7 @@ export interface ColorInfo {
  * An array of four decimal numbers within the interval [0, 1] that represent R, G, B, and A respectively.
  */
 export type Color = [number, number, number, number]
+
 export namespace Color {
 	export const NamedColors = new Map<string, number>([
 		['aqua', 0x55ffff],
@@ -88,6 +89,30 @@ export namespace Color {
 	}
 
 	/**
+	 * @param value A string in the format `#aarrggbb`
+	 */
+	export function fromHexARGB(value: string): Color {
+		var bigint = parseInt(value.slice(1), 16)
+		var a = (bigint >> 24) & 255
+		var r = (bigint >> 16) & 255
+		var g = (bigint >> 8) & 255
+		var b = bigint & 255
+		return fromIntRGBA(r, g, b, a)
+	}
+
+	/**
+	 * @param value A string in the format `#rrggbbaa`
+	 */
+	export function fromHexRGBA(value: string): Color {
+		var bigint = parseInt(value.slice(1), 16)
+		var r = (bigint >> 24) & 255
+		var g = (bigint >> 16) & 255
+		var b = (bigint >> 8) & 255
+		var a = bigint & 255
+		return fromIntRGBA(r, g, b, a)
+	}
+
+	/**
 	 * @param value `R << 16 + G << 8 + B`.
 	 */
 	export function fromCompositeRGB(value: number): Color {
@@ -129,13 +154,17 @@ export enum ColorFormat {
 	 */
 	IntRGB,
 	/**
-	 * `#ff9933ff`
-	 */
-	HexRGBA,
-	/**
 	 * `#ff9933`
 	 */
 	HexRGB,
+	/**
+	 * `#ffff9933`
+	 */
+	HexARGB,
+	/**
+	 * `#ff9933ff`
+	 */
+	HexRGBA,
 	/**
 	 * `16620441`
 	 */
@@ -160,40 +189,31 @@ export namespace ColorPresentation {
 	}
 
 	function colorPresentation(format: ColorFormat, color: Color): string {
-		const round = (num: number) => parseFloat(num.toFixed(3))
+		const [r, g, b, a] = color.map(c => Math.round(c * 255))
 		switch (format) {
 			case ColorFormat.DecRGBA:
-				return color.map((c) => round(c)).join(' ')
+				return color.map((c) => parseFloat(c.toFixed(3))).join(' ')
 			case ColorFormat.DecRGB:
-				return color.slice(0, 3).map((c) => round(c)).join(' ')
+				return color.slice(0, 3).map((c) => parseFloat(c.toFixed(3))).join(' ')
 			case ColorFormat.IntRGBA:
-				return color.map((c) => Math.round(c * 255)).join(' ')
+				return `${r} ${g} ${b} ${a}`
 			case ColorFormat.IntRGB:
-				return color.slice(0, 3).map((c) => Math.round(c * 255)).join(' ')
+				return `${r} ${g} ${b}`
+			case ColorFormat.HexRGB:
+				return `#${(((r << 16) + (g << 8) + b) >>> 0).toString(16).padStart(6, '0')}`
+			case ColorFormat.HexARGB:
+				return `#${
+					(((a << 24) + (r << 16) + (g << 8) + b) >>> 0).toString(16).padStart(8, '0')
+				}`
 			case ColorFormat.HexRGBA:
 				return `#${
-					Math.round(
-						(((color[0] * 255) << 24) + ((color[1] * 255) << 16) + color[2] * 255)
-							<< (8 + color[3] * 255),
-					).toString(16).padStart(8, '0')
-				}`
-			case ColorFormat.HexRGB:
-				return `#${
-					Math.round(((color[0] * 255) << 16) + ((color[1] * 255) << 8) + color[2] * 255)
-						.toString(16).padStart(6, '0')
+					(((r << 24) + (g << 16) + (b << 8) + a) >>> 0).toString(16).padStart(8, '0')
 				}`
 			case ColorFormat.CompositeRGB:
-				return `${
-					Math.round(((color[0] * 255) << 16) + ((color[1] * 255) << 8) + color[2] * 255)
-				}`
+				return `${(r << 16) + (g << 8) + b}`
 			case ColorFormat.CompositeARGB:
 				return `${
-					Number(
-						(BigInt(Math.round(color[3] * 255)) << 24n)
-							+ (BigInt(Math.round(color[0] * 255)) << 16n)
-							+ (BigInt(Math.round(color[1] * 255)) << 8n)
-							+ BigInt(Math.round(color[2] * 255)),
-					) << 0 // Convert to signed 32-bit integer
+					Number((BigInt(a) << 24n) + (BigInt(r) << 16n) + (BigInt(g) << 8n) + BigInt(b)) << 0
 				}`
 		}
 	}
