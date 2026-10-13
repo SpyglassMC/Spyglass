@@ -199,7 +199,11 @@ export function symbolRegistrar(
 
 		for (const [id, [properties, defaults]] of Object.entries(states)) {
 			const uri = McmetaSummaryUri
-			symbols.query(uri, category, core.ResourceLocation.lengthen(id)).onEach(
+			const query = symbols.query(uri, category, core.ResourceLocation.lengthen(id))
+			if (!query.symbol) {
+				continue
+			}
+			query.onEach(
 				Object.entries(properties),
 				([state, values], blockQuery) => {
 					const defaultValue = defaults[state]!
@@ -317,10 +321,10 @@ export function symbolRegistrar(
 }
 
 export const Fluids: McmetaStates = {
-	flowing_lava: [{ falling: ['false', 'true'], level: ['1', '2', '3', '4', '5', '6', '7', '8'] }, {
-		falling: 'false',
-		level: '1',
-	}],
+	flowing_lava: [
+		{ falling: ['false', 'true'], level: ['1', '2', '3', '4', '5', '6', '7', '8'] },
+		{ falling: 'false', level: '1' },
+	],
 	flowing_water: [
 		{ falling: ['false', 'true'], level: ['1', '2', '3', '4', '5', '6', '7', '8'] },
 		{ falling: 'false', level: '1' },
