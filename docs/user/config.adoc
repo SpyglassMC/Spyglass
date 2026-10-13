@@ -113,6 +113,9 @@ There's no support for multiple config files or inheriting/overriding config fil
 }
 ----
 
+== TypeScript Source
+https://github.com/SpyglassMC/Spyglass/blob/main/packages/core/src/service/Config.ts#L15
+
 == Environment Settings
 
 TODO: Find a way to generate the docs and the `Config` interfaces from one single source of truth.
