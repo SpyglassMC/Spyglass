@@ -261,6 +261,9 @@ export function typeDefinition(
 						// Because the runtime checker happens after binding, we need to manually call this
 						core.binder.fallbackSync(node, ctx)
 						core.checker.fallbackSync(node, ctx)
+						for (const child of node.children) {
+							core.checker.fallbackSync(child, ctx)
+						}
 					}
 				},
 			}),
@@ -364,6 +367,7 @@ export function blockStates(blocks: string[], _options: Options = {}): core.Sync
 interface NbtPathLink {
 	path: NbtPathNode
 	node: NbtPathChild | { type: 'leaf'; range: core.Range }
+	range: core.Range
 	prev?: NbtPathLink
 	next?: NbtPathLink
 }
@@ -382,9 +386,14 @@ export function path(
 		}
 		// Create a linked list representation
 		const leaf = { type: 'leaf', range: core.Range.create(node.range.end) } as const
-		let link: NbtPathLink = { path: node, node: leaf }
+		let link: NbtPathLink = { path: node, node: leaf, range: leaf.range }
 		for (let i = node.children.length - 1; i >= 0; i -= 1) {
-			link = { path: node, node: node.children[i], next: link }
+			link = {
+				path: node,
+				node: node.children[i],
+				next: link,
+				range: node.children[i].range,
+			}
 		}
 		let prev = link
 		while (prev.next) {

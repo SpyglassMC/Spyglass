@@ -226,7 +226,10 @@ function finalizeEscape(
 	// wrote the resolved char into `value` and onto the child. Look up the
 	// Unicode name for the resolved codepoint.
 	if (raw.length === 1) {
-		const codepoint = child.resolved ? child.resolved.codePointAt(0)! : raw.codePointAt(0)!
+		const codepoint = (child.resolved ?? raw).codePointAt(0)!
+		if (raw === '\\' || raw === '"' || raw === "'") {
+			return
+		}
 		child.codepoint = codepoint
 		child.name = lookupNameByCodepoint(codepoint, ctx)
 		child.hover = buildEscapeHover(codepoint, child.name)
@@ -270,8 +273,18 @@ function rewriteValue(
 	}
 	const start = entry.inner.start
 	const end = entry.inner.end
+	const oldLen = end - start
+	const newLen = resolved.length
+	const delta = newLen - oldLen
 	node.value = node.value.slice(0, start) + resolved + node.value.slice(end)
-	entry.inner = Range.create(start, start + resolved.length)
+	entry.inner = Range.create(start, start + newLen)
+	if (delta !== 0) {
+		const idx = node.valueMap.indexOf(entry)
+		for (let i = idx + 1; i < node.valueMap.length; i++) {
+			const e = node.valueMap[i]
+			e.inner = Range.create(e.inner.start + delta, e.inner.end + delta)
+		}
+	}
 }
 
 /**

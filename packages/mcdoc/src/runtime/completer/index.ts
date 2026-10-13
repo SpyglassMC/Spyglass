@@ -96,6 +96,11 @@ export function getValues(
 				}
 			}
 			return [...allValues.values()]
+		case 'mapped':
+			return getValues(typeDef.child as McdocType, ctx)
+		case 'concrete':
+			// TODO: thread the type generics through and resolve
+			return []
 		case 'reference':
 			// TODO: de-duplicate this logic from the runtime simplifier
 			if (!typeDef.path) {

@@ -1,4 +1,4 @@
-import { getOrInsertComputed, isObject } from '../common/index.js'
+import { isObject } from '../common/index.js'
 import { Operations } from './Operations.js'
 
 const BranchOff = Symbol('StateBranchOff')
@@ -52,8 +52,19 @@ export namespace StateProxy {
 	}
 }
 
+function getOrInsertComputed<V extends object>(
+	map: WeakMap<V, V>,
+	key: V,
+	callbackFunction: (key: V) => V,
+): V {
+	if (!map.has(key)) {
+		map.set(key, callbackFunction(key))
+	}
+	return map.get(key)!
+}
+
 class StateProxyHandler<T extends object> implements ProxyHandler<T> {
-	private readonly map = new Map<string | symbol, StateProxy<object>>()
+	private readonly map = new WeakMap<object, StateProxy<object>>()
 
 	constructor(
 		/**
@@ -81,7 +92,7 @@ class StateProxyHandler<T extends object> implements ProxyHandler<T> {
 		}
 		const value = Reflect.get(target, p, receiver)
 		if (p !== 'prototype' && isObject(value)) {
-			return getOrInsertComputed(this.map, p, () => _createStateProxy(value, this.rootOps))
+			return getOrInsertComputed(this.map, value, () => _createStateProxy(value, this.rootOps))
 		}
 		return value
 	}

@@ -1,5 +1,11 @@
-import { Range, Source } from '@spyglassmc/core'
-import type { CheckerContext, FullResourceLocation, SymbolQuery } from '@spyglassmc/core'
+import {
+	type AstNode,
+	type CheckerContext,
+	type FullResourceLocation,
+	Range,
+	Source,
+	type SymbolQuery,
+} from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import type {
@@ -421,6 +427,26 @@ function handleNodeAttachers<T>(
 	if (!nodeAttacher && !stringAttacher) {
 		return
 	}
+	if (
+		(runtimeValue.inferredType.kind === 'literal'
+			&& runtimeValue.inferredType.value.kind === 'string')
+		|| runtimeValue.inferredType.kind === 'string'
+	) {
+		const original = runtimeValue.originalNode as AstNode
+		const hasOverlappingErr = ctx.err.errors.some(e =>
+			original.range.start <= e.range.start && e.range.end <= original.range.end
+		)
+		if (hasOverlappingErr) {
+			return
+		}
+		const stringChildren = (original as { children?: { type: string; resolved?: string }[] })
+			.children
+		const hasUnresolvedEscape = Array.isArray(stringChildren)
+			&& stringChildren.some(c => c.type === 'unicode_escape' && c.resolved === '')
+		if (hasUnresolvedEscape) {
+			return
+		}
+	}
 	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
 		const parser = handler.stringParser?.(config, typeDef, ctx)
 		if (parser && stringAttacher) {
@@ -440,7 +466,12 @@ function handleNodeAttachers<T>(
 						Range.create(src.cursor, src.skipRemaining()),
 					)
 				}
-				node.children = [child]
+				if (node.children) {
+					const retained = node.children.filter(c => c.type === 'unicode_escape')
+					node.children = [child, ...retained]
+				} else {
+					node.children = [child]
+				}
 			})
 		}
 		const checker = handler.checker?.(config, runtimeValue.inferredType, ctx)

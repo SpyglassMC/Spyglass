@@ -11,6 +11,7 @@ import type {
 	NbtStringNode,
 	NbtUuidFunctionNode,
 } from '../node/index.js'
+import { SNBT_FUNCTIONS } from '../parser/entry.js'
 
 const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 	const index = core.binarySearch(node.children, ctx.offset, (n, o) => {
@@ -75,16 +76,8 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 	},
 })
 
-const SNBT_FUNCTIONS = ['bool', 'uuid'] as const
-
 const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	const insideRange = core.Range.contains(node, ctx.offset, true)
-	if (node.type === 'nbt:string' && insideRange) {
-		// Delegate to core's string completer so it can handle the
-		// `\N{…}` named-Unicode-escape completion. Works whether or not
-		// the nbt:string has a child string-parser result.
-		return core.completer.string(node, ctx)
-	}
 	if (
 		node.type === 'nbt:string' && !node.quote
 		&& SNBT_FUNCTIONS.some((name) => name.startsWith(node.value))
@@ -102,14 +95,29 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 		)
 		return items
 	}
+
+	const typeDefValues = node.typeDef
+		? getValues(node.typeDef, insideRange ? node : ctx.offset, {
+			...ctx,
+			requireCanonical: node.requireCanonical,
+		}, node.type === 'nbt:string' ? node.quote : undefined)
+		: []
+
+	if (node.type === 'nbt:string' && insideRange) {
+		const wouldOnlyEmitEmptyPairSnippet = node.value === ''
+			&& !node.children?.length
+			&& !/\\N\{[^\}]*$/.test(ctx.src.slice(node.range.start, ctx.offset))
+		const suppressEmptyPair = wouldOnlyEmitEmptyPairSnippet && typeDefValues.length > 0
+		const stringItems = suppressEmptyPair
+			? []
+			: core.completer.string(node, ctx)
+		return [...stringItems, ...typeDefValues]
+	}
+
 	if (!node.typeDef) {
 		return []
 	}
-	const values = getValues(node.typeDef, insideRange ? node : ctx.offset, {
-		...ctx,
-		requireCanonical: node.requireCanonical,
-	})
-	return values
+	return typeDefValues
 }
 
 const snbtFunction: core.Completer<NbtBoolFunctionNode | NbtUuidFunctionNode> = (node, ctx) => {
@@ -180,6 +188,7 @@ function getValues(
 	typeDef: core.DeepReadonly<mcdoc.McdocType>,
 	range: core.RangeLike,
 	ctx: mcdoc.runtime.completer.McdocCompleterContext,
+	quote?: core.Quote,
 ): core.CompletionItem[] {
 	return mcdoc.runtime.completer.getValues(typeDef, ctx)
 		.map((
@@ -190,8 +199,8 @@ function getValues(
 				labelSuffix,
 				detail,
 				documentation,
-				filterText: formatValue(value, kind),
-				insertText: formatValue(insertText ?? value, kind),
+				filterText: formatValue(value, kind, quote),
+				insertText: formatValue(insertText ?? value, kind, quote),
 				sortText,
 			})
 		)
@@ -205,10 +214,12 @@ function formatKey(key: string, quote?: core.Quote) {
 	return q + core.completer.escapeString(key, q) + q
 }
 
-function formatValue(value: string, kind?: mcdoc.McdocType['kind']) {
+function formatValue(value: string, kind?: mcdoc.McdocType['kind'], quote?: core.Quote) {
 	switch (kind) {
-		case 'string':
-			return `"${core.completer.escapeString(value, '"')}"`
+		case 'string': {
+			const q = quote ?? '"'
+			return `${q}${core.completer.escapeString(value, q)}${q}`
+		}
 		case 'byte':
 			return `${value}b`
 		case 'short':

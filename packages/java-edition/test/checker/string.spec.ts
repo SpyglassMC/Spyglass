@@ -211,8 +211,8 @@ describe('string checker', () => {
 			const run = runChecker('"\\uggez"', baseOptions())
 			assert.equal(run.parseErrors.length, 1)
 			assert.deepEqual(run.checkErrors.map((e) => e.message), [])
-			// The parser never attached a child, so there is nothing to check.
-			assert.equal(run.parsedEscapeCount, 0)
+			// An escape node with empty `resolved` is needed for later steps
+			assert.equal(run.parsedEscapeCount, 1)
 		})
 	})
 

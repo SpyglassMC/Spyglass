@@ -56,7 +56,7 @@ function runUnderscorePass(root: core.AstNode, ctx: core.CheckerContext): void {
 		ctx.err.report(
 			localize('nbt.parser.number.underscore-not-supported'),
 			first,
-			core.ErrorSeverity.Information,
+			core.ErrorSeverity.Warning,
 		)
 	}
 }
@@ -77,8 +77,7 @@ function checkRadixAndUnderscore(
 	oldSyntax: boolean,
 ): void {
 	// Typed radix collapses (`0x42b`, `0xffs`, `0b101i`, ...). Suffix-less
-	// and `0x...l` long forms are caught by `checkLong`. Skip underscore
-	// below when radix fires to match the original `else if` ordering.
+	// and `0x...l` long forms are caught by `checkLong`.
 	if (node.radix !== undefined && oldSyntax) {
 		ctx.err.report(
 			localize('nbt.parser.number.radix-not-supported'),
@@ -96,7 +95,7 @@ function checkRadixAndUnderscore(
 		ctx.err.report(
 			localize('nbt.parser.number.underscore-not-supported'),
 			node,
-			core.ErrorSeverity.Information,
+			core.ErrorSeverity.Warning,
 		)
 	}
 }
@@ -145,12 +144,14 @@ const checkBoolFunction: core.SyncChecker<NbtBoolFunctionNode> = (node, ctx) => 
 	if (isOldSyntax(ctx)) {
 		reportSnbtFunctionsNotSupported(node, ctx)
 	}
+	walkAndRunRegisteredCheckers(node, ctx)
 }
 
 const checkUuidFunction: core.SyncChecker<NbtUuidFunctionNode> = (node, ctx) => {
 	if (isOldSyntax(ctx)) {
 		reportSnbtFunctionsNotSupported(node, ctx)
 	}
+	walkAndRunRegisteredCheckers(node, ctx)
 }
 
 const checkLong: core.SyncChecker<NbtLongNode> = (node, ctx) => {
@@ -188,6 +189,9 @@ const checkDouble: core.SyncChecker<NbtDoubleNode> = (node, ctx) => {
 const checkString: core.SyncChecker<NbtStringNode> = (node, ctx) => {
 	unicodeEscapes(node, ctx)
 	if (isOldSyntax(ctx) || node.quote) {
+		return
+	}
+	if (nbt.NbtPathKeyNode.is(node.parent)) {
 		return
 	}
 	// Source-text heuristics - `ctx.src.slice(node.range)` would be wrong

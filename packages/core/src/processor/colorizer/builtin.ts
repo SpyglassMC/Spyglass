@@ -78,24 +78,63 @@ export const resourceLocation: Colorizer<ResourceLocationBaseNode> = (node, _ctx
 }
 
 export const string: Colorizer<StringBaseNode> = (node, ctx) => {
-	if (node.children) {
-		// Collect tokens from every child that owns a colorizer.
-		// `UnicodeEscapeNode` siblings need their own multi-segment
-		// highlighting, and the value-parser result (when present)
-		// gets its own tokens too.
-		const tokens: ColorToken[] = []
-		for (const child of node.children) {
-			if (!ctx.meta.hasColorizer(child.type)) {
+	if (!node.children) {
+		return [ColorToken.create(node, node.options.colorTokenType ?? 'string')]
+	}
+
+	const escapeRanges = node.children
+		.filter(c => c.type === 'unicode_escape')
+
+	const tokens: ColorToken[] = []
+	for (const child of node.children) {
+		const emitted = ctx.meta.hasColorizer(child.type)
+			? ctx.meta.getColorizer(child.type)(child, ctx)
+			: child.children?.length
+			? fallback(child, ctx)
+			: []
+		let tail = 0
+		const insert = (piece: ColorToken): void => {
+			while (tail < tokens.length && tokens[tail].range.start < piece.range.start) {
+				tail++
+			}
+			tokens.splice(tail, 0, piece)
+			tail++
+		}
+		for (const t of emitted) {
+			if (child.type === 'unicode_escape') {
+				insert(t)
 				continue
 			}
-			tokens.push(...ctx.meta.getColorizer(child.type)(child, ctx))
-		}
-		if (tokens.length) {
-			// TODO: Fill the gap between the last token and the ending quote with errors.
-			return ColorToken.fillGap(tokens, node.range, node.options.colorTokenType ?? 'string')
+			// Clip around escape ranges; emit the disjoint pieces in source order.
+			let cursor = t.range.start
+			const end = t.range.end
+			for (const { range } of escapeRanges) {
+				if (range.end <= cursor || range.start >= end) {
+					continue
+				}
+				if (range.start > cursor) {
+					insert({ ...t, range: Range.create(cursor, range.start) })
+				}
+				cursor = Math.max(cursor, range.end)
+				if (cursor >= end) {
+					break
+				}
+			}
+			if (cursor < end) {
+				insert({ ...t, range: Range.create(cursor, end) })
+			}
 		}
 	}
-	return [ColorToken.create(node, node.options.colorTokenType ?? 'string')]
+
+	if (!tokens.length) {
+		return [ColorToken.create(node, node.options.colorTokenType ?? 'string')]
+	}
+
+	return ColorToken.fillGap(
+		tokens,
+		node.range,
+		node.options.colorTokenType ?? 'string',
+	)
 }
 
 export const symbol: Colorizer<SymbolBaseNode> = (node) => {
@@ -107,18 +146,18 @@ export const unicodeEscape: Colorizer<UnicodeEscapeNode> = (node) => {
 	const { range, kind } = node
 	const tokens: ColorToken[] = []
 	if (kind === 'N') {
-		tokens.push(
-			ColorToken.create(Range.create(range.start, range.start + 3), 'escape'),
-		)
+		if (node.prefixRange!.start < node.prefixRange!.end) {
+			tokens.push(ColorToken.create(node.prefixRange!, 'escape'))
+		}
 		tokens.push(
 			ColorToken.create(
-				Range.create(range.start + 3, range.end - 1),
+				Range.create(node.prefixRange!.end, node.suffixRange!.start),
 				'resourceLocation',
 			),
 		)
-		tokens.push(
-			ColorToken.create(Range.create(range.end - 1, range.end), 'escape'),
-		)
+		if (node.suffixRange!.start < node.suffixRange!.end) {
+			tokens.push(ColorToken.create(node.suffixRange!, 'escape'))
+		}
 	} else {
 		// `\xHH` / `\uHHHH` / `\UHHHHHHHH`; highlight the entire escape as `escape`
 		tokens.push(
