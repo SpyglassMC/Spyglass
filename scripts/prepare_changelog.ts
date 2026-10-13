@@ -10,13 +10,13 @@ const REPO_URL = 'https://github.com/SpyglassMC/Spyglass'
 
 async function main() {
 	const repoRoot = path.join(import.meta.dirname, '..')
-	const gitLog = await execFile('git', ['log', '--pretty=format:%H %an %s'], { cwd: repoRoot })
+	const gitLog = await execFile('git', ['log', '--pretty=format:%H %cn %s'], { cwd: repoRoot })
 	const commits = gitLog.stdout.split('\n')
 		.map(line => {
-			const [hash, author, ...messageParts] = line.split(' ')
-			return { hash, author, message: messageParts.join(' ') }
+			const [hash, committer, ...messageParts] = line.split(' ')
+			return { hash, committer, message: messageParts.join(' ') }
 		})
-	const index = commits.findIndex(c => c.author.includes('SpyglassCrafter'))
+	const index = commits.findIndex(c => c.committer.includes('SpyglassCrafter'))
 	const changelogCommits = commits.slice(0, index)
 
 	const newFeatures: string[] = []
