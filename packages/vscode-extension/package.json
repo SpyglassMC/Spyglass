@@ -261,6 +261,11 @@
           "markdownDescription": "%spyglassmc.env.gameVersion%",
           "default": "Auto"
         },
+        "spyglassmc.env.enableSymbolCache": {
+          "type": "boolean",
+          "markdownDescription": "%spyglassmc.env.enableSymbolCache%",
+          "default": true
+        },
         "spyglassmc.env.enableMcdocCaching": {
           "type": "boolean",
           "markdownDescription": "%spyglassmc.env.enableMcdocCaching%",

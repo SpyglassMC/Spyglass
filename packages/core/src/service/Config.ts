@@ -109,6 +109,12 @@ export interface EnvConfig {
 	permissionLevel: 1 | 2 | 3 | 4
 	plugins: string[]
 	/**
+	 * Whether to enable the project symbol cache.
+	 * 
+	 * Currently enabled by default.
+	 */
+	enableSymbolCache: boolean
+	/**
 	 * Whether to enable caching of mcdoc simplified types.
 	 *
 	 * May become corrupt after changing game versions, so this is currently disabled by default.
@@ -353,6 +359,7 @@ export const VanillaConfig: Config = {
 		permissionLevel: 2,
 		plugins: [],
 		mcmetaSummaryOverrides: {},
+		enableSymbolCache: true,
 		enableMcdocCaching: false,
 	},
 	format: {
@@ -452,6 +459,9 @@ export namespace PartialConfig {
 			result.env = {}
 			if (typeof spyglassmcConfiguration.env.gameVersion === 'string') {
 				result.env.gameVersion = spyglassmcConfiguration.env.gameVersion
+			}
+			if (typeof spyglassmcConfiguration.env.enableSymbolCache === 'boolean') {
+				result.env.enableSymbolCache = spyglassmcConfiguration.env.enableSymbolCache
 			}
 			if (typeof spyglassmcConfiguration.env.enableMcdocCaching === 'boolean') {
 				result.env.enableMcdocCaching = spyglassmcConfiguration.env.enableMcdocCaching
