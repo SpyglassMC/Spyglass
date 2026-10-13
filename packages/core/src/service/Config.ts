@@ -110,7 +110,7 @@ export interface EnvConfig {
 	plugins: string[]
 	/**
 	 * Whether to enable the project symbol cache.
-	 * 
+	 *
 	 * Currently enabled by default.
 	 */
 	enableSymbolCache: boolean
