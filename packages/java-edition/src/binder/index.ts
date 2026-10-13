@@ -79,6 +79,7 @@ resource('tags/item', { category: 'tag/item', since: '1.21' })
 
 // Data pack
 resource('banner_pattern', { since: '1.20.5' })
+resource('block_sound_set', { since: '26.4' })
 resource('block_transformer', { since: '26.3' })
 resource('cat_sound_variant', { since: '26.1' })
 resource('cat_variant', { since: '1.21.5' })

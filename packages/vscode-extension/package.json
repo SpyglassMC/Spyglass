@@ -98,6 +98,7 @@
           "data/*/advancement/**/*.json",
           "data/*/advancements/**/*.json",
           "data/*/banner_pattern/**/*.json",
+          "data/*/block_sound_set/**/*.json",
           "data/*/block_transformer/**/*.json",
           "data/*/cat_sound_variant/**/*.json",
           "data/*/cat_variant/**/*.json",
