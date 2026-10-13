@@ -1,0 +1,4134 @@
+exports[`mcdoc runtime checker > struct { foo: double, bar: string }[foo] > with value 5 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 5,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 5
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "struct",
+          "fields": [
+            {
+              "kind": "pair",
+              "key": {
+                "kind": "literal",
+                "value": {
+                  "kind": "string",
+                  "value": "foo"
+                }
+              },
+              "type": {
+                "kind": "double"
+              }
+            },
+            {
+              "kind": "pair",
+              "key": {
+                "kind": "literal",
+                "value": {
+                  "kind": "string",
+                  "value": "bar"
+                }
+              },
+              "type": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": 5,
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { foo: double, bar: string }[foo] > with value \"hello\" 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": "hello",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "hello"
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "struct",
+          "fields": [
+            {
+              "kind": "pair",
+              "key": {
+                "kind": "literal",
+                "value": {
+                  "kind": "string",
+                  "value": "foo"
+                }
+              },
+              "type": {
+                "kind": "double"
+              }
+            },
+            {
+              "kind": "pair",
+              "key": {
+                "kind": "literal",
+                "value": {
+                  "kind": "string",
+                  "value": "bar"
+                }
+              },
+              "type": {
+                "kind": "string"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": "hello",
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { foo: double, bar: string }[foo] > with value {\"foo\":4,\"bar\":\"wrong\"} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "foo": 4,
+        "bar": "wrong"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "double"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 4,
+      "definition": {
+        "kind": "double"
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    },
+    {
+      "node": "wrong",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"fallback\"} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "fallback"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "fallback"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "fallback"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "fallback",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\",\"baz\":\"world\"} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "baz",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "baz"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "other",
+          "baz": "world"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "other",
+          "baz": "world"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "other",
+        "baz": "world"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "other",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\",\"baz\":true} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "baz",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "baz"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "other",
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "other",
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "other",
+        "baz": true
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "other",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\"} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "other"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "other"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "other"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "other",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"baz\":true} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "baz",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "baz"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "test",
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "test",
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "test",
+        "baz": true
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"config\":5} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "config",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "config"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "test",
+          "config": 5
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "test",
+          "config": 5
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "test",
+        "config": 5
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"config\":\"hello\"} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "config",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "config"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "test",
+          "config": "hello"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "test",
+          "config": "hello"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "test",
+        "config": "hello"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\"} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "test"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "test"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "test"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "id"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {},
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"fallback\",\"data\":{\"baz\":true}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "baz",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "baz"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "fallback",
+        "data": {
+          "baz": true
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "fallback",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {
+        "baz": true
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "data",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "data"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"fallback\",\"data\":{\"config\":\"hello\"}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "config",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "config"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "config": "hello"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "config": "hello"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "fallback",
+        "data": {
+          "config": "hello"
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "fallback",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {
+        "config": "hello"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "data",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "data"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"fallback\",\"data\":{}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "fallback",
+        "data": {}
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "fallback",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {},
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "data",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "data"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"fallback\"} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "id": "fallback"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "data"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "fallback"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "fallback",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\",\"data\":{\"baz\":\"world\"}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "baz",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "baz"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": "world"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": "world"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "other",
+        "data": {
+          "baz": "world"
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "other",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {
+        "baz": "world"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "data",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "data"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\",\"data\":{\"baz\":true}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "baz",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "baz"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "other",
+        "data": {
+          "baz": true
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "other",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {
+        "baz": true
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "data",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "data"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"other\",\"data\":{}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "other",
+        "data": {}
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "other",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {},
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "data",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "data"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"data\":{\"baz\":true}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "baz",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "baz"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "test",
+        "data": {
+          "baz": true
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {
+        "baz": true
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "data",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "data"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"data\":{\"config\":5}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "config",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "config"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "config": 5
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "config": 5
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "test",
+        "data": {
+          "config": 5
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {
+        "config": 5
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "data",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "data"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"data\":{\"config\":\"hello\"}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "config",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "config"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "config": "hello"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "config": "hello"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "test",
+        "data": {
+          "config": "hello"
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {
+        "config": "hello"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "data",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "data"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {\"id\":\"test\",\"data\":{}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "id": "test",
+        "data": {}
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    },
+    {
+      "node": "id",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "id"
+        }
+      }
+    },
+    {
+      "node": {},
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "data",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "data"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] } > with value {} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "id"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "data"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {},
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "id"
+              }
+            },
+            "type": {
+              "kind": "string"
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "data"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "test",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "config",
+                        "type": {
+                          "kind": "double"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "pair",
+                  "key": "other",
+                  "type": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "pair",
+                        "key": "baz",
+                        "type": {
+                          "kind": "boolean"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback] > with value {\"baz\":\"world\"} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "baz",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "baz"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": "world"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": "world"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "baz": "world"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback] > with value {\"baz\":true} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "baz",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "baz"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "baz": true
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "baz": true
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback] > with value {\"config\":5} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "config",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "config"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "config": 5
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "config": 5
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "config": 5
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback] > with value {\"config\":\"hello\"} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "unknown_key",
+      "node": {
+        "originalNode": "config",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "config"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "config": "hello"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {
+          "config": "hello"
+        },
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "config": "hello"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback] > with value {} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "test"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "other"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {},
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "test"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "config",
+                  "type": {
+                    "kind": "double"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "other"
+              }
+            },
+            "type": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "pair",
+                  "key": "baz",
+                  "type": {
+                    "kind": "boolean"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
