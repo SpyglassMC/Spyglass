@@ -1,0 +1,263 @@
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { id: string, tag: minecraft:item[[id]] }” > with filter 1: does not fall back to path data for a non-compound filter 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "fallback"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { id: string, tag: minecraft:item[[id]] }” > with filter undefined: falls back to path data when no filter is supplied 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "Damage"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { id: string, tag: minecraft:item[[id]] }” > with filter {\"id\":\"book\"}: changes subsequent fields when the filter changes 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "pages"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { id: string, tag: minecraft:item[[id]] }” > with filter {\"id\":\"book\"}: prefers filter data over path data 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "pages"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { id: string, tag: minecraft:item[[id]] }” > with filter {\"id\":\"elytra\"}: resolves a dispatcher key present in the filter 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "Damage"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { id: string, tag: minecraft:item[[id]] }” > with filter {\"other\":\"book\"}: uses the default type if the filter does not contain the dispatcher key 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "fallback"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { id: string, tag: minecraft:item[[id]] }” > with filter {}: uses the default type for an empty filter 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "fallback"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { tag: minecraft:item[[nested.id]] }” > with filter {\"nested\":1}: handles a non-compound type in filter 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "fallback"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { tag: minecraft:item[[nested.id]] }” > with filter {\"nested\":{\"id\":\"book\"}}: changes type using a nested dispatcher key 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "pages"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { tag: minecraft:item[[nested.id]] }” > with filter {\"nested\":{\"id\":\"elytra\"}}: traverses nested filter compound tag 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "Damage"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;
+
+exports[`mcdoc runtime: nbt path filter dispatching > typeDefinition “struct { tag: minecraft:item[[nested.id]] }” > with filter {\"nested\":{}}: handles a missing nested dispatcher key 1`] = `
+{
+  "errors": [],
+  "type": {
+    "kind": "struct",
+    "fields": [
+      {
+        "kind": "pair",
+        "key": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "fallback"
+          }
+        },
+        "type": {
+          "kind": "string"
+        }
+      }
+    ]
+  }
+}
+`;

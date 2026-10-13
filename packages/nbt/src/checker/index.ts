@@ -1,7 +1,10 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { SimplifiedMcdocTypeNoUnion } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
+import type {
+	SimplifiedMcdocType,
+	SimplifiedMcdocTypeNoUnion,
+} from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
 import type { NbtPathChild, NbtPathNode, TypedNbtNode } from '../node/index.js'
 import {
 	NbtByteNode,
@@ -363,12 +366,12 @@ export function blockStates(blocks: string[], _options: Options = {}): core.Sync
 
 interface NbtPathLink {
 	path: NbtPathNode
+	filter_data?: NbtNode
 	node: NbtPathChild | { type: 'leaf'; range: core.Range }
 	prev?: NbtPathLink
 	next?: NbtPathLink
 }
 
-// TODO: check nbt index nodes and nbt compound nodes
 export function path(
 	registry: core.FullResourceLocation,
 	id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined,
@@ -413,6 +416,7 @@ export function path(
 					return undefined
 				},
 				getChildren: (link): mcdoc.runtime.checker.RuntimeUnion<NbtPathLink>[] => {
+					const path_data = getPathFilterData(link)
 					while (link.next && link.node.type !== 'leaf' && NbtPathFilterNode.is(link.node)) {
 						link = link.next
 					}
@@ -423,6 +427,12 @@ export function path(
 						return [[{ originalNode: link.next, inferredType: inferPath(link.next) }]]
 					}
 					if (NbtPathKeyNode.is(link.node)) {
+						const key = link.node.children[0].value
+						if (NbtCompoundNode.is(path_data)) {
+							link.next.filter_data = path_data.children.find(
+								pair => pair.key?.value === key,
+							)?.value
+						}
 						return [{
 							key: {
 								originalNode: link,
@@ -440,6 +450,29 @@ export function path(
 					// Never reachable
 					return []
 				},
+				getChildrenFromFilterData: (link) => {
+					const path_data = getPathFilterData(link)
+					if (!path_data) {
+						return undefined
+					}
+					if (!NbtCompoundNode.is(path_data)) {
+						return []
+					}
+					const runtimeNode = (data: NbtNode) => ({
+						originalNode: {
+							path: link.path,
+							node: link.node,
+							filter_data: data,
+						} satisfies NbtPathLink,
+						inferredType: inferType(data),
+					})
+					return path_data.children.filter(pair => pair.key).map(pair => ({
+						key: runtimeNode(pair.key!),
+						possibleValues: pair.value
+							? [runtimeNode(pair.value)]
+							: [],
+					}))
+				},
 				reportError: (error) => {
 					if (error.kind === 'invalid_collection_length') {
 						return
@@ -455,8 +488,20 @@ export function path(
 					desc = '',
 					originalDefinition,
 				) {
-					if (NbtPathFilterNode.is(link.node) && link.next) {
-						attachTypeInfo(link.next, definition, desc, originalDefinition)
+					if (NbtPathFilterNode.is(link.node)) {
+						typeDefinition(originalDefinition ?? definition, { isPredicate: true })(
+							link.node.children[0],
+							ctx,
+						)
+						if (link.next) {
+							attachTypeInfo(link.next, definition, desc, originalDefinition)
+						}
+					}
+					if (NbtPathIndexNode.is(link.node) && NbtCompoundNode.is(link.node.children?.[0])) {
+						typeDefinition(getListFilterType(definition), { isPredicate: true })(
+							link.node.children[0],
+							ctx,
+						)
 					}
 					if (link.node.type === 'leaf') {
 						link.path.endOriginalTypeDef = originalDefinition
@@ -495,6 +540,43 @@ export function path(
 				},
 			}),
 		)
+	}
+}
+
+function getPathFilterData(link: NbtPathLink): NbtNode | undefined {
+	// Try to get filter data in the following piority:
+	// The current filter "r.a{b:1}.", the previous filter in list "r.a[{b:1}]", filter passed down from parent nodes "r{b:{}}.a."
+	if (NbtPathFilterNode.is(link.node)) {
+		return link.node.children[0]
+	}
+	if (NbtPathIndexNode.is(link.prev?.node)) {
+		const filter = link.prev.node.children?.[0]
+		if (NbtCompoundNode.is(filter)) {
+			return filter
+		}
+	}
+	if (link.filter_data) {
+		return link.filter_data
+	}
+	return undefined
+}
+
+function getListFilterType(type: SimplifiedMcdocType): mcdoc.McdocType {
+	switch (type.kind) {
+		case 'list':
+			return type.item
+		case 'tuple':
+			return { kind: 'union', members: type.items }
+		case 'union':
+			return { kind: 'union', members: type.members.map(getListFilterType) }
+		case 'byte_array':
+			return { kind: 'byte' }
+		case 'int_array':
+			return { kind: 'int' }
+		case 'long_array':
+			return { kind: 'long' }
+		default:
+			return { kind: 'any' }
 	}
 }
 

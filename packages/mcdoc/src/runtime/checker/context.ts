@@ -36,6 +36,10 @@ export type ChildrenGetter<T> = (
 	simplified: SimplifiedMcdocTypeNoUnion,
 ) => RuntimeUnion<T>[]
 
+export type OptionalChildrenGetter<T> = (
+	...args: Parameters<ChildrenGetter<T>>
+) => ReturnType<ChildrenGetter<T>> | undefined
+
 export type ErrorReporter<T> = (error: McdocRuntimeError<T>) => void
 
 export interface McdocCheckerContext<T> extends core.CheckerContext {
@@ -43,6 +47,7 @@ export interface McdocCheckerContext<T> extends core.CheckerContext {
 	requireCanonical: boolean
 	tryConvertTo: TypeConverter<T>
 	getChildren: ChildrenGetter<T>
+	getChildrenFromFilterData?: OptionalChildrenGetter<T>
 	reportError: ErrorReporter<T>
 	attachTypeInfo?: TypeInfoAttacher<T>
 	nodeAttacher?: NodeAttacher<T>
@@ -60,6 +65,7 @@ export namespace McdocCheckerContext {
 			requireCanonical: options.requireCanonical ?? false,
 			tryConvertTo: options.tryConvertTo ?? (() => undefined),
 			getChildren: options.getChildren ?? (() => []),
+			getChildrenFromFilterData: options.getChildrenFromFilterData,
 			reportError: options.reportError ?? (() => {}),
 			attachTypeInfo: options.attachTypeInfo,
 			nodeAttacher: options.nodeAttacher,

@@ -1035,11 +1035,15 @@ function resolveIndices<T>(
 					const newPossibilities: SimplifyNode<T>[] = []
 					for (const node of possibilities) {
 						const possibleChildren: SimplifyNode<T>[] = node.value
-							? (context.ctx.getChildren(
+							? ((context.ctx.getChildrenFromFilterData?.(
 								node.value.node.originalNode,
 								simplify(node.value.node.inferredType, { ...context, node: node.value })
 									.typeDef,
-							).filter(child => {
+							) ?? context.ctx.getChildren(
+								node.value.node.originalNode,
+								simplify(node.value.node.inferredType, { ...context, node: node.value })
+									.typeDef,
+							)).filter(child => {
 								if (!Array.isArray(child)) {
 									return child.key.inferredType.kind === 'literal'
 										&& child.key.inferredType.value.kind === 'string'
