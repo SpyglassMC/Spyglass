@@ -212,9 +212,7 @@ export namespace ColorPresentation {
 			case ColorFormat.CompositeRGB:
 				return `${(r << 16) + (g << 8) + b}`
 			case ColorFormat.CompositeARGB:
-				return `${
-					Number((BigInt(a) << 24n) + (BigInt(r) << 16n) + (BigInt(g) << 8n) + BigInt(b)) << 0
-				}`
+				return `${(a << 24) + (r << 16) + (g << 8) + b}`
 		}
 	}
 }
