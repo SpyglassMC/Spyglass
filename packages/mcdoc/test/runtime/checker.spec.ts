@@ -5,6 +5,7 @@ import type { SimplifiedMcdocType } from '@spyglassmc/mcdoc/lib/runtime/checker/
 import { LiteralNumericValue } from '@spyglassmc/mcdoc/lib/type/index.js'
 import type { McdocType, UnionType } from '@spyglassmc/mcdoc/lib/type/index.js'
 import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { module_ as binder, TypeDefSymbolData } from '../../lib/binder/index.js'
 import { module_ as parser } from '../../lib/parser/index.js'
@@ -313,4 +314,88 @@ describe('mcdoc runtime checker', () => {
 			})
 		}
 	}
+
+	describe('duplicate resource location keys (#2047)', () => {
+		const def = 'struct { [string]?: double }'
+		const cases: { name: string; pairs: [string, number][]; expectedDuplicates: number }[] = [
+			{ name: 'same spelling', pairs: [['foo', 1], ['foo', 2]], expectedDuplicates: 2 },
+			{
+				name: 'namespaced and short spellings denote the same location',
+				pairs: [['minecraft:aqua_affinity', 1], ['aqua_affinity', 2]],
+				expectedDuplicates: 2,
+			},
+			{
+				name: 'leading colon spelling',
+				pairs: [[':tick', 1], ['tick', 2]],
+				expectedDuplicates: 2,
+			},
+			{
+				name: 'different namespaces are distinct',
+				pairs: [['minecraft:tick', 1], ['custom:tick', 2]],
+				expectedDuplicates: 0,
+			},
+			{ name: 'different keys', pairs: [['foo', 1], ['bar', 2]], expectedDuplicates: 0 },
+		]
+		for (const { name, pairs, expectedDuplicates } of cases) {
+			it(name, async () => {
+				const project = mockProjectData()
+				const doc = TextDocument.create('test.mcdoc', '', 0, '')
+				const parseResult = parser(
+					new core.Source(`type Test = ${def}`),
+					core.ParserContext.create(project, { doc }),
+				)
+				if (parseResult === core.Failure) {
+					throw new Error(`Failed to parse content: ${def}`)
+				}
+				const binderCtx = core.BinderContext.create(project, { doc })
+				project.symbols.query(doc, 'mcdoc', '::test').enter({
+					data: { data: { nextAnonymousIndex: 0 } },
+					usage: { type: 'definition' },
+				})
+				await binder(parseResult, { ...binderCtx, moduleIdentifier: '::test' })
+
+				const errors: McdocRuntimeError<JsValue>[] = []
+				const checkerCtx = core.CheckerContext.create(project, { doc })
+				const ctx = McdocCheckerContext.create<JsValue>(checkerCtx, {
+					getChildren: (value) => {
+						// Represent the value as an array of [key, value] pairs so that
+						// duplicated keys survive (a plain object would collapse them).
+						if (
+							Array.isArray(value)
+							&& value.every(v => Array.isArray(v) && v.length === 2 && typeof v[0] === 'string')
+						) {
+							return (value as [string, number][]).map(([k, v]) => ({
+								key: { originalNode: k, inferredType: inferType(k) },
+								possibleValues: [{ originalNode: v, inferredType: inferType(v) }],
+							}))
+						}
+						return []
+					},
+					reportError: (error) => {
+						errors.push(error)
+					},
+					tryConvertTo: () => undefined,
+					attachTypeInfo: () => {},
+				})
+				const symbol = project.symbols.query(doc, 'mcdoc', '::test::Test')
+				const data = symbol.getData(TypeDefSymbolData.is)
+				if (!data?.typeDef) {
+					throw new Error(`Could not resolve typedef`)
+				}
+				typeDefinition(
+					[{ originalNode: pairs, inferredType: { kind: 'struct', fields: [] } }],
+					data.typeDef,
+					ctx,
+				)
+				const duplicates = errors.filter(e => e.kind === 'duplicate_key')
+				assert.equal(
+					duplicates.length,
+					expectedDuplicates,
+					`Expected ${expectedDuplicates} duplicate_key errors, got ${duplicates.length}: ${
+						JSON.stringify(errors.map(e => e.kind))
+					}`,
+				)
+			})
+		}
+	})
 })

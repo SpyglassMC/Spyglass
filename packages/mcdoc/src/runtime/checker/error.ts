@@ -298,7 +298,7 @@ function condenseErrorsAndFilterSiblings<T>(definitions: ErrorCondensingDefiniti
 
 	// No condensing needed for duplicate key. If a key is a duplicate in one definition, it really
 	// should have been reported by all of them
-	validDefinitions[0].errors.filter(e => e.kind === 'duplicate_key')
+	errors.push(...validDefinitions[0].errors.filter(e => e.kind === 'duplicate_key'))
 
 	const internalErrorResult = condense(
 		validDefinitions,

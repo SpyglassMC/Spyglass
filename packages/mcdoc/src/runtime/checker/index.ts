@@ -1,4 +1,4 @@
-import { Range, Source } from '@spyglassmc/core'
+import { Range, ResourceLocation, Source } from '@spyglassmc/core'
 import type { CheckerContext, FullResourceLocation, SymbolQuery } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../../binder/index.js'
@@ -577,12 +577,15 @@ function checkShallowly<T>(
 					child.key.inferredType.kind === 'literal'
 					&& child.key.inferredType.value.kind === 'string'
 				) {
-					const existing = literalKvps.get(child.key.inferredType.value.value)
+					// Normalize resource location keys (#2047): `minecraft:foo` and `foo`
+					// denote the same location and must collide as duplicate keys.
+					const normalizedKey = ResourceLocation.shorten(child.key.inferredType.value.value)
+					const existing = literalKvps.get(normalizedKey)
 					if (existing) {
 						// duplicate key
 						existing.values.push({ pair: child, index: i })
 					} else {
-						literalKvps.set(child.key.inferredType.value.value, {
+						literalKvps.set(normalizedKey, {
 							values: [{ pair: child, index: i }],
 							definition: undefined,
 						})
@@ -597,7 +600,7 @@ function checkShallowly<T>(
 				const otherKvpMatches: number[] = []
 				let foundMatch = false
 				if (pair.key.kind === 'literal' && pair.key.value.kind === 'string') {
-					const runtimeChild = literalKvps.get(pair.key.value.value)
+					const runtimeChild = literalKvps.get(ResourceLocation.shorten(pair.key.value.value))
 					if (runtimeChild) {
 						foundMatch = true
 						runtimeChild.definition = { keyType: pair.key, type: pair.type, desc: pair.desc }
