@@ -237,3 +237,14 @@ dispatch spyglassmc:test[%none] to struct {
 }
 
 type Test = spyglassmc:test[%fallback][id]
+
+//== dispatcher/duplicated keys
+//// `minecraft:tick` is the same resource location as `tick`; both spellings
+//// must trigger the duplicated-key diagnostic (see #2047).
+dispatch spyglassmc:test[tick] to struct {
+	value: int,
+}
+
+dispatch spyglassmc:test[minecraft:tick] to struct {
+	value: int,
+}

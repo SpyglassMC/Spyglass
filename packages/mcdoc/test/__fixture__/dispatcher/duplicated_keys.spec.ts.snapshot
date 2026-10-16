@@ -1,0 +1,657 @@
+exports[`mcdoc __fixture__ > dispatcher/duplicated keys 1`] = `
+{
+  "global": {
+    "mcdoc": {
+      "::test": {
+        "subcategory": "module",
+        "definition": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 0,
+              "end": 0
+            },
+            "posRange": {
+              "start": {
+                "line": 0,
+                "character": 0
+              },
+              "end": {
+                "line": 0,
+                "character": 0
+              }
+            },
+            "contributor": "uri_binder"
+          }
+        ],
+        "data": {
+          "nextAnonymousIndex": 2
+        }
+      },
+      "::test::<anonymous 0>": {
+        "data": {
+          "typeDef": {
+            "kind": "struct",
+            "fields": [
+              {
+                "kind": "pair",
+                "key": "value",
+                "type": {
+                  "kind": "int"
+                }
+              }
+            ]
+          }
+        },
+        "subcategory": "struct",
+        "definition": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 34,
+              "end": 40
+            },
+            "posRange": {
+              "start": {
+                "line": 0,
+                "character": 34
+              },
+              "end": {
+                "line": 0,
+                "character": 40
+              }
+            },
+            "contributor": "binder"
+          }
+        ],
+        "members": {
+          "value": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 44,
+                  "end": 49
+                },
+                "posRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 6
+                  }
+                },
+                "fullRange": {
+                  "start": 44,
+                  "end": 54
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 11
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
+      },
+      "::test::<anonymous 1>": {
+        "data": {
+          "typeDef": {
+            "kind": "struct",
+            "fields": [
+              {
+                "kind": "pair",
+                "key": "value",
+                "type": {
+                  "kind": "int"
+                }
+              }
+            ]
+          }
+        },
+        "subcategory": "struct",
+        "definition": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 103,
+              "end": 109
+            },
+            "posRange": {
+              "start": {
+                "line": 4,
+                "character": 44
+              },
+              "end": {
+                "line": 4,
+                "character": 50
+              }
+            },
+            "contributor": "binder"
+          }
+        ],
+        "members": {
+          "value": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 113,
+                  "end": 118
+                },
+                "posRange": {
+                  "start": {
+                    "line": 5,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 5,
+                    "character": 6
+                  }
+                },
+                "fullRange": {
+                  "start": 113,
+                  "end": 123
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 5,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 5,
+                    "character": 11
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "mcdoc/dispatcher": {
+      "spyglassmc:test": {
+        "reference": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 9,
+              "end": 24
+            },
+            "posRange": {
+              "start": {
+                "line": 0,
+                "character": 9
+              },
+              "end": {
+                "line": 0,
+                "character": 24
+              }
+            },
+            "fullRange": {
+              "start": 0,
+              "end": 59
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 0,
+                "character": 0
+              },
+              "end": {
+                "line": 4,
+                "character": 0
+              }
+            },
+            "contributor": "binder"
+          },
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 68,
+              "end": 83
+            },
+            "posRange": {
+              "start": {
+                "line": 4,
+                "character": 9
+              },
+              "end": {
+                "line": 4,
+                "character": 24
+              }
+            },
+            "fullRange": {
+              "start": 59,
+              "end": 126
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 4,
+                "character": 0
+              },
+              "end": {
+                "line": 6,
+                "character": 1
+              }
+            },
+            "contributor": "binder"
+          }
+        ],
+        "members": {
+          "tick": {
+            "data": {
+              "typeDef": {
+                "kind": "struct",
+                "fields": [
+                  {
+                    "kind": "pair",
+                    "key": "value",
+                    "type": {
+                      "kind": "int"
+                    }
+                  }
+                ]
+              }
+            },
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 25,
+                  "end": 29
+                },
+                "posRange": {
+                  "start": {
+                    "line": 0,
+                    "character": 25
+                  },
+                  "end": {
+                    "line": 0,
+                    "character": 29
+                  }
+                },
+                "fullRange": {
+                  "start": 0,
+                  "end": 59
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 0,
+                    "character": 0
+                  },
+                  "end": {
+                    "line": 4,
+                    "character": 0
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "nodes": {
+    "file:///test.mcdoc": {
+      "type": "file",
+      "range": {
+        "start": 0,
+        "end": 126
+      },
+      "children": [
+        {
+          "type": "mcdoc:module",
+          "children": [
+            {
+              "type": "mcdoc:dispatch_statement",
+              "children": [
+                {
+                  "type": "mcdoc:literal",
+                  "range": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "value": "dispatch",
+                  "colorTokenType": "keyword"
+                },
+                {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 9,
+                    "end": 24
+                  },
+                  "namespace": "spyglassmc",
+                  "path": [
+                    "test"
+                  ],
+                  "symbol": {
+                    "category": "mcdoc/dispatcher",
+                    "path": [
+                      "spyglassmc:test"
+                    ]
+                  }
+                },
+                {
+                  "type": "mcdoc:index_body",
+                  "children": [
+                    {
+                      "type": "mcdoc:identifier",
+                      "range": {
+                        "start": 25,
+                        "end": 29
+                      },
+                      "value": "tick",
+                      "symbol": {
+                        "category": "mcdoc/dispatcher",
+                        "path": [
+                          "spyglassmc:test",
+                          "tick"
+                        ]
+                      }
+                    }
+                  ],
+                  "range": {
+                    "start": 24,
+                    "end": 30
+                  }
+                },
+                {
+                  "type": "mcdoc:literal",
+                  "range": {
+                    "start": 31,
+                    "end": 33
+                  },
+                  "value": "to"
+                },
+                {
+                  "type": "mcdoc:struct",
+                  "children": [
+                    {
+                      "type": "mcdoc:literal",
+                      "range": {
+                        "start": 34,
+                        "end": 40
+                      },
+                      "value": "struct",
+                      "colorTokenType": "keyword",
+                      "symbol": {
+                        "category": "mcdoc",
+                        "path": [
+                          "::test::<anonymous 0>"
+                        ]
+                      }
+                    },
+                    {
+                      "type": "mcdoc:struct/block",
+                      "children": [
+                        {
+                          "type": "mcdoc:struct/field/pair",
+                          "children": [
+                            {
+                              "type": "mcdoc:identifier",
+                              "range": {
+                                "start": 44,
+                                "end": 49
+                              },
+                              "value": "value",
+                              "symbol": {
+                                "category": "mcdoc",
+                                "path": [
+                                  "::test::<anonymous 0>",
+                                  "value"
+                                ]
+                              }
+                            },
+                            {
+                              "type": "mcdoc:type/numeric_type",
+                              "children": [
+                                {
+                                  "type": "mcdoc:literal",
+                                  "range": {
+                                    "start": 51,
+                                    "end": 54
+                                  },
+                                  "value": "int",
+                                  "colorTokenType": "type"
+                                }
+                              ],
+                              "range": {
+                                "start": 51,
+                                "end": 54
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 44,
+                            "end": 54
+                          }
+                        }
+                      ],
+                      "range": {
+                        "start": 41,
+                        "end": 59
+                      }
+                    }
+                  ],
+                  "range": {
+                    "start": 34,
+                    "end": 59
+                  }
+                }
+              ],
+              "range": {
+                "start": 0,
+                "end": 59
+              }
+            },
+            {
+              "type": "mcdoc:dispatch_statement",
+              "children": [
+                {
+                  "type": "mcdoc:literal",
+                  "range": {
+                    "start": 59,
+                    "end": 67
+                  },
+                  "value": "dispatch",
+                  "colorTokenType": "keyword"
+                },
+                {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 68,
+                    "end": 83
+                  },
+                  "namespace": "spyglassmc",
+                  "path": [
+                    "test"
+                  ],
+                  "symbol": {
+                    "category": "mcdoc/dispatcher",
+                    "path": [
+                      "spyglassmc:test"
+                    ]
+                  }
+                },
+                {
+                  "type": "mcdoc:index_body",
+                  "children": [
+                    {
+                      "type": "resource_location",
+                      "range": {
+                        "start": 84,
+                        "end": 98
+                      },
+                      "namespace": "minecraft",
+                      "path": [
+                        "tick"
+                      ]
+                    }
+                  ],
+                  "range": {
+                    "start": 83,
+                    "end": 99
+                  }
+                },
+                {
+                  "type": "mcdoc:literal",
+                  "range": {
+                    "start": 100,
+                    "end": 102
+                  },
+                  "value": "to"
+                },
+                {
+                  "type": "mcdoc:struct",
+                  "children": [
+                    {
+                      "type": "mcdoc:literal",
+                      "range": {
+                        "start": 103,
+                        "end": 109
+                      },
+                      "value": "struct",
+                      "colorTokenType": "keyword",
+                      "symbol": {
+                        "category": "mcdoc",
+                        "path": [
+                          "::test::<anonymous 1>"
+                        ]
+                      }
+                    },
+                    {
+                      "type": "mcdoc:struct/block",
+                      "children": [
+                        {
+                          "type": "mcdoc:struct/field/pair",
+                          "children": [
+                            {
+                              "type": "mcdoc:identifier",
+                              "range": {
+                                "start": 113,
+                                "end": 118
+                              },
+                              "value": "value",
+                              "symbol": {
+                                "category": "mcdoc",
+                                "path": [
+                                  "::test::<anonymous 1>",
+                                  "value"
+                                ]
+                              }
+                            },
+                            {
+                              "type": "mcdoc:type/numeric_type",
+                              "children": [
+                                {
+                                  "type": "mcdoc:literal",
+                                  "range": {
+                                    "start": 120,
+                                    "end": 123
+                                  },
+                                  "value": "int",
+                                  "colorTokenType": "type"
+                                }
+                              ],
+                              "range": {
+                                "start": 120,
+                                "end": 123
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 113,
+                            "end": 123
+                          }
+                        }
+                      ],
+                      "range": {
+                        "start": 110,
+                        "end": 126
+                      }
+                    }
+                  ],
+                  "range": {
+                    "start": 103,
+                    "end": 126
+                  }
+                }
+              ],
+              "range": {
+                "start": 59,
+                "end": 126
+              }
+            }
+          ],
+          "range": {
+            "start": 0,
+            "end": 126
+          }
+        }
+      ],
+      "locals": {},
+      "parserErrors": [],
+      "binderErrors": [
+        {
+          "range": {
+            "start": 84,
+            "end": 98
+          },
+          "message": "Duplicated dispatcher case “tick”",
+          "severity": 2,
+          "info": {
+            "related": [
+              {
+                "location": {
+                  "uri": "file:///test.mcdoc",
+                  "range": {
+                    "start": 25,
+                    "end": 29
+                  },
+                  "posRange": {
+                    "start": {
+                      "line": 0,
+                      "character": 25
+                    },
+                    "end": {
+                      "line": 0,
+                      "character": 29
+                    }
+                  },
+                  "fullRange": {
+                    "start": 0,
+                    "end": 59
+                  },
+                  "fullPosRange": {
+                    "start": {
+                      "line": 0,
+                      "character": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "character": 0
+                    }
+                  },
+                  "contributor": "binder"
+                },
+                "message": "“tick” has already been dispatched here"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+`;
