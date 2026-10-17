@@ -2,10 +2,13 @@ import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import type {
+	RuntimeNode,
+	RuntimePair,
+	RuntimeUnion,
 	SimplifiedMcdocType,
 	SimplifiedMcdocTypeNoUnion,
 } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
-import type { NbtPathChild, NbtPathNode, TypedNbtNode } from '../node/index.js'
+import type { NbtPathChild, NbtPathKeyNode, NbtPathNode, TypedNbtNode } from '../node/index.js'
 import {
 	NbtByteNode,
 	NbtCollectionNode,
@@ -16,7 +19,6 @@ import {
 	NbtNumberNode,
 	NbtPathFilterNode,
 	NbtPathIndexNode,
-	NbtPathKeyNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
 	NbtUuidFunctionNode,
@@ -202,56 +204,7 @@ export function typeDefinition(
 					)(error)
 				},
 				attachTypeInfo: (node, definition, desc = '') => {
-					node.typeDef = definition
-					node.requireCanonical = options.isPredicate
-					// TODO: improve hover info
-					if (
-						node.parent && core.PairNode?.is(node.parent)
-						&& NbtNode.is(node.parent.key)
-						&& NbtNode.is(node.parent.value)
-					) {
-						if (node.parent.key?.typeDef && node.parent.value?.typeDef) {
-							const valueString = mcdoc.McdocType.toString(node.parent.value.typeDef)
-							let keyString = mcdoc.McdocType.toString(node.parent.key.typeDef)
-							if (node.parent.key.typeDef.kind !== 'literal') {
-								keyString = `[${keyString}]`
-							}
-
-							node.parent.key.hover =
-								`\`\`\`typescript\n${keyString}: ${valueString}\n\`\`\`\n${desc}`
-
-							if (NbtPrimitiveNode.is(node.parent.value)) {
-								let valueHover = `\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
-								// Preserve any hover set by the parser (e.g. the decimal
-								// value of a hex/binary literal) so it shows up alongside
-								// the mcdoc type info instead of being clobbered.
-								if (node.parent.value.hover) {
-									valueHover += `\n\n${node.parent.value.hover}`
-								}
-								node.parent.value.hover = valueHover
-							}
-						}
-					} else if (NbtPrimitiveNode.is(node)) {
-						let hover = `\`\`\`typescript\n${
-							mcdoc.McdocType.toString(definition)
-						}\n\`\`\`\n${desc}`
-						// Preserve any hover set by the parser (e.g. the decimal
-						// value of a hex/binary literal) so it shows up alongside
-						// the mcdoc type info instead of being clobbered.
-						if (node.hover) {
-							hover += `\n\n${node.hover}`
-						}
-						node.hover = hover
-					} else if (NbtUuidFunctionNode.is(node)) {
-						const uuidNode = node
-						// Skip the hover when the UUID is invalid - the parser
-						// already reports the error on the string arg, and a
-						// hover here would be redundant noise.
-						if (uuidNode.value.length !== 4) {
-							return
-						}
-						uuidNode.hover = `\`\`\`mcdoc\n[I; ${uuidNode.value.join(', ')}]\n\`\`\``
-					}
+					attachNbtTypeInfo(node, definition, desc, options.isPredicate)
 				},
 				nodeAttacher: (node, attacher) => attacher(node),
 				stringAttacher: (node, attacher) => {
@@ -268,6 +221,61 @@ export function typeDefinition(
 				},
 			}),
 		)
+	}
+}
+
+function attachNbtTypeInfo(
+	node: NbtNode,
+	definition: SimplifiedMcdocType,
+	desc: string,
+	requireCanonical: boolean | undefined,
+) {
+	node.typeDef = definition
+	node.requireCanonical = requireCanonical
+	// TODO: improve hover info
+	if (
+		node.parent && core.PairNode?.is(node.parent)
+		&& NbtNode.is(node.parent.key)
+		&& NbtNode.is(node.parent.value)
+	) {
+		if (node.parent.key?.typeDef && node.parent.value?.typeDef) {
+			const valueString = mcdoc.McdocType.toString(node.parent.value.typeDef)
+			let keyString = mcdoc.McdocType.toString(node.parent.key.typeDef)
+			if (node.parent.key.typeDef.kind !== 'literal') {
+				keyString = `[${keyString}]`
+			}
+
+			node.parent.key.hover = `\`\`\`typescript\n${keyString}: ${valueString}\n\`\`\`\n${desc}`
+
+			if (NbtPrimitiveNode.is(node.parent.value)) {
+				let valueHover = `\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+				// Preserve any hover set by the parser (e.g. the decimal
+				// value of a hex/binary literal) so it shows up alongside
+				// the mcdoc type info instead of being clobbered.
+				if (node.parent.value.hover) {
+					valueHover += `\n\n${node.parent.value.hover}`
+				}
+				node.parent.value.hover = valueHover
+			}
+		}
+	} else if (NbtPrimitiveNode.is(node)) {
+		let hover = `\`\`\`typescript\n${mcdoc.McdocType.toString(definition)}\n\`\`\`\n${desc}`
+		// Preserve any hover set by the parser (e.g. the decimal
+		// value of a hex/binary literal) so it shows up alongside
+		// the mcdoc type info instead of being clobbered.
+		if (node.hover) {
+			hover += `\n\n${node.hover}`
+		}
+		node.hover = hover
+	} else if (NbtUuidFunctionNode.is(node)) {
+		const uuidNode = node
+		// Skip the hover when the UUID is invalid - the parser
+		// already reports the error on the string arg, and a
+		// hover here would be redundant noise.
+		if (uuidNode.value.length !== 4) {
+			return
+		}
+		uuidNode.hover = `\`\`\`mcdoc\n[I; ${uuidNode.value.join(', ')}]\n\`\`\``
 	}
 }
 
@@ -364,228 +372,294 @@ export function blockStates(blocks: string[], _options: Options = {}): core.Sync
 	}
 }
 
-interface NbtPathLink {
-	path: NbtPathNode
-	filter_data?: NbtNode
-	node: NbtPathChild | { type: 'leaf'; range: core.Range }
-	prev?: NbtPathLink
-	next?: NbtPathLink
+/**A partial NBT value described by NBT path and its filters.*/
+interface NbtPathRuntimeData {
+	source: core.AstNode
+	type: SimplifiedMcdocTypeNoUnion
+	children: RuntimeUnion<NbtPathRuntimeData>[]
+	/** Original NBT nodes represented*/
+	nodes: NbtNode[]
+	pathTargets: (NbtPathChild | { type: 'leaf'; range: core.Range })[]
+	hoverKeys: NbtPathKeyNode[]
+}
+
+function NbtPathRuntimeNode(
+	data: NbtPathRuntimeData,
+): RuntimeNode<NbtPathRuntimeData> {
+	return { originalNode: data, inferredType: data.type }
 }
 
 export function path(
 	registry: core.FullResourceLocation,
 	id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined,
 ): core.SyncChecker<NbtPathNode> {
-	return (node, ctx) => {
-		// TODO: support dispatcher
-		const typeDef: mcdoc.McdocType = {
-			kind: 'dispatcher',
-			registry,
-			parallelIndices: getIndices(id),
+	interface PathCheckState {
+		path: NbtPathNode
+		ctx: core.CheckerContext
+		filterKeys: Set<NbtNode>
+	}
+
+	function makeNew(source: core.AstNode, type: SimplifiedMcdocTypeNoUnion): NbtPathRuntimeData {
+		return { source, type, children: [], nodes: [], pathTargets: [], hoverKeys: [] }
+	}
+	function keyOf(child: RuntimeUnion<NbtPathRuntimeData>): string | undefined {
+		if (
+			!Array.isArray(child) && child.key.inferredType.kind === 'literal'
+			&& child.key.inferredType.value.kind === 'string'
+		) {
+			return child.key.inferredType.value.value
 		}
-		// Create a linked list representation
-		const leaf = { type: 'leaf', range: core.Range.create(node.range.end) } as const
-		let link: NbtPathLink = { path: node, node: leaf }
-		for (let i = node.children.length - 1; i >= 0; i -= 1) {
-			link = { path: node, node: node.children[i], next: link }
+		return undefined
+	}
+	/** Convert an NBT into a {@link NbtPathRuntimeData} */
+	function fromNbt(state: PathCheckState, node: NbtNode): NbtPathRuntimeData {
+		const runtimData: NbtPathRuntimeData = makeNew(node, inferType(node))
+		runtimData.nodes.push(node)
+		if (NbtCompoundNode.is(node)) {
+			runtimData.children = node.children.filter(pair => pair.key).map(pair => {
+				state.filterKeys.add(pair.key!)
+				return {
+					key: NbtPathRuntimeNode(fromNbt(state, pair.key!)),
+					possibleValues: pair.value ? [NbtPathRuntimeNode(fromNbt(state, pair.value))] : [],
+				}
+			})
+		} else if (NbtCollectionNode.is(node)) {
+			runtimData.children = node.children.filter(entry => entry.value).map(entry => [
+				NbtPathRuntimeNode(fromNbt(state, entry.value!)),
+			])
 		}
-		let prev = link
-		while (prev.next) {
-			prev.next.prev = prev
-			prev = prev.next
+		return runtimData
+	}
+
+	/** Asymmetrically merge `incoming` into `base` */
+	function merge(
+		state: PathCheckState,
+		base: NbtPathRuntimeData,
+		incoming: NbtPathRuntimeData,
+	): NbtPathRuntimeData {
+		if (base.type.kind === 'unsafe') {
+			base.type = incoming.type
+			base.children = incoming.children
+			base.source = incoming.source
+		} else if (incoming.type.kind !== 'unsafe') {
+			if (
+				(base.type.kind === 'struct' && incoming.type.kind === 'struct')
+				|| (base.type.kind === 'list' && incoming.type.kind === 'list')
+			) {
+				base.children.push(...incoming.children)
+			} else if (!mcdoc.McdocType.equals(base.type, incoming.type)) {
+				state.ctx.err.report(
+					localize(
+						'expected-got',
+						mcdoc.McdocType.toString(base.type),
+						mcdoc.McdocType.toString(incoming.type),
+					),
+					incoming.source,
+				)
+			}
 		}
-		mcdoc.runtime.checker.typeDefinition<NbtPathLink>(
-			[{ originalNode: link, inferredType: inferPath(link) }],
-			typeDef,
-			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
-				allowMissingKeys: true,
-				requireCanonical: true,
-				tryConvertTo: (node, target) => {
-					if (NbtPathIndexNode.is(node.node)) {
-						switch (target.kind) {
-							case 'list':
-								return { kind: 'list', item: { kind: 'any' } }
-							case 'byte_array':
-							case 'int_array':
-							case 'long_array':
-								return { kind: target.kind }
-							case 'tuple':
-								return { kind: 'tuple', items: [] }
-						}
+		base.nodes.push(...incoming.nodes)
+		base.pathTargets.push(...incoming.pathTargets)
+		base.hoverKeys.push(...incoming.hoverKeys)
+		return base
+	}
+	function clone(data: NbtPathRuntimeData): NbtPathRuntimeData {
+		const cloneNode = (node: RuntimeNode<NbtPathRuntimeData>) =>
+			NbtPathRuntimeNode(clone(node.originalNode))
+		return {
+			...data,
+			nodes: [...data.nodes],
+			pathTargets: [...data.pathTargets],
+			hoverKeys: [...data.hoverKeys],
+			children: data.children.map(child =>
+				Array.isArray(child)
+					? child.map(cloneNode)
+					: {
+						key: cloneNode(child.key),
+						possibleValues: child.possibleValues.map(cloneNode),
 					}
-					return undefined
-				},
-				getChildren: (link): mcdoc.runtime.checker.RuntimeUnion<NbtPathLink>[] => {
-					const path_data = getPathFilterData(link)
-					while (link.next && link.node.type !== 'leaf' && NbtPathFilterNode.is(link.node)) {
-						link = link.next
+			),
+		}
+	}
+	/** Merge data from path into data from, to avoid duplicate keys from them */
+	function mergePathAccess(
+		state: PathCheckState,
+		filterData: RuntimePair<NbtPathRuntimeData>,
+		pathData: RuntimePair<NbtPathRuntimeData>,
+		copy: boolean,
+	): void {
+		const forTarget = (data: NbtPathRuntimeData) => copy ? clone(data) : data
+		filterData.key = NbtPathRuntimeNode(
+			merge(state, filterData.key.originalNode, forTarget(pathData.key.originalNode)),
+		)
+		for (const value of pathData.possibleValues) {
+			if (!filterData.possibleValues.length) {
+				filterData.possibleValues.push(NbtPathRuntimeNode(forTarget(value.originalNode)))
+				continue
+			}
+			filterData.possibleValues = filterData.possibleValues.map(previous =>
+				NbtPathRuntimeNode(merge(state, previous.originalNode, forTarget(value.originalNode)))
+			)
+		}
+	}
+	function prepareChildren(state: PathCheckState, runtimeData: NbtPathRuntimeData): void {
+		const resolveStruct = (state: PathCheckState, runtimeData: NbtPathRuntimeData) => {
+			const groups = new Map<string | undefined, RuntimePair<NbtPathRuntimeData>[]>()
+			for (const child of runtimeData.children) {
+				if (Array.isArray(child)) {
+					continue
+				}
+				const key = keyOf(child)
+				const group = groups.get(key) ?? []
+				group.push(child)
+				groups.set(key, group)
+			}
+			runtimeData.children = []
+			for (const group of groups.values()) {
+				const explicit = group
+					.filter(child =>
+						child.key.originalNode.nodes.some(node => state.filterKeys.has(node))
+					)
+				const pathDataList = group.filter(child => !explicit.includes(child))
+				const filterDataList = explicit.length ? explicit : pathDataList.splice(0, 1)
+				for (const filterData of filterDataList) {
+					for (const pathData of pathDataList) {
+						mergePathAccess(state, filterData, pathData, filterDataList.length > 1)
 					}
-					if (!link.next || link.node.type === 'leaf') {
-						return []
-					}
-					if (NbtPathIndexNode.is(link.node)) {
-						return [[{ originalNode: link.next, inferredType: inferPath(link.next) }]]
-					}
-					if (NbtPathKeyNode.is(link.node)) {
-						const key = link.node.children[0].value
-						if (NbtCompoundNode.is(path_data)) {
-							link.next.filter_data = path_data.children.find(
-								pair => pair.key?.value === key,
-							)?.value
-						}
-						return [{
-							key: {
-								originalNode: link,
-								inferredType: {
-									kind: 'literal',
-									value: { kind: 'string', value: link.node.children[0].value },
-								},
-							},
-							possibleValues: [{
-								originalNode: link.next,
-								inferredType: inferPath(link.next),
-							}],
-						}]
-					}
-					// Never reachable
-					return []
-				},
-				getChildrenFromFilterData: (link) => {
-					const path_data = getPathFilterData(link)
-					if (!path_data) {
-						return undefined
-					}
-					if (!NbtCompoundNode.is(path_data)) {
-						return []
-					}
-					const runtimeNode = (data: NbtNode) => ({
-						originalNode: {
-							path: link.path,
-							node: link.node,
-							filter_data: data,
-						} satisfies NbtPathLink,
-						inferredType: inferType(data),
-					})
-					return path_data.children.filter(pair => pair.key).map(pair => ({
-						key: runtimeNode(pair.key!),
-						possibleValues: pair.value
-							? [runtimeNode(pair.value)]
-							: [],
-					}))
-				},
-				reportError: (error) => {
-					if (error.kind === 'invalid_collection_length') {
-						return
-					}
-					mcdoc.runtime.checker.getDefaultErrorReporter<NbtPathLink>(
-						ctx,
-						({ originalNode: link }) => link.node.range,
-					)(error)
-				},
-				attachTypeInfo: function attachTypeInfo(
-					link,
-					definition,
-					desc = '',
-					originalDefinition,
+					runtimeData.children.push(filterData)
+				}
+			}
+		}
+		if (runtimeData.type.kind === 'struct') {
+			resolveStruct(state, runtimeData)
+		}
+		for (const child of runtimeData.children) {
+			for (const node of Array.isArray(child) ? child : child.possibleValues) {
+				prepareChildren(state, node.originalNode)
+			}
+		}
+	}
+	function build(state: PathCheckState, index: number): NbtPathRuntimeData {
+		const part = state.path.children[index]
+		if (!part) {
+			const leaf = { type: 'leaf', range: core.Range.create(state.path.range.end) } as const
+			const result = makeNew(leaf, { kind: 'unsafe' })
+			result.pathTargets.push(leaf)
+			return result
+		}
+		const next = build(state, index + 1)
+		if (NbtPathFilterNode.is(part)) {
+			core.checker.fallbackSync(part.children[0], state.ctx)
+			const result = merge(state, fromNbt(state, part.children[0]), next)
+			result.pathTargets.push(part)
+			return result
+		}
+		if (NbtPathIndexNode.is(part)) {
+			const filter = part.children?.[0]
+			let element = next
+			if (NbtCompoundNode.is(filter)) {
+				core.checker.fallbackSync(filter, state.ctx)
+				element = merge(state, fromNbt(state, filter), next)
+			}
+			const result = makeNew(part, { kind: 'list', item: { kind: 'any' } })
+			result.children = [[NbtPathRuntimeNode(element)]]
+			result.pathTargets.push(part)
+			return result
+		}
+		next.hoverKeys.push(part)
+		const key = fromNbt(state, part.children[0])
+		const result = makeNew(part, { kind: 'struct', fields: [] })
+		result.children = [{
+			key: NbtPathRuntimeNode(key),
+			possibleValues: [NbtPathRuntimeNode(next)],
+		}]
+		result.pathTargets.push(part)
+		return result
+	}
+	function createContext(path: NbtPathNode, ctx: core.CheckerContext) {
+		return mcdoc.runtime.checker.McdocCheckerContext.create<NbtPathRuntimeData>(ctx, {
+			allowMissingKeys: true,
+			requireCanonical: true,
+			getChildren: runtimeData => runtimeData.children,
+			tryConvertTo: (runTimeData, target) => {
+				const node = runTimeData.nodes[0]
+				if (
+					target.kind === 'boolean' && NbtByteNode.is(node)
+					&& (node.value === 0 || node.value === 1)
 				) {
-					if (NbtPathFilterNode.is(link.node)) {
-						typeDefinition(originalDefinition ?? definition, { isPredicate: true })(
-							link.node.children[0],
-							ctx,
-						)
-						if (link.next) {
-							attachTypeInfo(link.next, definition, desc, originalDefinition)
-						}
+					return { kind: 'literal', value: { kind: 'boolean', value: node.value === 1 } }
+				}
+				if (
+					runTimeData.type.kind === 'list' && (target.kind === 'tuple'
+						|| runTimeData.pathTargets.some(NbtPathIndexNode.is))
+				) {
+					switch (target.kind) {
+						case 'tuple':
+							return { kind: 'tuple', items: [] }
+						case 'byte_array':
+							return { kind: 'byte_array' }
+						case 'int_array':
+							return { kind: 'int_array' }
+						case 'long_array':
+							return { kind: 'long_array' }
 					}
-					if (NbtPathIndexNode.is(link.node) && NbtCompoundNode.is(link.node.children?.[0])) {
-						typeDefinition(getListFilterType(definition), { isPredicate: true })(
-							link.node.children[0],
-							ctx,
-						)
-					}
-					if (link.node.type === 'leaf') {
-						link.path.endOriginalTypeDef = originalDefinition
-					}
-					if (definition.kind === 'literal' && !definition.attributes?.length) {
-						return
-					}
-					if (link.node.type === 'leaf') {
-						link.path.endTypeDef = definition
+				}
+				return undefined
+			},
+			reportError: error => {
+				if (error.kind !== 'invalid_collection_length') {
+					mcdoc.runtime.checker.getDefaultErrorReporter<NbtPathRuntimeData>(
+						ctx,
+						({ originalNode }) => originalNode.source.range,
+					)(error)
+				}
+			},
+			attachTypeInfo: (runtimeData, definition, desc = '', originalDefinition) => {
+				for (const node of runtimeData.nodes) {
+					attachNbtTypeInfo(node, definition, desc, true)
+				}
+				for (const node of runtimeData.pathTargets) {
+					if (node.type === 'leaf') {
+						path.endOriginalTypeDef = originalDefinition
+						path.endTypeDef = definition
 					} else {
-						link.node.typeDef = definition
+						node.typeDef = definition
 					}
-					// TODO: improve hover info
-					if (NbtPathKeyNode.is(link.prev?.node)) {
-						link.prev.node.hover = `\`\`\`typescript\n${link.prev.node.children[0].value}: ${
-							mcdoc.McdocType.toString(definition)
-						}\n\`\`\`\n${desc}`
+				}
+				for (const key of runtimeData.hoverKeys) {
+					key.hover = `\`\`\`typescript\n${key.children[0].value}: ${
+						mcdoc.McdocType.toString(definition)
+					}\n\`\`\`\n${desc}`
+				}
+			},
+			nodeAttacher: (runtimeData, attacher) => {
+				for (const node of [...runtimeData.nodes, ...runtimeData.pathTargets]) {
+					if (node.type !== 'leaf') {
+						attacher(node)
 					}
-				},
-				nodeAttacher: (link, attacher) => {
-					if (link.node.type !== 'leaf') {
-						attacher(link.node)
+				}
+			},
+			stringAttacher: (runtimeData, attacher) => {
+				for (const node of runtimeData.nodes.filter(NbtStringNode.is)) {
+					attacher(node)
+					if (node.children) {
+						core.AstNode.setParents(node)
+						core.binder.fallbackSync(node, ctx)
+						core.checker.fallbackSync(node, ctx)
 					}
-				},
-				stringAttacher: (link, attacher) => {
-					if (!NbtPathKeyNode.is(link.node)) {
-						return
-					}
-					attacher(link.node.children[0])
-					if (link.node.children[0].children) {
-						core.AstNode.setParents(link.node.children[0])
-						// Because the runtime checker happens after binding, we need to manually call this
-						core.binder.fallbackSync(link.node.children[0], ctx)
-						core.checker.fallbackSync(link.node.children[0], ctx)
-					}
-				},
-			}),
+				}
+			},
+		})
+	}
+
+	return (path, ctx) => {
+		const state: PathCheckState = { path, ctx, filterKeys: new Set() }
+		const root = build(state, 0)
+		prepareChildren(state, root)
+		mcdoc.runtime.checker.typeDefinition(
+			[NbtPathRuntimeNode(root)],
+			{ kind: 'dispatcher', registry, parallelIndices: getIndices(id) },
+			createContext(path, ctx),
 		)
 	}
-}
-
-function getPathFilterData(link: NbtPathLink): NbtNode | undefined {
-	// Try to get filter data in the following piority:
-	// The current filter "r.a{b:1}.", the previous filter in list "r.a[{b:1}]", filter passed down from parent nodes "r{b:{}}.a."
-	if (NbtPathFilterNode.is(link.node)) {
-		return link.node.children[0]
-	}
-	if (NbtPathIndexNode.is(link.prev?.node)) {
-		const filter = link.prev.node.children?.[0]
-		if (NbtCompoundNode.is(filter)) {
-			return filter
-		}
-	}
-	if (link.filter_data) {
-		return link.filter_data
-	}
-	return undefined
-}
-
-function getListFilterType(type: SimplifiedMcdocType): mcdoc.McdocType {
-	switch (type.kind) {
-		case 'list':
-			return type.item
-		case 'tuple':
-			return { kind: 'union', members: type.items }
-		case 'union':
-			return { kind: 'union', members: type.members.map(getListFilterType) }
-		case 'byte_array':
-			return { kind: 'byte' }
-		case 'int_array':
-			return { kind: 'int' }
-		case 'long_array':
-			return { kind: 'long' }
-		default:
-			return { kind: 'any' }
-	}
-}
-
-function inferPath(link: NbtPathLink): SimplifiedMcdocTypeNoUnion {
-	if (link.node.type === 'leaf') {
-		return { kind: 'unsafe' }
-	}
-	if (NbtPathIndexNode.is(link.node)) {
-		return { kind: 'list', item: { kind: 'any' } }
-	}
-	return { kind: 'struct', fields: [] }
 }
