@@ -468,6 +468,7 @@ export function getDefaultErrorReporter<T>(
 		let severity = ErrorSeverity.Error
 		switch (error.kind) {
 			case 'duplicate_key':
+				severity = ErrorSeverity.Warning
 				localizedText = localize(
 					defaultTranslationKey,
 					error.node.inferredType.kind === 'literal'

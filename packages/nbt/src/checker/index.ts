@@ -8,7 +8,7 @@ import type {
 	SimplifiedMcdocType,
 	SimplifiedMcdocTypeNoUnion,
 } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
-import type { NbtPathChild, NbtPathKeyNode, NbtPathNode, TypedNbtNode } from '../node/index.js'
+import type { NbtPathChild, NbtPathNode, TypedNbtNode } from '../node/index.js'
 import {
 	NbtByteNode,
 	NbtCollectionNode,
@@ -19,6 +19,7 @@ import {
 	NbtNumberNode,
 	NbtPathFilterNode,
 	NbtPathIndexNode,
+	NbtPathKeyNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
 	NbtUuidFunctionNode,
@@ -393,12 +394,6 @@ export function path(
 	registry: core.FullResourceLocation,
 	id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined,
 ): core.SyncChecker<NbtPathNode> {
-	interface PathCheckState {
-		path: NbtPathNode
-		ctx: core.CheckerContext
-		filterKeys: Set<NbtNode>
-	}
-
 	function makeNew(source: core.AstNode, type: SimplifiedMcdocTypeNoUnion): NbtPathRuntimeData {
 		return { source, type, children: [], nodes: [], pathTargets: [], hoverKeys: [] }
 	}
@@ -412,169 +407,119 @@ export function path(
 		return undefined
 	}
 	/** Convert an NBT into a {@link NbtPathRuntimeData} */
-	function fromNbt(state: PathCheckState, node: NbtNode): NbtPathRuntimeData {
+	function fromNbt(node: NbtNode): NbtPathRuntimeData {
 		const runtimData: NbtPathRuntimeData = makeNew(node, inferType(node))
 		runtimData.nodes.push(node)
 		if (NbtCompoundNode.is(node)) {
 			runtimData.children = node.children.filter(pair => pair.key).map(pair => {
-				state.filterKeys.add(pair.key!)
 				return {
-					key: NbtPathRuntimeNode(fromNbt(state, pair.key!)),
-					possibleValues: pair.value ? [NbtPathRuntimeNode(fromNbt(state, pair.value))] : [],
+					key: NbtPathRuntimeNode(fromNbt(pair.key!)),
+					possibleValues: pair.value ? [NbtPathRuntimeNode(fromNbt(pair.value))] : [],
 				}
 			})
 		} else if (NbtCollectionNode.is(node)) {
 			runtimData.children = node.children.filter(entry => entry.value).map(entry => [
-				NbtPathRuntimeNode(fromNbt(state, entry.value!)),
+				NbtPathRuntimeNode(fromNbt(entry.value!)),
 			])
 		}
 		return runtimData
 	}
 
-	/** Asymmetrically merge `incoming` into `base` */
-	function merge(
-		state: PathCheckState,
-		base: NbtPathRuntimeData,
-		incoming: NbtPathRuntimeData,
-	): NbtPathRuntimeData {
-		if (base.type.kind === 'unsafe') {
-			base.type = incoming.type
-			base.children = incoming.children
-			base.source = incoming.source
-		} else if (incoming.type.kind !== 'unsafe') {
-			if (
-				(base.type.kind === 'struct' && incoming.type.kind === 'struct')
-				|| (base.type.kind === 'list' && incoming.type.kind === 'list')
-			) {
-				base.children.push(...incoming.children)
-			} else if (!mcdoc.McdocType.equals(base.type, incoming.type)) {
-				state.ctx.err.report(
-					localize(
-						'expected-got',
-						mcdoc.McdocType.toString(base.type),
-						mcdoc.McdocType.toString(incoming.type),
-					),
-					incoming.source,
-				)
-			}
-		}
-		base.nodes.push(...incoming.nodes)
-		base.pathTargets.push(...incoming.pathTargets)
-		base.hoverKeys.push(...incoming.hoverKeys)
-		return base
-	}
-	function clone(data: NbtPathRuntimeData): NbtPathRuntimeData {
-		const cloneNode = (node: RuntimeNode<NbtPathRuntimeData>) =>
-			NbtPathRuntimeNode(clone(node.originalNode))
-		return {
-			...data,
-			nodes: [...data.nodes],
-			pathTargets: [...data.pathTargets],
-			hoverKeys: [...data.hoverKeys],
-			children: data.children.map(child =>
-				Array.isArray(child)
-					? child.map(cloneNode)
-					: {
-						key: cloneNode(child.key),
-						possibleValues: child.possibleValues.map(cloneNode),
-					}
-			),
-		}
-	}
-	/** Merge data from path into data from, to avoid duplicate keys from them */
-	function mergePathAccess(
-		state: PathCheckState,
-		filterData: RuntimePair<NbtPathRuntimeData>,
-		pathData: RuntimePair<NbtPathRuntimeData>,
-		copy: boolean,
+	// Infer the type of an element in the Path,
+	// or check if the element matches the expected type.
+	function inferOrCheckType(
+		data: NbtPathRuntimeData,
+		requiredType: SimplifiedMcdocTypeNoUnion,
+		source: core.AstNode,
+		ctx: core.CheckerContext,
 	): void {
-		const forTarget = (data: NbtPathRuntimeData) => copy ? clone(data) : data
-		filterData.key = NbtPathRuntimeNode(
-			merge(state, filterData.key.originalNode, forTarget(pathData.key.originalNode)),
-		)
-		for (const value of pathData.possibleValues) {
-			if (!filterData.possibleValues.length) {
-				filterData.possibleValues.push(NbtPathRuntimeNode(forTarget(value.originalNode)))
-				continue
-			}
-			filterData.possibleValues = filterData.possibleValues.map(previous =>
-				NbtPathRuntimeNode(merge(state, previous.originalNode, forTarget(value.originalNode)))
+		if (data.type.kind === 'unsafe') {
+			Object.assign(data.type, requiredType)
+			data.source = source
+		} else if (data.type.kind !== requiredType.kind) {
+			ctx.err.report(
+				localize(
+					'expected-got',
+					mcdoc.McdocType.toString(data.type),
+					mcdoc.McdocType.toString(requiredType),
+				),
+				source,
 			)
 		}
 	}
-	function prepareChildren(state: PathCheckState, runtimeData: NbtPathRuntimeData): void {
-		const resolveStruct = (state: PathCheckState, runtimeData: NbtPathRuntimeData) => {
-			const groups = new Map<string | undefined, RuntimePair<NbtPathRuntimeData>[]>()
-			for (const child of runtimeData.children) {
-				if (Array.isArray(child)) {
-					continue
-				}
-				const key = keyOf(child)
-				const group = groups.get(key) ?? []
-				group.push(child)
-				groups.set(key, group)
-			}
-			runtimeData.children = []
-			for (const group of groups.values()) {
-				const explicit = group
-					.filter(child =>
-						child.key.originalNode.nodes.some(node => state.filterKeys.has(node))
-					)
-				const pathDataList = group.filter(child => !explicit.includes(child))
-				const filterDataList = explicit.length ? explicit : pathDataList.splice(0, 1)
-				for (const filterData of filterDataList) {
-					for (const pathData of pathDataList) {
-						mergePathAccess(state, filterData, pathData, filterDataList.length > 1)
-					}
-					runtimeData.children.push(filterData)
-				}
-			}
+	function addPathKey(
+		data: NbtPathRuntimeData,
+		key: NbtPathKeyNode,
+		ctx: core.CheckerContext,
+	): NbtPathRuntimeData[] {
+		inferOrCheckType(data, { kind: 'struct', fields: [] }, key, ctx)
+		data.pathTargets.push(key)
+		const matches = data.children.filter((child): child is RuntimePair<NbtPathRuntimeData> =>
+			!Array.isArray(child) && keyOf(child) === key.children[0].value
+		)
+		if (!matches.length) {
+			const member = { key: NbtPathRuntimeNode(fromNbt(key.children[0])), possibleValues: [] }
+			data.children.push(member)
+			matches.push(member)
 		}
-		if (runtimeData.type.kind === 'struct') {
-			resolveStruct(state, runtimeData)
-		}
-		for (const child of runtimeData.children) {
-			for (const node of Array.isArray(child) ? child : child.possibleValues) {
-				prepareChildren(state, node.originalNode)
+		return matches.flatMap(member => {
+			if (!member.key.originalNode.nodes.includes(key.children[0])) {
+				member.key.originalNode.nodes.push(key.children[0])
 			}
-		}
+			if (!member.possibleValues.length) {
+				member.possibleValues.push(NbtPathRuntimeNode(makeNew(key, { kind: 'unsafe' })))
+			}
+			return member.possibleValues.map(value => {
+				value.originalNode.hoverKeys.push(key)
+				return value.originalNode
+			})
+		})
 	}
-	function build(state: PathCheckState, index: number): NbtPathRuntimeData {
-		const part = state.path.children[index]
-		if (!part) {
-			const leaf = { type: 'leaf', range: core.Range.create(state.path.range.end) } as const
-			const result = makeNew(leaf, { kind: 'unsafe' })
-			result.pathTargets.push(leaf)
-			return result
-		}
-		const next = build(state, index + 1)
-		if (NbtPathFilterNode.is(part)) {
-			core.checker.fallbackSync(part.children[0], state.ctx)
-			const result = merge(state, fromNbt(state, part.children[0]), next)
-			result.pathTargets.push(part)
-			return result
-		}
-		if (NbtPathIndexNode.is(part)) {
-			const filter = part.children?.[0]
-			let element = next
-			if (NbtCompoundNode.is(filter)) {
-				core.checker.fallbackSync(filter, state.ctx)
-				element = merge(state, fromNbt(state, filter), next)
+	function addFilter(
+		data: NbtPathRuntimeData,
+		filterNode: NbtCompoundNode,
+		ctx: core.CheckerContext,
+	): void {
+		inferOrCheckType(data, { kind: 'struct', fields: [] }, filterNode, ctx)
+		data.children.push(...fromNbt(filterNode).children)
+		data.nodes.push(filterNode)
+	}
+	function pathToTree(path: NbtPathNode, ctx: core.CheckerContext): NbtPathRuntimeData {
+		const root = makeNew(path, { kind: 'unsafe' })
+		let current = [root]
+		for (const part of path.children) {
+			if (NbtPathKeyNode.is(part)) {
+				current = current.flatMap(data => addPathKey(data, part, ctx))
+				continue
 			}
-			const result = makeNew(part, { kind: 'list', item: { kind: 'any' } })
-			result.children = [[NbtPathRuntimeNode(element)]]
-			result.pathTargets.push(part)
-			return result
+			if (NbtPathFilterNode.is(part)) {
+				core.checker.fallbackSync(part.children[0], ctx)
+				for (const data of current) {
+					addFilter(data, part.children[0], ctx)
+					data.pathTargets.push(part)
+				}
+				continue
+			}
+			const filter = part.children?.[0]
+			if (NbtCompoundNode.is(filter)) {
+				core.checker.fallbackSync(filter, ctx)
+			}
+			current = current.map(data => {
+				inferOrCheckType(data, { kind: 'list', item: { kind: 'any' } }, part, ctx)
+				data.pathTargets.push(part)
+				const element = makeNew(part, { kind: 'unsafe' })
+				if (NbtCompoundNode.is(filter)) {
+					addFilter(element, filter, ctx)
+				}
+				data.children.push([NbtPathRuntimeNode(element)])
+				return element
+			})
 		}
-		next.hoverKeys.push(part)
-		const key = fromNbt(state, part.children[0])
-		const result = makeNew(part, { kind: 'struct', fields: [] })
-		result.children = [{
-			key: NbtPathRuntimeNode(key),
-			possibleValues: [NbtPathRuntimeNode(next)],
-		}]
-		result.pathTargets.push(part)
-		return result
+		const leaf = { type: 'leaf', range: core.Range.create(path.range.end) } as const
+		for (const data of current) {
+			data.pathTargets.push(leaf)
+		}
+		return root
 	}
 	function createContext(path: NbtPathNode, ctx: core.CheckerContext) {
 		return mcdoc.runtime.checker.McdocCheckerContext.create<NbtPathRuntimeData>(ctx, {
@@ -653,9 +598,7 @@ export function path(
 	}
 
 	return (path, ctx) => {
-		const state: PathCheckState = { path, ctx, filterKeys: new Set() }
-		const root = build(state, 0)
-		prepareChildren(state, root)
+		const root = pathToTree(path, ctx)
 		mcdoc.runtime.checker.typeDefinition(
 			[NbtPathRuntimeNode(root)],
 			{ kind: 'dispatcher', registry, parallelIndices: getIndices(id) },
