@@ -92,13 +92,15 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 			: child.children?.length
 			? fallback(child, ctx)
 			: []
-		let tail = 0
+		let insertIndex = 0
 		const insert = (piece: ColorToken): void => {
-			while (tail < tokens.length && tokens[tail].range.start < piece.range.start) {
-				tail++
+			while (
+				insertIndex < tokens.length && tokens[insertIndex].range.start < piece.range.start
+			) {
+				insertIndex++
 			}
-			tokens.splice(tail, 0, piece)
-			tail++
+			tokens.splice(insertIndex, 0, piece)
+			insertIndex++
 		}
 		for (const t of emitted) {
 			if (child.type === 'unicode_escape') {

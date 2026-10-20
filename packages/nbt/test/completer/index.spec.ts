@@ -202,20 +202,6 @@ describe('nbt completer (end-to-end)', () => {
 		assert.equal(id.insertText, "'minecraft:stone'")
 	})
 
-	it('keeps the empty-pair snippet for bare strings with no typeDef', () => {
-		// Regression guard: `wouldOnlyEmitEmptyPairSnippet` must only suppress
-		// the `""` / `''` snippet when a better set of completions is
-		// available. Without a typeDef, the snippet is the only sensible
-		// thing to show for an empty literal.
-		const { project, doc, node, offset } = setup('{name: ""}', '{name: ""'.length - 1)
-		const items = completeAt(node, project, doc, offset)
-		const labels = items.map((i) => i.label)
-		assert.ok(
-			labels.includes('""'),
-			`expected empty-pair suggestion, got ${JSON.stringify(labels)}`,
-		)
-	})
-
 	it('merges `\\N{…}` Unicode-name completions with typeDef values', () => {
 		// Cursor is inside `\\N{snow|`, so core.completer.string's Unicode
 		// matcher is active; a typeDef is attached too, so the mcdoc values

@@ -209,18 +209,15 @@ function finalizeEscape(
 	// Reject extended escapes (\u/\U/\x/\N{...}) when the resolved game
 	// version predates the cutoff. The parser accepted them syntactically; the
 	// checker is responsible for the version-gated diagnostic.
-	if (raw.length > 1) {
-		if (!supportsExtendedEscapes) {
-			ctx.err.report(
-				localize(
-					'parser.string.extended-unicode-escape-not-supported',
-					raw,
-					ExtendedEscapesSince,
-				),
-				escapeRange,
-			)
-			return
-		}
+	if (raw.length > 1 && !supportsExtendedEscapes) {
+		ctx.err.report(
+			localize(
+				'parser.string.extended-unicode-escape-not-supported',
+				raw,
+				ExtendedEscapesSince,
+			),
+			escapeRange,
+		)
 	}
 	// Simple escapes (`\n`, `\t`, ...) have raw === c2 and the parser already
 	// wrote the resolved char into `value` and onto the child. Look up the

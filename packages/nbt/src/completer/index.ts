@@ -1,15 +1,15 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type {
-	NbtBoolFunctionNode,
-	NbtCollectionNode,
-	NbtCompoundNode,
-	NbtNode,
-	NbtPathKeyNode,
-	NbtPathNode,
-	NbtPrimitiveNode,
+import {
+	type NbtBoolFunctionNode,
+	type NbtCollectionNode,
+	type NbtCompoundNode,
+	type NbtNode,
+	type NbtPathKeyNode,
+	type NbtPathNode,
+	type NbtPrimitiveNode,
 	NbtStringNode,
-	NbtUuidFunctionNode,
+	type NbtUuidFunctionNode,
 } from '../node/index.js'
 import { SNBT_FUNCTIONS } from '../parser/entry.js'
 
@@ -77,12 +77,13 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 })
 
 const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
+	const isString = NbtStringNode.is(node)
 	const insideRange = core.Range.contains(node, ctx.offset, true)
 	if (
-		node.type === 'nbt:string' && !node.quote
+		isString && !node.quote
 		&& SNBT_FUNCTIONS.some((name) => name.startsWith(node.value))
 	) {
-		const items = SNBT_FUNCTIONS.map((name) =>
+		return SNBT_FUNCTIONS.map((name) =>
 			core.CompletionItem.create(
 				name,
 				core.Range.create(node.range.start, ctx.offset),
@@ -93,30 +94,19 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 				},
 			)
 		)
-		return items
 	}
 
 	const typeDefValues = node.typeDef
 		? getValues(node.typeDef, insideRange ? node : ctx.offset, {
 			...ctx,
 			requireCanonical: node.requireCanonical,
-		}, node.type === 'nbt:string' ? node.quote : undefined)
+		}, isString ? node.quote : undefined)
 		: []
 
-	if (node.type === 'nbt:string' && insideRange) {
-		const wouldOnlyEmitEmptyPairSnippet = node.value === ''
-			&& !node.children?.length
-			&& !/\\N\{[^\}]*$/.test(ctx.src.slice(node.range.start, ctx.offset))
-		const suppressEmptyPair = wouldOnlyEmitEmptyPairSnippet && typeDefValues.length > 0
-		const stringItems = suppressEmptyPair
-			? []
-			: core.completer.string(node, ctx)
-		return [...stringItems, ...typeDefValues]
+	if (isString && insideRange) {
+		return [...core.completer.string(node, ctx), ...typeDefValues]
 	}
 
-	if (!node.typeDef) {
-		return []
-	}
 	return typeDefValues
 }
 
