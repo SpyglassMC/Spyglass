@@ -298,7 +298,7 @@ function condenseErrorsAndFilterSiblings<T>(definitions: ErrorCondensingDefiniti
 
 	// No condensing needed for duplicate key. If a key is a duplicate in one definition, it really
 	// should have been reported by all of them
-	validDefinitions[0].errors.filter(e => e.kind === 'duplicate_key')
+	errors.push(...validDefinitions[0].errors.filter(e => e.kind === 'duplicate_key'))
 
 	const internalErrorResult = condense(
 		validDefinitions,
@@ -467,6 +467,15 @@ export function getDefaultErrorReporter<T>(
 		let localizedText: string
 		let severity = ErrorSeverity.Error
 		switch (error.kind) {
+			case 'duplicate_key':
+				severity = ErrorSeverity.Warning
+				localizedText = localize(
+					defaultTranslationKey,
+					error.node.inferredType.kind === 'literal'
+						? localeQuote(error.node.inferredType.value.value.toString())
+						: `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`,
+				)
+				break
 			case 'unknown_tuple_element':
 				localizedText = localize('expected', localize('nothing'))
 				break
