@@ -1,3 +1,55 @@
+exports[`nbt entry() with SNBT functions > after a line-continuation (concatOnTrailingBackslash) > still recognises 'bool(...)' on the continued line 1`] = `
+{
+  "node": {
+    "type": "nbt:string",
+    "range": {
+      "start": 0,
+      "end": 6
+    },
+    "value": "prefix",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`nbt entry() with SNBT functions > after a line-continuation (concatOnTrailingBackslash) > still recognises 'uuid(...)' on the continued line 1`] = `
+{
+  "node": {
+    "type": "nbt:string",
+    "range": {
+      "start": 0,
+      "end": 6
+    },
+    "value": "prefix",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
 exports[`nbt entry() with SNBT functions > argument validation errors > reports for 'bool([])' 1`] = `
 {
   "node": {

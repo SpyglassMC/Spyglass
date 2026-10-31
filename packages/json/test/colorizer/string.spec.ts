@@ -4,7 +4,6 @@ import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import type { McdocType } from '@spyglassmc/mcdoc/lib/type/index.js'
 import * as nbt from '@spyglassmc/nbt/lib/index.js'
 import { registerMcdocAttributes } from '@spyglassmc/nbt/lib/mcdocAttributes.js'
-import * as assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { index as jsonCheck } from '../../lib/checker/index.js'
@@ -69,34 +68,10 @@ describe('json:string colorizer after mcdoc runtime attaches nbt:typed', () => {
 		return project
 	}
 
-	it('emits an escape token covering the opening `{` of a named Unicode escape', (t) => {
+	it('emits all tokens in the named Unicode escape correctly', (t) => {
 		const project = setupProject()
 		const tokens = runColorize(project, `{"tag":"{test:'\\N{Acute Angle}'}"}`)
 
-		// The `\N{...}` portion starts at offset 15 in this input:
-		//   {"tag":"{test:'\N{Acute Angle}'}"}
-		//   0   4 78  13 15       29  31
-		const escapeForOpeningBrace = tokens.find(t =>
-			t.type === 'escape'
-			&& t.range.start >= 15
-			&& t.range.start < 18
-			&& t.range.end === 18
-		)
-		assert.ok(
-			escapeForOpeningBrace,
-			`expected an escape token at ~[15, 18), got ${JSON.stringify(tokens)}`,
-		)
 		t.assert.snapshot(tokens)
-	})
-
-	it('emits the full `\N{name}` token sequence: escape, resourceLocation, escape', (t) => {
-		const project = setupProject()
-		const tokens = runColorize(project, `{"tag":"{test:'\\N{Acute Angle}'}"}`)
-
-		t.assert.snapshot(
-			tokens
-				.filter(t => t.type === 'escape' || t.type === 'resourceLocation')
-				.map(t => `${t.range.start}-${t.range.end}:${t.type}`),
-		)
 	})
 })

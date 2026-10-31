@@ -1,3 +1,4 @@
+import { concatOnTrailingBackslash } from '@spyglassmc/core'
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test/utils.ts'
 import { entry } from '@spyglassmc/nbt/lib/parser/index.js'
 import { describe, it } from 'node:test'
@@ -95,5 +96,46 @@ describe('nbt entry() with SNBT functions', () => {
 				t.assert.snapshot(result)
 			})
 		}
+	})
+
+	// Regression: the SNBT function parser must work inside an
+	// `concatOnTrailingBackslash`-wrapped source. After a `\` line continuation,
+	// `Source.cursor` (outer/mapped offset) and `Source.innerCursor` (offset
+	// into the wrapped string) diverge, so any match logic that indexes
+	// `src.string` with `src.cursor` looks at the wrong position and
+	// incorrectly fails to find `bool(...)` / `uuid(...)` after a multi-line
+	// command — cascading into the "Trailing data encountered" diagnostic.
+	describe('after a line-continuation (concatOnTrailingBackslash)', () => {
+		it("still recognises 'bool(...)' on the continued line", (t) => {
+			const wrapped = concatOnTrailingBackslash(entry)
+			const ctx = { project: { ctx: { loadedVersion: '1.21.5' } } }
+			const result = testParser(wrapped, 'prefix \\\n  bool(1)', ctx)
+			if (result.node === 'FAILURE' || result.node === 'undefined') {
+				throw new Error(
+					`Expected an nbt:bool_function node, got ${result.node}. Errors:\n  ${
+						result.errors.map(e => e.message).join('\n  ')
+					}`,
+				)
+			}
+			t.assert.snapshot(result)
+		})
+
+		it("still recognises 'uuid(...)' on the continued line", (t) => {
+			const wrapped = concatOnTrailingBackslash(entry)
+			const ctx = { project: { ctx: { loadedVersion: '1.21.5' } } }
+			const result = testParser(
+				wrapped,
+				'prefix \\\n  uuid("12345678-1234-1234-1234-123456789012")',
+				ctx,
+			)
+			if (result.node === 'FAILURE' || result.node === 'undefined') {
+				throw new Error(
+					`Expected an nbt:uuid_function node, got ${result.node}. Errors:\n  ${
+						result.errors.map(e => e.message).join('\n  ')
+					}`,
+				)
+			}
+			t.assert.snapshot(result)
+		})
 	})
 })
