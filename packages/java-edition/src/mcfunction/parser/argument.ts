@@ -318,7 +318,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:template_rotation':
 			return wrap(commandLiteral({ pool: RotationValues }))
 		case 'minecraft:time':
-			return wrap(time(treeNode.properties?.min))
+			return wrap(time(treeNode.properties?.min, treeNode.properties?.max))
 		case 'minecraft:uuid':
 			return wrap(uuid)
 		case 'minecraft:vec2':
@@ -1636,31 +1636,43 @@ function unquotableSymbol(
 	return validateUnquotable(symbol(options, terminators))
 }
 
-function time(minimum = 0): core.InfallibleParser<TimeNode> {
+function time(minimum?: number, maximum?: number): core.InfallibleParser<TimeNode> {
 	return core.validate(
-		core.map(
-			core.sequence([
-				float(),
-				core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
-			]),
-			(res) => {
-				const valueNode = res.children.find(core.FloatNode.is)!
-				const unitNode = res.children.find(core.LiteralNode.is)
-				const ans: TimeNode = {
-					type: 'mcfunction:time',
-					range: res.range,
-					children: res.children,
-					value: valueNode.value,
-					unit: unitNode?.value,
+		core.validate(
+			core.map(
+				core.sequence([
+					float(),
+					core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
+				]),
+				(res) => {
+					const valueNode = res.children.find(core.FloatNode.is)!
+					const unitNode = res.children.find(core.LiteralNode.is)
+					const ans: TimeNode = {
+						type: 'mcfunction:time',
+						range: res.range,
+						children: res.children,
+						value: valueNode.value,
+						unit: unitNode?.value,
+					}
+					return ans
+				},
+			),
+			(res, _src, ctx) => {
+				const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+				if (release && ReleaseVersion.cmp(release, '26.4') < 0) {
+					// Default minimum before 26.4
+					minimum = 0
 				}
-				return ans
+				const scale = TimeNode.UnitToTicks.get(res.unit ?? '')!
+				return minimum === undefined || Math.round(res.value * scale) >= minimum
 			},
+			localize('mcfunction.parser.time.below-min', minimum ?? 0),
 		),
 		(res) => {
 			const scale = TimeNode.UnitToTicks.get(res.unit ?? '')!
-			return Math.round(res.value * scale) >= minimum
+			return maximum === undefined || Math.round(res.value * scale) <= maximum
 		},
-		localize('mcfunction.parser.time.below-min', minimum),
+		localize('mcfunction.parser.time.above-max', maximum!)
 	)
 }
 
