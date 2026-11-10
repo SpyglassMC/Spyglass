@@ -1672,7 +1672,7 @@ function time(minimum?: number, maximum?: number): core.InfallibleParser<TimeNod
 			const scale = TimeNode.UnitToTicks.get(res.unit ?? '')!
 			return maximum === undefined || Math.round(res.value * scale) <= maximum
 		},
-		localize('mcfunction.parser.time.above-max', maximum!)
+		localize('mcfunction.parser.time.above-max', maximum!),
 	)
 }
 
