@@ -1661,7 +1661,7 @@ function time(minimum?: number, maximum?: number): core.InfallibleParser<TimeNod
 				const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
 				if (release && ReleaseVersion.cmp(release, '26.4') < 0) {
 					// Default minimum before 26.4
-					minimum = 0
+					minimum ??= 0
 				}
 				const scale = TimeNode.UnitToTicks.get(res.unit ?? '')!
 				return minimum === undefined || Math.round(res.value * scale) >= minimum
