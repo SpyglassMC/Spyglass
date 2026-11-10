@@ -14,11 +14,21 @@ const Suites: Partial<
 	Record<ArgumentTreeNode['parser'], { content: string[]; properties?: any; version?: string }[]>
 > = {
 	'brigadier:bool': [{ content: ['false', 'true'] }],
+	'minecraft:bool': [{ content: ['false', 'true'] }],
 	'brigadier:double': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
+	'minecraft:double': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
 	'brigadier:float': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
+	'minecraft:float': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
 	'brigadier:integer': [{ content: ['0', '123', '-123'] }],
+	'minecraft:integer': [{ content: ['0', '123', '-123'] }],
 	'brigadier:long': [{ content: ['0', '123', '-123'] }],
+	'minecraft:long': [{ content: ['0', '123', '-123'] }],
 	'brigadier:string': [
+		{ properties: { type: 'word' }, content: ['word', 'word_with_underscores'] },
+		{ properties: { type: 'phrase' }, content: ['"quoted phrase"', 'word', '""'] },
+		{ properties: { type: 'greedy' }, content: ['word', 'words with spaces', '"and symbols"'] },
+	],
+	'minecraft:string': [
 		{ properties: { type: 'word' }, content: ['word', 'word_with_underscores'] },
 		{ properties: { type: 'phrase' }, content: ['"quoted phrase"', 'word', '""'] },
 		{ properties: { type: 'greedy' }, content: ['word', 'words with spaces', '"and symbols"'] },
@@ -141,6 +151,13 @@ const Suites: Partial<
 			'end_rod{}',
 		],
 		version: '1.20.5',
+	}],
+	'minecraft:pattern': [{
+		properties: { pattern: '\\w+' },
+		content: ['foo', 'oh, no'],
+	}, {
+		properties: { pattern: '.*' },
+		content: ['foo', 'yes yes yes'],
 	}],
 	'minecraft:resource': [{
 		properties: { registry: 'bossbar' },

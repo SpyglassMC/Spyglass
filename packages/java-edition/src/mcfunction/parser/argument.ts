@@ -114,16 +114,22 @@ export const argument: mcf.ArgumentParserGetter = (
 
 	switch (treeNode.parser) {
 		case 'brigadier:bool':
+		case 'minecraft:bool':
 			return wrap(core.boolean)
 		case 'brigadier:double':
+		case 'minecraft:double':
 			return wrap(double(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:float':
+		case 'minecraft:float':
 			return wrap(float(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:integer':
+		case 'minecraft:integer':
 			return wrap(integer(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:long':
+		case 'minecraft:long':
 			return wrap(long(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:string':
+		case 'minecraft:string':
 			switch (treeNode.properties.type) {
 				case 'word':
 					return wrap(unquotedString)
@@ -251,6 +257,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(commandLiteral({ pool: OperationArgumentValues, colorTokenType: 'operator' }))
 		case 'minecraft:particle':
 			return wrap(particle)
+		case 'minecraft:pattern':
+			return wrap(pattern_match(treeNode.properties.pattern))
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
@@ -713,6 +721,40 @@ export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
 			return ans
 		},
 	)(src, ctx)
+}
+
+function pattern_match(pattern: string): core.Parser<core.StringNode> {
+	return (src, ctx) => {
+		try {
+			const matcher = new RegExp(pattern)
+			const remaining = src.peekRemaining()
+			const value = matcher.exec(remaining)?.[0]
+			const start = src.cursor
+			if (value !== undefined) {
+				src.skip(value.length)
+				return {
+					type: 'string',
+					value,
+					options: { unquotable: { blockList: new Set(['\n', '\r']) } },
+					range: core.Range.create(start, src),
+					valueMap: [],
+				}
+			} else {
+				src.skipRemaining()
+				const ans: core.StringNode = {
+					type: 'string',
+					value: remaining,
+					options: { unquotable: { blockList: new Set(['\n', '\r']) } },
+					range: core.Range.create(start, src),
+					valueMap: [],
+				}
+				ctx.err.report(localize('mismatching-regex-pattern', pattern), ans)
+				return ans
+			}
+		} catch { // Should only happen when the pattern is invalid
+			return core.Failure
+		}
+	}
 }
 
 function range(
