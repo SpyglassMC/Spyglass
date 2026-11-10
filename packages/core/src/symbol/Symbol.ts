@@ -29,6 +29,7 @@ export const RegistryCategories = Object.freeze(
 		'consume_effect_type',
 		'context_float_provider_type',
 		'context_int_provider_type',
+		'context_key_set',
 		'creative_mode_tab',
 		'custom_stat',
 		'data_component_predicate_type',

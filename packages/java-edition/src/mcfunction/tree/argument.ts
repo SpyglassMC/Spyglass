@@ -5,24 +5,47 @@ import type * as mcf from '@spyglassmc/mcfunction'
 export interface BrigadierBoolArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:bool'
 }
+export interface MinecraftBoolArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:bool'
+}
 export interface BrigadierDoubleArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:double'
+	properties?: { min: number; max: number }
+}
+export interface MinecraftDoubleArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:double'
 	properties?: { min: number; max: number }
 }
 export interface BrigadierFloatArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:float'
 	properties?: { min: number; max: number }
 }
+export interface MinecraftFloatArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:float'
+	properties?: { min: number; max: number }
+}
 export interface BrigadierIntegerArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:integer'
+	properties?: { min: number; max: number }
+}
+export interface MinecraftIntegerArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:integer'
 	properties?: { min: number; max: number }
 }
 export interface BrigadierLongArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:long'
 	properties?: { min: number; max: number }
 }
+export interface MinecraftLongArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:long'
+	properties?: { min: number; max: number }
+}
 export interface BrigadierStringArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:string'
+	properties: { type: 'word' | 'phrase' | 'greedy' }
+}
+export interface MinecraftStringArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:string'
 	properties: { type: 'word' | 'phrase' | 'greedy' }
 }
 export interface MinecraftAngleArgumentTreeNode extends mcf.ArgumentTreeNode {
@@ -197,6 +220,10 @@ export interface MinecraftOperationArgumentTreeNode extends mcf.ArgumentTreeNode
 export interface MinecraftParticleArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:particle'
 }
+export interface MinecraftPatternStringArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:pattern'
+	properties: { pattern: string }
+}
 export interface MinecraftResourceArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:resource'
 	properties: { registry: string }
@@ -258,7 +285,8 @@ export interface MinecraftTemplateRotationArgumentTreeNode extends mcf.ArgumentT
 export interface MinecraftTimeArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:time'
 	properties?: {
-		min: number
+		min?: number
+		max?: number
 	}
 }
 export interface MinecraftUuidArgumentTreeNode extends mcf.ArgumentTreeNode {
@@ -281,11 +309,17 @@ export interface SpyglassmcTagArgumentTreeNode extends mcf.ArgumentTreeNode {
 
 export type ArgumentTreeNode =
 	| BrigadierBoolArgumentTreeNode
+	| MinecraftBoolArgumentTreeNode
 	| BrigadierDoubleArgumentTreeNode
+	| MinecraftDoubleArgumentTreeNode
 	| BrigadierFloatArgumentTreeNode
+	| MinecraftFloatArgumentTreeNode
 	| BrigadierIntegerArgumentTreeNode
+	| MinecraftIntegerArgumentTreeNode
 	| BrigadierLongArgumentTreeNode
+	| MinecraftLongArgumentTreeNode
 	| BrigadierStringArgumentTreeNode
+	| MinecraftStringArgumentTreeNode
 	| MinecraftAngleArgumentTreeNode
 	| MinecraftBlockPosArgumentTreeNode
 	| MinecraftBlockPredicateArgumentTreeNode
@@ -324,6 +358,7 @@ export type ArgumentTreeNode =
 	| MinecraftObjectiveCriteriaArgumentTreeNode
 	| MinecraftOperationArgumentTreeNode
 	| MinecraftParticleArgumentTreeNode
+	| MinecraftPatternStringArgumentTreeNode
 	| MinecraftResourceArgumentTreeNode
 	| MinecraftResourceKeyArgumentTreeNode
 	| MinecraftResourceLocationArgumentTreeNode

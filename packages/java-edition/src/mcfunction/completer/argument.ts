@@ -79,17 +79,23 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 
 	switch (treeNode.parser) {
 		case 'brigadier:bool':
+		case 'minecraft:bool':
 			return BooleanNode.mock(range)
 		case 'brigadier:double':
+		case 'minecraft:double':
 		case 'brigadier:float':
+		case 'minecraft:float':
 		case 'brigadier:integer':
+		case 'minecraft:integer':
 		case 'brigadier:long':
+		case 'minecraft:long':
 		case 'minecraft:float_range':
 		case 'minecraft:message':
 		case 'minecraft:time':
 		case 'minecraft:uuid':
 			return []
 		case 'brigadier:string':
+		case 'minecraft:string':
 			return treeNode.properties.type === 'phrase'
 				? StringNode.mock(range, BrigadierStringOptions)
 				: []

@@ -114,16 +114,22 @@ export const argument: mcf.ArgumentParserGetter = (
 
 	switch (treeNode.parser) {
 		case 'brigadier:bool':
+		case 'minecraft:bool':
 			return wrap(core.boolean)
 		case 'brigadier:double':
+		case 'minecraft:double':
 			return wrap(double(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:float':
+		case 'minecraft:float':
 			return wrap(float(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:integer':
+		case 'minecraft:integer':
 			return wrap(integer(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:long':
+		case 'minecraft:long':
 			return wrap(long(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:string':
+		case 'minecraft:string':
 			switch (treeNode.properties.type) {
 				case 'word':
 					return wrap(unquotedString)
@@ -251,6 +257,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(commandLiteral({ pool: OperationArgumentValues, colorTokenType: 'operator' }))
 		case 'minecraft:particle':
 			return wrap(particle)
+		case 'minecraft:pattern':
+			return wrap(pattern_match(treeNode.properties.pattern))
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
@@ -310,7 +318,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:template_rotation':
 			return wrap(commandLiteral({ pool: RotationValues }))
 		case 'minecraft:time':
-			return wrap(time(treeNode.properties?.min))
+			return wrap(time(treeNode.properties?.min, treeNode.properties?.max))
 		case 'minecraft:uuid':
 			return wrap(uuid)
 		case 'minecraft:vec2':
@@ -713,6 +721,40 @@ export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
 			return ans
 		},
 	)(src, ctx)
+}
+
+function pattern_match(pattern: string): core.Parser<core.StringNode> {
+	return (src, ctx) => {
+		try {
+			const matcher = new RegExp(pattern)
+			const remaining = src.peekRemaining()
+			const value = matcher.exec(remaining)?.[0]
+			const start = src.cursor
+			if (value !== undefined) {
+				src.skip(value.length)
+				return {
+					type: 'string',
+					value,
+					options: { unquotable: { blockList: new Set(['\n', '\r']) } },
+					range: core.Range.create(start, src),
+					valueMap: [],
+				}
+			} else {
+				src.skipRemaining()
+				const ans: core.StringNode = {
+					type: 'string',
+					value: remaining,
+					options: { unquotable: { blockList: new Set(['\n', '\r']) } },
+					range: core.Range.create(start, src),
+					valueMap: [],
+				}
+				ctx.err.report(localize('mismatching-regex-pattern', pattern), ans)
+				return ans
+			}
+		} catch { // Should only happen when the pattern is invalid
+			return core.Failure
+		}
+	}
 }
 
 function range(
@@ -1594,31 +1636,43 @@ function unquotableSymbol(
 	return validateUnquotable(symbol(options, terminators))
 }
 
-function time(minimum = 0): core.InfallibleParser<TimeNode> {
+function time(minimum?: number, maximum?: number): core.InfallibleParser<TimeNode> {
 	return core.validate(
-		core.map(
-			core.sequence([
-				float(),
-				core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
-			]),
-			(res) => {
-				const valueNode = res.children.find(core.FloatNode.is)!
-				const unitNode = res.children.find(core.LiteralNode.is)
-				const ans: TimeNode = {
-					type: 'mcfunction:time',
-					range: res.range,
-					children: res.children,
-					value: valueNode.value,
-					unit: unitNode?.value,
+		core.validate(
+			core.map(
+				core.sequence([
+					float(),
+					core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
+				]),
+				(res) => {
+					const valueNode = res.children.find(core.FloatNode.is)!
+					const unitNode = res.children.find(core.LiteralNode.is)
+					const ans: TimeNode = {
+						type: 'mcfunction:time',
+						range: res.range,
+						children: res.children,
+						value: valueNode.value,
+						unit: unitNode?.value,
+					}
+					return ans
+				},
+			),
+			(res, _src, ctx) => {
+				const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+				if (release && ReleaseVersion.cmp(release, '26.4') < 0) {
+					// Default minimum before 26.4
+					minimum ??= 0
 				}
-				return ans
+				const scale = TimeNode.UnitToTicks.get(res.unit ?? '')!
+				return minimum === undefined || Math.round(res.value * scale) >= minimum
 			},
+			localize('mcfunction.parser.time.below-min', minimum ?? 0),
 		),
 		(res) => {
 			const scale = TimeNode.UnitToTicks.get(res.unit ?? '')!
-			return Math.round(res.value * scale) >= minimum
+			return maximum === undefined || Math.round(res.value * scale) <= maximum
 		},
-		localize('mcfunction.parser.time.below-min', minimum),
+		localize('mcfunction.parser.time.above-max', maximum!),
 	)
 }
 
