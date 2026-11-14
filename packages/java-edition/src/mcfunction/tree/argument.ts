@@ -2,160 +2,146 @@ import type * as core from '@spyglassmc/core'
 import type * as mcf from '@spyglassmc/mcfunction'
 
 // #region Argument nodes.
-export interface BrigadierBoolArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'brigadier:bool'
+export interface MinecraftBoolArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:bool' | 'brigadier:bool'
 }
-export interface MinecraftBoolArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:bool'
+export interface MinecraftDoubleArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:double' | 'brigadier:double'
+	min: number
+	max: number
 }
-export interface BrigadierDoubleArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'brigadier:double'
-	properties?: { min: number; max: number }
+export interface MinecraftFloatArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:float' | 'brigadier:float'
+	min: number
+	max: number
 }
-export interface MinecraftDoubleArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:double'
-	properties?: { min: number; max: number }
+export interface MinecraftIntegerArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:integer' | 'brigadier:integer'
+	min: number
+	max: number
 }
-export interface BrigadierFloatArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'brigadier:float'
-	properties?: { min: number; max: number }
+export interface MinecraftLongArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:long' | 'brigadier:long'
+	min: number
+	max: number
 }
-export interface MinecraftFloatArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:float'
-	properties?: { min: number; max: number }
+export interface MinecraftStringArgumentTreeData extends mcf.ArgumentTreeData { // Removed
+	type: 'minecraft:string' | 'brigadier:string'
+	type_: 'word' | 'phrase' | 'greedy'
 }
-export interface BrigadierIntegerArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'brigadier:integer'
-	properties?: { min: number; max: number }
+export interface MinecraftGreedyStringArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:greedy_string'
 }
-export interface MinecraftIntegerArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:integer'
-	properties?: { min: number; max: number }
+export interface MinecraftQuotedStringArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:quoted_string'
 }
-export interface BrigadierLongArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'brigadier:long'
-	properties?: { min: number; max: number }
+export interface MinecraftWordArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:word'
 }
-export interface MinecraftLongArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:long'
-	properties?: { min: number; max: number }
+export interface MinecraftAngleArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:angle'
 }
-export interface BrigadierStringArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'brigadier:string'
-	properties: { type: 'word' | 'phrase' | 'greedy' }
+export interface MinecraftBlockPosArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:block_pos'
 }
-export interface MinecraftGreedyStringArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:greedy_string'
+export interface MinecraftBlockPredicateArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:block_predicate'
 }
-export interface MinecraftQuotedStringArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:quoted_string'
+export interface MinecraftBlockStateArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:block_state'
 }
-export interface MinecraftWordArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:word'
+export interface MinecraftColorArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:color'
 }
-export interface MinecraftAngleArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:angle'
+export interface MinecraftColumnPosArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:column_pos'
 }
-export interface MinecraftBlockPosArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:block_pos'
+export interface MinecraftComponentArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:component'
 }
-export interface MinecraftBlockPredicateArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:block_predicate'
+export interface MinecraftContextFloatProviderArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:context_float_provider'
 }
-export interface MinecraftBlockStateArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:block_state'
+export interface MinecraftContextIntProviderArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:context_int_provider'
 }
-export interface MinecraftColorArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:color'
+export interface MinecraftDialogArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:dialog'
 }
-export interface MinecraftColumnPosArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:column_pos'
+export interface MinecraftDimensionArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:dimension'
 }
-export interface MinecraftComponentArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:component'
+export interface MinecraftEntityArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:entity'
+	single_result?: boolean
+	players_only?: boolean
+	amount?: 'multiple' | 'single' // Replaced with single_result
+	type_?: 'entities' | 'players' // Replaced with players_only
 }
-export interface MinecraftContextFloatProviderArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:context_float_provider'
+export interface MinecraftEntityAnchorArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:entity_anchor'
 }
-export interface MinecraftContextIntProviderArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:context_int_provider'
+export interface MinecraftEntitySummonArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:entity_summon'
 }
-export interface MinecraftDialogArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:dialog'
+export interface MinecraftFeatureArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:feature'
 }
-export interface MinecraftDimensionArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:dimension'
-}
-export interface MinecraftEntityArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:entity'
-	properties: { amount: 'multiple' | 'single'; type: 'entities' | 'players' }
-}
-export interface MinecraftEntityAnchorArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:entity_anchor'
-}
-export interface MinecraftEntitySummonArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:entity_summon'
-}
-export interface MinecraftFeatureArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:feature'
-}
-export interface RangeProperties extends Record<string, unknown> {
+export interface RangeProperties extends mcf.ArgumentTreeData {
 	min: number
 	max: number
 	minSpan: number
 	maxSpan: number
 }
-export interface MinecraftFloatRangeArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:float_range'
-	properties?: RangeProperties
+export interface MinecraftFloatRangeArgumentTreeData extends RangeProperties {
+	type: 'minecraft:float_range'
 }
-export interface MinecraftFunctionArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:function'
+export interface MinecraftFunctionArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:function'
 }
-export interface MinecraftGamemodeArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:gamemode'
+export interface MinecraftGamemodeArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:gamemode'
 }
-export interface MinecraftGameProfileArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:game_profile'
+export interface MinecraftGameProfileArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:game_profile'
 }
-export interface MinecraftHeightmapArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:heightmap'
+export interface MinecraftHeightmapArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:heightmap'
 }
-export interface MinecraftIntRangeArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:int_range'
-	properties?: RangeProperties
+export interface MinecraftIntRangeArgumentTreeData extends RangeProperties {
+	type: 'minecraft:int_range'
 }
-export interface MinecraftItemEnchantmentArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:item_enchantment'
+export interface MinecraftItemEnchantmentArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:item_enchantment'
 }
-export interface MinecraftItemPredicateArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:item_predicate'
+export interface MinecraftItemPredicateArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:item_predicate'
 }
-export interface MinecraftItemSlotArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:item_slot'
+export interface MinecraftItemSlotArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:item_slot'
 }
-export interface MinecraftItemSlotsArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:item_slots'
+export interface MinecraftItemSlotsArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:item_slots'
 }
-export interface MinecraftItemStackArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:item_stack'
+export interface MinecraftItemStackArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:item_stack'
 }
-export interface MinecraftLootModifierArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:loot_modifier'
+export interface MinecraftLootModifierArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:loot_modifier'
 }
-export interface MinecraftLootPredicateArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:loot_predicate'
+export interface MinecraftLootPredicateArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:loot_predicate'
 }
-export interface MinecraftLootTableArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:loot_table'
+export interface MinecraftLootTableArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:loot_table'
 }
-export interface MinecraftMessageArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:message'
+export interface MinecraftMessageArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:message'
 }
-export interface MinecraftMobEffectArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:mob_effect'
+export interface MinecraftMobEffectArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:mob_effect'
 }
-export interface NbtParserProperties extends Record<string, unknown> {
+export interface NbtParserOptions extends Record<string, unknown> {
 	/**
 	 * The NBT checker should check this argument by dispatching on `dispatcher`
 	 * with a static index inferred from the argument with the name `dispatchedBy`
@@ -171,13 +157,13 @@ export interface NbtParserProperties extends Record<string, unknown> {
 	 * The name of a vec3, an entity, an entity resource location, or a
 	 * storage resource location argument.
 	 *
-	 * @see {@link NbtParserProperties.dispatcher}
+	 * @see {@link NbtParserOptions.dispatcher}
 	 */
 	dispatchedBy: string
 	/**
 	 * The name of an NBT path argument.
 	 *
-	 * @see {@link NbtParserProperties.dispatcher}
+	 * @see {@link NbtParserOptions.dispatcher}
 	 */
 	indexedBy?: string
 	/**
@@ -201,190 +187,182 @@ export interface NbtParserProperties extends Record<string, unknown> {
 	 */
 	isListIndex?: boolean
 }
-export interface MinecraftNbtCompoundTagArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:nbt_compound_tag'
-	properties?: NbtParserProperties
+export interface MinecraftNbtCompoundTagArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:nbt_compound_tag'
+	options?: NbtParserOptions
 }
-export interface MinecraftNbtPathArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:nbt_path'
-	properties?: NbtParserProperties
+export interface MinecraftNbtPathArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:nbt_path'
+	options?: NbtParserOptions
 }
-export interface MinecraftNbtTagArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:nbt_tag'
-	properties?: NbtParserProperties
+export interface MinecraftNbtTagArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:nbt_tag'
+	options?: NbtParserOptions
 }
-export interface MinecraftObjectiveArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:objective'
+export interface MinecraftObjectiveArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:objective'
 }
-export interface MinecraftObjectiveCriteriaArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:objective_criteria'
+export interface MinecraftObjectiveCriteriaArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:objective_criteria'
 }
-export interface MinecraftOperationArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:operation'
+export interface MinecraftOperationArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:operation'
 }
-export interface MinecraftParticleArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:particle'
+export interface MinecraftParticleArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:particle'
 }
-export interface MinecraftPatternStringArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:pattern'
-	properties: { pattern: string }
+export interface MinecraftPatternStringArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:pattern'
+	pattern: string
 }
-export interface MinecraftResourceArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:resource'
-	properties: { registry: string }
+export interface MinecraftResourceArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:resource'
+	registry: string
 }
-export interface MinecraftResourceKeyArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:resource_key'
-	properties: { registry: string }
+export interface MinecraftResourceKeyArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:resource_key'
+	registry: string
 }
-export interface MinecraftResourceLocationArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:resource_location'
-	properties?: core.ResourceLocationOptions
+export interface MinecraftResourceLocationArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:resource_location'
+	options?: core.ResourceLocationOptions
 }
-export interface MinecraftResourceOrTagArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:resource_or_tag'
-	properties: { registry: string }
+export interface MinecraftResourceOrTagArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:resource_or_tag'
+	registry: string
 }
-export interface MinecraftResourceOrTagKeyArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:resource_or_tag_key'
-	properties: { registry: string }
+export interface MinecraftResourceOrTagKeyArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:resource_or_tag_key'
+	registry: string
 }
-export interface MinecraftResourceSelectorTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:resource_selector'
-	properties: { registry: string }
+export interface MinecraftResourceSelectorArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:resource_selector'
+	registry: string
 }
-export interface MinecraftRotationArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:rotation'
+export interface MinecraftRotationArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:rotation'
 }
-export interface MinecraftScoreHolderArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:score_holder'
-	properties: {
-		usageType: core.SymbolUsageType
-		amount: 'single' | 'multiple'
-	}
+export interface MinecraftScoreHolderArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:score_holder'
+	usageType: core.SymbolUsageType
+	multiple?: boolean
+	amount?: 'single' | 'multiple' // Replaced with multiple
 }
-export interface MinecraftScoreboardSlotArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:scoreboard_slot'
+export interface MinecraftScoreboardSlotArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:scoreboard_slot'
 }
-export interface MinecraftSlotSourceArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:slot_source'
+export interface MinecraftSlotSourceArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:slot_source'
 }
-export interface MinecraftStyleArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:style'
+export interface MinecraftStyleArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:style'
 }
-export interface MinecraftSwizzleArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:swizzle'
+export interface MinecraftSwizzleArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:swizzle'
 }
-export interface MinecraftTeamArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:team'
+export interface MinecraftTeamArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:team'
 }
-export interface MinecraftTeamColorArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:team_color'
+export interface MinecraftTeamColorArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:team_color'
 }
-export interface MinecraftTemplateMirrorArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:template_mirror'
+export interface MinecraftTemplateMirrorArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:template_mirror'
 }
-export interface MinecraftTemplateRotationArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:template_rotation'
+export interface MinecraftTemplateRotationArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:template_rotation'
 }
-export interface MinecraftTimeArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:time'
-	properties?: {
-		min?: number
-		max?: number
-	}
+export interface MinecraftTimeArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:time'
+	min?: number
+	max?: number
 }
-export interface MinecraftUuidArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:uuid'
-	properties?: Partial<core.SymbolOptions>
+export interface MinecraftUuidArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:uuid'
+	options?: Partial<core.SymbolOptions>
 }
-export interface MinecraftVec2ArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:vec2'
+export interface MinecraftVec2ArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:vec2'
 }
-export interface MinecraftVec3ArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:vec3'
+export interface MinecraftVec3ArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'minecraft:vec3'
 }
-export interface SpyglassmcCriterionArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'spyglassmc:criterion'
+export interface SpyglassmcCriterionArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'spyglassmc:criterion'
 }
-export interface SpyglassmcTagArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'spyglassmc:tag'
+export interface SpyglassmcTagArgumentTreeData extends mcf.ArgumentTreeData {
+	type: 'spyglassmc:tag'
 }
 // #endregion
 
-export type ArgumentTreeNode =
-	| BrigadierBoolArgumentTreeNode
-	| MinecraftBoolArgumentTreeNode
-	| BrigadierDoubleArgumentTreeNode
-	| MinecraftDoubleArgumentTreeNode
-	| BrigadierFloatArgumentTreeNode
-	| MinecraftFloatArgumentTreeNode
-	| BrigadierIntegerArgumentTreeNode
-	| MinecraftIntegerArgumentTreeNode
-	| BrigadierLongArgumentTreeNode
-	| MinecraftLongArgumentTreeNode
-	| BrigadierStringArgumentTreeNode
-	| MinecraftGreedyStringArgumentTreeNode
-	| MinecraftQuotedStringArgumentTreeNode
-	| MinecraftWordArgumentTreeNode
-	| MinecraftAngleArgumentTreeNode
-	| MinecraftBlockPosArgumentTreeNode
-	| MinecraftBlockPredicateArgumentTreeNode
-	| MinecraftBlockStateArgumentTreeNode
-	| MinecraftColorArgumentTreeNode
-	| MinecraftColumnPosArgumentTreeNode
-	| MinecraftComponentArgumentTreeNode
-	| MinecraftContextIntProviderArgumentTreeNode
-	| MinecraftContextFloatProviderArgumentTreeNode
-	| MinecraftDialogArgumentTreeNode
-	| MinecraftDimensionArgumentTreeNode
-	| MinecraftEntityArgumentTreeNode
-	| MinecraftEntityAnchorArgumentTreeNode
-	| MinecraftEntitySummonArgumentTreeNode
-	| MinecraftFeatureArgumentTreeNode
-	| MinecraftFloatRangeArgumentTreeNode
-	| MinecraftFunctionArgumentTreeNode
-	| MinecraftGamemodeArgumentTreeNode
-	| MinecraftGameProfileArgumentTreeNode
-	| MinecraftHeightmapArgumentTreeNode
-	| MinecraftIntRangeArgumentTreeNode
-	| MinecraftItemEnchantmentArgumentTreeNode
-	| MinecraftItemPredicateArgumentTreeNode
-	| MinecraftItemSlotArgumentTreeNode
-	| MinecraftItemSlotsArgumentTreeNode
-	| MinecraftItemStackArgumentTreeNode
-	| MinecraftLootModifierArgumentTreeNode
-	| MinecraftLootPredicateArgumentTreeNode
-	| MinecraftLootTableArgumentTreeNode
-	| MinecraftMessageArgumentTreeNode
-	| MinecraftMobEffectArgumentTreeNode
-	| MinecraftNbtCompoundTagArgumentTreeNode
-	| MinecraftNbtPathArgumentTreeNode
-	| MinecraftNbtTagArgumentTreeNode
-	| MinecraftObjectiveArgumentTreeNode
-	| MinecraftObjectiveCriteriaArgumentTreeNode
-	| MinecraftOperationArgumentTreeNode
-	| MinecraftParticleArgumentTreeNode
-	| MinecraftPatternStringArgumentTreeNode
-	| MinecraftResourceArgumentTreeNode
-	| MinecraftResourceKeyArgumentTreeNode
-	| MinecraftResourceLocationArgumentTreeNode
-	| MinecraftResourceOrTagArgumentTreeNode
-	| MinecraftResourceOrTagKeyArgumentTreeNode
-	| MinecraftResourceSelectorTreeNode
-	| MinecraftRotationArgumentTreeNode
-	| MinecraftScoreHolderArgumentTreeNode
-	| MinecraftScoreboardSlotArgumentTreeNode
-	| MinecraftSlotSourceArgumentTreeNode
-	| MinecraftStyleArgumentTreeNode
-	| MinecraftSwizzleArgumentTreeNode
-	| MinecraftTeamArgumentTreeNode
-	| MinecraftTeamColorArgumentTreeNode
-	| MinecraftTemplateMirrorArgumentTreeNode
-	| MinecraftTemplateRotationArgumentTreeNode
-	| MinecraftTimeArgumentTreeNode
-	| MinecraftUuidArgumentTreeNode
-	| MinecraftVec2ArgumentTreeNode
-	| MinecraftVec3ArgumentTreeNode
-	| SpyglassmcCriterionArgumentTreeNode
-	| SpyglassmcTagArgumentTreeNode
+export type ArgumentTreeData =
+	| MinecraftBoolArgumentTreeData
+	| MinecraftDoubleArgumentTreeData
+	| MinecraftFloatArgumentTreeData
+	| MinecraftIntegerArgumentTreeData
+	| MinecraftLongArgumentTreeData
+	| MinecraftStringArgumentTreeData
+	| MinecraftGreedyStringArgumentTreeData
+	| MinecraftQuotedStringArgumentTreeData
+	| MinecraftWordArgumentTreeData
+	| MinecraftAngleArgumentTreeData
+	| MinecraftBlockPosArgumentTreeData
+	| MinecraftBlockPredicateArgumentTreeData
+	| MinecraftBlockStateArgumentTreeData
+	| MinecraftColorArgumentTreeData
+	| MinecraftColumnPosArgumentTreeData
+	| MinecraftComponentArgumentTreeData
+	| MinecraftContextIntProviderArgumentTreeData
+	| MinecraftContextFloatProviderArgumentTreeData
+	| MinecraftDialogArgumentTreeData
+	| MinecraftDimensionArgumentTreeData
+	| MinecraftEntityArgumentTreeData
+	| MinecraftEntityAnchorArgumentTreeData
+	| MinecraftEntitySummonArgumentTreeData
+	| MinecraftFeatureArgumentTreeData
+	| MinecraftFloatRangeArgumentTreeData
+	| MinecraftFunctionArgumentTreeData
+	| MinecraftGamemodeArgumentTreeData
+	| MinecraftGameProfileArgumentTreeData
+	| MinecraftHeightmapArgumentTreeData
+	| MinecraftIntRangeArgumentTreeData
+	| MinecraftItemEnchantmentArgumentTreeData
+	| MinecraftItemPredicateArgumentTreeData
+	| MinecraftItemSlotArgumentTreeData
+	| MinecraftItemSlotsArgumentTreeData
+	| MinecraftItemStackArgumentTreeData
+	| MinecraftLootModifierArgumentTreeData
+	| MinecraftLootPredicateArgumentTreeData
+	| MinecraftLootTableArgumentTreeData
+	| MinecraftMessageArgumentTreeData
+	| MinecraftMobEffectArgumentTreeData
+	| MinecraftNbtCompoundTagArgumentTreeData
+	| MinecraftNbtPathArgumentTreeData
+	| MinecraftNbtTagArgumentTreeData
+	| MinecraftObjectiveArgumentTreeData
+	| MinecraftObjectiveCriteriaArgumentTreeData
+	| MinecraftOperationArgumentTreeData
+	| MinecraftParticleArgumentTreeData
+	| MinecraftPatternStringArgumentTreeData
+	| MinecraftResourceArgumentTreeData
+	| MinecraftResourceKeyArgumentTreeData
+	| MinecraftResourceLocationArgumentTreeData
+	| MinecraftResourceOrTagArgumentTreeData
+	| MinecraftResourceOrTagKeyArgumentTreeData
+	| MinecraftResourceSelectorArgumentTreeData
+	| MinecraftRotationArgumentTreeData
+	| MinecraftScoreHolderArgumentTreeData
+	| MinecraftScoreboardSlotArgumentTreeData
+	| MinecraftSlotSourceArgumentTreeData
+	| MinecraftStyleArgumentTreeData
+	| MinecraftSwizzleArgumentTreeData
+	| MinecraftTeamArgumentTreeData
+	| MinecraftTeamColorArgumentTreeData
+	| MinecraftTemplateMirrorArgumentTreeData
+	| MinecraftTemplateRotationArgumentTreeData
+	| MinecraftTimeArgumentTreeData
+	| MinecraftUuidArgumentTreeData
+	| MinecraftVec2ArgumentTreeData
+	| MinecraftVec3ArgumentTreeData
+	| SpyglassmcCriterionArgumentTreeData
+	| SpyglassmcTagArgumentTreeData

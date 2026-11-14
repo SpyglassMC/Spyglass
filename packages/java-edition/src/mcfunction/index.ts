@@ -12,7 +12,6 @@ import * as parser from './parser/index.js'
 import { signatureHelpProvider } from './signatureHelpProvider.js'
 import { getPatch } from './tree/patch.js'
 import { validatePatchedTree } from './tree/patchValidator.js'
-import { transformTree } from './tree/transform.js'
 
 export * as checker from './checker/index.js'
 export * as colorizer from './colorizer/index.js'
@@ -29,7 +28,6 @@ export const initialize = (
 
 	registerCustomResources(ctx.config)
 
-	transformTree(commands, releaseVersion)
 	const tree = core.merge(commands, getPatch(releaseVersion))
 	if (ctx.isDebugging) {
 		validatePatchedTree(tree, ctx.logger)
