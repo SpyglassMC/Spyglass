@@ -5,13 +5,13 @@ import {
 	testParser,
 } from '@spyglassmc/core/test/utils.ts'
 import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.js'
-import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
+import type { ArgumentTreeData } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
 import * as json from '@spyglassmc/json'
 import * as nbt from '@spyglassmc/nbt'
 import { describe, it } from 'node:test'
 
 const Suites: Partial<
-	Record<ArgumentTreeNode['parser'], { content: string[]; properties?: any; version?: string }[]>
+	Record<ArgumentTreeData['type'], { content: string[]; properties?: any; version?: string }[]>
 > = {
 	'brigadier:bool': [{ content: ['false', 'true'] }],
 	'brigadier:double': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
@@ -219,21 +219,24 @@ const RemoveExtraChildren = new Set([
 ])
 
 describe('mcfunction argument parser', () => {
-	for (const [parserName, cases] of Object.entries(Suites)) {
-		describe(parserName, () => {
+	for (const [argumentType, cases] of Object.entries(Suites)) {
+		describe(argumentType, () => {
 			for (const { content, properties, version = '1.15' } of cases) {
-				const treeNode: ArgumentTreeNode = {
-					type: 'argument',
-					parser: parserName as any,
-					properties,
+				const propertiesString = properties ? ` with ${JSON.stringify(properties)}` : ''
+				const versionString = version !== '1.15' ? ` in version ${version}` : ''
+				if (properties?.type) {
+					properties['type_'] = properties.type // FIXME argument field conflict
+					delete properties.type
+				}
+				const argumentData: ArgumentTreeData = {
+					type: argumentType,
+					...properties,
 				}
 				const project = mockProjectData({ ctx: { loadedVersion: version } })
 				json.getInitializer()(project)
 				nbt.initialize(project)
 
 				for (const string of content) {
-					const propertiesString = properties ? ` with ${JSON.stringify(properties)}` : ''
-					const versionString = version !== '1.15' ? ` in version ${version}` : ''
 					const itTitle = `Parse '${
 						showWhitespaceGlyph(string)
 					}'${propertiesString}${versionString}`
@@ -241,14 +244,18 @@ describe('mcfunction argument parser', () => {
 						snapshotWithUri(t, {
 							uri: new URL(
 								`./argument/${
-									parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())
+									argumentType.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())
 								}.spec.ts`,
 								import.meta.url,
 							),
-							value: testParser(argument(treeNode, [])!, string, {
-								project,
-								removeTopLevelChildren: RemoveExtraChildren.has(parserName),
-							}),
+							value: testParser(
+								argument({ type: 'argument', argument: argumentData }, [])!,
+								string,
+								{
+									project,
+									removeTopLevelChildren: RemoveExtraChildren.has(argumentType),
+								},
+							),
 						})
 					})
 				}

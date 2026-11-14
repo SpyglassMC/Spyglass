@@ -67,7 +67,7 @@ import {
 	ScoreHolderNode,
 	VectorNode,
 } from '../node/index.js'
-import type { ArgumentTreeNode } from '../tree/index.js'
+import type { ArgumentTreeData } from '../tree/index.js'
 
 export const getMockNodes: mcf.completer.MockNodesGetter = (
 	rawTreeNode,
@@ -75,22 +75,28 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 	ctx: CompleterContext,
 ): Arrayable<AstNode> => {
 	const range = ctx.offset
-	const treeNode = rawTreeNode as ArgumentTreeNode
+	const argument = rawTreeNode.argument as ArgumentTreeData
 
-	switch (treeNode.parser) {
+	switch (argument.type) {
+		case 'minecraft:bool':
 		case 'brigadier:bool':
 			return BooleanNode.mock(range)
+		case 'minecraft:double':
 		case 'brigadier:double':
+		case 'minecraft:float':
 		case 'brigadier:float':
+		case 'minecraft:integer':
 		case 'brigadier:integer':
+		case 'minecraft:long':
 		case 'brigadier:long':
 		case 'minecraft:float_range':
 		case 'minecraft:message':
 		case 'minecraft:time':
 		case 'minecraft:uuid':
 			return []
+		case 'minecraft:string':
 		case 'brigadier:string':
-			return treeNode.properties.type === 'phrase'
+			return argument.type_ === 'phrase'
 				? StringNode.mock(range, BrigadierStringOptions)
 				: []
 		case 'minecraft:angle':
@@ -171,10 +177,10 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
 		case 'minecraft:resource_or_tag_key':
-			const allowTag = treeNode.parser === 'minecraft:resource_or_tag'
-				|| treeNode.parser === 'minecraft:resource_or_tag_key'
+			const allowTag = argument.type === 'minecraft:resource_or_tag'
+				|| argument.type === 'minecraft:resource_or_tag_key'
 			return ResourceLocationNode.mock(range, {
-				category: ResourceLocation.shorten(treeNode.properties.registry) as
+				category: ResourceLocation.shorten(argument.registry) as
 					| RegistryCategory
 					| WorldgenFileCategory,
 				allowTag,
@@ -182,7 +188,7 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:resource_location':
 			return ResourceLocationNode.mock(
 				range,
-				treeNode.properties ?? { pool: [], allowUnknown: true },
+				argument.options ?? { pool: [], allowUnknown: true },
 			)
 		case 'minecraft:rotation':
 			return VectorNode.mock(range, { dimension: 2, noLocal: true })

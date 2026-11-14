@@ -36,7 +36,8 @@ export function registerMcdocAttributes(
 	if (gameRuleNode) {
 		const [boolGameRules, intGameRules] = ['brigadier:bool', 'brigadier:integer'].map((type) =>
 			Object.entries(gameRuleNode).flatMap(([key, node]) =>
-				node.children?.['value']?.type === 'argument' && node.children['value'].parser === type
+				node.children?.['value']?.type === 'argument'
+					&& node.children['value'].argument.type === type
 					? [key]
 					: []
 			)
