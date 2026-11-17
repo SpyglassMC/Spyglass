@@ -114,6 +114,7 @@
           "data/*/dialog/**/*.json",
           "data/*/dimension/**/*.json",
           "data/*/dimension_type/**/*.json",
+          "data/*/dispense_behavior/**/*.json",
           "data/*/enchantment/**/*.json",
           "data/*/enchantment_provider/**/*.json",
           "data/*/frog_variant/**/*.json",
