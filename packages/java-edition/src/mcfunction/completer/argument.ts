@@ -85,6 +85,7 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:double':
 		case 'brigadier:float':
 		case 'minecraft:float':
+		case 'minecraft:greedy_string':
 		case 'brigadier:integer':
 		case 'minecraft:integer':
 		case 'brigadier:long':
@@ -93,12 +94,14 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:message':
 		case 'minecraft:time':
 		case 'minecraft:uuid':
+		case 'minecraft:word':
 			return []
 		case 'brigadier:string':
-		case 'minecraft:string':
 			return treeNode.properties.type === 'phrase'
 				? StringNode.mock(range, BrigadierStringOptions)
 				: []
+		case 'minecraft:quoted_string':
+			return StringNode.mock(range, BrigadierStringOptions)
 		case 'minecraft:angle':
 			return CoordinateNode.mock(range)
 		case 'minecraft:block_pos':

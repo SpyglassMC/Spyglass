@@ -129,7 +129,6 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:long':
 			return wrap(long(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:string':
-		case 'minecraft:string':
 			switch (treeNode.properties.type) {
 				case 'word':
 					return wrap(unquotedString)
@@ -139,6 +138,12 @@ export const argument: mcf.ArgumentParserGetter = (
 				default:
 					return wrap(greedyString)
 			}
+		case 'minecraft:word':
+			return wrap(unquotedString)
+		case 'minecraft:quoted_string':
+			return wrap(core.brigadierString)
+		case 'minecraft:greedy_string':
+			return wrap(greedyString)
 		case 'minecraft:angle':
 			return wrap(
 				core.validate(

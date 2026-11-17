@@ -44,9 +44,14 @@ export interface BrigadierStringArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:string'
 	properties: { type: 'word' | 'phrase' | 'greedy' }
 }
-export interface MinecraftStringArgumentTreeNode extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:string'
-	properties: { type: 'word' | 'phrase' | 'greedy' }
+export interface MinecraftGreedyStringArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:greedy_string'
+}
+export interface MinecraftQuotedStringArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:quoted_string'
+}
+export interface MinecraftWordArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:word'
 }
 export interface MinecraftAngleArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:angle'
@@ -319,7 +324,9 @@ export type ArgumentTreeNode =
 	| BrigadierLongArgumentTreeNode
 	| MinecraftLongArgumentTreeNode
 	| BrigadierStringArgumentTreeNode
-	| MinecraftStringArgumentTreeNode
+	| MinecraftGreedyStringArgumentTreeNode
+	| MinecraftQuotedStringArgumentTreeNode
+	| MinecraftWordArgumentTreeNode
 	| MinecraftAngleArgumentTreeNode
 	| MinecraftBlockPosArgumentTreeNode
 	| MinecraftBlockPredicateArgumentTreeNode

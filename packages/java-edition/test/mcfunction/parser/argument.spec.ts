@@ -28,10 +28,14 @@ const Suites: Partial<
 		{ properties: { type: 'phrase' }, content: ['"quoted phrase"', 'word', '""'] },
 		{ properties: { type: 'greedy' }, content: ['word', 'words with spaces', '"and symbols"'] },
 	],
-	'minecraft:string': [
-		{ properties: { type: 'word' }, content: ['word', 'word_with_underscores'] },
-		{ properties: { type: 'phrase' }, content: ['"quoted phrase"', 'word', '""'] },
-		{ properties: { type: 'greedy' }, content: ['word', 'words with spaces', '"and symbols"'] },
+	'minecraft:word': [
+		{ content: ['word', 'word_with_underscores'] },
+	],
+	'minecraft:quoted_string': [
+		{ content: ['"quoted phrase"', 'word', '""'] },
+	],
+	'minecraft:greedy_string': [
+		{ content: ['word', 'words with spaces', '"and symbols"'] },
 	],
 	'minecraft:angle': [{ content: ['0', '~', '~-0.5', '^'] }],
 	'minecraft:block_pos': [{
