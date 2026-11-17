@@ -37,10 +37,14 @@ function transformNode(node: CommandTreeNode) {
 			delete node.properties['type']
 			delete (node as ModernArgumentTreeNode).argument
 
-			// `minecraft:entity` parser field change
-			if (node.parser === 'minecraft:entity') {
-				node.properties['amount'] = node.properties['single_result'] ? 'single' : 'multiple'
-				node.properties['type'] = node.properties['players_only'] ? 'players' : 'entities'
+			switch (node.parser) {
+				case 'minecraft:entity':
+					node.properties['amount'] = node.properties['single_result'] ? 'single' : 'multiple'
+					node.properties['type'] = node.properties['players_only'] ? 'players' : 'entities'
+					break
+				case 'minecraft:score_holder':
+					node.properties['amount'] = node.properties['multiple'] ? 'multiple' : 'single'
+					break
 			}
 		}
 	}
