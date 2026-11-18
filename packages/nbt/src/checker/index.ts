@@ -367,7 +367,6 @@ export function blockStates(blocks: string[], _options: Options = {}): core.Sync
 interface NbtPathLink {
 	path: NbtPathNode
 	node: NbtPathChild | { type: 'leaf'; range: core.Range }
-	range: core.Range
 	prev?: NbtPathLink
 	next?: NbtPathLink
 }
@@ -386,14 +385,9 @@ export function path(
 		}
 		// Create a linked list representation
 		const leaf = { type: 'leaf', range: core.Range.create(node.range.end) } as const
-		let link: NbtPathLink = { path: node, node: leaf, range: leaf.range }
+		let link: NbtPathLink = { path: node, node: leaf }
 		for (let i = node.children.length - 1; i >= 0; i -= 1) {
-			link = {
-				path: node,
-				node: node.children[i],
-				next: link,
-				range: node.children[i].range,
-			}
+			link = { path: node, node: node.children[i], next: link }
 		}
 		let prev = link
 		while (prev.next) {
