@@ -1,19 +1,19 @@
-import type {
-	AstNode,
-	BooleanNode,
-	CommentNode,
-	ErrorNode,
-	FloatNode,
-	IntegerNode,
-	LiteralBaseNode,
-	LiteralNode,
-	LongNode,
-	ResourceLocationBaseNode,
-	ResourceLocationNode,
-	StringBaseNode,
-	StringNode,
-	SymbolBaseNode,
-	SymbolNode,
+import {
+	type AstNode,
+	type BooleanNode,
+	type CommentNode,
+	type ErrorNode,
+	type FloatNode,
+	type IntegerNode,
+	type LiteralBaseNode,
+	type LiteralNode,
+	type LongNode,
+	type ResourceLocationBaseNode,
+	type ResourceLocationNode,
+	type StringBaseNode,
+	type StringNode,
+	type SymbolBaseNode,
+	type SymbolNode,
 	UnicodeEscapeNode,
 } from '../../node/index.js'
 import type { MetaRegistry } from '../../service/index.js'
@@ -82,8 +82,7 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 		return [ColorToken.create(node, node.options.colorTokenType ?? 'string')]
 	}
 
-	const escapeRanges = node.children
-		.filter(c => c.type === 'unicode_escape')
+	const escapeRanges = node.children.filter(c => UnicodeEscapeNode.is(c))
 
 	const tokens: ColorToken[] = []
 	for (const child of node.children) {
@@ -103,7 +102,7 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 			insertIndex++
 		}
 		for (const t of emitted) {
-			if (child.type === 'unicode_escape') {
+			if (UnicodeEscapeNode.is(child)) {
 				insert(t)
 				continue
 			}
