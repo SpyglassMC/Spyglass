@@ -424,13 +424,13 @@ export class Project extends EventDispatcher<{
 
 		const __profiler = this.profilers.get('project#init')
 
+		this.config = await this.#configService.load()
+		__profiler.task('Load Config')
+
 		const { symbols } = await this.cacheService.load()
 		this.symbols = new SymbolUtil(symbols)
 		this.symbols.buildCache()
 		__profiler.task('Load Cache')
-
-		this.config = await this.#configService.load()
-		__profiler.task('Load Config')
 
 		await callIntializers()
 		__profiler.task('Initialize').finalize()

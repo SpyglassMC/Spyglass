@@ -2,6 +2,8 @@ services:
   weblate:
     ports:
       - '{{ weblate_host_port }}:8080'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       # Admin
       WEBLATE_ADMIN_EMAIL: '{{ weblate_admin_email }}'
@@ -39,6 +41,8 @@ services:
       WEBLATE_ENABLE_HTTPS: 1
       WEBLATE_IP_BEHIND_REVERSE_PROXY: 1
       WEBLATE_SECURE_PROXY_SSL_HEADER: HTTP_X_FORWARDED_PROTO,https
+      WEBLATE_IP_PROXY_HEADER: HTTP_X_FORWARDED_FOR
+      WEBLATE_TRUSTED_PROXY_ADDRESSES: host.docker.internal
 
       # Registration: only allows GitHub
       WEBLATE_REGISTRATION_ALLOW_BACKENDS: github

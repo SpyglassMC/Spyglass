@@ -251,7 +251,7 @@ export function typeDefinition<T>(
 		for (const value of node.possibleValues) {
 			const inferredSimplified = simplify(value.node.inferredType, { ctx, node: value }).typeDef
 			const children = ctx.getChildren(value.node.originalNode, inferredSimplified)
-			const childNodes = children.map(c => {
+			value.children = children.map(c => {
 				const ans: CheckerTreeNode<T> = {
 					parent: value,
 					runtimeKey: !Array.isArray(c) ? c.key : undefined,
@@ -295,7 +295,7 @@ export function typeDefinition<T>(
 						if (!childDef) {
 							continue
 						}
-						const child = childNodes[i]
+						const child = value.children[i]
 						const existingDef = child.possibleValues.length > 0
 							? child.possibleValues[0].definitionsByParent
 								.find(
@@ -346,8 +346,7 @@ export function typeDefinition<T>(
 
 				condenseAndPropagate(definitionGroup, definitionErrors)
 			}
-			value.children = childNodes
-			nodeQueue.push(...childNodes)
+			nodeQueue.push(...value.children)
 		}
 	}
 

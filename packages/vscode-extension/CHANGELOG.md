@@ -1,3 +1,9 @@
+# v4.14.0 (2026-10-13)
+
+### ✨ New Features
+- [`9948bd9`](https://github.com/SpyglassMC/Spyglass/commit/9948bd9e275d345e530a28e9246e5855ed887e9b) Added `hex_argb` and `hex_rgba` colors info providers ([#2107](https://github.com/SpyglassMC/Spyglass/pull/2107))
+- [`93e822d`](https://github.com/SpyglassMC/Spyglass/commit/93e822dfb23c11d119dde996e380150f2635d11e) Added 26.4-snapshot-3 changes ([#2110](https://github.com/SpyglassMC/Spyglass/pull/2110))
+
 # v4.6.0 (2025-12-16)
 
 ### ✨ New Features

@@ -240,7 +240,8 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 	registerAttribute(meta, 'color', validator.string, {
 		checkInferred: (config, inferred, ctx) => {
 			if (
-				config === 'hex_rgb' && inferred.kind === 'literal' && inferred.value.kind === 'string'
+				config.startsWith('hex_') && inferred.kind === 'literal'
+				&& inferred.value.kind === 'string'
 			) {
 				return inferred.value.value.startsWith('#')
 			}
@@ -248,20 +249,29 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 		},
 		checker: (config, inferred) => {
 			return (node, ctx) => {
+				let range = node.range
+				if (core.StringBaseNode.is(node) && node.quote) {
+					range = core.Range.translate(range, 1, -1)
+				}
 				switch (config) {
 					case 'named':
 						if (inferred.kind !== 'literal' || inferred.value.kind !== 'string') {
 							return
 						}
-						node.color = core.Color.fromNamed(inferred.value.value)
+						const namedColor = core.Color.fromNamed(inferred.value.value)
+						if (namedColor) {
+							node.color = {
+								value: namedColor,
+								format: [],
+								range,
+							}
+						}
 						return
 					case 'hex_rgb':
+					case 'hex_argb':
+					case 'hex_rgba':
 						if (inferred.kind !== 'literal' || inferred.value.kind !== 'string') {
 							return
-						}
-						let range = node.range
-						if (core.StringBaseNode.is(node) && node.quote) {
-							range = core.Range.translate(range, 1, -1)
 						}
 						if (!inferred.value.value.startsWith('#')) {
 							ctx.err.report(
@@ -271,29 +281,40 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 							)
 							return
 						}
+						const hexColor = config === 'hex_rgb'
+							? core.Color.fromHexRGB(inferred.value.value)
+							: config === 'hex_argb'
+							? core.Color.fromHexARGB(inferred.value.value)
+							: core.Color.fromHexRGBA(inferred.value.value)
+						const hexFormat = config === 'hex_rgb'
+							? core.ColorFormat.HexRGB
+							: config === 'hex_argb'
+							? core.ColorFormat.HexARGB
+							: core.ColorFormat.HexRGBA
 						node.color = {
-							value: core.Color.fromHexRGB(inferred.value.value),
-							format: [core.ColorFormat.HexRGB],
+							value: hexColor,
+							format: [hexFormat],
 							range,
 						}
 						return
 					case 'composite_rgb':
-						if (inferred.kind !== 'literal' || typeof inferred.value.value !== 'number') {
-							return
-						}
-						node.color = {
-							value: core.Color.fromCompositeRGB(inferred.value.value),
-							format: [core.ColorFormat.CompositeRGB],
-							range: node.range,
-						}
-						return
 					case 'composite_argb':
-						if (inferred.kind !== 'literal' || typeof inferred.value.value !== 'number') {
+						if (
+							inferred.kind !== 'literal'
+							|| (typeof inferred.value.value !== 'number'
+								&& typeof inferred.value.value !== 'bigint')
+						) {
 							return
 						}
+						const compositeColor = config === 'composite_rgb'
+							? core.Color.fromCompositeRGB(Number(inferred.value.value))
+							: core.Color.fromCompositeARGB(Number(inferred.value.value))
+						const compositeFormat = config === 'composite_rgb'
+							? core.ColorFormat.CompositeRGB
+							: core.ColorFormat.CompositeARGB
 						node.color = {
-							value: core.Color.fromCompositeARGB(inferred.value.value),
-							format: [core.ColorFormat.CompositeARGB],
+							value: compositeColor,
+							format: [compositeFormat],
 							range: node.range,
 						}
 						return

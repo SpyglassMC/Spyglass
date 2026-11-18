@@ -1,0 +1,1546 @@
+exports[`mcdoc runtime checker > Bounds<int @ 1..> type Bounds<T> = struct { min: T, max: T } > with value {\"min\":2,\"max\":5} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "min": 2,
+        "max": 5
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "min"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::T"
+              },
+              "mapping": {
+                "::test::T": {
+                  "kind": "int",
+                  "valueRange": {
+                    "kind": 0,
+                    "min": 1
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "max"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::T"
+              },
+              "mapping": {
+                "::test::T": {
+                  "kind": "int",
+                  "valueRange": {
+                    "kind": 0,
+                    "min": 1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 2,
+      "definition": {
+        "kind": "int",
+        "valueRange": {
+          "kind": 0,
+          "min": 1
+        }
+      }
+    },
+    {
+      "node": "min",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "min"
+        }
+      }
+    },
+    {
+      "node": 5,
+      "definition": {
+        "kind": "int",
+        "valueRange": {
+          "kind": 0,
+          "min": 1
+        }
+      }
+    },
+    {
+      "node": "max",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "max"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Bounds<int @ 1..> type Bounds<T> = struct { min: T, max: T } > with value {\"min\":\"hello\",\"max\":-1} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": "hello",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "hello"
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "int",
+          "valueRange": {
+            "kind": 0,
+            "min": 1
+          }
+        }
+      ]
+    },
+    {
+      "kind": "number_out_of_range",
+      "node": {
+        "originalNode": -1,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": -1
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "min": 1
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "min": "hello",
+        "max": -1
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "min"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::T"
+              },
+              "mapping": {
+                "::test::T": {
+                  "kind": "int",
+                  "valueRange": {
+                    "kind": 0,
+                    "min": 1
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "max"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::T"
+              },
+              "mapping": {
+                "::test::T": {
+                  "kind": "int",
+                  "valueRange": {
+                    "kind": 0,
+                    "min": 1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "hello",
+      "definition": {
+        "kind": "int",
+        "valueRange": {
+          "kind": 0,
+          "min": 1
+        }
+      }
+    },
+    {
+      "node": "min",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "min"
+        }
+      }
+    },
+    {
+      "node": -1,
+      "definition": {
+        "kind": "int",
+        "valueRange": {
+          "kind": 0,
+          "min": 1
+        }
+      }
+    },
+    {
+      "node": "max",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "max"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Bounds<int @ 1..> type Bounds<T> = struct { min: T, max: T } > with value {} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "min"
+      ]
+    },
+    {
+      "kind": "missing_key",
+      "node": {
+        "originalNode": {},
+        "inferredType": {
+          "kind": "struct",
+          "fields": []
+        }
+      },
+      "keys": [
+        "max"
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {},
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "min"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::T"
+              },
+              "mapping": {
+                "::test::T": {
+                  "kind": "int",
+                  "valueRange": {
+                    "kind": 0,
+                    "min": 1
+                  }
+                }
+              }
+            }
+          },
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "max"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::T"
+              },
+              "mapping": {
+                "::test::T": {
+                  "kind": "int",
+                  "valueRange": {
+                    "kind": 0,
+                    "min": 1
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Outer<string> type Inner<B> = struct { bar: B } type Outer<A> = struct { foo: Inner<[A]> } > with value {\"foo\":3} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 3,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 3
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "struct",
+          "fields": [
+            {
+              "kind": "pair",
+              "key": {
+                "kind": "literal",
+                "value": {
+                  "kind": "string",
+                  "value": "bar"
+                }
+              },
+              "type": {
+                "kind": "mapped",
+                "child": {
+                  "kind": "reference",
+                  "path": "::test::B"
+                },
+                "mapping": {
+                  "::test::B": {
+                    "kind": "list",
+                    "item": {
+                      "kind": "mapped",
+                      "child": {
+                        "kind": "reference",
+                        "path": "::test::A"
+                      },
+                      "mapping": {
+                        "::test::A": {
+                          "kind": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "foo": 3
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "concrete",
+                "child": {
+                  "kind": "reference",
+                  "path": "::test::Inner"
+                },
+                "typeArgs": [
+                  {
+                    "kind": "list",
+                    "item": {
+                      "kind": "reference",
+                      "path": "::test::A"
+                    }
+                  }
+                ]
+              },
+              "mapping": {
+                "::test::A": {
+                  "kind": "string"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 3,
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::B"
+              },
+              "mapping": {
+                "::test::B": {
+                  "kind": "list",
+                  "item": {
+                    "kind": "mapped",
+                    "child": {
+                      "kind": "reference",
+                      "path": "::test::A"
+                    },
+                    "mapping": {
+                      "::test::A": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Outer<string> type Inner<B> = struct { bar: B } type Outer<A> = struct { foo: Inner<[A]> } > with value {\"foo\":{\"bar\":[2]}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 2,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 2
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "string"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "foo": {
+          "bar": [
+            2
+          ]
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "concrete",
+                "child": {
+                  "kind": "reference",
+                  "path": "::test::Inner"
+                },
+                "typeArgs": [
+                  {
+                    "kind": "list",
+                    "item": {
+                      "kind": "reference",
+                      "path": "::test::A"
+                    }
+                  }
+                ]
+              },
+              "mapping": {
+                "::test::A": {
+                  "kind": "string"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": {
+        "bar": [
+          2
+        ]
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::B"
+              },
+              "mapping": {
+                "::test::B": {
+                  "kind": "list",
+                  "item": {
+                    "kind": "mapped",
+                    "child": {
+                      "kind": "reference",
+                      "path": "::test::A"
+                    },
+                    "mapping": {
+                      "::test::A": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    },
+    {
+      "node": [
+        2
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "mapped",
+          "child": {
+            "kind": "reference",
+            "path": "::test::A"
+          },
+          "mapping": {
+            "::test::A": {
+              "kind": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    },
+    {
+      "node": 2,
+      "definition": {
+        "kind": "string"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Outer<string> type Inner<B> = struct { bar: B } type Outer<A> = struct { foo: Inner<[A]> } > with value {\"foo\":{\"bar\":[\"hello\"]}} 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": {
+        "foo": {
+          "bar": [
+            "hello"
+          ]
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "concrete",
+                "child": {
+                  "kind": "reference",
+                  "path": "::test::Inner"
+                },
+                "typeArgs": [
+                  {
+                    "kind": "list",
+                    "item": {
+                      "kind": "reference",
+                      "path": "::test::A"
+                    }
+                  }
+                ]
+              },
+              "mapping": {
+                "::test::A": {
+                  "kind": "string"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": {
+        "bar": [
+          "hello"
+        ]
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::B"
+              },
+              "mapping": {
+                "::test::B": {
+                  "kind": "list",
+                  "item": {
+                    "kind": "mapped",
+                    "child": {
+                      "kind": "reference",
+                      "path": "::test::A"
+                    },
+                    "mapping": {
+                      "::test::A": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    },
+    {
+      "node": [
+        "hello"
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "mapped",
+          "child": {
+            "kind": "reference",
+            "path": "::test::A"
+          },
+          "mapping": {
+            "::test::A": {
+              "kind": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    },
+    {
+      "node": "hello",
+      "definition": {
+        "kind": "string"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Outer<string> type Inner<B> = struct { bar: B } type Outer<A> = struct { foo: Inner<[A]> } > with value {\"foo\":{\"bar\":\"hello\"}} 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": "hello",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "hello"
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "list",
+          "item": {
+            "kind": "mapped",
+            "child": {
+              "kind": "reference",
+              "path": "::test::A"
+            },
+            "mapping": {
+              "::test::A": {
+                "kind": "string"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": {
+        "foo": {
+          "bar": "hello"
+        }
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "foo"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "concrete",
+                "child": {
+                  "kind": "reference",
+                  "path": "::test::Inner"
+                },
+                "typeArgs": [
+                  {
+                    "kind": "list",
+                    "item": {
+                      "kind": "reference",
+                      "path": "::test::A"
+                    }
+                  }
+                ]
+              },
+              "mapping": {
+                "::test::A": {
+                  "kind": "string"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": {
+        "bar": "hello"
+      },
+      "definition": {
+        "kind": "struct",
+        "fields": [
+          {
+            "kind": "pair",
+            "key": {
+              "kind": "literal",
+              "value": {
+                "kind": "string",
+                "value": "bar"
+              }
+            },
+            "type": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::B"
+              },
+              "mapping": {
+                "::test::B": {
+                  "kind": "list",
+                  "item": {
+                    "kind": "mapped",
+                    "child": {
+                      "kind": "reference",
+                      "path": "::test::A"
+                    },
+                    "mapping": {
+                      "::test::A": {
+                        "kind": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    },
+    {
+      "node": "hello",
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "mapped",
+          "child": {
+            "kind": "reference",
+            "path": "::test::A"
+          },
+          "mapping": {
+            "::test::A": {
+              "kind": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "node": "bar",
+      "definition": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "bar"
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Tag<string> type Tag<V> = (V | [V]) > with value 2 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 2,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 2
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "string"
+        },
+        {
+          "kind": "list",
+          "item": {
+            "kind": "mapped",
+            "child": {
+              "kind": "reference",
+              "path": "::test::V"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": 2,
+      "definition": {
+        "kind": "union",
+        "members": [
+          {
+            "kind": "string"
+          },
+          {
+            "kind": "list",
+            "item": {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::V"
+              },
+              "mapping": {
+                "::test::V": {
+                  "kind": "string"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Tag<string> type Tag<V> = (V | [V]) > with value [10] 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 10,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 10
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "string"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
+        10
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "mapped",
+          "child": {
+            "kind": "reference",
+            "path": "::test::V"
+          },
+          "mapping": {
+            "::test::V": {
+              "kind": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "node": 10,
+      "definition": {
+        "kind": "string"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Tag<string> type Tag<V> = (V | [V]) > with value [\"test\"] 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": [
+        "test"
+      ],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "mapped",
+          "child": {
+            "kind": "reference",
+            "path": "::test::V"
+          },
+          "mapping": {
+            "::test::V": {
+              "kind": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Tag<string> type Tag<V> = (V | [V]) > with value [] 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": [],
+      "definition": {
+        "kind": "list",
+        "item": {
+          "kind": "mapped",
+          "child": {
+            "kind": "reference",
+            "path": "::test::V"
+          },
+          "mapping": {
+            "::test::V": {
+              "kind": "string"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Tag<string> type Tag<V> = (V | [V]) > with value \"hello\" 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": "hello",
+      "definition": {
+        "kind": "string"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Tag<string> type Tag<V> = [int, V] > with value [10,\"test\"] 1`] = `
+{
+  "errors": [],
+  "typeAttachments": [
+    {
+      "node": [
+        10,
+        "test"
+      ],
+      "definition": {
+        "kind": "tuple",
+        "items": [
+          {
+            "kind": "mapped",
+            "child": {
+              "kind": "int"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          },
+          {
+            "kind": "mapped",
+            "child": {
+              "kind": "reference",
+              "path": "::test::V"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 10,
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Tag<string> type Tag<V> = [int, V] > with value [10] 1`] = `
+{
+  "errors": [
+    {
+      "kind": "invalid_collection_length",
+      "node": {
+        "originalNode": [
+          10
+        ],
+        "inferredType": {
+          "kind": "list",
+          "item": {
+            "kind": "any"
+          }
+        }
+      },
+      "ranges": [
+        {
+          "kind": 0,
+          "max": 2,
+          "min": 2
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
+        10
+      ],
+      "definition": {
+        "kind": "tuple",
+        "items": [
+          {
+            "kind": "mapped",
+            "child": {
+              "kind": "int"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          },
+          {
+            "kind": "mapped",
+            "child": {
+              "kind": "reference",
+              "path": "::test::V"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 10,
+      "definition": {
+        "kind": "int"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Tag<string> type Tag<V> = [int, V] > with value [4,5] 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": 5,
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "double",
+            "value": 5
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "string"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
+        4,
+        5
+      ],
+      "definition": {
+        "kind": "tuple",
+        "items": [
+          {
+            "kind": "mapped",
+            "child": {
+              "kind": "int"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          },
+          {
+            "kind": "mapped",
+            "child": {
+              "kind": "reference",
+              "path": "::test::V"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": 4,
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": 5,
+      "definition": {
+        "kind": "string"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Tag<string> type Tag<V> = [int, V] > with value [\"foo\",\"test\"] 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": "foo",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "foo"
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "int"
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": [
+        "foo",
+        "test"
+      ],
+      "definition": {
+        "kind": "tuple",
+        "items": [
+          {
+            "kind": "mapped",
+            "child": {
+              "kind": "int"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          },
+          {
+            "kind": "mapped",
+            "child": {
+              "kind": "reference",
+              "path": "::test::V"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "node": "foo",
+      "definition": {
+        "kind": "int"
+      }
+    },
+    {
+      "node": "test",
+      "definition": {
+        "kind": "string"
+      }
+    }
+  ]
+}
+`;
+
+exports[`mcdoc runtime checker > Tag<string> type Tag<V> = [int, V] > with value \"test\" 1`] = `
+{
+  "errors": [
+    {
+      "kind": "type_mismatch",
+      "node": {
+        "originalNode": "test",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "test"
+          }
+        }
+      },
+      "expected": [
+        {
+          "kind": "tuple",
+          "items": [
+            {
+              "kind": "mapped",
+              "child": {
+                "kind": "int"
+              },
+              "mapping": {
+                "::test::V": {
+                  "kind": "string"
+                }
+              }
+            },
+            {
+              "kind": "mapped",
+              "child": {
+                "kind": "reference",
+                "path": "::test::V"
+              },
+              "mapping": {
+                "::test::V": {
+                  "kind": "string"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "typeAttachments": [
+    {
+      "node": "test",
+      "definition": {
+        "kind": "tuple",
+        "items": [
+          {
+            "kind": "mapped",
+            "child": {
+              "kind": "int"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          },
+          {
+            "kind": "mapped",
+            "child": {
+              "kind": "reference",
+              "path": "::test::V"
+            },
+            "mapping": {
+              "::test::V": {
+                "kind": "string"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+`;

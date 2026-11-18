@@ -125,7 +125,7 @@ export class CacheService {
 
 	async load(): Promise<LoadResult> {
 		const ans: LoadResult = { symbols: {} }
-		if (this.project.projectRoots.length === 0) {
+		if (!this.project.config.env.enableSymbolCache || this.project.projectRoots.length === 0) {
 			return ans
 		}
 		const __profiler = this.project.profilers.get('cache#load')
@@ -227,7 +227,7 @@ export class CacheService {
 	 * @returns If the cache file was saved successfully.
 	 */
 	async save(): Promise<boolean> {
-		if (this.project.projectRoots.length === 0) {
+		if (!this.project.config?.env.enableSymbolCache || this.project.projectRoots.length === 0) {
 			return false
 		}
 		const __profiler = this.project.profilers.get('cache#save')
