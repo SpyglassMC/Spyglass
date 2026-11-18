@@ -360,6 +360,32 @@ describe('checkSnbtSyntax (via typeDefinition wrapper)', () => {
 	})
 })
 
+describe('checkSnbtSyntax (the arguments of bool() / uuid() are checked)', () => {
+	// `bool()` and `uuid()` are function nodes; their arguments are ordinary
+	// SNBT values and have to be checked like any other value.
+	it('reports the underscore diagnostic inside bool()', () => {
+		const result = check('bool(1_000)', '1.21.4')
+		assert.ok(
+			result.errors.some(e => hasError([e], 'nbt.parser.number.underscore-not-supported')),
+			`expected the underscore diagnostic, got:\n  ${
+				result.errors.map(e => e.message).join('\n  ')
+			}`,
+		)
+	})
+
+	it('reports the value diagnostic inside uuid()', () => {
+		const result = check('uuid(1abc)', '1.21.5')
+		assert.ok(
+			result.errors.some(e =>
+				hasError([e], 'nbt.parser.string.unquoted-string-first-character')
+			),
+			`expected the first-character diagnostic, got:\n  ${
+				result.errors.map(e => e.message).join('\n  ')
+			}`,
+		)
+	})
+})
+
 describe('checkSnbtSyntax (nbt path key exemption)', () => {
 	// Path keys (`entity.0.SomeTag`) legitimately need to start with
 	// digits / `+` / `-` because the path grammar uses `.` as a separator
