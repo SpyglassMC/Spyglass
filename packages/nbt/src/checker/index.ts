@@ -261,9 +261,6 @@ export function typeDefinition(
 						// Because the runtime checker happens after binding, we need to manually call this
 						core.binder.fallbackSync(node, ctx)
 						core.checker.fallbackSync(node, ctx)
-						for (const child of node.children) {
-							core.checker.fallbackSync(child, ctx)
-						}
 					}
 				},
 			}),
