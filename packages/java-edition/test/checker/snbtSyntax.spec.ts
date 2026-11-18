@@ -391,17 +391,14 @@ describe('checkSnbtSyntax (nbt path key exemption)', () => {
 		const parserCtx = ParserContext.create(project, {
 			doc: TextDocument.create('', '', 0, content),
 		})
-		const src = new Source(content)
-		const node = path(src, parserCtx)
-		const errors = [...parserCtx.err.dump()]
-		if (node && node !== core.Failure) {
-			const checkerCtx = CheckerContext.create(project, {
-				doc: TextDocument.create('', '', 0, content),
-			})
-			core.checker.fallbackSync(node, checkerCtx)
-			for (const e of checkerCtx.err.dump()) {
-				errors.push(e)
-			}
+		const node = core.file(path)(new Source(content), parserCtx)
+		const errors = [...(node.parserErrors ?? [])]
+		const checkerCtx = CheckerContext.create(project, {
+			doc: TextDocument.create('', '', 0, content),
+		})
+		core.checker.fallbackSync(node, checkerCtx)
+		for (const e of checkerCtx.err.dump()) {
+			errors.push(e)
 		}
 		return { node, errors }
 	}

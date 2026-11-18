@@ -38,7 +38,6 @@ export const path: core.Parser<NbtPathNode> = (src, ctx) => {
 	}
 
 	ans.range.end = src.cursor
-	core.AstNode.setParents(ans)
 	return ans
 }
 
