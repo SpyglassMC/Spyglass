@@ -230,7 +230,7 @@ export class LspFileWatcher extends core.EventDispatcher<core.FileWatcherEventMa
 				for (const diskEntry of diskEntries) {
 					diskEntryNames.add(diskEntry.name)
 					await this.#reconcile(
-						core.fileUtil.joinRawSegment(dirUri, diskEntry.name),
+						core.fileUtil.joinPlainPath(dirUri, diskEntry.name as core.PlainPath),
 						diskEntry,
 					)
 				}
@@ -238,7 +238,9 @@ export class LspFileWatcher extends core.EventDispatcher<core.FileWatcherEventMa
 				const storeEntryNames = this.#watchedFiles.getChildrenNames(dirUri)
 				for (const storeEntryName of storeEntryNames) {
 					if (!diskEntryNames.has(storeEntryName)) {
-						this.#handleDelete(core.fileUtil.joinRawSegment(dirUri, storeEntryName))
+						this.#handleDelete(
+							core.fileUtil.joinPlainPath(dirUri, storeEntryName as core.PlainPath),
+						)
 					}
 				}
 			} else if (stat.isFile()) {

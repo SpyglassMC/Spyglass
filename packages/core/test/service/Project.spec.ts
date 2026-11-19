@@ -158,4 +158,46 @@ describe('Project', () => {
 			}
 		})
 	})
+
+	describe('isUserExcluded()', () => {
+		const cases: readonly {
+			name: string
+			exclude: string[]
+			uri: string
+			shouldExclude: boolean
+		}[] = [
+			{
+				name: 'Should exclude if the glob pattern matches the file URI',
+				exclude: ['file:///root/.gitignore/**'],
+				uri: 'file:///root/.gitignore/foo',
+				shouldExclude: true,
+			},
+			{
+				name:
+					'Should not exclude if the glob pattern is only a partial prefix match of the file URI',
+				exclude: ['file:///root/.gitignore'],
+				uri: 'file:///root/.gitignore/foo',
+				shouldExclude: false,
+			},
+			{
+				name:
+					'Should not exclude if the glob pattern is only a partial suffix match of the file URI',
+				exclude: ['file:///pack1/.gitignore/**'],
+				uri: 'file:///root/pack1/.gitignore/foo',
+				shouldExclude: false,
+			},
+			{
+				name: 'Should exclude paths with special characters',
+				exclude: ['file:///root/测试'],
+				uri: 'file:///root/测试',
+				shouldExclude: true,
+			},
+		]
+		for (const { name, exclude, uri, shouldExclude } of cases) {
+			it(name, () => {
+				const actualResult = Project.isUserExcluded(exclude, uri)
+				assert.equal(actualResult, shouldExclude)
+			})
+		}
+	})
 })

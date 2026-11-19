@@ -53,6 +53,93 @@ describe('ConfigService', () => {
 			)
 		})
 	})
+
+	describe('resolvePathInput()', () => {
+		const Win32BaseUri = 'file:///c:/Users/admin/'
+		const UnixBaseUri = 'file:///home/user/'
+		const cases = [
+			{
+				paths: [
+					'file:///C:/Users/admin/my%20datapack/commands.json',
+					'C:\\Users\\admin\\my datapack\\commands.json',
+					'.\\my datapack\\commands.json',
+					'my datapack\\commands.json',
+				],
+				baseUri: Win32BaseUri,
+				isGlobPattern: false,
+				expected: 'file:///c:/Users/admin/my%20datapack/commands.json',
+			},
+			{
+				paths: [
+					'file:///home/user/my%20datapack/commands.json',
+					'/home/user/my datapack/commands.json',
+					'./my datapack/commands.json',
+					'my datapack/commands.json',
+				],
+				baseUri: UnixBaseUri,
+				isGlobPattern: false,
+				expected: 'file:///home/user/my%20datapack/commands.json',
+			},
+			{
+				paths: [
+					'file:///C:/Users/admin/my%20datapack/**/*.b?lt',
+					'C:\\Users\\admin\\my datapack\\**\\*.b?lt',
+					'.\\my datapack\\**\\*.b?lt',
+					'my datapack\\**\\*.b?lt',
+				],
+				baseUri: Win32BaseUri,
+				isGlobPattern: true,
+				expected: 'file:///c:/Users/admin/my%20datapack/**/*.b?lt',
+			},
+			{
+				paths: [
+					'file:///home/user/my%20datapack/**/*.b?lt',
+					'/home/user/my datapack/**/*.b?lt',
+					'./my datapack/**/*.b?lt',
+					'my datapack/**/*.b?lt',
+				],
+				baseUri: UnixBaseUri,
+				isGlobPattern: true,
+				expected: 'file:///home/user/my%20datapack/**/*.b?lt',
+			},
+		]
+		for (const { paths, baseUri, isGlobPattern, expected } of cases) {
+			for (const path of paths) {
+				it(`Should return ${expected} for ${path}`, () => {
+					const actual = ConfigService.resolvePathInput(path, baseUri, isGlobPattern)
+					assert.equal(actual, expected)
+				})
+			}
+		}
+	})
+
+	describe('resolvePathInputsInConfig()', () => {
+		it('Should resolve path inputs correctly', () => {
+			const config: PartialConfig = {
+				env: {
+					dependencies: [
+						'@vanilla-mcdoc',
+						'../playermotion.zip',
+					],
+					mcmetaSummaryOverrides: {
+						commands: { path: 'commands.json' },
+					},
+				},
+			}
+			const actual = ConfigService.resolvePathInputsInConfig(config, 'file:///root/')
+			assert.deepEqual(actual, {
+				env: {
+					dependencies: [
+						'@vanilla-mcdoc',
+						'file:///playermotion.zip',
+					],
+					mcmetaSummaryOverrides: {
+						commands: { path: 'file:///root/commands.json' },
+					},
+				},
+			})
+		})
+	})
 })
 
 describe('PartialConfig', () => {
