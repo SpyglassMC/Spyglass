@@ -253,7 +253,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:particle':
 			return wrap(particle)
 		case 'minecraft:pattern':
-			return wrap(pattern_match(argument.pattern))
+			return wrap(patternMatch(argument.pattern))
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
@@ -718,7 +718,7 @@ export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
 	)(src, ctx)
 }
 
-function pattern_match(pattern: string): core.Parser<core.StringNode> {
+function patternMatch(pattern: string): core.Parser<core.StringNode> {
 	return (src, ctx) => {
 		try {
 			const matcher = new RegExp(pattern)
