@@ -225,7 +225,7 @@ function unknown(treeNode: ArgumentTreeNode): core.InfallibleParser<UnknownComma
 		const value = src.readUntilLineEnd()
 		const range = core.Range.create(start, src)
 		ctx.err.report(
-			localize('mcfunction.parser.unknown-parser', localeQuote(treeNode.parser)),
+			localize('mcfunction.parser.unknown-parser', localeQuote(treeNode.argument.type)),
 			range,
 			core.ErrorSeverity.Hint,
 		)

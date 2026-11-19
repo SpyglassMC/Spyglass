@@ -53,21 +53,23 @@ export async function getMcmetaSummary(
 	const getResource = async <T extends object>(
 		type: 'block_states' | 'commands' | 'registries',
 		overrideConfig: OverrideConfig,
+		migration?: (data: any) => T,
 	): Promise<{ data: T | undefined; checksum: string }> => {
 		const response = await core.fetchWithCache(
 			externals,
 			logger,
 			`https://api.spyglassmc.com/mcje/versions/${encodeURIComponent(version)}/${type}`,
 		)
+		const data = await handleOverride(await response.json(), overrideConfig)
 		return {
-			data: await handleOverride(await response.json(), overrideConfig),
+			data: migration ? migration(data) : data,
 			checksum: response.headers.get('etag') ?? '',
 		}
 	}
 
 	const [blocks, commands, fluids, registries] = [
 		await getResource<McmetaStates>('block_states', overridePaths.blocks),
-		await getResource<McmetaCommands>('commands', overridePaths.commands),
+		await getResource<McmetaCommands>('commands', overridePaths.commands, migrateCommandTree),
 		{
 			data: await handleOverride<McmetaStates>(Fluids, overridePaths.fluids),
 			checksum: 'v1',
@@ -82,6 +84,27 @@ export async function getMcmetaSummary(
 		registries: registries.data,
 		checksum: `${blocks.checksum}-${commands.checksum}-${fluids.checksum}-${registries.checksum}`,
 	}
+}
+
+const migrateCommandTree = (node: any): McmetaCommands => {
+	if (node.type !== 'argument' || !node.parser) {
+		const children = Object.create(null)
+		for (const [key, value] of Object.entries(node.children ?? {})) {
+			children[key] = migrateCommandTree(value)
+		}
+		return { ...node, children }
+	}
+	if (node.properties?.type) {
+		node.properties['type_'] = node.properties.type
+		delete node.properties.type
+	}
+	const argument = {
+		type: node.parser,
+		...node.properties,
+	}
+	delete node.parser
+	delete node.properties
+	return { type: 'argument', argument, ...node }
 }
 
 /* istanbul ignore next */

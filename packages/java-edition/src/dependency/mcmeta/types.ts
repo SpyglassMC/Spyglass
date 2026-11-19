@@ -330,8 +330,12 @@ interface BaseTreeNode {
 
 export interface ArgumentTreeNode extends BaseTreeNode {
 	type: 'argument'
-	parser: string
-	properties?: { [name: string]: any }
+	argument: ArgumentTreeData
+}
+
+export interface ArgumentTreeData {
+	type: string
+	[name: string]: any
 }
 
 export interface LiteralTreeNode extends BaseTreeNode {

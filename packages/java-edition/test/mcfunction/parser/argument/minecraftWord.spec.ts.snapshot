@@ -1,0 +1,51 @@
+exports[`mcfunction argument parser > minecraft:word > Parse 'word' 1`] = `
+{
+  "node": {
+    "type": "string",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "value": "word",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+`;
+
+exports[`mcfunction argument parser > minecraft:word > Parse 'word_with_underscores' 1`] = `
+{
+  "node": {
+    "type": "string",
+    "range": {
+      "start": 0,
+      "end": 21
+    },
+    "value": "word_with_underscores",
+    "valueMap": [
+      {
+        "inner": {
+          "start": 0,
+          "end": 0
+        },
+        "outer": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+`;

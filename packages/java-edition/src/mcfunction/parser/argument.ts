@@ -58,7 +58,7 @@ import {
 	ObjectiveCriteriaNode,
 	TimeNode,
 } from '../node/index.js'
-import type { ArgumentTreeNode, NbtParserProperties } from '../tree/argument.js'
+import type { ArgumentTreeData, NbtParserOptions } from '../tree/argument.js'
 
 const IntegerPattern = /^-?\d+$/
 
@@ -107,24 +107,30 @@ export const argument: mcf.ArgumentParserGetter = (
 	rawTreeNode,
 	prevNodes,
 ): core.Parser | undefined => {
-	const treeNode = rawTreeNode as ArgumentTreeNode
+	const argument = rawTreeNode.argument as ArgumentTreeData
 
 	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser =>
 		core.failOnEmpty<T>(core.stopBefore(parser, '\r', '\n'))
 
-	switch (treeNode.parser) {
+	switch (argument.type) {
+		case 'minecraft:bool':
 		case 'brigadier:bool':
 			return wrap(core.boolean)
+		case 'minecraft:double':
 		case 'brigadier:double':
-			return wrap(double(treeNode.properties?.min, treeNode.properties?.max))
+			return wrap(double(argument.min, argument.max))
+		case 'minecraft:float':
 		case 'brigadier:float':
-			return wrap(float(treeNode.properties?.min, treeNode.properties?.max))
+			return wrap(float(argument.min, argument.max))
+		case 'minecraft:integer':
 		case 'brigadier:integer':
-			return wrap(integer(treeNode.properties?.min, treeNode.properties?.max))
+			return wrap(integer(argument.min, argument.max))
+		case 'minecraft:long':
 		case 'brigadier:long':
-			return wrap(long(treeNode.properties?.min, treeNode.properties?.max))
+			return wrap(long(argument.min, argument.max))
+		case 'minecraft:string':
 		case 'brigadier:string':
-			switch (treeNode.properties.type) {
+			switch (argument.type_) {
 				case 'word':
 					return wrap(unquotedString)
 				case 'phrase':
@@ -133,6 +139,12 @@ export const argument: mcf.ArgumentParserGetter = (
 				default:
 					return wrap(greedyString)
 			}
+		case 'minecraft:word':
+			return wrap(unquotedString)
+		case 'minecraft:quoted_string':
+			return wrap(core.brigadierString)
+		case 'minecraft:greedy_string':
+			return wrap(greedyString)
 		case 'minecraft:angle':
 			return wrap(
 				core.validate(
@@ -172,7 +184,10 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:dimension':
 			return wrap(core.resourceLocation({ category: 'dimension' }))
 		case 'minecraft:entity':
-			return wrap(entity(treeNode.properties.amount, treeNode.properties.type))
+			return wrap(entity(
+				argument.amount ?? (argument.single_result ? 'single' : 'multiple'),
+				argument.type_ ?? (argument.players_only ? 'players' : 'entities'),
+			))
 		case 'minecraft:entity_anchor':
 			return wrap(commandLiteral({ pool: EntityAnchorArgumentValues }))
 		case 'minecraft:entity_summon':
@@ -180,15 +195,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:feature':
 			return wrap(resourceOrInline('worldgen/feature'))
 		case 'minecraft:float_range':
-			return wrap(
-				range(
-					'float',
-					treeNode.properties?.min,
-					treeNode.properties?.max,
-					treeNode.properties?.minSpan,
-					treeNode.properties?.maxSpan,
-				),
-			)
+			return wrap(range('float', argument.min, argument.max, argument.minSpan, argument.maxSpan))
 		case 'minecraft:function':
 			return wrap(core.resourceLocation({ category: 'function', allowTag: true }))
 		case 'minecraft:gamemode':
@@ -199,13 +206,7 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(commandLiteral({ pool: HeightmapValues }))
 		case 'minecraft:int_range':
 			return wrap(
-				range(
-					'integer',
-					treeNode.properties?.min,
-					treeNode.properties?.max,
-					treeNode.properties?.minSpan,
-					treeNode.properties?.maxSpan,
-				),
+				range('integer', argument.min, argument.max, argument.minSpan, argument.maxSpan),
 			)
 		case 'minecraft:item_enchantment':
 			return wrap(core.resourceLocation({ category: 'enchantment' }))
@@ -232,16 +233,16 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:mob_effect':
 			return wrap(core.resourceLocation({ category: 'mob_effect' }))
 		case 'minecraft:nbt_compound_tag':
-			return wrap(nbtDispatchedParser(nbt.parser.compound, treeNode.properties))
+			return wrap(nbtDispatchedParser(nbt.parser.compound, argument.options))
 		case 'minecraft:nbt_path':
-			return wrap(nbtPathParser(nbt.parser.path, treeNode.properties))
+			return wrap(nbtPathParser(nbt.parser.path, argument.options))
 		case 'minecraft:nbt_tag':
-			return wrap(nbtDispatchedParser(nbt.parser.entry, treeNode.properties))
+			return wrap(nbtDispatchedParser(nbt.parser.entry, argument.options))
 		case 'minecraft:objective':
 			return wrap(
 				objective(
-					core.SymbolUsageType.is(treeNode.properties?.['usageType'])
-						? treeNode.properties?.['usageType']
+					core.SymbolUsageType.is(argument['usageType'])
+						? argument['usageType']
 						: undefined,
 				),
 			)
@@ -251,28 +252,33 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(commandLiteral({ pool: OperationArgumentValues, colorTokenType: 'operator' }))
 		case 'minecraft:particle':
 			return wrap(particle)
+		case 'minecraft:pattern':
+			return wrap(patternMatch(argument.pattern))
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
 		case 'minecraft:resource_or_tag_key':
-			const allowTag = treeNode.parser === 'minecraft:resource_or_tag'
-				|| treeNode.parser === 'minecraft:resource_or_tag_key'
+			const allowTag = argument.type === 'minecraft:resource_or_tag'
+				|| argument.type === 'minecraft:resource_or_tag_key'
 			return wrap(
 				core.resourceLocation({
-					category: core.ResourceLocation.shorten(treeNode.properties.registry) as
+					category: core.ResourceLocation.shorten(argument.registry) as
 						| core.RegistryCategory
 						| core.WorldgenFileCategory,
 					allowTag,
 				}),
 			)
 		case 'minecraft:resource_location':
-			return wrap(core.resourceLocation(treeNode.properties ?? { pool: [], allowUnknown: true }))
+			return wrap(core.resourceLocation(argument.options ?? { pool: [], allowUnknown: true }))
 		case 'minecraft:resource_selector':
-			return wrap(resourceSelector(treeNode.properties.registry))
+			return wrap(resourceSelector(argument.registry))
 		case 'minecraft:rotation':
 			return wrap(vector({ dimension: 2, noLocal: true }))
 		case 'minecraft:score_holder':
-			return wrap(scoreHolder(treeNode.properties.usageType, treeNode.properties.amount))
+			return wrap(scoreHolder(
+				argument.usageType,
+				argument.amount ?? (argument.multiple ? 'multiple' : 'single'),
+			))
 		case 'minecraft:scoreboard_slot':
 			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.
 			// But I do not want to spend time supporting them.
@@ -286,13 +292,9 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:swizzle':
 			return wrap(commandLiteral({ pool: SwizzleArgumentValues }))
 		case 'minecraft:team':
-			return wrap(
-				team(
-					core.SymbolUsageType.is(treeNode.properties?.['usageType'])
-						? treeNode.properties?.['usageType']
-						: undefined,
-				),
-			)
+			return wrap(team(
+				core.SymbolUsageType.is(argument['usageType']) ? argument['usageType'] : undefined,
+			))
 		case 'minecraft:team_color':
 			return wrap(
 				core.map(
@@ -310,11 +312,11 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:template_rotation':
 			return wrap(commandLiteral({ pool: RotationValues }))
 		case 'minecraft:time':
-			return wrap(time(treeNode.properties?.min))
+			return wrap(time(argument.min, argument.max))
 		case 'minecraft:uuid':
 			return wrap(uuid)
 		case 'minecraft:vec2':
-			return wrap(vector({ dimension: 2, noLocal: true }))
+			return wrap(vec2)
 		case 'minecraft:vec3':
 			return wrap(vector({ dimension: 3 }))
 		case 'spyglassmc:criterion':
@@ -324,17 +326,13 @@ export const argument: mcf.ArgumentParserGetter = (
 			if (core.ResourceLocationNode.is(advancementNode)) {
 				return wrap(criterion(
 					core.ResourceLocationNode.toString(advancementNode, 'full'),
-					core.SymbolUsageType.is(treeNode.properties?.['usageType'])
-						? treeNode.properties?.['usageType']
-						: undefined,
+					core.SymbolUsageType.is(argument['usageType']) ? argument['usageType'] : undefined,
 				))
 			}
 			return wrap(greedyString)
 		case 'spyglassmc:tag':
 			return wrap(tag(
-				core.SymbolUsageType.is(treeNode.properties?.['usageType'])
-					? treeNode.properties?.['usageType']
-					: undefined,
+				core.SymbolUsageType.is(argument['usageType']) ? argument['usageType'] : undefined,
 			))
 		default:
 			// Unknown parser.
@@ -618,17 +616,22 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 
 function nbtDispatchedParser(
 	parser: core.Parser<nbt.NbtNode>,
-	properties?: NbtParserProperties,
+	options?: NbtParserOptions,
 ): core.Parser<NbtNode> {
 	return core.map(parser, (res) => {
-		const ans: NbtNode = { type: 'mcfunction:nbt', range: res.range, children: [res], properties }
+		const ans: NbtNode = {
+			type: 'mcfunction:nbt',
+			range: res.range,
+			children: [res],
+			properties: options,
+		}
 		return ans
 	})
 }
 
 function nbtPathParser(
 	parser: core.Parser<nbt.NbtPathNode>,
-	properties?: NbtParserProperties,
+	properties?: NbtParserOptions,
 ): core.Parser<NbtPathNode> {
 	return core.map(parser, (res) => {
 		const ans: NbtPathNode = {
@@ -713,6 +716,40 @@ export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
 			return ans
 		},
 	)(src, ctx)
+}
+
+function patternMatch(pattern: string): core.Parser<core.StringNode> {
+	return (src, ctx) => {
+		try {
+			const matcher = new RegExp(pattern)
+			const remaining = src.peekRemaining()
+			const value = matcher.exec(remaining)?.[0]
+			const start = src.cursor
+			if (value !== undefined) {
+				src.skip(value.length)
+				return {
+					type: 'string',
+					value,
+					options: { unquotable: { blockList: new Set(['\n', '\r']) } },
+					range: core.Range.create(start, src),
+					valueMap: [],
+				}
+			} else {
+				src.skipRemaining()
+				const ans: core.StringNode = {
+					type: 'string',
+					value: remaining,
+					options: { unquotable: { blockList: new Set(['\n', '\r']) } },
+					range: core.Range.create(start, src),
+					valueMap: [],
+				}
+				ctx.err.report(localize('mismatching-regex-pattern', pattern), ans)
+				return ans
+			}
+		} catch { // Should only happen when the pattern is invalid
+			return core.Failure
+		}
+	}
 }
 
 function range(
@@ -1594,31 +1631,43 @@ function unquotableSymbol(
 	return validateUnquotable(symbol(options, terminators))
 }
 
-function time(minimum = 0): core.InfallibleParser<TimeNode> {
+function time(minimum?: number, maximum?: number): core.InfallibleParser<TimeNode> {
 	return core.validate(
-		core.map(
-			core.sequence([
-				float(),
-				core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
-			]),
-			(res) => {
-				const valueNode = res.children.find(core.FloatNode.is)!
-				const unitNode = res.children.find(core.LiteralNode.is)
-				const ans: TimeNode = {
-					type: 'mcfunction:time',
-					range: res.range,
-					children: res.children,
-					value: valueNode.value,
-					unit: unitNode?.value,
+		core.validate(
+			core.map(
+				core.sequence([
+					float(),
+					core.optional(core.failOnEmpty(core.literal(...TimeNode.Units))),
+				]),
+				(res) => {
+					const valueNode = res.children.find(core.FloatNode.is)!
+					const unitNode = res.children.find(core.LiteralNode.is)
+					const ans: TimeNode = {
+						type: 'mcfunction:time',
+						range: res.range,
+						children: res.children,
+						value: valueNode.value,
+						unit: unitNode?.value,
+					}
+					return ans
+				},
+			),
+			(res, _src, ctx) => {
+				const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+				if (release && ReleaseVersion.cmp(release, '26.4') < 0) {
+					// Default minimum before 26.4
+					minimum ??= 0
 				}
-				return ans
+				const scale = TimeNode.UnitToTicks.get(res.unit ?? '')!
+				return minimum === undefined || Math.round(res.value * scale) >= minimum
 			},
+			localize('mcfunction.parser.time.below-min', minimum ?? 0),
 		),
 		(res) => {
 			const scale = TimeNode.UnitToTicks.get(res.unit ?? '')!
-			return Math.round(res.value * scale) >= minimum
+			return maximum === undefined || Math.round(res.value * scale) <= maximum
 		},
-		localize('mcfunction.parser.time.below-min', minimum),
+		localize('mcfunction.parser.time.above-max', maximum!),
 	)
 }
 
@@ -1700,6 +1749,12 @@ function validateUnquotable(
 		}
 		return res
 	})
+}
+
+const vec2: core.InfallibleParser<VectorNode> = (src, ctx) => {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	const noLocal = release && ReleaseVersion.cmp(release, '26.4') < 0
+	return vector({ dimension: 2, noLocal })(src, ctx)
 }
 
 function vector(options: VectorNode.Options): core.InfallibleParser<VectorNode> {
