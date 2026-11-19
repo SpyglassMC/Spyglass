@@ -316,7 +316,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:uuid':
 			return wrap(uuid)
 		case 'minecraft:vec2':
-			return wrap(vector({ dimension: 2, noLocal: true }))
+			return wrap(vec2)
 		case 'minecraft:vec3':
 			return wrap(vector({ dimension: 3 }))
 		case 'spyglassmc:criterion':
@@ -1749,6 +1749,12 @@ function validateUnquotable(
 		}
 		return res
 	})
+}
+
+const vec2: core.InfallibleParser<VectorNode> = (src, ctx) => {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	const noLocal = release && ReleaseVersion.cmp(release, '26.4') < 0
+	return vector({ dimension: 2, noLocal })(src, ctx)
 }
 
 function vector(options: VectorNode.Options): core.InfallibleParser<VectorNode> {
