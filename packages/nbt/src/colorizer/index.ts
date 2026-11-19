@@ -16,8 +16,8 @@ import type {
 	TypedNbtNode,
 } from '../node/index.js'
 
-const snbtFunction: core.Colorizer<NbtFunctionNode> = (node) => {
-	return [
+const snbtFunction: core.Colorizer<NbtFunctionNode> = (node, ctx) => {
+	const tokens: ColorToken[] = [
 		ColorToken.create(
 			core.Range.create(node.prefixRange.start, node.prefixRange.start + 4),
 			'function',
@@ -26,8 +26,13 @@ const snbtFunction: core.Colorizer<NbtFunctionNode> = (node) => {
 			core.Range.create(node.prefixRange.start + 4, node.prefixRange.end),
 			'operator',
 		),
-		ColorToken.create(node.suffixRange, 'operator'),
 	]
+	for (const child of node.children) {
+		const childColorizer = ctx.meta.getColorizer(child.type)
+		tokens.push(...childColorizer(child, ctx))
+	}
+	tokens.push(ColorToken.create(node.suffixRange, 'operator'))
+	return tokens
 }
 
 const compound: core.Colorizer<NbtCompoundNode> = (node, ctx) => {

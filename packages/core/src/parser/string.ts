@@ -22,8 +22,10 @@ function makeEscapeChild(
 	raw: string,
 	kind: UnicodeEscapeKind,
 	resolved = '',
+	prefixRange?: Range,
+	suffixRange?: Range,
 ): UnicodeEscapeNode {
-	return {
+	const ans: UnicodeEscapeNode = {
 		type: 'unicode_escape',
 		kind,
 		range: Range.create(start, end),
@@ -31,6 +33,13 @@ function makeEscapeChild(
 		resolved,
 		codepoint: resolved ? resolved.codePointAt(0)! : 0,
 	}
+	if (prefixRange) {
+		ans.prefixRange = prefixRange
+	}
+	if (suffixRange) {
+		ans.suffixRange = suffixRange
+	}
+	return ans
 }
 
 export function string(options: StringOptions): InfallibleParser<StringNode> {
@@ -63,7 +72,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						const resolved = EscapeTable.get(c2)!
 						ans.valueMap.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
-							outer: Range.create(cStart, src),
+							outer: Range.create(src.cursor - 1, src.cursor),
 						})
 						ans.value += resolved
 						pushChild(
@@ -92,6 +101,9 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 									outer: Range.create(cStart, src),
 								})
 								ans.value += c2
+								pushChild(
+									makeEscapeChild(cStart, src.cursor, raw, c2),
+								)
 								cStart = src.cursor
 								continue
 							}
@@ -124,6 +136,9 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								outer: Range.create(cStart, src),
 							})
 							ans.value += c2
+							pushChild(
+								makeEscapeChild(cStart, src.cursor, src.sliceToCursor(cStart), c2),
+							)
 						}
 					} else if (c2 === 'N') {
 						if (!src.trySkip('{')) {
@@ -151,9 +166,22 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							})
 							ans.value += c2
 						} else {
+							const prefixEndOuter = src.cursor
 							src.skip(name.length + 1)
 							const raw = src.sliceToCursor(cStart)
-							pushChild(makeEscapeChild(cStart, src.cursor, raw, 'N'))
+							const prefixRange = Range.create(cStart, prefixEndOuter)
+							const suffixRange = Range.create(src.cursor - 1, src.cursor)
+							pushChild(
+								makeEscapeChild(
+									cStart,
+									src.cursor,
+									raw,
+									'N',
+									'',
+									prefixRange,
+									suffixRange,
+								),
+							)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + raw.length),
 								outer: Range.create(cStart, src),

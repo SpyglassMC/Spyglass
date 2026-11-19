@@ -4,7 +4,7 @@ import { mockProjectData } from '@spyglassmc/core/test/utils.ts'
 import { register } from '@spyglassmc/java-edition/lib/checker/index.js'
 import { localize } from '@spyglassmc/locales'
 import * as nbt from '@spyglassmc/nbt'
-import { entry } from '@spyglassmc/nbt/lib/parser/index.js'
+import { entry, path } from '@spyglassmc/nbt/lib/parser/index.js'
 import * as assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { TextDocument } from 'vscode-languageserver-textdocument'
@@ -358,4 +358,89 @@ describe('checkSnbtSyntax (via typeDefinition wrapper)', () => {
 			)
 		}
 	})
+})
+
+describe('checkSnbtSyntax (the arguments of bool() / uuid() are checked)', () => {
+	// `bool()` and `uuid()` are function nodes; their arguments are ordinary
+	// SNBT values and have to be checked like any other value.
+	it('reports the underscore diagnostic inside bool()', () => {
+		const result = check('bool(1_000)', '1.21.4')
+		assert.ok(
+			result.errors.some(e => hasError([e], 'nbt.parser.number.underscore-not-supported')),
+			`expected the underscore diagnostic, got:\n  ${
+				result.errors.map(e => e.message).join('\n  ')
+			}`,
+		)
+	})
+
+	it('reports the value diagnostic inside uuid()', () => {
+		const result = check('uuid(1abc)', '1.21.5')
+		assert.ok(
+			result.errors.some(e =>
+				hasError([e], 'nbt.parser.string.unquoted-string-first-character')
+			),
+			`expected the first-character diagnostic, got:\n  ${
+				result.errors.map(e => e.message).join('\n  ')
+			}`,
+		)
+	})
+})
+
+describe('checkSnbtSyntax (nbt path key exemption)', () => {
+	// Path keys (`entity.0.SomeTag`) legitimately need to start with
+	// digits / `+` / `-` because the path grammar uses `.` as a separator
+	// and a numeric first segment is a valid part index. The
+	// `unquoted-string-first-character` checker must skip path keys, even
+	// when their first character would normally trigger it.
+	const Cases: { name: string; source: string }[] = [
+		{ name: 'numeric first segment', source: '0.tag' },
+		{ name: 'numeric first segment after dot', source: 'entity.0.tag' },
+		{ name: 'signed first segment', source: '+1.tag' },
+		{ name: 'dotted first segment', source: '.leading' },
+		{ name: 'dashed first segment', source: '-1.tag' },
+	]
+	function checkPath(content: string, version: ReleaseVersion) {
+		const ctx: Record<string, string> = { loadedVersion: version }
+		const project = mockProjectData({ ctx })
+		const data = getUnicodeData()
+		project.meta.registerSymbolRegistrar('unicode-data', {
+			checksum: data.checksum,
+			registrar: unicodeSymbolRegistrar(data),
+		})
+		for (const [id, { registrar }] of project.meta.symbolRegistrars) {
+			project.symbols.contributeAs(`symbol_registrar/${id}`, () => {
+				registrar(project.symbols, {})
+				return undefined
+			})
+		}
+		register(project.meta)
+		const parserCtx = ParserContext.create(project, {
+			doc: TextDocument.create('', '', 0, content),
+		})
+		const node = core.file(path)(new Source(content), parserCtx)
+		const errors = [...(node.parserErrors ?? [])]
+		const checkerCtx = CheckerContext.create(project, {
+			doc: TextDocument.create('', '', 0, content),
+		})
+		core.checker.fallbackSync(node, checkerCtx)
+		for (const e of checkerCtx.err.dump()) {
+			errors.push(e)
+		}
+		return { node, errors }
+	}
+	for (const { name, source } of Cases) {
+		it(name, () => {
+			const result = checkPath(source, '1.21.5')
+			const unwanted = result.errors.filter(e =>
+				e.message.includes(prefix('nbt.parser.string.unquoted-string-first-character'))
+			)
+			assert.deepEqual(
+				unwanted.map(e => e.message),
+				[],
+				`path key must not trigger first-character error, got:\n  ${
+					unwanted.map(e => e.message).join('\n  ')
+				}`,
+			)
+		})
+	}
 })

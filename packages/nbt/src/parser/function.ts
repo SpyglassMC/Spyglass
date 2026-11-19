@@ -15,26 +15,27 @@ import { entry } from './entry.js'
  */
 export const snbtFunction = (
 	functions: readonly string[],
-): core.Parser<NbtNode> =>
-(src, ctx) => {
-	// Try each known function name and pick the longest match.
-	let matched: string | undefined
-	for (const name of functions) {
-		if (src.string.startsWith(name, src.cursor) && name.length > (matched?.length ?? 0)) {
-			matched = name
+): core.Parser<NbtNode> => {
+	return (src, ctx) => {
+		// Try each known function name and pick the longest match.
+		let matched: string | undefined
+		for (const name of functions) {
+			if (src.peek(name.length) === name && name.length > (matched?.length ?? 0)) {
+				matched = name
+			}
 		}
-	}
-	if (!matched) {
+		if (!matched) {
+			return core.Failure
+		}
+
+		if (matched === 'bool') {
+			return parseBool(src, ctx)
+		}
+		if (matched === 'uuid') {
+			return parseUuid(src, ctx)
+		}
 		return core.Failure
 	}
-
-	if (matched === 'bool') {
-		return parseBool(src, ctx)
-	}
-	if (matched === 'uuid') {
-		return parseUuid(src, ctx)
-	}
-	return core.Failure
 }
 
 const parseBool = (

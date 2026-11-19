@@ -52,7 +52,7 @@ function getEarlierNode(
 
 const rootCommand = (
 	nodes: mcf.CommandNode['children'],
-	index: number,
+	_index: number,
 	ctx: core.CheckerContext,
 ) => {
 	for (let i = 0; i < nodes.length; i += 1) {

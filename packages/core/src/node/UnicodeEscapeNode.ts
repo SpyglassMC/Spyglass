@@ -16,6 +16,10 @@ export interface UnicodeEscapeNode extends AstNode {
 	codepoint: number
 	/** Canonical Unicode name when known, otherwise `undefined`. */
 	name?: string
+	/** Outer source range of the `\N{` prefix when `kind === 'N'`. */
+	prefixRange?: Range
+	/** Outer source range of the closing `}` when `kind === 'N'`. */
+	suffixRange?: Range
 }
 export namespace UnicodeEscapeNode {
 	/* istanbul ignore next */

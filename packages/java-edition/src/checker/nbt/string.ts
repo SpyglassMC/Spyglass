@@ -1,5 +1,5 @@
-import type { AstNode, CheckerContext, SyncChecker, UnicodeEscapeNode } from '@spyglassmc/core'
-import { Range, StringBaseNode } from '@spyglassmc/core'
+import type { AstNode, CheckerContext, SyncChecker } from '@spyglassmc/core'
+import { Range, StringBaseNode, UnicodeEscapeNode } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import {
 	BulkNames,
@@ -209,24 +209,24 @@ function finalizeEscape(
 	// Reject extended escapes (\u/\U/\x/\N{...}) when the resolved game
 	// version predates the cutoff. The parser accepted them syntactically; the
 	// checker is responsible for the version-gated diagnostic.
-	if (raw.length > 1) {
-		if (!supportsExtendedEscapes) {
-			ctx.err.report(
-				localize(
-					'parser.string.extended-unicode-escape-not-supported',
-					raw,
-					ExtendedEscapesSince,
-				),
-				escapeRange,
-			)
-			return
-		}
+	if (raw.length > 1 && !supportsExtendedEscapes) {
+		ctx.err.report(
+			localize(
+				'parser.string.extended-unicode-escape-not-supported',
+				raw,
+				ExtendedEscapesSince,
+			),
+			escapeRange,
+		)
 	}
 	// Simple escapes (`\n`, `\t`, ...) have raw === c2 and the parser already
 	// wrote the resolved char into `value` and onto the child. Look up the
 	// Unicode name for the resolved codepoint.
 	if (raw.length === 1) {
-		const codepoint = child.resolved ? child.resolved.codePointAt(0)! : raw.codePointAt(0)!
+		const codepoint = (child.resolved ?? raw).codePointAt(0)!
+		if (raw === '\\' || raw === '"' || raw === "'") {
+			return
+		}
 		child.codepoint = codepoint
 		child.name = lookupNameByCodepoint(codepoint, ctx)
 		child.hover = buildEscapeHover(codepoint, child.name)
@@ -270,8 +270,18 @@ function rewriteValue(
 	}
 	const start = entry.inner.start
 	const end = entry.inner.end
+	const oldLen = end - start
+	const newLen = resolved.length
+	const delta = newLen - oldLen
 	node.value = node.value.slice(0, start) + resolved + node.value.slice(end)
-	entry.inner = Range.create(start, start + resolved.length)
+	entry.inner = Range.create(start, start + newLen)
+	if (delta !== 0) {
+		const idx = node.valueMap.indexOf(entry)
+		for (let i = idx + 1; i < node.valueMap.length; i++) {
+			const e = node.valueMap[i]
+			e.inner = Range.create(e.inner.start + delta, e.inner.end + delta)
+		}
+	}
 }
 
 /**
@@ -290,11 +300,11 @@ export const unicodeEscapes: SyncChecker<StringBaseNode> = (node, ctx) => {
 		const isStringNode = StringBaseNode.is(n)
 		if (isStringNode) {
 			for (const child of children) {
-				if (child.type === 'unicode_escape') {
+				if (UnicodeEscapeNode.is(child)) {
 					finalizeEscape(
-						child as UnicodeEscapeNode,
+						child,
 						ctx,
-						n as StringBaseNode,
+						n,
 						supportsExtendedEscapes,
 					)
 				} else {

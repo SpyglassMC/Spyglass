@@ -5,7 +5,7 @@ import { compound } from './compound.js'
 import { snbtFunction } from './function.js'
 import { primitive } from './primitive.js'
 
-const SNBT_FUNCTIONS = ['bool', 'uuid']
+export const SNBT_FUNCTIONS = ['bool', 'uuid'] as const
 
 export const entry: core.Parser<NbtNode> = (src, ctx) =>
 	core.failOnEmpty(

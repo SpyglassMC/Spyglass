@@ -726,7 +726,7 @@ exports[`checkSnbtSyntax (pre-1.21.5) > underscore digit separator 1`] = `
         "end": 5
       },
       "message": "Rendered as a number by Spyglass, while the game will see it as a string in version 1.21.4 and lower / data pack format 70 and lower",
-      "severity": 1
+      "severity": 2
     }
   ]
 }

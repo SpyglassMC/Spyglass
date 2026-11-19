@@ -96,6 +96,8 @@ export function getValues(
 				}
 			}
 			return [...allValues.values()]
+		case 'mapped':
+			return getValues(typeDef.child as McdocType, ctx)
 		case 'reference':
 			// TODO: de-duplicate this logic from the runtime simplifier
 			if (!typeDef.path) {

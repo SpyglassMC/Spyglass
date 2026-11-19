@@ -180,6 +180,27 @@ describe('string checker', () => {
 		})
 	})
 
+	describe('the valueMap stays consistent after a resolved \\N{…}', () => {
+		it('shifts the entries that follow the resolved escape', () => {
+			// `\N{bel}` is 7 source characters that resolve to one character,
+			// so every entry after it has to move by 6 to keep pointing at the
+			// same source text.
+			const run = runChecker('"a\\N{bel}\\n"', baseOptions())
+			assert.equal(run.node.value, 'a\u0007\n')
+			const escape = run.node.valueMap[1]!
+			const after = run.node.valueMap[2]!
+			// The escape itself now covers one character of the value.
+			assert.deepEqual(escape.inner, { start: 1, end: 2 })
+			// The `\n` escape sat at [8,9) of the value before the `\N{bel}`
+			// was resolved; it has moved to [2,3).
+			assert.deepEqual(after.inner, { start: 2, end: 3 })
+			// The outer (source) side is untouched. A simple escape's outer
+			// range covers the escaped character only (see the `valueMap`
+			// mapping tests in `packages/core/test/parser/string.spec.ts`).
+			assert.deepEqual(after.outer, { start: 10, end: 11 })
+		})
+	})
+
 	describe('\\u / \\U / \\x hex escapes', () => {
 		it('annotates \\u#### with its codepoint, glyph and name', () => {
 			const run = runChecker('"\\u00a7"', baseOptions())
@@ -211,8 +232,8 @@ describe('string checker', () => {
 			const run = runChecker('"\\uggez"', baseOptions())
 			assert.equal(run.parseErrors.length, 1)
 			assert.deepEqual(run.checkErrors.map((e) => e.message), [])
-			// The parser never attached a child, so there is nothing to check.
-			assert.equal(run.parsedEscapeCount, 0)
+			// An escape node with empty `resolved` is needed for later steps
+			assert.equal(run.parsedEscapeCount, 1)
 		})
 	})
 
@@ -268,6 +289,43 @@ describe('string checker', () => {
 			const run = runChecker('"\\u00a7"', baseOptions())
 			assert.deepEqual(run.checkErrors.map((e) => e.message), [])
 		})
+
+		it('still resolves the escape after reporting it', () => {
+			const run = runChecker('"\\u00a7"', baseOptions(), '1.21.4')
+			assert.match(onlyCheckError(run), gated)
+			const esc = run.escapes[0]!
+			assert.equal(esc.codepoint, 0xa7)
+			assert.equal(esc.resolved, '§')
+			assert.equal(esc.name, 'section sign')
+			assert.equal(esc.hover, "[ § ] 'Section Sign' - `U+00A7`")
+		})
+
+		it('still resolves a named escape after reporting it', () => {
+			const run = runChecker('"\\N{snowman}"', baseOptions(), '1.21.4')
+			assert.match(onlyCheckError(run), gated)
+			const esc = run.escapes[0]!
+			assert.equal(esc.codepoint, 0x2603)
+			assert.equal(esc.resolved, '☃')
+			assert.equal(esc.hover, "[ ☃ ] 'Snowman' - `U+2603`")
+		})
+	})
+
+	describe('the \\, " and \' escapes', () => {
+		// These escapes are pure syntax: a backslash or a quote has no
+		// Unicode name of its own that is worth showing.
+		const cases: { name: string; text: string }[] = [
+			{ name: 'backslash', text: '"\\\\"' },
+			{ name: 'double quote', text: '"\\""' },
+			{ name: 'single quote', text: "'\\''" },
+		]
+		for (const { name, text } of cases) {
+			it(`gives the ${name} escape no name and no hover`, () => {
+				const esc = onlyEscape(runChecker(text, { quotes: ['"', "'"], escapable: {} }))
+				assert.equal(esc.name, undefined)
+				assert.equal(esc.hover, undefined)
+				assert.equal(esc.codepoint, esc.resolved!.codePointAt(0))
+			})
+		}
 	})
 
 	describe('\\N{…} named escapes', () => {
