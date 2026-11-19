@@ -155,7 +155,15 @@ export class MetaRegistry {
 		return this.#checkers.get(type) ?? checker.fallback
 	}
 	public registerChecker<N extends AstNode>(type: N['type'], checker: Checker<N>): void {
-		this.#checkers.set(type, checker)
+		const oldChecker = this.#checkers.get(type)
+		if (oldChecker !== undefined) {
+			this.#checkers.set(type, (node, ctx) => {
+				oldChecker(node, ctx)
+				checker(node, ctx)
+			})
+		} else {
+			this.#checkers.set(type, checker)
+		}
 	}
 
 	public hasCodeActionProvider<N extends AstNode>(type: N['type']): boolean {
