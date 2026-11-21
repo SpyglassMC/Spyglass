@@ -21,7 +21,6 @@ import * as jeJson from './json/index.js'
 import { registerMcdocAttributes, registerPackFormatAttribute } from './mcdocAttributes.js'
 import * as jeMcf from './mcfunction/index.js'
 import { applyMigrations } from './mcfunction/tree/migrations.js'
-import { getPatch } from './mcfunction/tree/patch.js'
 
 export * as binder from './binder/index.js'
 export * as checker from './checker/index.js'
@@ -129,7 +128,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	}
 
 	const commands = applyMigrations(
-		core.merge(summary.commands, getPatch(release)),
+		summary.commands,
 		{ major: version.data_pack_version, minor: version.data_pack_version_minor },
 		versions,
 		logger,
