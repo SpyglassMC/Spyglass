@@ -114,31 +114,15 @@ export const argument: mcf.ArgumentParserGetter = (
 
 	switch (argument.type) {
 		case 'minecraft:bool':
-		case 'brigadier:bool':
 			return wrap(core.boolean)
 		case 'minecraft:double':
-		case 'brigadier:double':
 			return wrap(double(argument.min, argument.max))
 		case 'minecraft:float':
-		case 'brigadier:float':
 			return wrap(float(argument.min, argument.max))
 		case 'minecraft:integer':
-		case 'brigadier:integer':
 			return wrap(integer(argument.min, argument.max))
 		case 'minecraft:long':
-		case 'brigadier:long':
 			return wrap(long(argument.min, argument.max))
-		case 'minecraft:string':
-		case 'brigadier:string':
-			switch (argument.type_) {
-				case 'word':
-					return wrap(unquotedString)
-				case 'phrase':
-					return wrap(core.brigadierString)
-				case 'greedy':
-				default:
-					return wrap(greedyString)
-			}
 		case 'minecraft:word':
 			return wrap(unquotedString)
 		case 'minecraft:quoted_string':
@@ -185,8 +169,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(core.resourceLocation({ category: 'dimension' }))
 		case 'minecraft:entity':
 			return wrap(entity(
-				argument.amount ?? (argument.single_result ? 'single' : 'multiple'),
-				argument.type_ ?? (argument.players_only ? 'players' : 'entities'),
+				argument.single_result ? 'single' : 'multiple',
+				argument.players_only ? 'players' : 'entities',
 			))
 		case 'minecraft:entity_anchor':
 			return wrap(commandLiteral({ pool: EntityAnchorArgumentValues }))
@@ -255,11 +239,8 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:pattern':
 			return wrap(patternMatch(argument.pattern))
 		case 'minecraft:resource':
-		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
-		case 'minecraft:resource_or_tag_key':
 			const allowTag = argument.type === 'minecraft:resource_or_tag'
-				|| argument.type === 'minecraft:resource_or_tag_key'
 			return wrap(
 				core.resourceLocation({
 					category: core.ResourceLocation.shorten(argument.registry) as
@@ -277,7 +258,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:score_holder':
 			return wrap(scoreHolder(
 				argument.usageType,
-				argument.amount ?? (argument.multiple ? 'multiple' : 'single'),
+				argument.multiple ? 'multiple' : 'single',
 			))
 		case 'minecraft:scoreboard_slot':
 			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.

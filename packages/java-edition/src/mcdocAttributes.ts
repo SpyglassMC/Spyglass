@@ -32,9 +32,9 @@ export function registerMcdocAttributes(
 			return field
 		},
 	})
-	const gameRuleNode = commands.children['gamerule']?.children
+	const gameRuleNode = commands.children?.['gamerule']?.children
 	if (gameRuleNode) {
-		const [boolGameRules, intGameRules] = ['brigadier:bool', 'brigadier:integer'].map((type) =>
+		const [boolGameRules, intGameRules] = ['minecraft:bool', 'minecraft:integer'].map((type) =>
 			Object.entries(gameRuleNode).flatMap(([key, node]) =>
 				node.children?.['value']?.type === 'argument'
 					&& node.children['value'].argument.type === type

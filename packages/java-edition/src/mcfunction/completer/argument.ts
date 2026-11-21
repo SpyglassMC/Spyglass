@@ -79,27 +79,17 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 
 	switch (argument.type) {
 		case 'minecraft:bool':
-		case 'brigadier:bool':
 			return BooleanNode.mock(range)
 		case 'minecraft:double':
-		case 'brigadier:double':
 		case 'minecraft:float':
-		case 'brigadier:float':
 		case 'minecraft:integer':
-		case 'brigadier:integer':
 		case 'minecraft:long':
-		case 'brigadier:long':
 		case 'minecraft:float_range':
 		case 'minecraft:message':
 		case 'minecraft:time':
 		case 'minecraft:uuid':
 		case 'minecraft:word':
 			return []
-		case 'minecraft:string':
-		case 'brigadier:string':
-			return argument.type_ === 'phrase'
-				? StringNode.mock(range, BrigadierStringOptions)
-				: []
 		case 'minecraft:quoted_string':
 			return StringNode.mock(range, BrigadierStringOptions)
 		case 'minecraft:angle':
@@ -177,11 +167,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:particle':
 			return ParticleNode.mock(range)
 		case 'minecraft:resource':
-		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
-		case 'minecraft:resource_or_tag_key':
 			const allowTag = argument.type === 'minecraft:resource_or_tag'
-				|| argument.type === 'minecraft:resource_or_tag_key'
 			return ResourceLocationNode.mock(range, {
 				category: ResourceLocation.shorten(argument.registry) as
 					| RegistryCategory

@@ -13,21 +13,11 @@ import { describe, it } from 'node:test'
 const Suites: Partial<
 	Record<ArgumentTreeData['type'], { content: string[]; properties?: any; version?: string }[]>
 > = {
-	'brigadier:bool': [{ content: ['false', 'true'] }],
 	'minecraft:bool': [{ content: ['false', 'true'] }],
-	'brigadier:double': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
 	'minecraft:double': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
-	'brigadier:float': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
 	'minecraft:float': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
-	'brigadier:integer': [{ content: ['0', '123', '-123'] }],
 	'minecraft:integer': [{ content: ['0', '123', '-123'] }],
-	'brigadier:long': [{ content: ['0', '123', '-123'] }],
 	'minecraft:long': [{ content: ['0', '123', '-123'] }],
-	'brigadier:string': [
-		{ properties: { type: 'word' }, content: ['word', 'word_with_underscores'] },
-		{ properties: { type: 'phrase' }, content: ['"quoted phrase"', 'word', '""'] },
-		{ properties: { type: 'greedy' }, content: ['word', 'words with spaces', '"and symbols"'] },
-	],
 	'minecraft:word': [
 		{ content: ['word', 'word_with_underscores'] },
 	],
@@ -53,17 +43,17 @@ const Suites: Partial<
 	'minecraft:dialog': [{ content: ['minecraft:custom_options', '{type:"notice",title:"Hello"}'] }],
 	'minecraft:dimension': [{ content: ['minecraft:overworld', 'minecraft:the_nether'] }],
 	'minecraft:entity': [{
-		properties: { amount: 'multiple', type: 'entities' },
+		properties: { single_result: false, players_only: false },
 		content: ['Player', '0123', '@e', '@e[type=foo]', 'dd12be42-52a9-4a91-a8a1-11c01849e498'],
 	}, {
-		properties: { amount: 'single', type: 'entities' },
+		properties: { single_result: true, players_only: false },
 		content: ['@n', '@n[type=cow]', '@n[distance=..5]'],
 	}, {
-		properties: { amount: 'single', type: 'entities' },
+		properties: { single_result: true, players_only: false },
 		content: ['@n', '@n[type=cow]', '@n[distance=..5]'],
 		version: '1.21',
 	}, {
-		properties: { amount: 'single', type: 'players' },
+		properties: { single_result: true, players_only: true },
 		content: [
 			'Player',
 			'0123',
@@ -74,7 +64,7 @@ const Suites: Partial<
 			'dd12be42-52a9-4a91-a8a1-11c01849e498',
 		],
 	}, {
-		properties: { amount: 'multiple', type: 'entities' },
+		properties: { single_result: false, players_only: false },
 		content: [
 			'this_is_a_super_long_player_name',
 			'@a[ ]',
@@ -177,10 +167,10 @@ const Suites: Partial<
 	}],
 	'minecraft:rotation': [{ content: ['0 0', '~ ~', '~-5 ~5'] }],
 	'minecraft:score_holder': [
-		{ properties: { amount: 'multiple' }, content: ['Player', '0123', '*', '@e'] },
-		{ properties: { amount: 'single' }, content: ['Player', '0123', '*', '@e'] },
+		{ properties: { multiple: true }, content: ['Player', '0123', '*', '@e'] },
+		{ properties: { multiple: false }, content: ['Player', '0123', '*', '@e'] },
 		{
-			properties: { amount: 'multiple' },
+			properties: { multiple: true },
 			content: [
 				'@a[ scores = { foo = 1.. , } , ]',
 				'@a[ scores = { } , scores = { } , ]',
@@ -248,10 +238,6 @@ describe('mcfunction argument parser', () => {
 			for (const { content, properties, version = '1.15' } of cases) {
 				const propertiesString = properties ? ` with ${JSON.stringify(properties)}` : ''
 				const versionString = version !== '1.15' ? ` in version ${version}` : ''
-				if (properties?.type) {
-					properties['type_'] = properties.type
-					delete properties.type
-				}
 				const argumentData: ArgumentTreeData = {
 					type: argumentType,
 					...properties,

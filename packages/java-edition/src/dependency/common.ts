@@ -40,7 +40,28 @@ export interface VersionInfo {
 	id: string
 	name: string
 	data_pack_version: number
+	data_pack_version_minor: number
 	resource_pack_version: number
+}
+
+export interface PackFormat {
+	major: number
+	minor: number
+}
+
+export namespace PackFormat {
+	/**
+	 * @returns
+	 * * `-1` if `a` is older than `b`.
+	 * * `0` if `a` is the same as `b`.
+	 * * `1` if `a` is newer than `b`.
+	 */
+	export function cmp(a: PackFormat, b: PackFormat): number {
+		if (a.major !== b.major) {
+			return Math.sign(a.major - b.major)
+		}
+		return Math.sign(a.minor - b.minor)
+	}
 }
 
 export namespace PackMcmeta {
