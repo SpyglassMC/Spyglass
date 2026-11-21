@@ -1,4 +1,4 @@
-import type * as core from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import * as mcf from '@spyglassmc/mcfunction'
 import { registerCustomResources } from '../binder/index.js'
 import type { McmetaCommands } from '../dependency/index.js'
@@ -10,6 +10,7 @@ import { inlayHintProvider } from './inlayHintProvider.js'
 import { registerMcdocAttributes } from './mcdocAttributes.js'
 import * as parser from './parser/index.js'
 import { signatureHelpProvider } from './signatureHelpProvider.js'
+import { getPatch } from './tree/patch.js'
 import { validatePatchedTree } from './tree/patchValidator.js'
 
 export * as checker from './checker/index.js'
@@ -20,13 +21,14 @@ export * as parser from './parser/index.js'
 /* istanbul ignore next */
 export const initialize = (
 	ctx: core.ProjectInitializerContext,
-	tree: McmetaCommands,
+	commands: McmetaCommands,
 	releaseVersion: ReleaseVersion,
 ) => {
 	const { meta } = ctx
 
 	registerCustomResources(ctx.config)
 
+	const tree = core.merge(commands, getPatch(releaseVersion))
 	if (ctx.isDebugging) {
 		validatePatchedTree(tree, ctx.logger)
 	}
