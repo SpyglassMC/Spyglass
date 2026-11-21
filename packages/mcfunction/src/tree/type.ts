@@ -1,19 +1,32 @@
-interface BaseTreeNode {
+export type CommandPermissionLevel =
+	| 'normal'
+	| 'moderators'
+	| 'gamemasters'
+	| 'admins'
+	| 'owners'
+
+export interface TreeNodePermissions<L extends CommandPermissionLevel = CommandPermissionLevel> {
+	type: 'minecraft:always_pass' | 'minecraft:require'
+	permission?: {
+		type: 'minecraft:command_level'
+		level: L
+	}
+}
+
+interface BaseTreeNode<L extends CommandPermissionLevel = CommandPermissionLevel> {
 	// The following properties are provided in `commands.json` created by the data generator.
 	type: string
-	children?: { [name: string]: TreeNode }
+	children?: { [name: string]: TreeNode<L> }
 	executable?: boolean
 	redirect?: readonly string[]
 
 	// The following properties are custom.
-	/**
-	 * The permission level required to use this node.
-	 * @default 2
-	 */
-	permission?: 0 | 1 | 2 | 3 | 4
+	permissions?: TreeNodePermissions<L>
 }
 
-export interface ArgumentTreeNode extends BaseTreeNode {
+export interface ArgumentTreeNode<L extends CommandPermissionLevel = CommandPermissionLevel>
+	extends BaseTreeNode<L>
+{
 	type: 'argument'
 	argument: ArgumentTreeData
 }
@@ -23,17 +36,38 @@ export interface ArgumentTreeData {
 	[name: string]: unknown
 }
 
-export interface LiteralTreeNode extends BaseTreeNode {
+export interface LiteralTreeNode<L extends CommandPermissionLevel = CommandPermissionLevel>
+	extends BaseTreeNode<L>
+{
 	type: 'literal'
 }
 
-export interface RootTreeNode extends BaseTreeNode {
+export interface RootTreeNode<L extends CommandPermissionLevel = CommandPermissionLevel>
+	extends BaseTreeNode<L>
+{
 	type: 'root'
 }
 
-export type TreeNode = ArgumentTreeNode | LiteralTreeNode | RootTreeNode
+export type TreeNode<L extends CommandPermissionLevel = CommandPermissionLevel> =
+	| ArgumentTreeNode<L>
+	| LiteralTreeNode<L>
+	| RootTreeNode<L>
+
+/**
+ * A command tree node that is known to require the given permission level.
+ */
+export type TreeNodeWithPermissionLevel<L extends CommandPermissionLevel> = TreeNode<L> & {
+	permissions: TreeNodePermissions<L> & {
+		permission: {
+			type: 'minecraft:command_level'
+			level: L
+		}
+	}
+}
 
 type RecursivePartial<T> = T extends object ? { [K in keyof T]?: RecursivePartial<T[K]> } : T
 
-export type PartialTreeNode = RecursivePartial<TreeNode>
-export type PartialRootTreeNode = RecursivePartial<RootTreeNode>
+export type PartialTreeNode<L extends CommandPermissionLevel = CommandPermissionLevel> =
+	RecursivePartial<TreeNode<L>>
+export type PartialRootTreeNode<L extends CommandPermissionLevel = CommandPermissionLevel> =
+	RecursivePartial<RootTreeNode<L>>

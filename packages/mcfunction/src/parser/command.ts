@@ -8,7 +8,12 @@ import type {
 	TrailingCommandChildNode,
 	UnknownCommandChildNode,
 } from '../node/index.js'
-import { categorizeTreeChildren, resolveParentTreeNode } from '../tree/index.js'
+import {
+	categorizeTreeChildren,
+	CommandPermissionLevels,
+	getPermissionLevel,
+	resolveParentTreeNode,
+} from '../tree/index.js'
 import type { ArgumentTreeNode, RootTreeNode, TreeNode } from '../tree/type.js'
 import type { ArgumentParserGetter } from './argument.js'
 import { argumentTreeNodeToString } from './argument.js'
@@ -175,7 +180,10 @@ function dispatch(
 				return false
 			}
 
-			const requiredPermissionLevel = childTreeNode.permission ?? 2
+			const requiredLevel = getPermissionLevel(childTreeNode)
+			const requiredPermissionLevel = requiredLevel === undefined
+				? 2
+				: CommandPermissionLevels.indexOf(requiredLevel)
 			if (ctx.config.env.permissionLevel < requiredPermissionLevel) {
 				ctx.err.report(
 					localize(

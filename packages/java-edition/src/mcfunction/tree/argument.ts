@@ -3,31 +3,27 @@ import type * as mcf from '@spyglassmc/mcfunction'
 
 // #region Argument nodes.
 export interface MinecraftBoolArgumentTreeData extends mcf.ArgumentTreeData {
-	type: 'minecraft:bool' | 'brigadier:bool'
+	type: 'minecraft:bool'
 }
 export interface MinecraftDoubleArgumentTreeData extends mcf.ArgumentTreeData {
-	type: 'minecraft:double' | 'brigadier:double'
+	type: 'minecraft:double'
 	min: number
 	max: number
 }
 export interface MinecraftFloatArgumentTreeData extends mcf.ArgumentTreeData {
-	type: 'minecraft:float' | 'brigadier:float'
+	type: 'minecraft:float'
 	min: number
 	max: number
 }
 export interface MinecraftIntegerArgumentTreeData extends mcf.ArgumentTreeData {
-	type: 'minecraft:integer' | 'brigadier:integer'
+	type: 'minecraft:integer'
 	min: number
 	max: number
 }
 export interface MinecraftLongArgumentTreeData extends mcf.ArgumentTreeData {
-	type: 'minecraft:long' | 'brigadier:long'
+	type: 'minecraft:long'
 	min: number
 	max: number
-}
-export interface MinecraftStringArgumentTreeData extends mcf.ArgumentTreeData { // Removed
-	type: 'minecraft:string' | 'brigadier:string'
-	type_: 'word' | 'phrase' | 'greedy'
 }
 export interface MinecraftGreedyStringArgumentTreeData extends mcf.ArgumentTreeData {
 	type: 'minecraft:greedy_string'
@@ -75,8 +71,6 @@ export interface MinecraftEntityArgumentTreeData extends mcf.ArgumentTreeData {
 	type: 'minecraft:entity'
 	single_result?: boolean
 	players_only?: boolean
-	amount?: 'multiple' | 'single' // Replaced with single_result
-	type_?: 'entities' | 'players' // Replaced with players_only
 }
 export interface MinecraftEntityAnchorArgumentTreeData extends mcf.ArgumentTreeData {
 	type: 'minecraft:entity_anchor'
@@ -219,20 +213,12 @@ export interface MinecraftResourceArgumentTreeData extends mcf.ArgumentTreeData 
 	type: 'minecraft:resource'
 	registry: string
 }
-export interface MinecraftResourceKeyArgumentTreeData extends mcf.ArgumentTreeData {
-	type: 'minecraft:resource_key'
-	registry: string
-}
 export interface MinecraftResourceLocationArgumentTreeData extends mcf.ArgumentTreeData {
 	type: 'minecraft:resource_location'
 	options?: core.ResourceLocationOptions
 }
 export interface MinecraftResourceOrTagArgumentTreeData extends mcf.ArgumentTreeData {
 	type: 'minecraft:resource_or_tag'
-	registry: string
-}
-export interface MinecraftResourceOrTagKeyArgumentTreeData extends mcf.ArgumentTreeData {
-	type: 'minecraft:resource_or_tag_key'
 	registry: string
 }
 export interface MinecraftResourceSelectorArgumentTreeData extends mcf.ArgumentTreeData {
@@ -246,7 +232,6 @@ export interface MinecraftScoreHolderArgumentTreeData extends mcf.ArgumentTreeDa
 	type: 'minecraft:score_holder'
 	usageType: core.SymbolUsageType
 	multiple?: boolean
-	amount?: 'single' | 'multiple' // Replaced with multiple
 }
 export interface MinecraftScoreboardSlotArgumentTreeData extends mcf.ArgumentTreeData {
 	type: 'minecraft:scoreboard_slot'
@@ -301,7 +286,6 @@ export type ArgumentTreeData =
 	| MinecraftFloatArgumentTreeData
 	| MinecraftIntegerArgumentTreeData
 	| MinecraftLongArgumentTreeData
-	| MinecraftStringArgumentTreeData
 	| MinecraftGreedyStringArgumentTreeData
 	| MinecraftQuotedStringArgumentTreeData
 	| MinecraftWordArgumentTreeData
@@ -345,10 +329,8 @@ export type ArgumentTreeData =
 	| MinecraftParticleArgumentTreeData
 	| MinecraftPatternStringArgumentTreeData
 	| MinecraftResourceArgumentTreeData
-	| MinecraftResourceKeyArgumentTreeData
 	| MinecraftResourceLocationArgumentTreeData
 	| MinecraftResourceOrTagArgumentTreeData
-	| MinecraftResourceOrTagKeyArgumentTreeData
 	| MinecraftResourceSelectorArgumentTreeData
 	| MinecraftRotationArgumentTreeData
 	| MinecraftScoreHolderArgumentTreeData

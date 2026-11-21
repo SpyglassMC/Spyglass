@@ -1,6 +1,7 @@
 import type { ResourceLocationOptions } from '@spyglassmc/core'
 import { SymbolAccessType } from '@spyglassmc/core'
 import type { PartialRootTreeNode, PartialTreeNode } from '@spyglassmc/mcfunction'
+import { AlwaysPass, requirePermission } from '@spyglassmc/mcfunction'
 import { ReleaseVersion } from '../../dependency/index.js'
 import type { NbtParserOptions } from './argument.js'
 
@@ -97,13 +98,13 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				}
 				: {}),
 			ban: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			'ban-ip': {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			banlist: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			bossbar: {
 				children: {
@@ -197,17 +198,17 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 						? {
 							// Added in 21w15a (1.21.6, pack format 72)
 							create: {
-								permission: 4,
+								permissions: requirePermission('owners'),
 							},
 						}
 						: {}),
 				},
 			},
 			debug: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			deop: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			execute: {
 				children: {
@@ -430,21 +431,21 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				}
 				: {}),
 			help: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			...(ReleaseVersion.cmp(release, '1.18') >= 0
 				? {
 					// Added in 21w37a (1.18, pack format 8)
 					jfr: {
-						permission: 4,
+						permissions: requirePermission('owners'),
 					},
 				}
 				: {}),
 			kick: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			list: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			...(ReleaseVersion.isBetween(release, '1.16', '1.19')
 				? {
@@ -517,25 +518,25 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			me: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			msg: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			op: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			pardon: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			'pardon-ip': {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			...(ReleaseVersion.cmp(release, '1.17') >= 0
 				? {
 					// Added in 1.17 Pre-release 1 (1.17, pack format 7)
 					perf: {
-						permission: 4,
+						permissions: requirePermission('owners'),
 					},
 				}
 				: {}),
@@ -619,7 +620,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				}
 				: {}),
 			publish: {
-				permission: 4,
+				permissions: requirePermission('owners'),
 			},
 			...(ReleaseVersion.cmp(release, '1.20.2') >= 0
 				? {
@@ -689,13 +690,13 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			'save-all': {
-				permission: 4,
+				permissions: requirePermission('owners'),
 			},
 			'save-off': {
-				permission: 4,
+				permissions: requirePermission('owners'),
 			},
 			'save-on': {
-				permission: 4,
+				permissions: requirePermission('owners'),
 			},
 			schedule: {
 				children: {
@@ -751,10 +752,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			setidletimeout: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			stop: {
-				permission: 4,
+				permissions: requirePermission('owners'),
 			},
 			stopsound: {
 				children: {
@@ -894,7 +895,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			teammsg: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			/**
 			 * Original command syntax:
@@ -925,7 +926,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			tell: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			...(ReleaseVersion.cmp(release, '1.21.5') >= 0
 				? {
@@ -951,23 +952,23 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				? {
 					// Added in 23w43a (1.20.3, pack format 22)
 					tick: {
-						permission: 3,
+						permissions: requirePermission('admins'),
 					},
 				}
 				: {}),
 			tm: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			...(ReleaseVersion.cmp(release, '1.20.5') >= 0
 				? {
 					// Added in 24w04a (1.20.5, pack format 29)
 					transfer: {
-						permission: 3,
+						permissions: requirePermission('admins'),
 					},
 				}
 				: {}),
 			trigger: {
-				permission: 0,
+				permissions: AlwaysPass,
 				children: {
 					objective: {
 						argument: {
@@ -980,7 +981,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			w: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			...(ReleaseVersion.cmp(release, '1.21.6') >= 0
 				? {
@@ -1014,7 +1015,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				}
 				: {}),
 			whitelist: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 		},
 	}
