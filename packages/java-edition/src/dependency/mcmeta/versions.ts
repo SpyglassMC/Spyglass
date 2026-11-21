@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import type { FileEntry } from '@zip.js/zip.js'
 import { HttpReader, TextWriter, ZipReader } from '@zip.js/zip.js'
+import type { PackFormat } from '../common.js'
 import type { McmetaVersion, MojangVersionManifestEntry } from './types.js'
 import {
 	McmetaVersions,
@@ -15,6 +16,30 @@ const GITHUB_API_URI =
 const MOJANG_VERSION_MANIFEST_URI =
 	'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'
 const MAX_CLIENT_JAR_FETCHES = 5
+
+export function getDataPackFormat(
+	versionId: string,
+	versions: McmetaVersions,
+): PackFormat | undefined {
+	const version = versions.find((v) => v.id === versionId)
+	if (!version) {
+		return undefined
+	}
+	return {
+		major: version.data_pack_version,
+		minor: version.data_pack_version_minor,
+	}
+}
+
+export function getVersionsByDataPackFormat(
+	packFormat: PackFormat,
+	versions: McmetaVersions,
+): McmetaVersion[] {
+	return versions.filter((v) =>
+		v.data_pack_version === packFormat.major
+		&& v.data_pack_version_minor === packFormat.minor
+	)
+}
 
 export async function fetchMcmetaVersions(
 	externals: core.Externals,

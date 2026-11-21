@@ -22,6 +22,7 @@ function toVersionInfo(
 		name: version.name,
 		release: release ?? version.id as ReleaseVersion,
 		data_pack_version: version.data_pack_version,
+		data_pack_version_minor: version.data_pack_version_minor,
 		resource_pack_version: version.resource_pack_version,
 	}
 }

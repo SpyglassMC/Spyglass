@@ -1,4 +1,71 @@
-import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from './type.js'
+import type {
+	ArgumentTreeNode,
+	CommandPermissionLevel,
+	LiteralTreeNode,
+	RootTreeNode,
+	TreeNode,
+	TreeNodePermissions,
+	TreeNodeWithPermissionLevel,
+} from './type.js'
+
+/**
+ * All permission levels, from the least to the most restrictive.
+ */
+export const CommandPermissionLevels: readonly CommandPermissionLevel[] = [
+	'normal',
+	'moderators',
+	'gamemasters',
+	'admins',
+	'owners',
+]
+
+/**
+ * The permissions of a node that anyone can use.
+ */
+export const AlwaysPass: TreeNodePermissions = {
+	type: 'minecraft:always_pass',
+}
+
+/**
+ * @returns The permissions of a node that requires the given permission level.
+ */
+export function requirePermission(level: CommandPermissionLevel): TreeNodePermissions {
+	return {
+		type: 'minecraft:require',
+		permission: {
+			type: 'minecraft:command_level',
+			level,
+		},
+	}
+}
+
+/**
+ * @returns The permission level required by the node, or `undefined` if the node doesn't require
+ * any specific permission level.
+ */
+export function getPermissionLevel(node: TreeNode): CommandPermissionLevel | undefined {
+	const permissions = node.permissions
+	if (!permissions) {
+		return undefined
+	}
+	if (permissions.type === 'minecraft:always_pass') {
+		return 'normal'
+	}
+	if (permissions.permission?.type !== 'minecraft:command_level') {
+		return undefined
+	}
+	return permissions.permission.level
+}
+
+/**
+ * @returns `true` if the node requires the given permission level.
+ */
+export function isPermissionLevel<L extends CommandPermissionLevel>(
+	node: TreeNode,
+	level: L,
+): node is TreeNodeWithPermissionLevel<L> {
+	return getPermissionLevel(node) === level
+}
 
 export function redirect(rootTreeNode: TreeNode, path: readonly string[]): TreeNode | undefined {
 	return path.reduce<TreeNode | undefined>((p, c) => p?.children?.[c], rootTreeNode)

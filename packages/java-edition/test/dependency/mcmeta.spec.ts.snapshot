@@ -4,6 +4,7 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve '1.16.5' 1`] = `
   "name": "1.16.5",
   "release": "1.16.5",
   "data_pack_version": 6,
+  "data_pack_version_minor": 0,
   "resource_pack_version": 6
 }
 `;
@@ -14,6 +15,7 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve '20w06a' 1`] = `
   "name": "Snapshot 20w06a",
   "release": "1.16",
   "data_pack_version": 5,
+  "data_pack_version_minor": 0,
   "resource_pack_version": 5
 }
 `;
@@ -24,6 +26,7 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve '22w03a' 1`] = `
   "name": "22w03a",
   "release": "1.18.2",
   "data_pack_version": 8,
+  "data_pack_version_minor": 0,
   "resource_pack_version": 8
 }
 `;
@@ -34,6 +37,7 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve '26.1-snapshot-1' 
   "name": "26.1 Snapshot 1",
   "release": "26.1",
   "data_pack_version": 95,
+  "data_pack_version_minor": 0,
   "resource_pack_version": 76
 }
 `;
@@ -44,6 +48,7 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve 'Auto' 1`] = `
   "name": "1.16.5",
   "release": "1.16.5",
   "data_pack_version": 6,
+  "data_pack_version_minor": 0,
   "resource_pack_version": 6
 }
 `;
@@ -54,6 +59,7 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve 'Latest Release' 1
   "name": "1.21.11",
   "release": "1.21.11",
   "data_pack_version": 94,
+  "data_pack_version_minor": 1,
   "resource_pack_version": 75
 }
 `;
@@ -64,6 +70,7 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve 'Latest Snapshot' 
   "name": "26.1 Snapshot 1",
   "release": "26.1",
   "data_pack_version": 95,
+  "data_pack_version_minor": 0,
   "resource_pack_version": 76
 }
 `;
@@ -74,6 +81,7 @@ exports[`mcmeta > resolveConfiguredVersion() > Should resolve 'unknown' 1`] = `
   "name": "26.1 Snapshot 1",
   "release": "26.1",
   "data_pack_version": 95,
+  "data_pack_version_minor": 0,
   "resource_pack_version": 76
 }
 `;
