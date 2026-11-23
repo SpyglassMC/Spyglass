@@ -5,6 +5,8 @@
 
 !dist/*.js
 !dist/*.js.map
+!dist/web/*.js
+!dist/web/*.js.map
 !resource/*.json
 !CHANGELOG.md
 !icon.png

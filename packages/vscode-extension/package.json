@@ -3,6 +3,7 @@
   "version": "0.1.0-PLACEHOLDER",
   "type": "commonjs",
   "main": "dist/extension.js",
+  "browser": "dist/web/extension.js",
   "author": "Spyglass Contributors",
   "publisher": "SPGoding",
   "license": "MIT",
@@ -11,6 +12,7 @@
     "build:dev": "wireit",
     "release": "vsce publish && ovsx publish",
     "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
+    "smoke:web": "node web-smoke/run.mjs",
     "watch": "npm run build:dev --watch"
   },
   "wireit": {
@@ -21,11 +23,14 @@
       ],
       "files": [
         "out/extension.mjs",
+        "out/extension.web.mjs",
         "../language-server/lib/server.js"
       ],
       "output": [
         "dist/extension.js",
-        "dist/server.js"
+        "dist/server.js",
+        "dist/web/extension.js",
+        "dist/web/server.js"
       ]
     },
     "build:dev": {
@@ -35,11 +40,14 @@
       ],
       "files": [
         "out/extension.mjs",
+        "out/extension.web.mjs",
         "../language-server/lib/server.js"
       ],
       "output": [
         "dist/extension.js",
-        "dist/server.js"
+        "dist/server.js",
+        "dist/web/extension.js",
+        "dist/web/server.js"
       ]
     }
   },

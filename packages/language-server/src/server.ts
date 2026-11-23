@@ -1,13 +1,16 @@
 import * as core from '@spyglassmc/core'
-import { fileUtil } from '@spyglassmc/core'
-import { getNodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as locales from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import envPaths from 'env-paths'
-import url from 'url'
-import * as util from 'util'
 import * as ls from 'vscode-languageserver/node.js'
+import {
+	cacheRoot,
+	canShowFiles,
+	connection,
+	externals,
+	logger,
+	setFailedExitCode,
+} from './platform.js'
 import type {
 	CustomInitializationOptions,
 	CustomServerCapabilities,
@@ -19,29 +22,10 @@ import { LspFileWatcher } from './util/LspFileWatcher.js'
 
 export * from './util/types.js'
 
-if (process.argv.length === 2) {
-	// When the server is launched from the cmd script, the process arguments
-	// are wiped. I don't know why it happens, but this is what it is.
-	// Therefore, we push a '--stdio' if the argument list is too short.
-	process.argv.push('--stdio')
-}
-
-const { cache: cacheRootPath } = envPaths('spyglassmc')
-const cacheRoot = fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRootPath).toString())
-
-const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
 let workspaceFolders!: ls.WorkspaceFolder[]
 let projectRoots!: core.RootUriString[]
 let hasShutdown = false
-
-const logger: core.Logger = {
-	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
-	info: (msg: any, ...args: any[]): void => connection.console.info(util.format(msg, ...args)),
-	log: (msg: any, ...args: any[]): void => connection.console.log(util.format(msg, ...args)),
-	warn: (msg: any, ...args: any[]): void => connection.console.warn(util.format(msg, ...args)),
-}
-const externals = getNodeJsExternals({ cacheRoot, logger })
 let service!: core.Service
 
 function buildSemanticTokensCapability(isDynamic: boolean): ls.SemanticTokensRegistrationOptions {
@@ -149,7 +133,7 @@ connection.onInitialize(async (params) => {
 		analyzeProject: true,
 		dataHackPubify: true,
 		resetProjectCache: true,
-		showCacheRoot: true,
+		showCacheRoot: canShowFiles,
 	}
 
 	const ans: ls.InitializeResult = {
@@ -650,7 +634,7 @@ connection.onExit((): void => {
 		console.error(
 			'The server has not finished the shutdown request before receiving the exit request.',
 		)
-		process.exitCode = 1
+		setFailedExitCode()
 	}
 })
 
