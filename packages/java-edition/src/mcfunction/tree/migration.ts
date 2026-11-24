@@ -3,7 +3,7 @@ import {
 	type McmetaCommands,
 	ReleaseVersion,
 } from '../../dependency/index.js'
-import { type NodeMigrationRule, Migrations } from './migrations/index.js'
+import { Migrations, type NodeMigrationRule } from './migrations/index.js'
 
 export function migrateCommandTree(tree: McmetaCommands, version: ReleaseVersion) {
 	for (const rule of Migrations) {
