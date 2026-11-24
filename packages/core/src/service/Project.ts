@@ -232,6 +232,11 @@ export class Project extends EventDispatcher<{
 	readonly logger: Logger
 	readonly meta = new MetaRegistry()
 	readonly profilers: ProfilerFactory
+	/**
+	 * Only contains workspace roots.
+	 *
+	 * Dependencies and other pack roots identified by `pack.mcmeta` are not included.
+	 */
 	readonly projectRoots: RootUriString[]
 	symbols: SymbolUtil
 

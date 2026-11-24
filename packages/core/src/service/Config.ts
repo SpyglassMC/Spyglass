@@ -11,7 +11,7 @@ import {
 } from '../common/index.js'
 import { ErrorSeverity } from '../source/index.js'
 import { DataFileCategories, RegistryCategories } from '../symbol/index.js'
-import type { PlainPath, RootUriString } from './fileUtil.js'
+import type { PlainPath } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
 import type { Project } from './Project.js'
 /* eslint-disable no-restricted-syntax */
@@ -552,19 +552,9 @@ export class ConfigService extends EventDispatcher<{ changed: ConfigEvent; error
 	)
 
 	private currentEditorConfiguration: PartialConfig = {}
-	#firstProjectRoot: RootUriString
-	#roots: readonly RootUriString[]
 
 	constructor(private readonly project: Project, private readonly defaultConfig = VanillaConfig) {
 		super()
-
-		this.#firstProjectRoot = project.projectRoots[0]
-		this.#roots = project.roots
-		project.on('rootsUpdated', async ({ roots }) => {
-			this.#firstProjectRoot = project.projectRoots[0]
-			this.#roots = roots
-			this.emit('changed', { config: await this.load() })
-		})
 
 		const handler = async ({ uri }: { uri: string }) => {
 			if (ConfigService.isConfigFile(uri)) {
@@ -583,7 +573,7 @@ export class ConfigService extends EventDispatcher<{ changed: ConfigEvent; error
 
 	async load(): Promise<Config> {
 		const overrides: PartialConfig[] = []
-		for (const root of this.#roots) {
+		for (const root of this.project.projectRoots) {
 			for (const name of ConfigService.ConfigFileNames) {
 				const uri = root + name
 				try {
@@ -603,7 +593,7 @@ export class ConfigService extends EventDispatcher<{ changed: ConfigEvent; error
 			this.defaultConfig,
 			ConfigService.resolvePathInputsInConfig(
 				this.currentEditorConfiguration,
-				this.#firstProjectRoot,
+				this.project.projectRoots[0],
 			),
 			...overrides,
 		)
