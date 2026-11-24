@@ -252,6 +252,8 @@ export class Project extends EventDispatcher<{
 	 *
 	 * Some URIs in the array may overlap with each other. In such cases, the deeper ones are guaranteed to come
 	 * before the shallower ones (e.g. `file:///foo/bar/` will come before `file:///foo/`).
+	 *
+	 * This list is not available during pack initialization.
 	 */
 	get roots(): readonly RootUriString[] {
 		return this.#roots
