@@ -23,13 +23,17 @@ const commandTree: mcf.RootTreeNode = {
 			children: {
 				targets: {
 					type: 'argument',
-					parser: 'minecraft:entity',
-					properties: { amount: 'multiple', type: 'entities' },
+					argument: {
+						type: 'minecraft:entity',
+						players_only: false,
+						single_result: false,
+					},
 					children: {
 						message: {
 							type: 'argument',
-							parser: 'brigadier:string',
-							properties: { type: 'phrase' },
+							argument: {
+								type: 'minecraft:word',
+							},
 							executable: true,
 						},
 					},
