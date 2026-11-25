@@ -322,9 +322,9 @@ export interface McmetaStates {
 
 export type McmetaCommands = RootTreeNode
 
-export interface BaseTreeNode<T = CommandTreeNode> {
+export interface BaseTreeNode {
 	type: string
-	children?: { [name: string]: T }
+	children?: { [name: string]: CommandTreeNode }
 	executable?: boolean
 	redirect?: [string]
 	permissions?: TreeNodePermissions
@@ -356,29 +356,6 @@ export interface LegacyParserOptions {
 	amount?: 'single' | 'multiple'
 	[name: string]: unknown
 }
-
-export interface MigratableArgumentTreeNode extends BaseTreeNode<MigratableCommandTreeNode> {
-	type: 'argument'
-	parser?: string
-	properties?: LegacyParserOptions
-	argument?: ArgumentTreeData
-}
-
-export interface MigratableLiteralTreeNode extends BaseTreeNode<MigratableCommandTreeNode> {
-	type: 'literal'
-}
-
-export interface MigratableRootTreeNode extends BaseTreeNode<MigratableCommandTreeNode> {
-	type: 'root'
-	children: { [command: string]: MigratableLiteralTreeNode }
-}
-
-export type MigratableCommandTreeNode =
-	| MigratableArgumentTreeNode
-	| MigratableLiteralTreeNode
-	| MigratableRootTreeNode
-
-export type MigratableMcmetaCommands = MigratableRootTreeNode
 
 export interface McmetaRegistries {
 	[id: string]: string[]
