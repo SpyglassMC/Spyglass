@@ -282,15 +282,6 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 		return [...valueItems ?? [], ...unicodeNameItems ?? []]
 	}
 
-	if (node.options.quotes && node.value === '') {
-		return node.options.quotes.map((q) =>
-			CompletionItem.create(`${q}${q}`, node, {
-				insertText: `${q}$1${q}`,
-				kind: CompletionKind.Value,
-			})
-		)
-	}
-
 	return []
 }
 

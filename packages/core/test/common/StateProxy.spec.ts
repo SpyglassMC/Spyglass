@@ -114,4 +114,42 @@ describe('StateProxy', () => {
 		const squaredNumbers = proxy.map((v) => v * v)
 		assert.deepStrictEqual(squaredNumbers, [0, 1, 4, 9])
 	})
+	it('Should not serve a stale proxy after the value is overwritten', () => {
+		const testArr = [{ id: 'a' }, { id: 'b' }]
+		const proxy = StateProxy.create(testArr)
+
+		// Prime the proxy cache.
+		const stale = proxy[0]
+		assert.strictEqual(stale.id, 'a')
+
+		const replacement = { id: 'c' }
+		proxy[0] = StateProxy.create(replacement)
+
+		// The proxy must serve the object that is actually stored, not the one it cached earlier.
+		assert.notStrictEqual(proxy[0], stale)
+		assert.strictEqual(proxy[0].id, 'c')
+		assert.strictEqual(testArr[0], replacement)
+
+		// Writes through the proxy must land on the stored object.
+		proxy[0].id = 'd'
+		assert.strictEqual(testArr[0].id, 'd')
+	})
+	it('Should reflect in-place array mutations such as splice', () => {
+		const testArr = [{ id: 'a' }, { id: 'b' }, { id: 'c' }]
+		const proxy = StateProxy.create(testArr)
+
+		// Prime the proxy cache.
+		assert.strictEqual(proxy[0].id, 'a')
+		assert.strictEqual(proxy[1].id, 'b')
+
+		proxy.splice(0, 1)
+
+		assert.strictEqual(proxy.length, 2)
+		assert.strictEqual(proxy[0].id, 'b')
+		assert.strictEqual(proxy[1].id, 'c')
+
+		// Writes through the proxy must land on the shifted object.
+		proxy[0].id = 'B'
+		assert.strictEqual(testArr[0].id, 'B')
+	})
 })

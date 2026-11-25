@@ -56,18 +56,26 @@ function runUnderscorePass(root: core.AstNode, ctx: core.CheckerContext): void {
 		ctx.err.report(
 			localize('nbt.parser.number.underscore-not-supported'),
 			first,
-			core.ErrorSeverity.Information,
+			core.ErrorSeverity.Warning,
 		)
+	}
+}
+
+/**
+ * Runs the checker registered for the node, if there is one. Otherwise walks
+ * into the node's children.
+ */
+function runRegisteredChecker(node: core.AstNode, ctx: core.CheckerContext): void {
+	if (ctx.meta.hasChecker(node.type)) {
+		ctx.meta.getChecker(node.type)(node, ctx)
+	} else {
+		walkAndRunRegisteredCheckers(node, ctx)
 	}
 }
 
 function walkAndRunRegisteredCheckers(node: core.AstNode, ctx: core.CheckerContext): void {
 	for (const child of node.children ?? []) {
-		if (ctx.meta.hasChecker(child.type)) {
-			ctx.meta.getChecker(child.type)(child, ctx)
-		} else {
-			walkAndRunRegisteredCheckers(child, ctx)
-		}
+		runRegisteredChecker(child, ctx)
 	}
 }
 
@@ -77,8 +85,7 @@ function checkRadixAndUnderscore(
 	oldSyntax: boolean,
 ): void {
 	// Typed radix collapses (`0x42b`, `0xffs`, `0b101i`, ...). Suffix-less
-	// and `0x...l` long forms are caught by `checkLong`. Skip underscore
-	// below when radix fires to match the original `else if` ordering.
+	// and `0x...l` long forms are caught by `checkLong`.
 	if (node.radix !== undefined && oldSyntax) {
 		ctx.err.report(
 			localize('nbt.parser.number.radix-not-supported'),
@@ -96,7 +103,7 @@ function checkRadixAndUnderscore(
 		ctx.err.report(
 			localize('nbt.parser.number.underscore-not-supported'),
 			node,
-			core.ErrorSeverity.Information,
+			core.ErrorSeverity.Warning,
 		)
 	}
 }
@@ -105,7 +112,17 @@ function checkCompound(node: NbtCompoundNode, ctx: core.CheckerContext): void {
 	if (isOldSyntax(ctx)) {
 		runUnderscorePass(node, ctx)
 	}
-	walkAndRunRegisteredCheckers(node, ctx)
+	for (const pair of node.children) {
+		if (pair.key) {
+			const errorCount = ctx.err.errors.length
+			runRegisteredChecker(pair.key, ctx)
+			const keyErrors = ctx.err.errors.splice(errorCount)
+			ctx.err.errors.push(...keyErrors.filter((e) => !isValueOnlyDiagnostic(e.message)))
+		}
+		if (pair.value) {
+			runRegisteredChecker(pair.value, ctx)
+		}
+	}
 }
 function checkList(node: NbtListNode, ctx: core.CheckerContext): void {
 	if (isOldSyntax(ctx)) {
@@ -145,12 +162,14 @@ const checkBoolFunction: core.SyncChecker<NbtBoolFunctionNode> = (node, ctx) => 
 	if (isOldSyntax(ctx)) {
 		reportSnbtFunctionsNotSupported(node, ctx)
 	}
+	walkAndRunRegisteredCheckers(node, ctx)
 }
 
 const checkUuidFunction: core.SyncChecker<NbtUuidFunctionNode> = (node, ctx) => {
 	if (isOldSyntax(ctx)) {
 		reportSnbtFunctionsNotSupported(node, ctx)
 	}
+	walkAndRunRegisteredCheckers(node, ctx)
 }
 
 const checkLong: core.SyncChecker<NbtLongNode> = (node, ctx) => {
@@ -185,26 +204,37 @@ const checkDouble: core.SyncChecker<NbtDoubleNode> = (node, ctx) => {
 	checkRadixAndUnderscore(node, ctx, isOldSyntax(ctx))
 }
 
+/**
+ * The diagnostics that only apply to *values*.
+ *
+ * An unquoted value that starts with `[0-9.+-]` is ambiguous with a number,
+ * but a compound key is always a string, so these must not be reported on it.
+ */
+const negativeRadixNotSupported = (): string =>
+	localize('nbt.parser.number.negative-radix-not-supported')
+const unquotedStringFirstCharacter = (): string =>
+	localize('nbt.parser.string.unquoted-string-first-character')
+
+function isValueOnlyDiagnostic(message: string): boolean {
+	return message === negativeRadixNotSupported() || message === unquotedStringFirstCharacter()
+}
+
 const checkString: core.SyncChecker<NbtStringNode> = (node, ctx) => {
 	unicodeEscapes(node, ctx)
 	if (isOldSyntax(ctx) || node.quote) {
+		return
+	}
+	if (nbt.NbtPathKeyNode.is(node.parent)) {
+		// An NBT path key is always a string too.
 		return
 	}
 	// Source-text heuristics - `ctx.src.slice(node.range)` would be wrong
 	// when the string came from a JSON-string attach.
 	const v = node.value
 	if (/^-0[xXbB]/.test(v)) {
-		ctx.err.report(
-			localize('nbt.parser.number.negative-radix-not-supported'),
-			node,
-			core.ErrorSeverity.Error,
-		)
+		ctx.err.report(negativeRadixNotSupported(), node, core.ErrorSeverity.Error)
 	} else if (/^[0-9.+-]/.test(v)) {
-		ctx.err.report(
-			localize('nbt.parser.string.unquoted-string-first-character'),
-			node,
-			core.ErrorSeverity.Error,
-		)
+		ctx.err.report(unquotedStringFirstCharacter(), node, core.ErrorSeverity.Error)
 	}
 }
 

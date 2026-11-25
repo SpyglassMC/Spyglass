@@ -69,7 +69,14 @@ describe('json:string colorizer after mcdoc runtime attaches nbt:typed', () => {
 		return project
 	}
 
-	it('emits an escape token covering the opening `{` of a named Unicode escape', (t) => {
+	it('emits all tokens in the named Unicode escape correctly', (t) => {
+		const project = setupProject()
+		const tokens = runColorize(project, `{"tag":"{test:'\\N{Acute Angle}'}"}`)
+
+		t.assert.snapshot(tokens)
+	})
+
+	it('emits an escape token covering the opening `{` of a named Unicode escape', () => {
 		const project = setupProject()
 		const tokens = runColorize(project, `{"tag":"{test:'\\N{Acute Angle}'}"}`)
 
@@ -86,17 +93,24 @@ describe('json:string colorizer after mcdoc runtime attaches nbt:typed', () => {
 			escapeForOpeningBrace,
 			`expected an escape token at ~[15, 18), got ${JSON.stringify(tokens)}`,
 		)
-		t.assert.snapshot(tokens)
 	})
 
-	it('emits the full `\N{name}` token sequence: escape, resourceLocation, escape', (t) => {
+	it('emits the full `\N{name}` token sequence: escape, resourceLocation, escape', () => {
 		const project = setupProject()
 		const tokens = runColorize(project, `{"tag":"{test:'\\N{Acute Angle}'}"}`)
 
-		t.assert.snapshot(
+		// The `\N{` prefix and the closing `}` are escape-coloured, and the
+		// name in between is highlighted on its own - the prefix must not
+		// swallow the name.
+		assert.deepEqual(
 			tokens
 				.filter(t => t.type === 'escape' || t.type === 'resourceLocation')
 				.map(t => `${t.range.start}-${t.range.end}:${t.type}`),
+			[
+				'15-18:escape',
+				'18-29:resourceLocation',
+				'29-30:escape',
+			],
 		)
 	})
 })

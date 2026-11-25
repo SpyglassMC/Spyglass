@@ -847,7 +847,7 @@ exports[`JSON object parser > object() > Parse '{\"\\\"\": \"\\u1234\"}' 1`] = `
                   "end": 1
                 },
                 "outer": {
-                  "start": 2,
+                  "start": 3,
                   "end": 4
                 }
               }
@@ -936,7 +936,7 @@ exports[`JSON object parser > object() > Parse '{\"\\\"\": \"\\u1234\"}' 1`] = `
                 "end": 1
               },
               "outer": {
-                "start": 2,
+                "start": 3,
                 "end": 4
               }
             }
@@ -1342,7 +1342,20 @@ exports[`JSON object parser > object() > Parse '{\"test\": \"\\u1z34\"}' 1`] = `
                 }
               }
             ],
-            "quote": "\\""
+            "quote": "\\"",
+            "children": [
+              {
+                "type": "unicode_escape",
+                "kind": "u",
+                "range": {
+                  "start": 10,
+                  "end": 12
+                },
+                "raw": "\\\\u",
+                "resolved": "",
+                "codepoint": 0
+              }
+            ]
           }
         ],
         "key": {
@@ -1399,7 +1412,20 @@ exports[`JSON object parser > object() > Parse '{\"test\": \"\\u1z34\"}' 1`] = `
               }
             }
           ],
-          "quote": "\\""
+          "quote": "\\"",
+          "children": [
+            {
+              "type": "unicode_escape",
+              "kind": "u",
+              "range": {
+                "start": 10,
+                "end": 12
+              },
+              "raw": "\\\\u",
+              "resolved": "",
+              "codepoint": 0
+            }
+          ]
         }
       }
     ],

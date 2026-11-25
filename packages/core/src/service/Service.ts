@@ -184,21 +184,54 @@ export class Service {
 	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | undefined {
 		try {
 			this.debug(`Getting hover for ${doc.uri} # ${doc.version} @ ${offset}`)
-			let node = AstNode.findDeepestChild({ node: file, needle: offset })
-			while (node) {
+			let rangeSize = 0
+			let range: Range | undefined
+			const hovers: string[] = []
+			const namespaces: string[] = []
+			const upsert = (nodeRange: Range, markdown: string, namespace: string) => {
+				const size = nodeRange.end - nodeRange.start
+				if (range === undefined || rangeSize > size) {
+					rangeSize = size
+					range = nodeRange
+				}
+				if (namespaces.length > 0 && namespaces[namespaces.length - 1] === namespace) {
+					hovers[hovers.length - 1] = markdown
+				} else {
+					hovers.unshift(markdown)
+					namespaces.unshift(namespace)
+				}
+			}
+			const visit = (node: AstNode) => {
+				const contains = node.range.start <= offset && node.range.end > offset
+				if (!contains) {
+					return
+				}
 				const symbol = this.project.symbols.resolveAlias(node.symbol)
+				const colonIdx = node.type.indexOf(':')
+				const namespace = colonIdx === -1 ? node.type : node.type.slice(0, colonIdx)
 				if (symbol) {
-					const hover =
+					upsert(
+						node.range,
 						`\`\`\`typescript\n(${symbol.category}${
 							symbol.subcategory ? `/${symbol.subcategory}` : ''
-						}) ${symbol.identifier}\n\`\`\`` + (symbol.desc ? `\n******\n${symbol.desc}` : '')
-					return Hover.create(node.range, hover)
+						}) ${symbol.identifier}\n\`\`\``
+							+ (symbol.desc ? `\n******\n${symbol.desc}` : ''),
+						namespace,
+					)
 				}
 				if (node.hover) {
-					return Hover.create(node.range, node.hover)
+					upsert(node.range, node.hover, namespace)
 				}
-				node = node.parent
+				const children = node.children ?? []
+				for (const child of children) {
+					visit(child)
+				}
 			}
+			visit(file)
+			if (hovers.length === 0) {
+				return undefined
+			}
+			return Hover.create(range!, hovers.join('\n\n******\n\n'))
 		} catch (e) {
 			this.logger.error(`[Service] [getHover] Failed for ${doc.uri} # ${doc.version}`, e)
 		}

@@ -1,0 +1,437 @@
+exports[`snbt function colorizer > Colorize 'bool(' 1`] = `
+[
+  {
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "type": "function"
+  },
+  {
+    "range": {
+      "start": 4,
+      "end": 5
+    },
+    "type": "operator"
+  },
+  {
+    "range": {
+      "start": 5,
+      "end": 5
+    },
+    "type": "operator"
+  }
+]
+`;
+
+exports[`snbt function colorizer > Colorize 'bool(0xff)' 1`] = `
+[
+  {
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "type": "function"
+  },
+  {
+    "range": {
+      "start": 4,
+      "end": 5
+    },
+    "type": "operator"
+  },
+  {
+    "range": {
+      "start": 5,
+      "end": 9
+    },
+    "type": "number"
+  },
+  {
+    "range": {
+      "start": 9,
+      "end": 10
+    },
+    "type": "operator"
+  }
+]
+`;
+
+exports[`snbt function colorizer > Colorize 'bool(1)' 1`] = `
+[
+  {
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "type": "function"
+  },
+  {
+    "range": {
+      "start": 4,
+      "end": 5
+    },
+    "type": "operator"
+  },
+  {
+    "range": {
+      "start": 5,
+      "end": 6
+    },
+    "type": "number"
+  },
+  {
+    "range": {
+      "start": 6,
+      "end": 7
+    },
+    "type": "operator"
+  }
+]
+`;
+
+exports[`snbt function colorizer > Colorize 'bool(1_000)' 1`] = `
+[
+  {
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "type": "function"
+  },
+  {
+    "range": {
+      "start": 4,
+      "end": 5
+    },
+    "type": "operator"
+  },
+  {
+    "range": {
+      "start": 5,
+      "end": 10
+    },
+    "type": "number"
+  },
+  {
+    "range": {
+      "start": 10,
+      "end": 11
+    },
+    "type": "operator"
+  }
+]
+`;
+
+exports[`snbt function colorizer > Colorize 'bool(42)' 1`] = `
+[
+  {
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "type": "function"
+  },
+  {
+    "range": {
+      "start": 4,
+      "end": 5
+    },
+    "type": "operator"
+  },
+  {
+    "range": {
+      "start": 5,
+      "end": 7
+    },
+    "type": "number"
+  },
+  {
+    "range": {
+      "start": 7,
+      "end": 8
+    },
+    "type": "operator"
+  }
+]
+`;
+
+exports[`snbt function colorizer > Colorize 'uuid(' 1`] = `
+[
+  {
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "type": "function"
+  },
+  {
+    "range": {
+      "start": 4,
+      "end": 5
+    },
+    "type": "operator"
+  },
+  {
+    "range": {
+      "start": 5,
+      "end": 5
+    },
+    "type": "operator"
+  }
+]
+`;
+
+exports[`snbt function colorizer > Colorize 'uuid(42)' 1`] = `
+[
+  {
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "type": "function"
+  },
+  {
+    "range": {
+      "start": 4,
+      "end": 5
+    },
+    "type": "operator"
+  },
+  {
+    "range": {
+      "start": 7,
+      "end": 8
+    },
+    "type": "operator"
+  }
+]
+`;
+
+exports[`snbt function colorizer > Colorize 'uuid(\"12345678-1234-1234-1234-123456789012\")' 1`] = `
+[
+  {
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "type": "function"
+  },
+  {
+    "range": {
+      "start": 4,
+      "end": 5
+    },
+    "type": "operator"
+  },
+  {
+    "range": {
+      "start": 5,
+      "end": 43
+    },
+    "type": "string"
+  },
+  {
+    "range": {
+      "start": 43,
+      "end": 44
+    },
+    "type": "operator"
+  }
+]
+`;
+
+exports[`snbt function colorizer wrapped in nbt:typed > Colorize 'bool(1)' 1`] = `
+{
+  "viaTypedWrapper": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "type": "function"
+    },
+    {
+      "range": {
+        "start": 4,
+        "end": 5
+      },
+      "type": "operator"
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 6
+      },
+      "type": "number"
+    },
+    {
+      "range": {
+        "start": 6,
+        "end": 7
+      },
+      "type": "operator"
+    }
+  ],
+  "viaInnerColorizer": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "type": "function"
+    },
+    {
+      "range": {
+        "start": 4,
+        "end": 5
+      },
+      "type": "operator"
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 6
+      },
+      "type": "number"
+    },
+    {
+      "range": {
+        "start": 6,
+        "end": 7
+      },
+      "type": "operator"
+    }
+  ]
+}
+`;
+
+exports[`snbt function colorizer wrapped in nbt:typed > Colorize 'bool(1_000)' 1`] = `
+{
+  "viaTypedWrapper": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "type": "function"
+    },
+    {
+      "range": {
+        "start": 4,
+        "end": 5
+      },
+      "type": "operator"
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 10
+      },
+      "type": "number"
+    },
+    {
+      "range": {
+        "start": 10,
+        "end": 11
+      },
+      "type": "operator"
+    }
+  ],
+  "viaInnerColorizer": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "type": "function"
+    },
+    {
+      "range": {
+        "start": 4,
+        "end": 5
+      },
+      "type": "operator"
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 10
+      },
+      "type": "number"
+    },
+    {
+      "range": {
+        "start": 10,
+        "end": 11
+      },
+      "type": "operator"
+    }
+  ]
+}
+`;
+
+exports[`snbt function colorizer wrapped in nbt:typed > Colorize 'uuid(\"12345678-1234-1234-1234-123456789012\")' 1`] = `
+{
+  "viaTypedWrapper": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "type": "function"
+    },
+    {
+      "range": {
+        "start": 4,
+        "end": 5
+      },
+      "type": "operator"
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 43
+      },
+      "type": "string"
+    },
+    {
+      "range": {
+        "start": 43,
+        "end": 44
+      },
+      "type": "operator"
+    }
+  ],
+  "viaInnerColorizer": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "type": "function"
+    },
+    {
+      "range": {
+        "start": 4,
+        "end": 5
+      },
+      "type": "operator"
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 43
+      },
+      "type": "string"
+    },
+    {
+      "range": {
+        "start": 43,
+        "end": 44
+      },
+      "type": "operator"
+    }
+  ]
+}
+`;

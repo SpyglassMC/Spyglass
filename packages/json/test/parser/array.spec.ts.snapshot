@@ -661,7 +661,7 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
                   "end": 1
                 },
                 "outer": {
-                  "start": 2,
+                  "start": 3,
                   "end": 4
                 }
               }
@@ -706,7 +706,7 @@ exports[`JSON array parser > array() > Parse '[\"\\\"\",\"\\u1234\"]' 1`] = `
                 "end": 1
               },
               "outer": {
-                "start": 2,
+                "start": 3,
                 "end": 4
               }
             }
@@ -879,7 +879,20 @@ exports[`JSON array parser > array() > Parse '[\"\\u1z34\"]' 1`] = `
                 }
               }
             ],
-            "quote": "\\""
+            "quote": "\\"",
+            "children": [
+              {
+                "type": "unicode_escape",
+                "kind": "u",
+                "range": {
+                  "start": 2,
+                  "end": 4
+                },
+                "raw": "\\\\u",
+                "resolved": "",
+                "codepoint": 0
+              }
+            ]
           }
         ],
         "value": {
@@ -911,7 +924,20 @@ exports[`JSON array parser > array() > Parse '[\"\\u1z34\"]' 1`] = `
               }
             }
           ],
-          "quote": "\\""
+          "quote": "\\"",
+          "children": [
+            {
+              "type": "unicode_escape",
+              "kind": "u",
+              "range": {
+                "start": 2,
+                "end": 4
+              },
+              "raw": "\\\\u",
+              "resolved": "",
+              "codepoint": 0
+            }
+          ]
         }
       }
     ]
