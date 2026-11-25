@@ -32,7 +32,7 @@ const commandTree: mcf.RootTreeNode = {
 						message: {
 							type: 'argument',
 							argument: {
-								type: 'minecraft:word',
+								type: 'minecraft:quoted_string',
 							},
 							executable: true,
 						},
