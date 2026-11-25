@@ -66,16 +66,25 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 
 const primitive: core.Completer<JsonPrimitiveNode> = (node, ctx) => {
 	const insideRange = core.Range.contains(node, ctx.offset, true)
+	const typeDefValues = node.typeDef
+		? getValues(node.typeDef, insideRange ? node : ctx.offset, ctx)
+		: []
 	if (node.type === 'json:string' && insideRange) {
+		// Only suggest a quote pair when the location is empty and not already quoted.
+		if (typeDefValues.length === 0 && node.quote === undefined && node.value === '') {
+			return (node.options?.quotes ?? ['"']).map(q =>
+				core.CompletionItem.create(`${q}${q}`, node, {
+					insertText: `${q}$1${q}`,
+					kind: core.CompletionKind.Value,
+				})
+			)
+		}
 		// Delegate to core's string completer for the `\N{…}` named-Unicode
 		// escape completion. Works whether or not the json:string has a child
 		// string-parser result.
-		return core.completer.string(node, ctx)
+		return [...core.completer.string(node, ctx), ...typeDefValues]
 	}
-	if (!node.typeDef) {
-		return []
-	}
-	return getValues(node.typeDef, insideRange ? node : ctx.offset, ctx)
+	return typeDefValues
 }
 
 function getValues(

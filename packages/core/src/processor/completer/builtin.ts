@@ -282,16 +282,6 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 		return [...valueItems ?? [], ...unicodeNameItems ?? []]
 	}
 
-	// Only suggest a quote pair when the location is empty and not already quoted.
-	if (node.options.quotes && node.quote === undefined && node.value === '') {
-		return node.options.quotes.map((q) =>
-			CompletionItem.create(`${q}${q}`, node, {
-				insertText: `${q}$1${q}`,
-				kind: CompletionKind.Value,
-			})
-		)
-	}
-
 	return []
 }
 
