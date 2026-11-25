@@ -5,23 +5,27 @@ import {
 	testParser,
 } from '@spyglassmc/core/test/utils.ts'
 import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.js'
-import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
+import type { ArgumentTreeData } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
 import * as json from '@spyglassmc/json'
 import * as nbt from '@spyglassmc/nbt'
 import { describe, it } from 'node:test'
 
 const Suites: Partial<
-	Record<ArgumentTreeNode['parser'], { content: string[]; properties?: any; version?: string }[]>
+	Record<ArgumentTreeData['type'], { content: string[]; properties?: any; version?: string }[]>
 > = {
-	'brigadier:bool': [{ content: ['false', 'true'] }],
-	'brigadier:double': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
-	'brigadier:float': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
-	'brigadier:integer': [{ content: ['0', '123', '-123'] }],
-	'brigadier:long': [{ content: ['0', '123', '-123'] }],
-	'brigadier:string': [
-		{ properties: { type: 'word' }, content: ['word', 'word_with_underscores'] },
-		{ properties: { type: 'phrase' }, content: ['"quoted phrase"', 'word', '""'] },
-		{ properties: { type: 'greedy' }, content: ['word', 'words with spaces', '"and symbols"'] },
+	'minecraft:bool': [{ content: ['false', 'true'] }],
+	'minecraft:double': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
+	'minecraft:float': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
+	'minecraft:integer': [{ content: ['0', '123', '-123'] }],
+	'minecraft:long': [{ content: ['0', '123', '-123'] }],
+	'minecraft:word': [
+		{ content: ['word', 'word_with_underscores'] },
+	],
+	'minecraft:quoted_string': [
+		{ content: ['"quoted phrase"', 'word', '""'] },
+	],
+	'minecraft:greedy_string': [
+		{ content: ['word', 'words with spaces', '"and symbols"'] },
 	],
 	'minecraft:angle': [{ content: ['0', '~', '~-0.5', '^'] }],
 	'minecraft:block_pos': [{
@@ -39,17 +43,17 @@ const Suites: Partial<
 	'minecraft:dialog': [{ content: ['minecraft:custom_options', '{type:"notice",title:"Hello"}'] }],
 	'minecraft:dimension': [{ content: ['minecraft:overworld', 'minecraft:the_nether'] }],
 	'minecraft:entity': [{
-		properties: { amount: 'multiple', type: 'entities' },
+		properties: { single_result: false, players_only: false },
 		content: ['Player', '0123', '@e', '@e[type=foo]', 'dd12be42-52a9-4a91-a8a1-11c01849e498'],
 	}, {
-		properties: { amount: 'single', type: 'entities' },
+		properties: { single_result: true, players_only: false },
 		content: ['@n', '@n[type=cow]', '@n[distance=..5]'],
 	}, {
-		properties: { amount: 'single', type: 'entities' },
+		properties: { single_result: true, players_only: false },
 		content: ['@n', '@n[type=cow]', '@n[distance=..5]'],
 		version: '1.21',
 	}, {
-		properties: { amount: 'single', type: 'players' },
+		properties: { single_result: true, players_only: true },
 		content: [
 			'Player',
 			'0123',
@@ -60,7 +64,7 @@ const Suites: Partial<
 			'dd12be42-52a9-4a91-a8a1-11c01849e498',
 		],
 	}, {
-		properties: { amount: 'multiple', type: 'entities' },
+		properties: { single_result: false, players_only: false },
 		content: [
 			'this_is_a_super_long_player_name',
 			'@a[ ]',
@@ -142,6 +146,13 @@ const Suites: Partial<
 		],
 		version: '1.20.5',
 	}],
+	'minecraft:pattern': [{
+		properties: { pattern: '\\w+' },
+		content: ['foo', 'oh, no'],
+	}, {
+		properties: { pattern: '.*' },
+		content: ['foo', 'yes yes yes'],
+	}],
 	'minecraft:resource': [{
 		properties: { registry: 'bossbar' },
 		content: ['foo', 'foo:bar', '012'],
@@ -156,10 +167,10 @@ const Suites: Partial<
 	}],
 	'minecraft:rotation': [{ content: ['0 0', '~ ~', '~-5 ~5'] }],
 	'minecraft:score_holder': [
-		{ properties: { amount: 'multiple' }, content: ['Player', '0123', '*', '@e'] },
-		{ properties: { amount: 'single' }, content: ['Player', '0123', '*', '@e'] },
+		{ properties: { multiple: true }, content: ['Player', '0123', '*', '@e'] },
+		{ properties: { multiple: false }, content: ['Player', '0123', '*', '@e'] },
 		{
-			properties: { amount: 'multiple' },
+			properties: { multiple: true },
 			content: [
 				'@a[ scores = { foo = 1.. , } , ]',
 				'@a[ scores = { } , scores = { } , ]',
@@ -203,7 +214,10 @@ const Suites: Partial<
 			'fffffffffffffff-1-1-1-1',
 		],
 	}],
-	'minecraft:vec2': [{ content: ['0 0', '~ ~', '0.1 -0.5', '~1 ~-2'] }],
+	'minecraft:vec2': [
+		{ content: ['0 0', '~ ~', '0.1 -0.5', '~1 ~-2', '^ ^', '^1 ^2'] },
+		{ content: ['0 0', '~ ~', '0.1 -0.5', '~1 ~-2', '^ ^', '^1 ^2'], version: '26.4' },
+	],
 	'minecraft:vec3': [{
 		content: ['0 0 0', '~ ~ ~', '^ ^ ^', '^1 ^ ^-5', '0.1 -0.5 .9', '~0.5 ~1 ~-5'],
 	}],
@@ -219,21 +233,20 @@ const RemoveExtraChildren = new Set([
 ])
 
 describe('mcfunction argument parser', () => {
-	for (const [parserName, cases] of Object.entries(Suites)) {
-		describe(parserName, () => {
+	for (const [argumentType, cases] of Object.entries(Suites)) {
+		describe(argumentType, () => {
 			for (const { content, properties, version = '1.15' } of cases) {
-				const treeNode: ArgumentTreeNode = {
-					type: 'argument',
-					parser: parserName as any,
-					properties,
+				const propertiesString = properties ? ` with ${JSON.stringify(properties)}` : ''
+				const versionString = version !== '1.15' ? ` in version ${version}` : ''
+				const argumentData: ArgumentTreeData = {
+					type: argumentType,
+					...properties,
 				}
 				const project = mockProjectData({ ctx: { loadedVersion: version } })
 				json.getInitializer()(project)
 				nbt.initialize(project)
 
 				for (const string of content) {
-					const propertiesString = properties ? ` with ${JSON.stringify(properties)}` : ''
-					const versionString = version !== '1.15' ? ` in version ${version}` : ''
 					const itTitle = `Parse '${
 						showWhitespaceGlyph(string)
 					}'${propertiesString}${versionString}`
@@ -241,14 +254,18 @@ describe('mcfunction argument parser', () => {
 						snapshotWithUri(t, {
 							uri: new URL(
 								`./argument/${
-									parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())
+									argumentType.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())
 								}.spec.ts`,
 								import.meta.url,
 							),
-							value: testParser(argument(treeNode, [])!, string, {
-								project,
-								removeTopLevelChildren: RemoveExtraChildren.has(parserName),
-							}),
+							value: testParser(
+								argument({ type: 'argument', argument: argumentData }, [])!,
+								string,
+								{
+									project,
+									removeTopLevelChildren: RemoveExtraChildren.has(argumentType),
+								},
+							),
 						})
 					})
 				}

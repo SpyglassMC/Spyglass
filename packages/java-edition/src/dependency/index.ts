@@ -59,8 +59,9 @@ export async function getMcmetaSummary(
 			logger,
 			`https://api.spyglassmc.com/mcje/versions/${encodeURIComponent(version)}/${type}`,
 		)
+		const data = await handleOverride(await response.json(), overrideConfig)
 		return {
-			data: await handleOverride(await response.json(), overrideConfig),
+			data,
 			checksum: response.headers.get('etag') ?? '',
 		}
 	}

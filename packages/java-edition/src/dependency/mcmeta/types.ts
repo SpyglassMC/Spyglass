@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import type { TreeNodePermissions } from '@spyglassmc/mcfunction'
 
 export interface McmetaVersion {
 	id: string
@@ -321,17 +322,22 @@ export interface McmetaStates {
 
 export type McmetaCommands = RootTreeNode
 
-interface BaseTreeNode {
+export interface BaseTreeNode<T = CommandTreeNode> {
 	type: string
-	children?: { [name: string]: CommandTreeNode }
+	children?: { [name: string]: T }
 	executable?: boolean
 	redirect?: [string]
+	permissions?: TreeNodePermissions
 }
 
 export interface ArgumentTreeNode extends BaseTreeNode {
 	type: 'argument'
-	parser: string
-	properties?: { [name: string]: any }
+	argument: ArgumentTreeData
+}
+
+export interface ArgumentTreeData {
+	type: string
+	[name: string]: any
 }
 
 export interface LiteralTreeNode extends BaseTreeNode {
@@ -344,6 +350,35 @@ export interface RootTreeNode extends BaseTreeNode {
 }
 
 export type CommandTreeNode = ArgumentTreeNode | LiteralTreeNode | RootTreeNode
+
+export interface LegacyParserOptions {
+	type?: 'entities' | 'players' | 'word' | 'phrase' | 'greedy'
+	amount?: 'single' | 'multiple'
+	[name: string]: unknown
+}
+
+export interface MigratableArgumentTreeNode extends BaseTreeNode<MigratableCommandTreeNode> {
+	type: 'argument'
+	parser?: string
+	properties?: LegacyParserOptions
+	argument?: ArgumentTreeData
+}
+
+export interface MigratableLiteralTreeNode extends BaseTreeNode<MigratableCommandTreeNode> {
+	type: 'literal'
+}
+
+export interface MigratableRootTreeNode extends BaseTreeNode<MigratableCommandTreeNode> {
+	type: 'root'
+	children: { [command: string]: MigratableLiteralTreeNode }
+}
+
+export type MigratableCommandTreeNode =
+	| MigratableArgumentTreeNode
+	| MigratableLiteralTreeNode
+	| MigratableRootTreeNode
+
+export type MigratableMcmetaCommands = MigratableRootTreeNode
 
 export interface McmetaRegistries {
 	[id: string]: string[]

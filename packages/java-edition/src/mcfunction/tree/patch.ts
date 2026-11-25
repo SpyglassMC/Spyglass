@@ -1,8 +1,9 @@
 import type { ResourceLocationOptions } from '@spyglassmc/core'
 import { SymbolAccessType } from '@spyglassmc/core'
 import type { PartialRootTreeNode, PartialTreeNode } from '@spyglassmc/mcfunction'
+import { AlwaysPass, requirePermission } from '@spyglassmc/mcfunction'
 import { ReleaseVersion } from '../../dependency/index.js'
-import type { NbtParserProperties } from './argument.js'
+import type { NbtParserOptions } from './argument.js'
 
 export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 	return {
@@ -20,8 +21,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							target: {
 								children: {
 									attribute: {
-										properties: {
-											category: 'attribute',
+										argument: {
+											options: {
+												category: 'attribute',
+											},
 										},
 										children: {
 											modifier: {
@@ -29,13 +32,17 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 													add: {
 														children: {
 															id: {
-																properties: {
-																	category: 'attribute_modifier',
+																argument: {
+																	options: {
+																		category: 'attribute_modifier',
+																	},
 																},
 															},
 															uuid: {
-																properties: {
-																	category: 'attribute_modifier_uuid',
+																argument: {
+																	options: {
+																		category: 'attribute_modifier_uuid',
+																	},
 																},
 															},
 														},
@@ -43,13 +50,17 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 													remove: {
 														children: {
 															id: {
-																properties: {
-																	category: 'attribute_modifier',
+																argument: {
+																	options: {
+																		category: 'attribute_modifier',
+																	},
 																},
 															},
 															uuid: {
-																properties: {
-																	category: 'attribute_modifier_uuid',
+																argument: {
+																	options: {
+																		category: 'attribute_modifier_uuid',
+																	},
 																},
 															},
 														},
@@ -59,13 +70,17 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 															get: {
 																children: {
 																	id: {
-																		properties: {
-																			category: 'attribute_modifier',
+																		argument: {
+																			options: {
+																				category: 'attribute_modifier',
+																			},
 																		},
 																	},
 																	uuid: {
-																		properties: {
-																			category: 'attribute_modifier_uuid',
+																		argument: {
+																			options: {
+																				category: 'attribute_modifier_uuid',
+																			},
 																		},
 																	},
 																},
@@ -83,22 +98,24 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				}
 				: {}),
 			ban: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			'ban-ip': {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			banlist: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			bossbar: {
 				children: {
 					add: {
 						children: {
 							id: {
-								properties: {
-									category: 'bossbar',
-									usageType: 'definition',
+								argument: {
+									options: {
+										category: 'bossbar',
+										usageType: 'definition',
+									},
 								},
 							},
 						},
@@ -106,8 +123,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					get: {
 						children: {
 							id: {
-								properties: {
-									category: 'bossbar',
+								argument: {
+									options: {
+										category: 'bossbar',
+									},
 								},
 							},
 						},
@@ -115,8 +134,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					remove: {
 						children: {
 							id: {
-								properties: {
-									category: 'bossbar',
+								argument: {
+									options: {
+										category: 'bossbar',
+									},
 								},
 							},
 						},
@@ -124,9 +145,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					set: {
 						children: {
 							id: {
-								properties: {
-									category: 'bossbar',
-									accessType: SymbolAccessType.Write,
+								argument: {
+									options: {
+										category: 'bossbar',
+										accessType: SymbolAccessType.Write,
+									},
 								},
 							},
 						},
@@ -175,17 +198,17 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 						? {
 							// Added in 21w15a (1.21.6, pack format 72)
 							create: {
-								permission: 4,
+								permissions: requirePermission('owners'),
 							},
 						}
 						: {}),
 				},
 			},
 			debug: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			deop: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			execute: {
 				children: {
@@ -206,8 +229,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							id: {
 								children: {
 									id: {
-										properties: {
-											category: 'player_uuid',
+										argument: {
+											options: {
+												category: 'player_uuid',
+											},
 										},
 									},
 								},
@@ -224,10 +249,12 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 								children: {
 									// Added in 23w31a (1.20.2, pack format 16)
 									arguments: {
-										properties: {
-											dispatcher: 'minecraft:macro_function',
-											dispatchedBy: 'name',
-										} satisfies NbtParserProperties,
+										argument: {
+											options: {
+												dispatcher: 'minecraft:macro_function',
+												dispatchedBy: 'name',
+											} satisfies Partial<NbtParserOptions>,
+										},
 									},
 									with: getDataPatch('source', 'path'),
 								},
@@ -258,9 +285,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																					sourceSlot: {
 																						children: {
 																							modifier: {
-																								properties: {
-																									category:
-																										'item_modifier',
+																								argument: {
+																									options: {
+																										category:
+																											'item_modifier',
+																									},
 																								},
 																							},
 																						},
@@ -276,9 +305,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																					sourceSlot: {
 																						children: {
 																							modifier: {
-																								properties: {
-																									category:
-																										'item_modifier',
+																								argument: {
+																									options: {
+																										category:
+																											'item_modifier',
+																									},
 																								},
 																							},
 																						},
@@ -310,9 +341,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																					sourceSlot: {
 																						children: {
 																							modifier: {
-																								properties: {
-																									category:
-																										'item_modifier',
+																								argument: {
+																									options: {
+																										category:
+																											'item_modifier',
+																									},
 																								},
 																							},
 																						},
@@ -328,9 +361,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																					sourceSlot: {
 																						children: {
 																							modifier: {
-																								properties: {
-																									category:
-																										'item_modifier',
+																								argument: {
+																									options: {
+																										category:
+																											'item_modifier',
+																									},
 																								},
 																							},
 																						},
@@ -358,8 +393,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 													slot: {
 														children: {
 															modifier: {
-																properties: {
-																	category: 'item_modifier',
+																argument: {
+																	options: {
+																		category: 'item_modifier',
+																	},
 																},
 															},
 														},
@@ -375,8 +412,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 													slot: {
 														children: {
 															modifier: {
-																properties: {
-																	category: 'item_modifier',
+																argument: {
+																	options: {
+																		category: 'item_modifier',
+																	},
 																},
 															},
 														},
@@ -392,21 +431,21 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				}
 				: {}),
 			help: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			...(ReleaseVersion.cmp(release, '1.18') >= 0
 				? {
 					// Added in 21w37a (1.18, pack format 8)
 					jfr: {
-						permission: 4,
+						permissions: requirePermission('owners'),
 					},
 				}
 				: {}),
 			kick: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			list: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			...(ReleaseVersion.isBetween(release, '1.16', '1.19')
 				? {
@@ -415,10 +454,12 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					locatebiome: {
 						children: {
 							biome: {
-								properties: {
-									category: 'worldgen/biome',
-									// Allowed in 1.18.2-pre1 (1.18.2, pack format 9)
-									allowTag: ReleaseVersion.cmp(release, '1.18.2') >= 0,
+								argument: {
+									options: {
+										category: 'worldgen/biome',
+										// Allowed in 1.18.2-pre1 (1.18.2, pack format 9)
+										allowTag: ReleaseVersion.cmp(release, '1.18.2') >= 0,
+									},
 								},
 							},
 						},
@@ -477,25 +518,25 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			me: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			msg: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			op: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			pardon: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			'pardon-ip': {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			...(ReleaseVersion.cmp(release, '1.17') >= 0
 				? {
 					// Added in 1.17 Pre-release 1 (1.17, pack format 7)
 					perf: {
-						permission: 4,
+						permissions: requirePermission('owners'),
 					},
 				}
 				: {}),
@@ -509,9 +550,13 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 									pool: {
 										children: {
 											target: {
-												properties: {
-													category: 'jigsaw_block_name',
-													allowUnknown: true,
+												argument: {
+													options: {
+														options: {
+															category: 'jigsaw_block_name',
+															allowUnknown: true,
+														},
+													},
 												},
 											},
 										},
@@ -521,8 +566,12 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							template: {
 								children: {
 									template: {
-										properties: {
-											category: 'structure',
+										argument: {
+											options: {
+												options: {
+													category: 'structure',
+												},
+											},
 										},
 									},
 								},
@@ -541,8 +590,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 									targets: {
 										children: {
 											posteffect: {
-												properties: {
-													category: 'post_effect',
+												argument: {
+													options: {
+														category: 'post_effect',
+													},
 												},
 											},
 										},
@@ -554,8 +605,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 									targets: {
 										children: {
 											posteffect: {
-												properties: {
-													category: 'post_effect',
+												argument: {
+													options: {
+														category: 'post_effect',
+													},
 												},
 											},
 										},
@@ -567,7 +620,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				}
 				: {}),
 			publish: {
-				permission: 4,
+				permissions: requirePermission('owners'),
 			},
 			...(ReleaseVersion.cmp(release, '1.20.2') >= 0
 				? {
@@ -577,9 +630,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							reset: {
 								children: {
 									sequence: {
-										properties: {
-											category: 'random_sequence',
-											allowUnknown: true,
+										argument: {
+											options: {
+												category: 'random_sequence',
+												allowUnknown: true,
+											},
 										},
 									},
 								},
@@ -587,15 +642,17 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							roll: {
 								children: {
 									range: {
-										properties: {
+										argument: {
 											minSpan: 1,
 											maxSpan: 2147483646,
 										},
 										children: {
 											sequence: {
-												properties: {
-													category: 'random_sequence',
-													allowUnknown: true,
+												argument: {
+													options: {
+														category: 'random_sequence',
+														allowUnknown: true,
+													},
 												},
 											},
 										},
@@ -605,15 +662,17 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							value: {
 								children: {
 									range: {
-										properties: {
+										argument: {
 											minSpan: 1,
 											maxSpan: 2147483646,
 										},
 										children: {
 											sequence: {
-												properties: {
-													category: 'random_sequence',
-													allowUnknown: true,
+												argument: {
+													options: {
+														category: 'random_sequence',
+														allowUnknown: true,
+													},
 												},
 											},
 										},
@@ -631,13 +690,13 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			'save-all': {
-				permission: 4,
+				permissions: requirePermission('owners'),
 			},
 			'save-off': {
-				permission: 4,
+				permissions: requirePermission('owners'),
 			},
 			'save-on': {
-				permission: 4,
+				permissions: requirePermission('owners'),
 			},
 			schedule: {
 				children: {
@@ -646,7 +705,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							function: {
 								children: {
 									time: {
-										properties: {
+										argument: {
 											min: 1,
 										},
 									},
@@ -657,8 +716,9 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					clear: {
 						children: {
 							function: {
-								parser: 'minecraft:function',
-								properties: undefined,
+								argument: {
+									type: 'minecraft:function',
+								},
 							},
 						},
 					},
@@ -671,8 +731,8 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							add: {
 								children: {
 									objective: {
-										parser: 'minecraft:objective',
-										properties: {
+										argument: {
+											type: 'minecraft:objective',
 											usageType: 'definition',
 										},
 									},
@@ -692,10 +752,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			setidletimeout: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 			stop: {
-				permission: 4,
+				permissions: requirePermission('owners'),
 			},
 			stopsound: {
 				children: {
@@ -728,9 +788,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							create: {
 								children: {
 									id: {
-										properties: {
-											category: 'stopwatch',
-											usageType: 'definition',
+										argument: {
+											options: {
+												category: 'stopwatch',
+												usageType: 'definition',
+											},
 										},
 									},
 								},
@@ -738,8 +800,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							query: {
 								children: {
 									id: {
-										properties: {
-											category: 'stopwatch',
+										argument: {
+											options: {
+												category: 'stopwatch',
+											},
 										},
 									},
 								},
@@ -747,8 +811,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							remove: {
 								children: {
 									id: {
-										properties: {
-											category: 'stopwatch',
+										argument: {
+											options: {
+												category: 'stopwatch',
+											},
 										},
 									},
 								},
@@ -756,8 +822,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							restart: {
 								children: {
 									id: {
-										properties: {
-											category: 'stopwatch',
+										argument: {
+											options: {
+												category: 'stopwatch',
+											},
 										},
 									},
 								},
@@ -773,10 +841,12 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							pos: {
 								children: {
 									nbt: {
-										properties: {
-											dispatcher: 'minecraft:entity',
-											dispatchedBy: 'entity',
-										} satisfies NbtParserProperties,
+										argument: {
+											options: {
+												dispatcher: 'minecraft:entity',
+												dispatchedBy: 'entity',
+											} satisfies Partial<NbtParserOptions>,
+										},
 									},
 								},
 							},
@@ -791,14 +861,18 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							add: {
 								children: {
 									name: {
-										parser: 'spyglassmc:tag',
+										argument: {
+											type: 'spyglassmc:tag',
+										},
 									},
 								},
 							},
 							remove: {
 								children: {
 									name: {
-										parser: 'spyglassmc:tag',
+										argument: {
+											type: 'spyglassmc:tag',
+										},
 									},
 								},
 							},
@@ -811,8 +885,8 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					add: {
 						children: {
 							team: {
-								parser: 'minecraft:team',
-								properties: {
+								argument: {
+									type: 'minecraft:team',
 									usageType: 'definition',
 								},
 							},
@@ -821,7 +895,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			teammsg: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			/**
 			 * Original command syntax:
@@ -852,7 +926,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				},
 			},
 			tell: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			...(ReleaseVersion.cmp(release, '1.21.5') >= 0
 				? {
@@ -861,9 +935,11 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							create: {
 								children: {
 									id: {
-										properties: {
-											category: 'test_instance',
-											allowUnknown: true,
+										argument: {
+											options: {
+												category: 'test_instance',
+												allowUnknown: true,
+											},
 										},
 									},
 								},
@@ -876,34 +952,36 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				? {
 					// Added in 23w43a (1.20.3, pack format 22)
 					tick: {
-						permission: 3,
+						permissions: requirePermission('admins'),
 					},
 				}
 				: {}),
 			tm: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			...(ReleaseVersion.cmp(release, '1.20.5') >= 0
 				? {
 					// Added in 24w04a (1.20.5, pack format 29)
 					transfer: {
-						permission: 3,
+						permissions: requirePermission('admins'),
 					},
 				}
 				: {}),
 			trigger: {
-				permission: 0,
+				permissions: AlwaysPass,
 				children: {
 					objective: {
-						properties: {
-							category: 'objective',
-							accessType: SymbolAccessType.Write,
+						argument: {
+							options: {
+								category: 'objective',
+								accessType: SymbolAccessType.Write,
+							},
 						},
 					},
 				},
 			},
 			w: {
-				permission: 0,
+				permissions: AlwaysPass,
 			},
 			...(ReleaseVersion.cmp(release, '1.21.6') >= 0
 				? {
@@ -918,8 +996,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 													set: {
 														children: {
 															style: {
-																properties: {
-																	category: 'waypoint_style',
+																argument: {
+																	options: {
+																		category: 'waypoint_style',
+																	},
 																},
 															},
 														},
@@ -935,7 +1015,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				}
 				: {}),
 			whitelist: {
-				permission: 3,
+				permissions: requirePermission('admins'),
 			},
 		},
 	}
@@ -948,8 +1028,10 @@ const AdvancementTargets: PartialTreeNode = Object.freeze({
 				from: {
 					children: {
 						advancement: {
-							properties: {
-								category: 'advancement',
+							argument: {
+								options: {
+									category: 'advancement',
+								},
 							},
 						},
 					},
@@ -957,14 +1039,18 @@ const AdvancementTargets: PartialTreeNode = Object.freeze({
 				only: {
 					children: {
 						advancement: {
-							properties: {
-								category: 'advancement',
+							argument: {
+								options: {
+									category: 'advancement',
+								},
 							},
 							children: {
 								criterion: {
-									parser: 'spyglassmc:criterion',
-									properties: {
-										usageType: 'reference',
+									argument: {
+										options: {
+											type: 'spyglassmc:criterion',
+											usageType: 'reference',
+										},
 									},
 								},
 							},
@@ -974,8 +1060,10 @@ const AdvancementTargets: PartialTreeNode = Object.freeze({
 				through: {
 					children: {
 						advancement: {
-							properties: {
-								category: 'advancement',
+							argument: {
+								options: {
+									category: 'advancement',
+								},
 							},
 						},
 					},
@@ -983,8 +1071,10 @@ const AdvancementTargets: PartialTreeNode = Object.freeze({
 				until: {
 					children: {
 						advancement: {
-							properties: {
-								category: 'advancement',
+							argument: {
+								options: {
+									category: 'advancement',
+								},
 							},
 						},
 					},
@@ -1051,13 +1141,15 @@ function getDataPatch(
 					[`${vaultKey}Pos`]: {
 						children: {
 							[nbtKey]: {
-								properties: {
-									dispatcher: 'minecraft:block',
-									dispatchedBy: `${vaultKey}Pos`,
-									accessType: nbtAccessType,
-									isPredicate,
-									isMerge,
-								} satisfies NbtParserProperties,
+								argument: {
+									options: {
+										dispatcher: 'minecraft:block',
+										dispatchedBy: `${vaultKey}Pos`,
+										accessType: nbtAccessType,
+										isPredicate,
+										isMerge,
+									} satisfies Partial<NbtParserOptions>,
+								},
 								...children ? { children: children('block') } : {},
 							},
 						},
@@ -1069,13 +1161,15 @@ function getDataPatch(
 					[vaultKey]: {
 						children: {
 							[nbtKey]: {
-								properties: {
-									dispatcher: 'minecraft:entity',
-									dispatchedBy: vaultKey,
-									accessType: nbtAccessType,
-									isPredicate,
-									isMerge,
-								} satisfies NbtParserProperties,
+								argument: {
+									options: {
+										dispatcher: 'minecraft:entity',
+										dispatchedBy: vaultKey,
+										accessType: nbtAccessType,
+										isPredicate,
+										isMerge,
+									} satisfies Partial<NbtParserOptions>,
+								},
 								...children ? { children: children('entity') } : {},
 							},
 						},
@@ -1085,20 +1179,24 @@ function getDataPatch(
 			storage: {
 				children: {
 					[vaultKey]: {
-						properties: {
-							category: 'storage',
-							accessType: vaultAccessType,
-							usageType: 'definition',
-						} satisfies ResourceLocationOptions,
+						argument: {
+							options: {
+								category: 'storage',
+								accessType: vaultAccessType,
+								usageType: 'definition',
+							} satisfies ResourceLocationOptions,
+						},
 						children: {
 							[nbtKey]: {
-								properties: {
-									dispatcher: 'minecraft:storage',
-									dispatchedBy: vaultKey,
-									accessType: nbtAccessType,
-									isPredicate,
-									isMerge,
-								} satisfies NbtParserProperties,
+								argument: {
+									options: {
+										dispatcher: 'minecraft:storage',
+										dispatchedBy: vaultKey,
+										accessType: nbtAccessType,
+										isPredicate,
+										isMerge,
+									} satisfies Partial<NbtParserOptions>,
+								},
 								...children ? { children: children('storage') } : {},
 							},
 						},
@@ -1126,13 +1224,15 @@ const getDataModifySource = (
 			value: {
 				children: {
 					value: {
-						properties: {
-							dispatcher: `minecraft:${type}`,
-							dispatchedBy: type === 'block' ? 'targetPos' : 'target',
-							indexedBy: 'targetPath',
-							isMerge,
-							isListIndex,
-						} satisfies NbtParserProperties,
+						argument: {
+							options: {
+								dispatcher: `minecraft:${type}`,
+								dispatchedBy: type === 'block' ? 'targetPos' : 'target',
+								indexedBy: 'targetPath',
+								isMerge,
+								isListIndex,
+							} satisfies Partial<NbtParserOptions>,
+						},
 					},
 				},
 			},
@@ -1147,8 +1247,10 @@ const ExecuteCondition: PartialTreeNode = Object.freeze({
 		predicate: {
 			children: {
 				predicate: {
-					properties: {
-						category: 'predicate',
+					argument: {
+						options: {
+							category: 'predicate',
+						},
 					},
 				},
 			},
@@ -1156,8 +1258,10 @@ const ExecuteCondition: PartialTreeNode = Object.freeze({
 		stopwatch: {
 			children: {
 				id: {
-					properties: {
-						category: 'stopwatch',
+					argument: {
+						options: {
+							category: 'stopwatch',
+						},
 					},
 				},
 			},
@@ -1175,9 +1279,11 @@ const ExecuteStoreTarget: PartialTreeNode = Object.freeze({
 		bossbar: {
 			children: {
 				id: {
-					properties: {
-						category: 'bossbar',
-						accessType: SymbolAccessType.Write,
+					argument: {
+						options: {
+							category: 'bossbar',
+							accessType: SymbolAccessType.Write,
+						},
 					},
 				},
 			},
@@ -1185,12 +1291,12 @@ const ExecuteStoreTarget: PartialTreeNode = Object.freeze({
 		score: {
 			children: {
 				targets: {
-					properties: {
+					argument: {
 						usageType: 'definition',
 					},
 					children: {
 						objective: {
-							properties: {
+							argument: {
 								accessType: SymbolAccessType.Write,
 							},
 						},
@@ -1206,8 +1312,10 @@ const LootSource: PartialTreeNode = Object.freeze({
 		fish: {
 			children: {
 				loot_table: {
-					properties: {
-						category: 'loot_table',
+					argument: {
+						options: {
+							category: 'loot_table',
+						},
 					},
 				},
 			},
@@ -1215,8 +1323,10 @@ const LootSource: PartialTreeNode = Object.freeze({
 		loot: {
 			children: {
 				loot_table: {
-					properties: {
-						category: 'loot_table',
+					argument: {
+						options: {
+							category: 'loot_table',
+						},
 					},
 				},
 			},
@@ -1227,12 +1337,12 @@ const LootSource: PartialTreeNode = Object.freeze({
 const ObjectiveWriteTargets: PartialTreeNode = Object.freeze({
 	children: {
 		targets: {
-			properties: {
+			argument: {
 				usageType: 'definition',
 			},
 			children: {
 				objective: {
-					properties: {
+					argument: {
 						accessType: SymbolAccessType.Write,
 					},
 				},
@@ -1246,8 +1356,10 @@ const RecipeTargets: PartialTreeNode = Object.freeze({
 		targets: {
 			children: {
 				recipe: {
-					properties: {
-						category: 'recipe',
+					argument: {
+						options: {
+							category: 'recipe',
+						},
 					},
 				},
 			},
@@ -1258,8 +1370,10 @@ const RecipeTargets: PartialTreeNode = Object.freeze({
 const Sound: PartialTreeNode = Object.freeze({
 	children: {
 		sound: {
-			properties: {
-				category: 'sound_event',
+			argument: {
+				options: {
+					category: 'sound_event',
+				},
 			},
 		},
 	},

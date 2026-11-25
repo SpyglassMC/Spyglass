@@ -2,9 +2,9 @@ import type * as core from '@spyglassmc/core'
 import type { RootTreeNode, TreeNode } from '@spyglassmc/mcfunction'
 
 /**
- * A set of parsers that must be patched with a `properties` field.
+ * A set of arguments that must be patched extra properties.
  */
-const PatchRequiredParsers = new Set([
+const PatchRequiredArguments = new Set([
 	'minecraft:nbt_compound_tag',
 	'minecraft:nbt_path',
 	'minecraft:nbt_tag',
@@ -13,14 +13,19 @@ const PatchRequiredParsers = new Set([
 ])
 
 /**
- * Validate that parsers requiring patches have been patched in the tree.
+ * Validate that arguments requiring patches have been patched in the tree.
  */
 export function validatePatchedTree(tree: RootTreeNode, logger: core.Logger) {
 	walk(tree, [])
 
 	function walk(node: TreeNode, path: readonly string[]) {
-		if (node.type === 'argument' && PatchRequiredParsers.has(node.parser) && !node.properties) {
-			logger.warn(`[validatePatchedTree] Patch required: ${node.parser} at ${path.join('.')}`)
+		if (
+			node.type === 'argument' && PatchRequiredArguments.has(node.argument.type)
+			&& Object.keys(node.argument).length === 1
+		) {
+			logger.warn(
+				`[validatePatchedTree] Patch required: ${node.argument.type} at ${path.join('.')}`,
+			)
 		}
 
 		for (const [key, value] of Object.entries(node.children ?? {})) {

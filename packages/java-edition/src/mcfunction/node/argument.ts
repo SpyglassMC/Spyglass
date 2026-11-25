@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import type * as nbt from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../../dependency/common.js'
-import type { NbtParserProperties } from '../tree/argument.js'
+import type { NbtParserOptions } from '../tree/argument.js'
 
 export interface BlockStatesNode extends core.RecordBaseNode<core.StringNode, core.StringNode> {
 	type: 'mcfunction:block/states'
@@ -425,7 +425,7 @@ export interface MessageNode extends core.AstNode {
 export interface NbtNode extends core.AstNode {
 	type: 'mcfunction:nbt'
 	children: [nbt.NbtNode]
-	properties?: NbtParserProperties
+	properties?: NbtParserOptions
 }
 export namespace NbtNode {
 	/* istanbul ignore next */
@@ -437,7 +437,7 @@ export namespace NbtNode {
 export interface NbtPathNode extends core.AstNode {
 	type: 'mcfunction:nbt_path'
 	children: [nbt.NbtPathNode]
-	properties?: NbtParserProperties
+	properties?: NbtParserOptions
 }
 export namespace NbtPathNode {
 	/* istanbul ignore next */

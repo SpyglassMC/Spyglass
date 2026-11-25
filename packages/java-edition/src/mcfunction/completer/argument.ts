@@ -67,7 +67,7 @@ import {
 	ScoreHolderNode,
 	VectorNode,
 } from '../node/index.js'
-import type { ArgumentTreeNode } from '../tree/index.js'
+import type { ArgumentTreeData } from '../tree/index.js'
 
 export const getMockNodes: mcf.completer.MockNodesGetter = (
 	rawTreeNode,
@@ -75,24 +75,23 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 	ctx: CompleterContext,
 ): Arrayable<AstNode> => {
 	const range = ctx.offset
-	const treeNode = rawTreeNode as ArgumentTreeNode
+	const argument = rawTreeNode.argument as ArgumentTreeData
 
-	switch (treeNode.parser) {
-		case 'brigadier:bool':
+	switch (argument.type) {
+		case 'minecraft:bool':
 			return BooleanNode.mock(range)
-		case 'brigadier:double':
-		case 'brigadier:float':
-		case 'brigadier:integer':
-		case 'brigadier:long':
+		case 'minecraft:double':
+		case 'minecraft:float':
+		case 'minecraft:integer':
+		case 'minecraft:long':
 		case 'minecraft:float_range':
 		case 'minecraft:message':
 		case 'minecraft:time':
 		case 'minecraft:uuid':
+		case 'minecraft:word':
 			return []
-		case 'brigadier:string':
-			return treeNode.properties.type === 'phrase'
-				? StringNode.mock(range, BrigadierStringOptions)
-				: []
+		case 'minecraft:quoted_string':
+			return StringNode.mock(range, BrigadierStringOptions)
 		case 'minecraft:angle':
 			return CoordinateNode.mock(range)
 		case 'minecraft:block_pos':
@@ -168,13 +167,10 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:particle':
 			return ParticleNode.mock(range)
 		case 'minecraft:resource':
-		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
-		case 'minecraft:resource_or_tag_key':
-			const allowTag = treeNode.parser === 'minecraft:resource_or_tag'
-				|| treeNode.parser === 'minecraft:resource_or_tag_key'
+			const allowTag = argument.type === 'minecraft:resource_or_tag'
 			return ResourceLocationNode.mock(range, {
-				category: ResourceLocation.shorten(treeNode.properties.registry) as
+				category: ResourceLocation.shorten(argument.registry) as
 					| RegistryCategory
 					| WorldgenFileCategory,
 				allowTag,
@@ -182,7 +178,7 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:resource_location':
 			return ResourceLocationNode.mock(
 				range,
-				treeNode.properties ?? { pool: [], allowUnknown: true },
+				argument.options ?? { pool: [], allowUnknown: true },
 			)
 		case 'minecraft:rotation':
 			return VectorNode.mock(range, { dimension: 2, noLocal: true })

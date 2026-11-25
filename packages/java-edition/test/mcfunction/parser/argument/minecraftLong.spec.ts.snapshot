@@ -1,7 +1,7 @@
-exports[`mcfunction argument parser > brigadier:integer > Parse '-123' 1`] = `
+exports[`mcfunction argument parser > minecraft:long > Parse '-123' 1`] = `
 {
   "node": {
-    "type": "integer",
+    "type": "long",
     "range": {
       "start": 0,
       "end": 4
@@ -12,10 +12,10 @@ exports[`mcfunction argument parser > brigadier:integer > Parse '-123' 1`] = `
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:integer > Parse '0' 1`] = `
+exports[`mcfunction argument parser > minecraft:long > Parse '0' 1`] = `
 {
   "node": {
-    "type": "integer",
+    "type": "long",
     "range": {
       "start": 0,
       "end": 1
@@ -26,10 +26,10 @@ exports[`mcfunction argument parser > brigadier:integer > Parse '0' 1`] = `
 }
 `;
 
-exports[`mcfunction argument parser > brigadier:integer > Parse '123' 1`] = `
+exports[`mcfunction argument parser > minecraft:long > Parse '123' 1`] = `
 {
   "node": {
-    "type": "integer",
+    "type": "long",
     "range": {
       "start": 0,
       "end": 3

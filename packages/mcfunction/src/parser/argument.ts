@@ -15,6 +15,6 @@ export type ArgumentParserGetter = (
 ) => core.Parser | undefined
 
 export function argumentTreeNodeToString(name: string, treeNode: ArgumentTreeNode): string {
-	const parserName = treeNode.parser.slice(treeNode.parser.indexOf(':') + 1)
+	const parserName = treeNode.argument.type.slice(treeNode.argument.type.indexOf(':') + 1)
 	return `<${name}: ${parserName}>`
 }

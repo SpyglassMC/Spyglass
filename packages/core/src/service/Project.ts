@@ -232,6 +232,11 @@ export class Project extends EventDispatcher<{
 	readonly logger: Logger
 	readonly meta = new MetaRegistry()
 	readonly profilers: ProfilerFactory
+	/**
+	 * Only contains workspace roots.
+	 *
+	 * Dependencies and other pack roots identified by `pack.mcmeta` are not included.
+	 */
 	readonly projectRoots: RootUriString[]
 	symbols: SymbolUtil
 
@@ -247,6 +252,8 @@ export class Project extends EventDispatcher<{
 	 *
 	 * Some URIs in the array may overlap with each other. In such cases, the deeper ones are guaranteed to come
 	 * before the shallower ones (e.g. `file:///foo/bar/` will come before `file:///foo/`).
+	 *
+	 * This list is not available during pack initialization.
 	 */
 	get roots(): readonly RootUriString[] {
 		return this.#roots
@@ -1040,7 +1047,7 @@ export class Project extends EventDispatcher<{
 	 */
 	public shouldExclude(uri: string, language?: string): boolean {
 		return (!this.isSupportedLanguage(uri, language) && !ConfigService.isConfigFile(uri))
-			|| this.isUserExcluded(uri)
+			|| Project.isUserExcluded(this.config.env.exclude, uri)
 	}
 
 	private isSupportedLanguage(uri: string, language?: string): boolean {
@@ -1064,14 +1071,18 @@ export class Project extends EventDispatcher<{
 		return this.meta.getLanguageID(ext) ?? ext.slice(1)
 	}
 
-	private isUserExcluded(uri: string): boolean {
-		if (this.config.env.exclude.length === 0) {
+	/**
+	 * @param exclude An array of file URI glob patterns to exclude
+	 */
+	public static isUserExcluded(
+		exclude: string[],
+		uri: string,
+	): boolean {
+		if (exclude.length === 0) {
 			return false
 		}
-		for (const rel of fileUtil.getRels(uri, this.projectRoots)) {
-			if (picomatch(this.config.env.exclude, { dot: true, posixSlashes: false })(rel)) {
-				return true
-			}
+		if (picomatch(exclude, { dot: true })(uri)) {
+			return true
 		}
 		return false
 	}

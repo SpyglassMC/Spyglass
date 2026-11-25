@@ -1,4 +1,4 @@
-exports[`mcfunction argument parser > minecraft:entity > Parse '0123' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '0123' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -31,7 +31,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '0123' with {\"am
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '0123' with {\"amount\":\"single\",\"type\":\"players\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '0123' with {\"single_result\":true,\"players_only\":true} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -64,7 +64,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '0123' with {\"am
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -124,7 +124,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ ]' with {\"a
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ advancements = { minecraft:foo = true , minecraft:bar = { qux = true , } , } , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ advancements = { minecraft:foo = true , minecraft:bar = { qux = true , } , } , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -1264,7 +1264,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ advancements
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ advancements = { } , advancements = { } , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ advancements = { } , advancements = { } , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -1739,7 +1739,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ advancements
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ distance = ..-1 , distance = 1..0 , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ distance = ..-1 , distance = 1..0 , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -2400,7 +2400,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ distance = .
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ distance = ..1 , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ distance = ..1 , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -2734,7 +2734,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ distance = .
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ gamemode = ! creative , gamemode = ! adventure , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ gamemode = ! creative , gamemode = ! adventure , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -3728,7 +3728,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ gamemode = !
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ gamemode = creative , gamemode = unknown , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ gamemode = creative , gamemode = unknown , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -4675,7 +4675,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ gamemode = c
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ level = -1 , level = -1 , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ level = -1 , level = -1 , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -5238,7 +5238,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ level = -1 ,
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ level = 1.. , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ level = 1.. , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -5570,7 +5570,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ level = 1.. 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ limit = 1 , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ limit = 1 , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -5818,7 +5818,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ limit = 1 , 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"SPGoding\" , \"name\" = ! Misode , 'name' = ! , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"SPGoding\" , \"name\" = ! Misode , 'name' = ! , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -7054,7 +7054,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = ! \"S
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPGoding\" , \"name\" = Misode , 'name' = , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPGoding\" , \"name\" = Misode , 'name' = , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -8211,7 +8211,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ name = \"SPG
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ nbt = {} , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ nbt = {} , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -8563,7 +8563,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ nbt = {} , ]
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ predicate = spgoding:foo , predicate = ! spgoding:bar , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ predicate = spgoding:foo , predicate = ! spgoding:bar , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -9221,7 +9221,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[ predicate = 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@a[limit=1]' with {\"amount\":\"single\",\"type\":\"players\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@a[limit=1]' with {\"single_result\":true,\"players_only\":true} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -9461,7 +9461,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@a[limit=1]' wit
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@e' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@e' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -9500,7 +9500,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@e' with {\"amou
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@e' with {\"amount\":\"single\",\"type\":\"players\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@e' with {\"single_result\":true,\"players_only\":true} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -9556,7 +9556,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@e' with {\"amou
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@e[limit=1]' with {\"amount\":\"single\",\"type\":\"players\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@e[limit=1]' with {\"single_result\":true,\"players_only\":true} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -9808,7 +9808,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@e[limit=1]' wit
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@e[type=foo]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@e[type=foo]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -10139,7 +10139,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@e[type=foo]' wi
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@n' with {\"amount\":\"single\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@n' with {\"single_result\":true,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -10184,7 +10184,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@n' with {\"amou
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@n' with {\"amount\":\"single\",\"type\":\"entities\"} in version 1.21 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@n' with {\"single_result\":true,\"players_only\":false} in version 1.21 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -10220,7 +10220,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@n' with {\"amou
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@n[distance=..5]' with {\"amount\":\"single\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@n[distance=..5]' with {\"single_result\":true,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -10555,7 +10555,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@n[distance=..5]
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@n[distance=..5]' with {\"amount\":\"single\",\"type\":\"entities\"} in version 1.21 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@n[distance=..5]' with {\"single_result\":true,\"players_only\":false} in version 1.21 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -10881,7 +10881,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@n[distance=..5]
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@n[type=cow]' with {\"amount\":\"single\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@n[type=cow]' with {\"single_result\":true,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -11218,7 +11218,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@n[type=cow]' wi
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@n[type=cow]' with {\"amount\":\"single\",\"type\":\"entities\"} in version 1.21 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@n[type=cow]' with {\"single_result\":true,\"players_only\":false} in version 1.21 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -11546,7 +11546,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@n[type=cow]' wi
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@r' with {\"amount\":\"single\",\"type\":\"players\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@r' with {\"single_result\":true,\"players_only\":true} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -11582,7 +11582,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@r' with {\"amou
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse '@s[ limit = 0 , limit = 0 , ]' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse '@s[ limit = 0 , limit = 0 , ]' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -12041,7 +12041,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse '@s[ limit = 0 , 
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse 'Player' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse 'Player' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -12074,7 +12074,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'Player' with {\"
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse 'Player' with {\"amount\":\"single\",\"type\":\"players\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse 'Player' with {\"single_result\":true,\"players_only\":true} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -12107,7 +12107,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'Player' with {\"
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse 'dd12be42-52a9-4a91-a8a1-11c01849e498' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse 'dd12be42-52a9-4a91-a8a1-11c01849e498' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -12132,7 +12132,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'dd12be42-52a9-4a
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse 'dd12be42-52a9-4a91-a8a1-11c01849e498' with {\"amount\":\"single\",\"type\":\"players\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse 'dd12be42-52a9-4a91-a8a1-11c01849e498' with {\"single_result\":true,\"players_only\":true} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
@@ -12166,7 +12166,7 @@ exports[`mcfunction argument parser > minecraft:entity > Parse 'dd12be42-52a9-4a
 }
 `;
 
-exports[`mcfunction argument parser > minecraft:entity > Parse 'this_is_a_super_long_player_name' with {\"amount\":\"multiple\",\"type\":\"entities\"} 1`] = `
+exports[`mcfunction argument parser > minecraft:entity > Parse 'this_is_a_super_long_player_name' with {\"single_result\":false,\"players_only\":false} 1`] = `
 {
   "node": {
     "type": "mcfunction:entity",
